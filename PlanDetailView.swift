@@ -263,15 +263,31 @@ struct PlanDetailView: View {
                 }
                 .buttonStyle(.plain)
             }
-            
-            ForEach(Array(group.exercises.enumerated()), id: \.element.id) { index, planEx in
-                exerciseRow(for: planEx, in: group)
-                    .id(planEx.id)
-                    .padding(.horizontal)
-                
-                if index < group.exercises.count - 1 {
-                    Divider()
-                        .padding(.leading)
+            if group.supersetGroupId != nil && !isExpanded {
+                VStack(alignment: .leading, spacing: 4) {
+                    ForEach(Array(group.exercises.enumerated()), id: \.element.id) { index, planEx in
+                        Text(planEx.exercise?.name ?? "Unbekannt")
+                            .font(.headline)
+                            .foregroundColor(.brand)
+                        
+                        if index < group.exercises.count - 1 {
+                            Divider()
+                                .padding(.leading)
+                        }
+                    }
+                }
+                .padding(.horizontal)
+                .padding(.bottom, Spacing.md)
+            } else {
+                ForEach(Array(group.exercises.enumerated()), id: \.element.id) { index, planEx in
+                    exerciseRow(for: planEx, in: group)
+                        .id(planEx.id)
+                        .padding(.horizontal)
+                    
+                    if index < group.exercises.count - 1 {
+                        Divider()
+                            .padding(.leading)
+                    }
                 }
             }
         }
