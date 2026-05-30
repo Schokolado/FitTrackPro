@@ -86,38 +86,38 @@ struct WorkoutSessionView: View {
             }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    if viewModel.restTimerActive {
+                        Button(action: {
+                            if requireRestTimerConfirm {
+                                showingSkipRestAlert = true
+                            } else {
+                                viewModel.skipRestTimer()
+                            }
+                        }) {
+                            HStack(spacing: 4) {
+                                Image(systemName: "timer")
+                                Text(viewModel.formatTime(viewModel.restTimeRemaining))
+                            }
+                            .font(.subheadline.monospacedDigit().bold())
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 4)
+                            .background(Color.green)
+                            .foregroundColor(.white)
+                            .cornerRadius(6)
+                        }
+                    }
+                }
+                
                 ToolbarItem(placement: .principal) {
                     VStack(spacing: 2) {
                         Text(session.plan?.name ?? "Freies Workout")
                             .font(.caption)
                             .foregroundColor(.secondary)
                         
-                        HStack(spacing: 8) {
-                            Text(viewModel.formatTime(viewModel.elapsedTime))
-                                .font(.headline.monospacedDigit())
-                                .foregroundColor(.primary)
-                            
-                            if viewModel.restTimerActive {
-                                Button(action: {
-                                    if requireRestTimerConfirm {
-                                        showingSkipRestAlert = true
-                                    } else {
-                                        viewModel.skipRestTimer()
-                                    }
-                                }) {
-                                    HStack(spacing: 4) {
-                                        Image(systemName: "timer")
-                                        Text(viewModel.formatTime(viewModel.restTimeRemaining))
-                                    }
-                                    .font(.subheadline.monospacedDigit().bold())
-                                    .padding(.horizontal, 6)
-                                    .padding(.vertical, 2)
-                                    .background(Color.green)
-                                    .foregroundColor(.white)
-                                    .cornerRadius(6)
-                                }
-                            }
-                        }
+                        Text(viewModel.formatTime(viewModel.elapsedTime))
+                            .font(.headline.monospacedDigit())
+                            .foregroundColor(.primary)
                     }
                 }
                 
