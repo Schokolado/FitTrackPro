@@ -236,15 +236,28 @@ struct PlanDetailView: View {
     private func exerciseGroupView(for group: ExerciseGroup) -> some View {
         VStack(alignment: .leading, spacing: 0) {
             if group.supersetGroupId != nil {
-                HStack {
-                    Image(systemName: "link")
-                    Text("Supersatz")
+                Button(action: {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                        if expandedGroups.contains(group.id) {
+                            expandedGroups.remove(group.id)
+                        } else {
+                            expandedGroups.insert(group.id)
+                        }
+                    }
+                }) {
+                    HStack {
+                        Image(systemName: "link")
+                        Text("Supersatz")
+                        Spacer()
+                    }
+                    .font(.caption)
+                    .foregroundColor(.brandSecondary)
+                    .padding(.horizontal)
+                    .padding(.top, Spacing.md)
+                    .padding(.bottom, 8)
+                    .contentShape(Rectangle())
                 }
-                .font(.caption)
-                .foregroundColor(.brandSecondary)
-                .padding(.horizontal)
-                .padding(.top, Spacing.md)
-                .padding(.bottom, 8)
+                .buttonStyle(.plain)
             }
             
             ForEach(Array(group.exercises.enumerated()), id: \.element.id) { index, planEx in
