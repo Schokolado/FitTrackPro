@@ -14,6 +14,8 @@ struct PlanDetailView: View {
     @State private var showingReorderSheet = false
     @State private var refreshId = UUID()
     @State private var newlyAddedExerciseIds: Set<UUID> = []
+    @State private var expandedGroups: Set<String> = []
+    @State private var expandedExercises: Set<UUID> = []
     
     private var groupedExercises: [ExerciseGroup] {
         let sorted = (plan.planExercises ?? []).sorted(by: { $0.sortOrder < $1.sortOrder })
@@ -52,41 +54,7 @@ struct PlanDetailView: View {
                     }
                     
                     ForEach(groupedExercises) { group in
-                        VStack(alignment: .leading, spacing: 0) {
-                            if group.supersetGroupId != nil {
-                                HStack {
-                                    Image(systemName: "link")
-                                    Text("Supersatz")
-                                }
-                                .font(.caption)
-                                .foregroundColor(.brandSecondary)
-                                .padding(.horizontal)
-                                .padding(.top, Spacing.md)
-                                .padding(.bottom, 8)
-                            }
-                            
-                            ForEach(Array(group.exercises.enumerated()), id: \.element.id) { index, planEx in
-                                PlanExerciseRowView(
-                                    planExercise: planEx,
-                                    startExpanded: newlyAddedExerciseIds.contains(planEx.id),
-                                    onReorder: {
-                                        showingReorderSheet = true
-                                    },
-                                    onSupersetChanged: {
-                                        refreshId = UUID()
-                                    }
-                                )
-                                    .id(planEx.id)
-                                    .padding(.horizontal)
-                                
-                                if index < group.exercises.count - 1 {
-                                    Divider()
-                                        .padding(.leading)
-                                }
-                            }
-                        }
-                        .cardStyle()
-                        .padding(.horizontal)
+                        exerciseGroupView(for: group)
                     }
                     
                     Button(action: { showingExerciseSelection = true }) {
@@ -263,10 +231,84 @@ struct PlanDetailView: View {
             modelContext.delete(item)
         }
     }
+    
+    @ViewBuilder
+    private func exerciseGroupView(for group: ExerciseGroup) -> some View {
+        VStack(alignment: .leading, spacing: 0) {
+            if group.supersetGroupId != nil {
+                HStack {
+                    Image(systemName: "link")
+                    Text("Supersatz")
+                }
+                .font(.caption)
+                .foregroundColor(.brandSecondary)
+                .padding(.horizontal)
+                .padding(.top, Spacing.md)
+                .padding(.bottom, 8)
+            }
+            
+            ForEach(Array(group.exercises.enumerated()), id: \.element.id) { index, planEx in
+                exerciseRow(for: planEx, in: group)
+                    .id(planEx.id)
+                    .padding(.horizontal)
+                
+                if index < group.exercises.count - 1 {
+                    Divider()
+                        .padding(.leading)
+                }
+            }
+        }
+        .cardStyle()
+        .padding(.horizontal)
+    }
+    
+    @ViewBuilder
+    private func exerciseRow(for planEx: PlanExercise, in group: ExerciseGroup) -> some View {
+        PlanExerciseRowView(
+            planExercise: planEx,
+            onReorder: {
+                showingReorderSheet = true
+            },
+            onSupersetChanged: {
+                refreshId = UUID()
+            },
+            isExpanded: binding(for: group, planEx: planEx)
+        )
+    }
+    
+    private func binding(for group: ExerciseGroup, planEx: PlanExercise) -> Binding<Bool> {
+        Binding(
+            get: {
+                if group.supersetGroupId != nil {
+                    return expandedGroups.contains(group.id)
+                } else {
+                    return expandedExercises.contains(planEx.id) || newlyAddedExerciseIds.contains(planEx.id)
+                }
+            },
+            set: { val in
+                if group.supersetGroupId != nil {
+                    if val { expandedGroups.insert(group.id) }
+                    else { expandedGroups.remove(group.id) }
+                } else {
+                    if val { expandedExercises.insert(planEx.id) }
+                    else {
+                        expandedExercises.remove(planEx.id)
+                        newlyAddedExerciseIds.remove(planEx.id)
+                    }
+                }
+            }
+        )
+    }
 }
 
 struct ExerciseGroup: Identifiable {
-    let id = UUID()
+    var id: String {
+        if let groupId = supersetGroupId {
+            return "superset-\(groupId)"
+        } else {
+            return "single-\(exercises.first?.id.uuidString ?? UUID().uuidString)"
+        }
+    }
     var exercises: [PlanExercise]
     var supersetGroupId: Int?
 }
