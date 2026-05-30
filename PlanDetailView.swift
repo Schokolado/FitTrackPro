@@ -246,14 +246,23 @@ struct PlanDetailView: View {
                     }
                 }) {
                     HStack {
-                        Image(systemName: "link")
-                        Text("Supersatz")
+                        HStack {
+                            Image(systemName: "link")
+                            Text("Supersatz")
+                        }
+                        .font(.caption)
+                        .foregroundColor(.brandSecondary)
+                        
                         Spacer()
+                        
+                        Image(systemName: expandedGroups.contains(group.id) ? "chevron.up" : "chevron.down")
+                            .foregroundColor(.secondary)
+                            .padding(.leading, 4)
+                            .padding(.vertical, 4)
                     }
-                    .font(.caption)
-                    .foregroundColor(.brandSecondary)
                     .padding(.horizontal)
-                    .padding(.vertical, Spacing.md)
+                    .padding(.top, Spacing.md)
+                    .padding(.bottom, expandedGroups.contains(group.id) ? Spacing.sm : 8)
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
