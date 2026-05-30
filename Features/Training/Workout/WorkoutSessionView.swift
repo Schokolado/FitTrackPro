@@ -330,20 +330,9 @@ struct ExerciseSectionHeader: View {
     let exercise: Exercise
     let currentSessionId: UUID
     
-    @Query private var pastSets: [WorkoutSet]
-    @State private var showingHistory = false
-    
     init(exercise: Exercise, currentSessionId: UUID) {
         self.exercise = exercise
         self.currentSessionId = currentSessionId
-        let exerciseId = exercise.id
-        
-        _pastSets = Query(
-            filter: #Predicate<WorkoutSet> { set in
-                set.exercise?.id == exerciseId && set.isCompleted == true && set.session?.id != currentSessionId
-            },
-            sort: \.timestamp, order: .reverse
-        )
     }
     
     var body: some View {
@@ -351,32 +340,11 @@ struct ExerciseSectionHeader: View {
             NavigationLink(destination: ExerciseDetailView(exercise: exercise)) {
                 Text(exercise.name)
                     .font(.headline)
-                    .foregroundColor(.primary)
+                    .foregroundColor(.brand)
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.borderless)
                 
             Spacer()
-            
-            Button(action: { showingHistory = true }) {
-                if let lastSet = pastSets.first {
-                    Text("Zuletzt: \(lastSet.actualWeight, specifier: "%.1f") kg × \(lastSet.actualReps)")
-                        .font(.caption)
-                        .foregroundColor(.brand)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(Color.brand.opacity(0.1))
-                        .cornerRadius(8)
-                } else {
-                    Image(systemName: "clock.arrow.circlepath")
-                        .foregroundColor(.brand)
-                }
-            }
-            .textCase(nil)
-        }
-        .sheet(isPresented: $showingHistory) {
-            NavigationStack {
-                ExerciseHistoryView(exercise: exercise)
-            }
         }
     }
 }
