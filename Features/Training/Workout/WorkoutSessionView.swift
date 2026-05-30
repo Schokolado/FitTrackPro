@@ -336,15 +336,16 @@ struct ExerciseSectionHeader: View {
     }
     
     var body: some View {
-        HStack {
-            NavigationLink(destination: ExerciseDetailView(exercise: exercise)) {
+        NavigationLink(destination: ExerciseDetailView(exercise: exercise)) {
+            HStack {
                 Text(exercise.name)
                     .font(.headline)
                     .foregroundColor(.brand)
+                    
+                Spacer()
             }
-            .buttonStyle(.borderless)
-                
-            Spacer()
+            .contentShape(Rectangle())
         }
+        .buttonStyle(.borderless)
     }
 }

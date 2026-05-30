@@ -7,19 +7,23 @@ struct PlanExerciseRowView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                if let exercise = planExercise.exercise {
-                    NavigationLink(destination: ExerciseDetailView(exercise: exercise)) {
+            if let exercise = planExercise.exercise {
+                NavigationLink(destination: ExerciseDetailView(exercise: exercise)) {
+                    HStack {
                         Text(exercise.name)
                             .font(.headline)
                             .foregroundColor(.brand)
+                        Spacer()
                     }
-                    .buttonStyle(.borderless)
-                } else {
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.borderless)
+            } else {
+                HStack {
                     Text("Gelöschte Übung")
                         .font(.headline)
+                    Spacer()
                 }
-                Spacer()
             }
             
             HStack(spacing: 16) {
