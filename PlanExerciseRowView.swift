@@ -8,6 +8,7 @@ struct PlanExerciseRowView: View {
     var onReorder: (() -> Void)? = nil
     var onSupersetChanged: (() -> Void)? = nil
     @State private var isExpanded: Bool = false
+    @State private var showingDeleteAlert = false
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -102,18 +103,7 @@ struct PlanExerciseRowView: View {
                         Divider()
                         
                         Button(role: .destructive) {
-                            if let plan = planExercise.plan {
-                                // Clean up supersets if needed
-                                if let groupId = planExercise.supersetGroup {
-                                    let remainingInGroup = plan.planExercises?.filter { $0.id != planExercise.id && $0.supersetGroup == groupId } ?? []
-                                    if remainingInGroup.count == 1 {
-                                        remainingInGroup[0].supersetGroup = nil
-                                    }
-                                }
-                                plan.planExercises?.removeAll(where: { $0.id == planExercise.id })
-                            }
-                            modelContext.delete(planExercise)
-                            onSupersetChanged?()
+                            showingDeleteAlert = true
                         } label: {
                             Label("Übung löschen", systemImage: "trash")
                         }
@@ -186,6 +176,25 @@ struct PlanExerciseRowView: View {
             if startExpanded {
                 isExpanded = true
             }
+        }
+        .alert("Übung löschen", isPresented: $showingDeleteAlert) {
+            Button("Abbrechen", role: .cancel) { }
+            Button("Löschen", role: .destructive) {
+                if let plan = planExercise.plan {
+                    // Clean up supersets if needed
+                    if let groupId = planExercise.supersetGroup {
+                        let remainingInGroup = plan.planExercises?.filter { $0.id != planExercise.id && $0.supersetGroup == groupId } ?? []
+                        if remainingInGroup.count == 1 {
+                            remainingInGroup[0].supersetGroup = nil
+                        }
+                    }
+                    plan.planExercises?.removeAll(where: { $0.id == planExercise.id })
+                }
+                modelContext.delete(planExercise)
+                onSupersetChanged?()
+            }
+        } message: {
+            Text("Möchtest du diese Übung wirklich aus dem Plan entfernen?")
         }
     }
 }
