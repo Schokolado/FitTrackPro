@@ -44,15 +44,20 @@ final class Exercise {
     func deleteCascading(in context: ModelContext) {
         let linkedPlanExercises = self.planExercises ?? []
         for planEx in linkedPlanExercises {
-            if let plan = planEx.plan, let groupId = planEx.supersetGroup {
-                let others = plan.planExercises?.filter { $0.id != planEx.id && $0.supersetGroup == groupId } ?? []
-                // If only 1 other exercise is left in the superset, break the superset
-                if others.count == 1, let remaining = others.first {
-                    remaining.supersetGroup = nil
+            if let plan = planEx.plan {
+                if let groupId = planEx.supersetGroup {
+                    let others = plan.planExercises?.filter { $0.id != planEx.id && $0.supersetGroup == groupId } ?? []
+                    // If only 1 other exercise is left in the superset, break the superset
+                    if others.count == 1, let remaining = others.first {
+                        remaining.supersetGroup = nil
+                    }
                 }
+                // Explicitly remove from the plan's array so the UI updates and SwiftData registers it
+                plan.planExercises?.removeAll { $0.id == planEx.id }
             }
             context.delete(planEx)
         }
         context.delete(self)
+        try? context.save()
     }
 }
