@@ -237,10 +237,21 @@ struct WorkoutSessionView: View {
     private var sessionExerciseGroups: [SessionExerciseGroupData] {
         let sortedGroups = groupedSets
         var groups: [SessionExerciseGroupData] = []
+        var processedIds: Set<UUID> = []
         
         for g in sortedGroups {
-            // Feature temporarily hidden: ignoring supersetGroup
-            groups.append(SessionExerciseGroupData(id: "single-\(g.id.uuidString)", exerciseGroups: [g], supersetGroupId: nil))
+            if processedIds.contains(g.id) { continue }
+            
+            if let groupId = g.planExercise?.supersetGroup {
+                let related = sortedGroups.filter { $0.planExercise?.supersetGroup == groupId }
+                for rel in related {
+                    processedIds.insert(rel.id)
+                }
+                groups.append(SessionExerciseGroupData(id: "superset-\(groupId)", exerciseGroups: related, supersetGroupId: groupId))
+            } else {
+                processedIds.insert(g.id)
+                groups.append(SessionExerciseGroupData(id: "single-\(g.id.uuidString)", exerciseGroups: [g], supersetGroupId: nil))
+            }
         }
         
         return groups
