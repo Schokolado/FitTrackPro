@@ -187,30 +187,34 @@ struct PlanExerciseRowView: View {
     }
     
     private func createSuperset(with other: PlanExercise, in planExercises: [PlanExercise], plan: TrainingPlan) {
-        let newGroupId = other.supersetGroup ?? (planExercise.supersetGroup ?? Int.random(in: 1...100000))
-        planExercise.supersetGroup = newGroupId
-        other.supersetGroup = newGroupId
+        let targetGroupId = other.supersetGroup ?? (planExercise.supersetGroup ?? Int.random(in: 1...100000))
+        let sourceGroupId = planExercise.supersetGroup
         
-        // Always move the later exercise to immediately follow the earlier exercise
-        let first = planExercise.sortOrder < other.sortOrder ? planExercise : other
-        let second = planExercise.sortOrder < other.sortOrder ? other : planExercise
-        
-        var sorted = planExercises.sorted(by: { $0.sortOrder < $1.sortOrder })
-        sorted.removeAll(where: { $0.id == second.id })
-        
-        if let insertIndex = sorted.firstIndex(where: { $0.id == first.id }) {
-            // Find the last exercise in the same superset to append after the whole group
-            // Actually, just inserting after 'first' is fine because 'first' might already be part of a group
-            // To be perfectly safe, insert after the last item of first's group
-            var targetIndex = insertIndex
-            while targetIndex + 1 < sorted.count, sorted[targetIndex + 1].supersetGroup == newGroupId {
-                targetIndex += 1
+        // Update group IDs for all affected exercises
+        for ex in planExercises {
+            if ex.id == planExercise.id || (sourceGroupId != nil && ex.supersetGroup == sourceGroupId) {
+                ex.supersetGroup = targetGroupId
             }
-            sorted.insert(second, at: targetIndex + 1)
-        } else {
-            sorted.append(second)
+        }
+        if other.supersetGroup == nil {
+            other.supersetGroup = targetGroupId
         }
         
+        var sorted = planExercises.sorted(by: { $0.sortOrder < $1.sortOrder })
+        
+        // Find all exercises in the new combined group
+        let combinedGroup = sorted.filter { $0.supersetGroup == targetGroupId }
+        
+        // Find the earliest index where any of these exercises appeared
+        let earliestIndex = sorted.firstIndex(where: { $0.supersetGroup == targetGroupId }) ?? 0
+        
+        // Remove all combined group exercises from sorted
+        sorted.removeAll(where: { $0.supersetGroup == targetGroupId })
+        
+        // Insert them all back at earliestIndex to guarantee they are contiguous
+        sorted.insert(contentsOf: combinedGroup, at: earliestIndex)
+        
+        // Reassign sortOrder
         for (i, ex) in sorted.enumerated() {
             ex.sortOrder = i
         }
