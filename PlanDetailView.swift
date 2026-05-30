@@ -212,6 +212,7 @@ struct PlanDetailView: View {
                 )
                 modelContext.insert(workoutSet)
                 // Fix SwiftData relationship dropping by assigning after insertion
+                workoutSet.session = newSession
                 workoutSet.exercise = planEx.exercise
                 workoutSet.planExercise = planEx
             }
