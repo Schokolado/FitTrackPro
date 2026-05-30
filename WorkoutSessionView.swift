@@ -398,7 +398,6 @@ struct WorkoutSupersetGroupCard: View {
                         if index < sessionGroup.exerciseGroups.count - 1 {
                             Divider()
                                 .padding(.leading)
-                                .padding(.bottom, 12)
                         }
                     }
                 } else {
@@ -411,7 +410,6 @@ struct WorkoutSupersetGroupCard: View {
                             if index < sessionGroup.exerciseGroups.count - 1 {
                                 Divider()
                                     .padding(.leading)
-                                    .padding(.bottom, 12)
                             }
                         }
                     }
@@ -512,7 +510,6 @@ struct WorkoutExerciseInnerView: View {
                         }
                     }
                     .padding(.horizontal)
-                    .padding(.bottom, 12)
                     
                     if index < sets.count - 1 {
                         Divider()

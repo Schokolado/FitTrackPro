@@ -67,12 +67,10 @@ struct PlanDetailView: View {
                                 showingReorderSheet = true
                             }
                                 .padding(.horizontal)
-                                .padding(.bottom, 12)
                             
                             if index < group.exercises.count - 1 {
                                 Divider()
                                     .padding(.leading)
-                                    .padding(.bottom, 12)
                             }
                         }
                     }
