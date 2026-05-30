@@ -23,35 +23,54 @@ struct WorkoutSessionView: View {
     @State private var showingCustomTimerAlert = false
     @State private var customTimerSeconds: String = ""
     
-    // Group sets by Exercise for UI
-    private var groupedSets: [(Exercise, [WorkoutSet])] {
+    private struct GroupKey: Hashable {
+        let planExerciseId: UUID?
+        let exerciseId: UUID
+    }
+    
+    // Group sets by Exercise and PlanExercise for UI
+    private var groupedSets: [(id: UUID, exercise: Exercise, planExercise: PlanExercise?, sets: [WorkoutSet])] {
         guard let sets = session.sets else { return [] }
-        var dict: [Exercise: [WorkoutSet]] = [:]
+        var dict: [GroupKey: [WorkoutSet]] = [:]
         
         for set in sets {
             guard let exercise = set.exercise else { continue }
-            if dict[exercise] == nil {
-                dict[exercise] = []
+            let key = GroupKey(planExerciseId: set.planExercise?.id, exerciseId: exercise.id)
+            if dict[key] == nil {
+                dict[key] = []
             }
-            dict[exercise]?.append(set)
+            dict[key]?.append(set)
         }
         
-        var sortedExercises: [Exercise] = []
+        var result: [(id: UUID, exercise: Exercise, planExercise: PlanExercise?, sets: [WorkoutSet])] = []
+        
         if let plan = session.plan, let planExercises = plan.planExercises {
-            let orderedExercises = planExercises.sorted(by: { $0.sortOrder < $1.sortOrder }).compactMap { $0.exercise }
-            sortedExercises = orderedExercises.filter { dict.keys.contains($0) }
-            let remaining = dict.keys.filter { !orderedExercises.contains($0) }.sorted(by: { $0.name < $1.name })
-            sortedExercises.append(contentsOf: remaining)
-        } else {
-            // Sort by earliest timestamp of their sets as fallback
-            sortedExercises = dict.keys.sorted { e1, e2 in
-                let t1 = dict[e1]?.first?.timestamp ?? Date.distantFuture
-                let t2 = dict[e2]?.first?.timestamp ?? Date.distantFuture
-                return t1 < t2
+            let orderedExercises = planExercises.sorted(by: { $0.sortOrder < $1.sortOrder })
+            for planEx in orderedExercises {
+                guard let exercise = planEx.exercise else { continue }
+                let key = GroupKey(planExerciseId: planEx.id, exerciseId: exercise.id)
+                if let groupSets = dict[key] {
+                    result.append((id: planEx.id, exercise: exercise, planExercise: planEx, sets: groupSets.sorted(by: { $0.setNumber < $1.setNumber })))
+                    dict.removeValue(forKey: key)
+                }
             }
         }
         
-        return sortedExercises.map { ($0, dict[$0]!.sorted(by: { $0.setNumber < $1.setNumber })) }
+        // Add remaining ad-hoc exercises
+        let remainingKeys = dict.keys.sorted { k1, k2 in
+            let t1 = dict[k1]?.first?.timestamp ?? Date.distantFuture
+            let t2 = dict[k2]?.first?.timestamp ?? Date.distantFuture
+            return t1 < t2
+        }
+        
+        for key in remainingKeys {
+            if let groupSets = dict[key], let firstSet = groupSets.first, let exercise = firstSet.exercise {
+                let id = key.planExerciseId ?? exercise.id
+                result.append((id: id, exercise: exercise, planExercise: firstSet.planExercise, sets: groupSets.sorted(by: { $0.setNumber < $1.setNumber })))
+            }
+        }
+        
+        return result
     }
     
     var body: some View {
@@ -184,15 +203,23 @@ struct WorkoutSessionView: View {
         }
     }
     
-    private func addSet(for exercise: Exercise) {
+    private func addSet(for exercise: Exercise, planExercise: PlanExercise?) {
         guard let sets = session.sets else { return }
-        let existingSets = sets.filter { $0.exercise?.id == exercise.id }
+        
+        let existingSets: [WorkoutSet]
+        if let planEx = planExercise {
+            existingSets = sets.filter { $0.planExercise?.id == planEx.id }
+        } else {
+            existingSets = sets.filter { $0.exercise?.id == exercise.id && $0.planExercise == nil }
+        }
+        
         let newSetNumber = (existingSets.max(by: { $0.setNumber < $1.setNumber })?.setNumber ?? 0) + 1
         
         let newSet = WorkoutSet(
             setNumber: newSetNumber,
             session: session,
-            exercise: exercise
+            exercise: exercise,
+            planExercise: planExercise
         )
         modelContext.insert(newSet)
     }
@@ -227,8 +254,8 @@ struct WorkoutSessionView: View {
     
     private var workoutSetsList: some View {
         List {
-            ForEach(groupedSets, id: \.0.id) { (exercise, sets) in
-                exerciseSection(for: exercise, sets: sets)
+            ForEach(groupedSets, id: \.id) { group in
+                exerciseSection(for: group.exercise, planExercise: group.planExercise, sets: group.sets)
             }
             
             Section {
@@ -256,10 +283,11 @@ struct WorkoutSessionView: View {
     }
     
     @ViewBuilder
-    private func exerciseSection(for exercise: Exercise, sets: [WorkoutSet]) -> some View {
+    private func exerciseSection(for exercise: Exercise, planExercise: PlanExercise?, sets: [WorkoutSet]) -> some View {
         Section(header: ExerciseSectionHeader(exercise: exercise, currentSessionId: session.id)) {
             ForEach(sets) { workoutSet in
                 WorkoutSetRowView(workoutSet: workoutSet) {
+                    // Trigger Rest Timer
                     let duration = workoutSet.planExercise?.restDuration ?? exercise.defaultRestDuration
                     viewModel.startRestTimer(duration: duration)
                 }
@@ -269,7 +297,7 @@ struct WorkoutSessionView: View {
             }
             
             Button(action: {
-                addSet(for: exercise)
+                addSet(for: exercise, planExercise: planExercise)
             }) {
                 Label("Satz hinzufügen", systemImage: "plus")
                     .font(.subheadline)
