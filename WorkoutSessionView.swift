@@ -408,7 +408,6 @@ struct WorkoutSupersetGroupCard: View {
                                 if index < sessionGroup.exerciseGroups.count - 1 {
                                     Divider()
                                         .padding(.leading)
-                                        .padding(.bottom, 12)
                                 }
                             }
                         }
