@@ -153,27 +153,27 @@ struct PlanDetailView: View {
     }
     
     private func startWorkout() {
-        // Create a new session for this plan
         let newSession = WorkoutSession(plan: plan)
         modelContext.insert(newSession)
-        
-        // Prefill sets based on PlanExercises
-        let sortedExercises = (plan.planExercises ?? []).sorted(by: { $0.sortOrder < $1.sortOrder })
+
+        let sortedExercises = (plan.planExercises ?? []).sorted { $0.sortOrder < $1.sortOrder }
         for planEx in sortedExercises {
             for setIndex in 0..<planEx.targetSets {
                 let workoutSet = WorkoutSet(
                     setNumber: setIndex + 1,
                     actualWeight: planEx.targetWeight ?? 0.0,
-                    actualReps: planEx.targetReps,
-                    session: newSession,
-                    exercise: planEx.exercise,
-                    planExercise: planEx
+                    actualReps: planEx.targetReps
                 )
                 modelContext.insert(workoutSet)
+                // Fix SwiftData relationship dropping by assigning after insertion
+                workoutSet.exercise = planEx.exercise
+                workoutSet.planExercise = planEx
             }
         }
         
+        try? modelContext.save()
         activeSession = newSession
+    }
     }
     
     private func deleteExercises(offsets: IndexSet, from group: ExerciseGroup) {

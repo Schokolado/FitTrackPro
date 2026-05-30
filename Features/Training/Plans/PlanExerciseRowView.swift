@@ -41,6 +41,7 @@ struct PlanExerciseRowView: View {
                                             let newGroupId = other.supersetGroup ?? (planExercise.supersetGroup ?? Int.random(in: 1...100000))
                                             planExercise.supersetGroup = newGroupId
                                             other.supersetGroup = newGroupId
+                                            try? modelContext.save()
                                         }
                                     }
                                 } label: {

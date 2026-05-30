@@ -237,23 +237,23 @@ struct WorkoutSessionView: View {
     private var sessionExerciseGroups: [SessionExerciseGroupData] {
         let sortedGroups = groupedSets
         var groups: [SessionExerciseGroupData] = []
-        var currentGroup: SessionExerciseGroupData?
+        var processedIds: Set<UUID> = []
         
         for g in sortedGroups {
+            if processedIds.contains(g.id) { continue }
+            
             if let groupId = g.planExercise?.supersetGroup {
-                if currentGroup?.supersetGroupId == groupId {
-                    currentGroup?.exerciseGroups.append(g)
-                } else {
-                    if let cg = currentGroup { groups.append(cg) }
-                    currentGroup = SessionExerciseGroupData(id: "superset-\(groupId)", exerciseGroups: [g], supersetGroupId: groupId)
+                let related = sortedGroups.filter { $0.planExercise?.supersetGroup == groupId }
+                for rel in related {
+                    processedIds.insert(rel.id)
                 }
+                groups.append(SessionExerciseGroupData(id: "superset-\(groupId)", exerciseGroups: related, supersetGroupId: groupId))
             } else {
-                if let cg = currentGroup { groups.append(cg) }
-                currentGroup = nil
+                processedIds.insert(g.id)
                 groups.append(SessionExerciseGroupData(id: "single-\(g.id.uuidString)", exerciseGroups: [g], supersetGroupId: nil))
             }
         }
-        if let cg = currentGroup { groups.append(cg) }
+        
         return groups
     }
 
@@ -384,20 +384,32 @@ struct WorkoutSupersetGroupCard: View {
                 .padding(.bottom, isCollapsed ? Spacing.sm : 8)
                 
                 if !isCollapsed {
-                    ForEach(Array(sessionGroup.exerciseGroups.enumerated()), id: \.element.id) { index, group in
-                        WorkoutExerciseInnerView(
-                            exercise: group.exercise,
-                            planExercise: group.planExercise,
-                            sets: group.sets,
-                            session: session,
-                            viewModel: viewModel,
-                            isSuperset: true,
-                            groupIsCollapsed: .constant(false)
-                        )
+                    HStack(spacing: 0) {
+                        Rectangle()
+                            .fill(Color.brand.opacity(0.3))
+                            .frame(width: 4)
+                            .cornerRadius(2)
+                            .padding(.leading, 16)
+                            .padding(.trailing, 8)
+                            .padding(.vertical, 8)
                         
-                        if index < sessionGroup.exerciseGroups.count - 1 {
-                            Divider()
-                                .padding(.leading)
+                        VStack(spacing: 0) {
+                            ForEach(Array(sessionGroup.exerciseGroups.enumerated()), id: \.element.id) { index, group in
+                                WorkoutExerciseInnerView(
+                                    exercise: group.exercise,
+                                    planExercise: group.planExercise,
+                                    sets: group.sets,
+                                    session: session,
+                                    viewModel: viewModel,
+                                    isSuperset: true,
+                                    groupIsCollapsed: .constant(false)
+                                )
+                                
+                                if index < sessionGroup.exerciseGroups.count - 1 {
+                                    Divider()
+                                        .padding(.leading)
+                                }
+                            }
                         }
                     }
                 } else {
