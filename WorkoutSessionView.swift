@@ -26,6 +26,8 @@ struct WorkoutSessionView: View {
     @State private var showingAutoFinishAlert = false
     @State private var hasShownAutoFinishAlert = false
     
+    @State private var expandedGroupIds: Set<String> = []
+    
     private struct GroupKey: Hashable {
         let planExerciseId: UUID?
         let exerciseId: UUID
@@ -74,6 +76,12 @@ struct WorkoutSessionView: View {
         }
         
         return result
+    }
+    
+    private func isGroupCompleted(_ group: SessionExerciseGroupData) -> Bool {
+        group.exerciseGroups.allSatisfy { g in
+            !g.sets.isEmpty && g.sets.allSatisfy { $0.isCompleted }
+        }
     }
     
     private var allSetsCompleted: Bool {
@@ -221,6 +229,10 @@ struct WorkoutSessionView: View {
             .onAppear {
                 NotificationService.shared.requestAuthorization()
                 viewModel.startWorkout()
+                
+                if let firstUncompleted = sessionExerciseGroups.first(where: { !isGroupCompleted($0) }) {
+                    expandedGroupIds.insert(firstUncompleted.id)
+                }
             }
             // Milestone 5: Workout Summary
             .sheet(isPresented: $showingFinishSheet) {
@@ -260,12 +272,32 @@ struct WorkoutSessionView: View {
     private var workoutSetsList: some View {
         ScrollView {
             VStack(spacing: Spacing.md) {
-                ForEach(sessionExerciseGroups, id: \.id) { sessionGroup in
+                ForEach(sessionExerciseGroups) { group in
                     WorkoutSupersetGroupCard(
-                        sessionGroup: sessionGroup,
+                        sessionGroup: group,
                         session: session,
-                        viewModel: viewModel
+                        viewModel: viewModel,
+                        isExpanded: Binding(
+                            get: { expandedGroupIds.contains(group.id) },
+                            set: { val in
+                                if val { expandedGroupIds.insert(group.id) }
+                                else { expandedGroupIds.remove(group.id) }
+                            }
+                        ),
+                        onGroupCompleted: {
+                            if let next = sessionExerciseGroups.first(where: { !isGroupCompleted($0) }) {
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                    _ = expandedGroupIds.insert(next.id)
+                                    _ = expandedGroupIds.remove(group.id)
+                                }
+                            } else {
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                    _ = expandedGroupIds.remove(group.id)
+                                }
+                            }
+                        }
                     )
+                    .padding(.bottom, Spacing.sm)
                 }
                 
                 Button(action: {
@@ -329,19 +361,8 @@ struct WorkoutSupersetGroupCard: View {
     let sessionGroup: SessionExerciseGroupData
     let session: WorkoutSession
     let viewModel: WorkoutSessionViewModel
-    
-    @State private var isCollapsed: Bool
-    
-    init(sessionGroup: SessionExerciseGroupData, session: WorkoutSession, viewModel: WorkoutSessionViewModel) {
-        self.sessionGroup = sessionGroup
-        self.session = session
-        self.viewModel = viewModel
-        
-        let completed = sessionGroup.exerciseGroups.allSatisfy { g in
-            !g.sets.isEmpty && g.sets.allSatisfy { $0.isCompleted }
-        }
-        self._isCollapsed = State(initialValue: completed)
-    }
+    @Binding var isExpanded: Bool
+    var onGroupCompleted: () -> Void
     
     private var isCompleted: Bool {
         sessionGroup.exerciseGroups.allSatisfy { g in
@@ -353,7 +374,7 @@ struct WorkoutSupersetGroupCard: View {
         VStack(alignment: .leading, spacing: 0) {
             if sessionGroup.supersetGroupId != nil {
                 Button(action: {
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) { isCollapsed.toggle() }
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) { isExpanded.toggle() }
                 }) {
                     HStack {
                         HStack {
@@ -377,7 +398,7 @@ struct WorkoutSupersetGroupCard: View {
                 }
                 .buttonStyle(.plain)
                 
-                if !isCollapsed {
+                if isExpanded {
                     ForEach(Array(sessionGroup.exerciseGroups.enumerated()), id: \.element.id) { index, group in
                         WorkoutExerciseInnerView(
                             exercise: group.exercise,
@@ -397,7 +418,7 @@ struct WorkoutSupersetGroupCard: View {
                     }
                 } else {
                     Button(action: {
-                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) { isCollapsed.toggle() }
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) { isExpanded.toggle() }
                     }) {
                         VStack(alignment: .leading, spacing: 4) {
                             ForEach(Array(sessionGroup.exerciseGroups.enumerated()), id: \.element.id) { index, g in
@@ -427,7 +448,10 @@ struct WorkoutSupersetGroupCard: View {
                         session: session,
                         viewModel: viewModel,
                         isSuperset: false,
-                        groupIsCollapsed: $isCollapsed
+                        groupIsCollapsed: Binding(
+                            get: { !isExpanded },
+                            set: { isExpanded = !$0 }
+                        )
                     )
                 }
             }
@@ -436,7 +460,7 @@ struct WorkoutSupersetGroupCard: View {
         .padding(.horizontal)
         .onChange(of: isCompleted) { oldValue, newValue in
             if newValue == true {
-                withAnimation { isCollapsed = true }
+                onGroupCompleted()
             }
         }
     }
