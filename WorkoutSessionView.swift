@@ -216,12 +216,12 @@ struct WorkoutSessionView: View {
                     currentGroup?.exerciseGroups.append(g)
                 } else {
                     if let cg = currentGroup { groups.append(cg) }
-                    currentGroup = SessionExerciseGroupData(id: UUID(), exerciseGroups: [g], supersetGroupId: groupId)
+                    currentGroup = SessionExerciseGroupData(id: "superset-\(groupId)", exerciseGroups: [g], supersetGroupId: groupId)
                 }
             } else {
                 if let cg = currentGroup { groups.append(cg) }
                 currentGroup = nil
-                groups.append(SessionExerciseGroupData(id: UUID(), exerciseGroups: [g], supersetGroupId: nil))
+                groups.append(SessionExerciseGroupData(id: "single-\(g.id.uuidString)", exerciseGroups: [g], supersetGroupId: nil))
             }
         }
         if let cg = currentGroup { groups.append(cg) }
@@ -290,7 +290,7 @@ struct ExerciseGroupData: Identifiable {
 }
 
 struct SessionExerciseGroupData: Identifiable {
-    let id: UUID
+    let id: String
     var exerciseGroups: [ExerciseGroupData]
     var supersetGroupId: Int?
 }
@@ -301,7 +301,18 @@ struct WorkoutSupersetGroupCard: View {
     let session: WorkoutSession
     let viewModel: WorkoutSessionViewModel
     
-    @State private var isCollapsed: Bool = false
+    @State private var isCollapsed: Bool
+    
+    init(sessionGroup: SessionExerciseGroupData, session: WorkoutSession, viewModel: WorkoutSessionViewModel) {
+        self.sessionGroup = sessionGroup
+        self.session = session
+        self.viewModel = viewModel
+        
+        let completed = sessionGroup.exerciseGroups.allSatisfy { g in
+            !g.sets.isEmpty && g.sets.allSatisfy { $0.isCompleted }
+        }
+        self._isCollapsed = State(initialValue: completed)
+    }
     
     private var isCompleted: Bool {
         sessionGroup.exerciseGroups.allSatisfy { g in
