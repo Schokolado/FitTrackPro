@@ -11,9 +11,9 @@ extension Color {
     static let destructive = Color.red
     
     // Background Colors
-    static let backgroundPrimary = Color(uiColor: .systemBackground)
-    static let backgroundSecondary = Color(uiColor: .secondarySystemBackground)
-    static let backgroundCard = Color(uiColor: .tertiarySystemBackground)
+    static let backgroundPrimary = Color(uiColor: .systemGroupedBackground)
+    static let backgroundSecondary = Color(uiColor: .secondarySystemGroupedBackground)
+    static let backgroundCard = Color(uiColor: .secondarySystemGroupedBackground)
     
     // Text Colors
     static let textPrimary = Color.primary
