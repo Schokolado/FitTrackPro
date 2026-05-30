@@ -9,6 +9,7 @@ struct TrainingPlansView: View {
     @State private var showingRenameAlert = false
     @State private var newPlanName = ""
     @State private var planToRename: TrainingPlan? = nil
+    @State private var isFabExpanded = false
     
     var body: some View {
         NavigationStack {
@@ -82,29 +83,89 @@ struct TrainingPlansView: View {
                 }
             }
             .background(Color.backgroundPrimary)
+            .overlay {
+                if isFabExpanded {
+                    Color.black.opacity(0.4)
+                        .ignoresSafeArea()
+                        .onTapGesture {
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                isFabExpanded = false
+                            }
+                        }
+                }
+            }
             .overlay(alignment: .bottomTrailing) {
-                NavigationLink(destination: ExerciseLibraryView()) {
-                    Image(systemName: "dumbbell.fill")
-                        .font(.title2)
-                        .foregroundColor(.white)
-                        .padding(16)
-                        .background(Color.brand)
-                        .clipShape(Circle())
-                        .shadow(color: Color.black.opacity(0.2), radius: 5, x: 0, y: 3)
+                VStack(alignment: .trailing, spacing: 16) {
+                    if isFabExpanded {
+                        NavigationLink(destination: ExerciseLibraryView()) {
+                            HStack {
+                                Text("Übungen")
+                                    .font(.subheadline)
+                                    .fontWeight(.medium)
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 8)
+                                    .background(Color.white)
+                                    .foregroundColor(.primary)
+                                    .cornerRadius(8)
+                                    .shadow(color: Color.black.opacity(0.1), radius: 3, x: 0, y: 2)
+                                
+                                Image(systemName: "dumbbell.fill")
+                                    .font(.title3)
+                                    .foregroundColor(.white)
+                                    .frame(width: 48, height: 48)
+                                    .background(Color.brand)
+                                    .clipShape(Circle())
+                                    .shadow(color: Color.black.opacity(0.2), radius: 4, x: 0, y: 2)
+                            }
+                        }
+                        
+                        Button(action: {
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                isFabExpanded = false
+                            }
+                            newPlanName = ""
+                            showingAddAlert = true
+                        }) {
+                            HStack {
+                                Text("Neuer Plan")
+                                    .font(.subheadline)
+                                    .fontWeight(.medium)
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 8)
+                                    .background(Color.white)
+                                    .foregroundColor(.primary)
+                                    .cornerRadius(8)
+                                    .shadow(color: Color.black.opacity(0.1), radius: 3, x: 0, y: 2)
+                                
+                                Image(systemName: "doc.badge.plus")
+                                    .font(.title3)
+                                    .foregroundColor(.white)
+                                    .frame(width: 48, height: 48)
+                                    .background(Color.brandSecondary)
+                                    .clipShape(Circle())
+                                    .shadow(color: Color.black.opacity(0.2), radius: 4, x: 0, y: 2)
+                            }
+                        }
+                    }
+                    
+                    Button(action: {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                            isFabExpanded.toggle()
+                        }
+                    }) {
+                        Image(systemName: "plus")
+                            .font(.title)
+                            .foregroundColor(.white)
+                            .frame(width: 60, height: 60)
+                            .background(Color.brand)
+                            .clipShape(Circle())
+                            .shadow(color: Color.black.opacity(0.3), radius: 5, x: 0, y: 3)
+                            .rotationEffect(.degrees(isFabExpanded ? 45 : 0))
+                    }
                 }
                 .padding(20)
             }
             .navigationTitle("Trainingspläne")
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: {
-                        newPlanName = ""
-                        showingAddAlert = true
-                    }) {
-                        Image(systemName: "plus")
-                    }
-                }
-            }
             .alert("Neuer Trainingsplan", isPresented: $showingAddAlert) {
                 TextField("Name", text: $newPlanName)
                 Button("Abbrechen", role: .cancel) { }
