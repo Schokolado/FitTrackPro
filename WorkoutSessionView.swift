@@ -259,7 +259,7 @@ struct WorkoutSessionView: View {
 
     private var workoutSetsList: some View {
         ScrollView {
-            VStack(spacing: Spacing.lg) {
+            VStack(spacing: Spacing.md) {
                 ForEach(sessionExerciseGroups, id: \.id) { sessionGroup in
                     WorkoutSupersetGroupCard(
                         sessionGroup: sessionGroup,

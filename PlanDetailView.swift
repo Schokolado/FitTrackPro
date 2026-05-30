@@ -234,11 +234,12 @@ struct PlanDetailView: View {
     
     @ViewBuilder
     private func exerciseGroupView(for group: ExerciseGroup) -> some View {
+        let isExpanded = expandedGroups.contains(group.id)
         VStack(alignment: .leading, spacing: 0) {
             if group.supersetGroupId != nil {
                 Button(action: {
                     withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                        if expandedGroups.contains(group.id) {
+                        if isExpanded {
                             expandedGroups.remove(group.id)
                         } else {
                             expandedGroups.insert(group.id)
@@ -255,14 +256,14 @@ struct PlanDetailView: View {
                         
                         Spacer()
                         
-                        Image(systemName: expandedGroups.contains(group.id) ? "chevron.up" : "chevron.down")
+                        Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
                             .foregroundColor(.secondary)
                             .padding(.leading, 4)
                             .padding(.vertical, 4)
                     }
                     .padding(.horizontal)
                     .padding(.top, Spacing.md)
-                    .padding(.bottom, expandedGroups.contains(group.id) ? Spacing.sm : 8)
+                    .padding(.bottom, isExpanded ? Spacing.sm : 8)
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
