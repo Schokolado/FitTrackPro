@@ -131,22 +131,14 @@ struct WorkoutSessionView: View {
                 NotificationService.shared.requestAuthorization()
                 viewModel.startWorkout()
             }
-            // Transition to Milestone 5 Placeholder
+            // Milestone 5: Workout Summary
             .sheet(isPresented: $showingFinishSheet) {
-                // Milestone 5: WorkoutSummaryView
-                VStack(spacing: 20) {
-                    Text("Workout abgeschlossen! 🎉")
-                        .font(.title)
-                    Text("Hier kommt in Milestone 5 die Zusammenfassung inkl. Ratings.")
-                        .multilineTextAlignment(.center)
-                        .padding()
-                    Button("Speichern & Schließen") {
-                        session.endTime = Date()
-                        dismiss()
-                    }
-                    .buttonStyle(.borderedProminent)
-                }
-                .presentationDetents([.medium])
+                WorkoutSummaryView(session: session)
+                    .interactiveDismissDisabled() // User must click "Speichern"
+            }
+            .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("WorkoutFinished"))) { _ in
+                // Dismiss the full screen cover when the summary is saved
+                dismiss()
             }
         }
     }

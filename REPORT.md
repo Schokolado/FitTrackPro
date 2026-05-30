@@ -18,7 +18,7 @@
 | M2 – Übungs-Mediathek | ✅ Abgeschlossen |
 | M3 – Trainingspläne | ✅ Abgeschlossen |
 | M4 – Workout-Modus | ✅ Abgeschlossen |
-| M5 – Workout-Abschluss | ⏳ Ausstehend |
+| M5 – Workout-Abschluss | ✅ Abgeschlossen |
 | M6 – Ernährung + Barcode | ⏳ Ausstehend |
 | M7 – Gewichtstracker | ⏳ Ausstehend |
 | M8 – Dashboard | ⏳ Ausstehend |
@@ -35,6 +35,20 @@
 ---
 
 ## Einträge
+
+### 2026-05-30 – Milestone 5 abgeschlossen
+
+**Status:** ✅ Fertig  
+**Bearbeitet:** Workout-Abschluss & Zusammenfassung
+
+**Implementiert:**
+- `WorkoutSummaryView`: Zeigt automatisch berechnete Statistiken an (Dauer, Gesamtvolumen in kg, Anzahl der abgehakten Sätze).
+- Sterne-Rating für die Stimmung (Mood) und Picker für RPE-Intensität (1-5).
+- Speichern-Button: Sichert alle Daten (`endTime`, `moodRating`, `intensityRating`, `notes`) im SwiftData-Context und schließt den Workout-Modus.
+- Animierter Pokal als visuelles Feedback für das abgeschlossene Training.
+- `WorkoutSessionView` aktualisiert, um die Summary als Sheet anzuzeigen (ohne Swipe-to-dismiss).
+
+**Nächster Schritt:** Milestone 6 (Ernährung + Barcode)
 
 ### 2026-05-30 – Milestone 4 abgeschlossen
 

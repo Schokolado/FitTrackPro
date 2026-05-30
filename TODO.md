@@ -92,12 +92,13 @@
 
 ## Milestone 5 – Workout-Abschluss & Rating
 
-- [ ] `WorkoutSummaryView.swift` – Zusammenfassung nach Training
-- [ ] Mood-Rating (1–5, Emoji/Sterne)
-- [ ] Intensitäts-Rating (1–5)
-- [ ] Optionale Notiz zum Training
-- [ ] Workout in SwiftData persistieren
-- [ ] `WidgetDataService` nach Workout-Abschluss aktualisieren
+- [x] `WorkoutSummaryView.swift`
+- [x] Anzeige der Dauer, absolvierten Übungen und bewegtem Gesamtgewicht (Volumen)
+- [x] Abfrage von Stimmung (1-5 Sterne/Emojis)
+- [x] Abfrage von Intensität (1-5 RPE Scale oder Text)
+- [x] Notizfeld (optional)
+- [x] Speichern der `WorkoutSession` (Zeitstempel `endTime` setzen) und Schließen des Full-Screen-Covers
+- [x] Konfetti-Animation / Erfolgs-Feedback beim Abschluss
 - [ ] Übergang zum Dashboard nach Abschluss
 - [ ] Conditional: „An Apple Health senden"-Button (wenn manueller Sync aktiviert)
 
