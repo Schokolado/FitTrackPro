@@ -28,6 +28,33 @@ struct PlanExerciseRowView: View {
                             Label("Übung verschieben", systemImage: "arrow.up.arrow.down")
                         }
                         
+                        if let plan = planExercise.plan, let planExercises = plan.planExercises {
+                            let otherExercises = planExercises.filter { $0.id != planExercise.id }.sorted(by: { $0.sortOrder < $1.sortOrder })
+                            if !otherExercises.isEmpty {
+                                Menu {
+                                    Button("Kein Supersatz") {
+                                        planExercise.supersetGroup = nil
+                                    }
+                                    Divider()
+                                    ForEach(otherExercises) { other in
+                                        Button(other.exercise?.name ?? "Unbekannt") {
+                                            let newGroupId = other.supersetGroup ?? (planExercise.supersetGroup ?? Int.random(in: 1...100000))
+                                            planExercise.supersetGroup = newGroupId
+                                            other.supersetGroup = newGroupId
+                                        }
+                                    }
+                                } label: {
+                                    if let currentGroup = planExercise.supersetGroup, let linked = otherExercises.first(where: { $0.supersetGroup == currentGroup }) {
+                                        Label("Supersatz: \(linked.exercise?.name ?? "Ja")", systemImage: "link")
+                                    } else {
+                                        Label("Supersatz mit...", systemImage: "link")
+                                    }
+                                }
+                            }
+                        }
+                        
+                        Divider()
+                        
                         Button(role: .destructive) {
                             if let plan = planExercise.plan {
                                 plan.planExercises?.removeAll(where: { $0.id == planExercise.id })
@@ -94,47 +121,7 @@ struct PlanExerciseRowView: View {
                 }
             }
             
-            // Supersatz Picker
-            if let plan = planExercise.plan, let planExercises = plan.planExercises {
-                let otherExercises = planExercises.filter { $0.id != planExercise.id }.sorted(by: { $0.sortOrder < $1.sortOrder })
-                if !otherExercises.isEmpty {
-                    HStack {
-                        Text("Supersatz mit:")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                        Spacer()
-                        Menu {
-                            Button("Kein Supersatz") {
-                                planExercise.supersetGroup = nil
-                            }
-                            Divider()
-                            ForEach(otherExercises) { other in
-                                Button(other.exercise?.name ?? "Unbekannt") {
-                                    let newGroupId = other.supersetGroup ?? (planExercise.supersetGroup ?? Int.random(in: 1...100000))
-                                    planExercise.supersetGroup = newGroupId
-                                    other.supersetGroup = newGroupId
-                                }
-                            }
-                            Divider()
-                            Button("Übung entfernen", role: .destructive) {
-                                modelContext.delete(planExercise)
-                            }
-                        } label: {
-                            if let currentGroup = planExercise.supersetGroup, 
-                               let linked = otherExercises.first(where: { $0.supersetGroup == currentGroup }) {
-                                Text(linked.exercise?.name ?? "Verbunden")
-                                    .font(.caption)
-                                    .foregroundColor(.brand)
-                                    .multilineTextAlignment(.trailing)
-                            } else {
-                                Text("Auswählen...")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                            }
-                        }
-                    }
-                }
-            }
+
         }
         .padding(.vertical, 4)
     }
