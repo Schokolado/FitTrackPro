@@ -97,6 +97,9 @@ struct WorkoutSessionView: View {
                                     viewModel.startRestTimer(duration: duration)
                                 }
                             }
+                            .onDelete { offsets in
+                                deleteSets(at: offsets, from: sets)
+                            }
                             
                             Button(action: {
                                 addSet(for: exercise)
@@ -154,5 +157,18 @@ struct WorkoutSessionView: View {
             exercise: exercise
         )
         modelContext.insert(newSet)
+    }
+    
+    private func deleteSets(at offsets: IndexSet, from sets: [WorkoutSet]) {
+        for index in offsets {
+            let setToDelete = sets[index]
+            modelContext.delete(setToDelete)
+        }
+        
+        // Renumber remaining sets for this exercise
+        let remainingSets = sets.enumerated().filter { !offsets.contains($0.offset) }.map { $0.element }
+        for (index, set) in remainingSets.sorted(by: { $0.setNumber < $1.setNumber }).enumerated() {
+            set.setNumber = index + 1
+        }
     }
 }
