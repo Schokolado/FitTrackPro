@@ -384,32 +384,21 @@ struct WorkoutSupersetGroupCard: View {
                 .padding(.bottom, isCollapsed ? Spacing.sm : 8)
                 
                 if !isCollapsed {
-                    HStack(spacing: 0) {
-                        Rectangle()
-                            .fill(Color.brand.opacity(0.3))
-                            .frame(width: 4)
-                            .cornerRadius(2)
-                            .padding(.leading, 16)
-                            .padding(.trailing, 8)
-                            .padding(.vertical, 8)
+                    ForEach(Array(sessionGroup.exerciseGroups.enumerated()), id: \.element.id) { index, group in
+                        WorkoutExerciseInnerView(
+                            exercise: group.exercise,
+                            planExercise: group.planExercise,
+                            sets: group.sets,
+                            session: session,
+                            viewModel: viewModel,
+                            isSuperset: true,
+                            groupIsCollapsed: .constant(false)
+                        )
                         
-                        VStack(spacing: 0) {
-                            ForEach(Array(sessionGroup.exerciseGroups.enumerated()), id: \.element.id) { index, group in
-                                WorkoutExerciseInnerView(
-                                    exercise: group.exercise,
-                                    planExercise: group.planExercise,
-                                    sets: group.sets,
-                                    session: session,
-                                    viewModel: viewModel,
-                                    isSuperset: true,
-                                    groupIsCollapsed: .constant(false)
-                                )
-                                
-                                if index < sessionGroup.exerciseGroups.count - 1 {
-                                    Divider()
-                                        .padding(.leading)
-                                }
-                            }
+                        if index < sessionGroup.exerciseGroups.count - 1 {
+                            Divider()
+                                .padding(.leading)
+                                .padding(.vertical, 8)
                         }
                     }
                 } else {
