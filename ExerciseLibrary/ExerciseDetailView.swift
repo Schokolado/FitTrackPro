@@ -31,16 +31,7 @@ struct ExerciseDetailView: View {
                 }
                 .padding(.horizontal)
                 
-                VStack(alignment: .leading, spacing: Spacing.sm) {
-                    HStack {
-                        Text("Historie")
-                            .font(.headline)
-                        Spacer()
-                        PlanExerciseHistoryButton(exercise: exercise)
-                    }
-                }
-                .cardStyle()
-                .padding(.horizontal)
+                ExerciseHistoryPreview(exercise: exercise)
                 
                 VStack(alignment: .leading, spacing: Spacing.sm) {
                     Text("Standard-Pause")
@@ -48,6 +39,7 @@ struct ExerciseDetailView: View {
                     Text("\(Int(exercise.defaultRestDuration)) Sekunden")
                         .foregroundColor(.secondary)
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
                 .cardStyle()
                 .padding(.horizontal)
                 
@@ -58,6 +50,7 @@ struct ExerciseDetailView: View {
                         Text(exercise.notes)
                             .foregroundColor(.secondary)
                     }
+                    .frame(maxWidth: .infinity, alignment: .leading)
                     .cardStyle()
                     .padding(.horizontal)
                 }
@@ -88,6 +81,67 @@ struct ExerciseDetailView: View {
         .sheet(isPresented: $showingEditForm) {
             NavigationStack {
                 ExerciseFormView(exerciseToEdit: exercise)
+            }
+        }
+    }
+}
+
+struct ExerciseHistoryPreview: View {
+    let exercise: Exercise
+    
+    @Query private var pastSets: [WorkoutSet]
+    @State private var showingHistory = false
+    
+    init(exercise: Exercise) {
+        self.exercise = exercise
+        let exerciseId = exercise.id
+        
+        _pastSets = Query(
+            filter: #Predicate<WorkoutSet> { set in
+                set.exercise?.id == exerciseId && set.isCompleted == true
+            },
+            sort: \.timestamp, order: .reverse
+        )
+    }
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: Spacing.sm) {
+            HStack {
+                Text("Historie")
+                    .font(.headline)
+                Spacer()
+                Button(action: { showingHistory = true }) {
+                    Text("Mehr")
+                        .font(.subheadline)
+                        .foregroundColor(.brand)
+                }
+            }
+            
+            if pastSets.isEmpty {
+                Text("Noch keine Einträge.")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                    .padding(.top, 4)
+            } else {
+                ForEach(pastSets.prefix(3)) { set in
+                    HStack {
+                        Text(set.timestamp, format: .dateTime.day().month().year())
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                        Spacer()
+                        Text("\(set.actualWeight, specifier: "%.1f") kg × \(set.actualReps)")
+                            .font(.subheadline.bold())
+                    }
+                    .padding(.vertical, 2)
+                }
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .cardStyle()
+        .padding(.horizontal)
+        .sheet(isPresented: $showingHistory) {
+            NavigationStack {
+                ExerciseHistoryView(exercise: exercise)
             }
         }
     }

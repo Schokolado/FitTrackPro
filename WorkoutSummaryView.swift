@@ -10,6 +10,7 @@ struct WorkoutSummaryView: View {
     @State private var intensity: Int = 3
     @State private var notes: String = ""
     @State private var showConfetti = false
+    @State private var showingCancelAlert = false
     
     // Computed statistics
     private var totalVolume: Double {
@@ -120,7 +121,7 @@ struct WorkoutSummaryView: View {
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Abbrechen") {
-                        cancelWorkout()
+                        showingCancelAlert = true
                     }
                     .foregroundColor(.red)
                 }
@@ -139,6 +140,14 @@ struct WorkoutSummaryView: View {
                 if session.endTime == nil {
                     session.endTime = Date()
                 }
+            }
+            .alert("Training verwerfen?", isPresented: $showingCancelAlert) {
+                Button("Ja, verwerfen", role: .destructive) {
+                    cancelWorkout()
+                }
+                Button("Abbrechen", role: .cancel) {}
+            } message: {
+                Text("Bist du sicher, dass du das Training abbrechen und verwerfen möchtest? Alle bisherigen Einträge gehen verloren.")
             }
         }
     }
