@@ -167,10 +167,11 @@ struct PlanExerciseRowView: View {
                     }
                 }
                 .padding(.top, 8)
+                .padding(.bottom, 16)
                 .transition(.opacity.combined(with: .move(edge: .top)))
             }
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, 8)
         .alert("Übung löschen", isPresented: $showingDeleteAlert) {
             Button("Abbrechen", role: .cancel) { }
             Button("Löschen", role: .destructive) {
