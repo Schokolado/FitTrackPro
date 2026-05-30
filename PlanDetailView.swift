@@ -12,28 +12,11 @@ struct PlanDetailView: View {
     @State private var editName = ""
     @State private var activeSession: WorkoutSession? = nil
     @State private var showingReorderSheet = false
+    @State private var refreshId = UUID()
+    @State private var newlyAddedExerciseIds: Set<UUID> = []
     
     private var groupedExercises: [ExerciseGroup] {
-        let sorted = (plan.planExercises ?? []).sorted(by: { $0.sortOrder < $1.sortOrder })
-        var groups: [ExerciseGroup] = []
-        var currentGroup: ExerciseGroup?
-        
-        for ex in sorted {
-            if let groupId = ex.supersetGroup {
-                if currentGroup?.supersetGroupId == groupId {
-                    currentGroup?.exercises.append(ex)
-                } else {
-                    if let cg = currentGroup { groups.append(cg) }
-                    currentGroup = ExerciseGroup(exercises: [ex], supersetGroupId: groupId)
-                }
-            } else {
-                if let cg = currentGroup { groups.append(cg) }
-                currentGroup = nil
-                groups.append(ExerciseGroup(exercises: [ex], supersetGroupId: nil))
-            }
-        }
-        if let cg = currentGroup { groups.append(cg) }
-        return groups
+        plan.groupedPlanExercises
     }
     
     var body: some View {
@@ -63,9 +46,16 @@ struct PlanDetailView: View {
                         }
                         
                         ForEach(Array(group.exercises.enumerated()), id: \.element.id) { index, planEx in
-                            PlanExerciseRowView(planExercise: planEx) {
-                                showingReorderSheet = true
-                            }
+                            PlanExerciseRowView(
+                                planExercise: planEx,
+                                startExpanded: newlyAddedExerciseIds.contains(planEx.id),
+                                onReorder: {
+                                    showingReorderSheet = true
+                                },
+                                onSupersetChanged: {
+                                    refreshId = UUID()
+                                }
+                            )
                                 .padding(.horizontal)
                             
                             if index < group.exercises.count - 1 {
@@ -91,6 +81,7 @@ struct PlanDetailView: View {
             }
             .padding(.vertical)
         }
+        .id(refreshId)
         .background(Color.backgroundPrimary)
         .navigationTitle(plan.name)
         .navigationBarTitleDisplayMode(.large)
@@ -141,7 +132,9 @@ struct PlanDetailView: View {
         }
         .sheet(isPresented: $showingExerciseSelection) {
             NavigationStack {
-                ExerciseSelectionView(plan: plan)
+                ExerciseSelectionView(plan: plan, onExerciseAdded: { newPlanEx in
+                    newlyAddedExerciseIds.insert(newPlanEx.id)
+                })
             }
         }
         .sheet(isPresented: $showingReorderSheet) {
@@ -150,30 +143,78 @@ struct PlanDetailView: View {
         .fullScreenCover(item: $activeSession) { session in
             WorkoutSessionView(session: session)
         }
+        .onAppear {
+            cleanupPlanExercises()
+        }
+    }
+    
+    private func cleanupPlanExercises() {
+        var sorted = (plan.planExercises ?? [])
+            .filter { $0.exercise != nil }
+            .sorted(by: { $0.sortOrder < $1.sortOrder })
+        
+        var newOrder: [PlanExercise] = []
+        var processedIds: Set<UUID> = []
+        
+        for ex in sorted {
+            if processedIds.contains(ex.id) { continue }
+            if let groupId = ex.supersetGroup {
+                let related = sorted.filter { $0.supersetGroup == groupId }
+                newOrder.append(contentsOf: related)
+                for r in related { processedIds.insert(r.id) }
+            } else {
+                newOrder.append(ex)
+                processedIds.insert(ex.id)
+            }
+        }
+        
+        var changed = false
+        for (i, ex) in newOrder.enumerated() {
+            if ex.sortOrder != i {
+                ex.sortOrder = i
+                changed = true
+            }
+        }
+        
+        // Remove zombies permanently from the array
+        // Remove zombies permanently from the array and DB
+        let zombies = plan.planExercises?.filter { $0.exercise == nil } ?? []
+        for zombie in zombies {
+            modelContext.delete(zombie)
+            changed = true
+        }
+        plan.planExercises?.removeAll { $0.exercise == nil }
+        
+        if changed {
+            try? modelContext.save()
+        }
     }
     
     private func startWorkout() {
-        // Create a new session for this plan
         let newSession = WorkoutSession(plan: plan)
         modelContext.insert(newSession)
+
+        let sortedExercises = (plan.planExercises ?? [])
+            .filter { $0.exercise != nil }
+            .sorted { $0.sortOrder < $1.sortOrder }
         
-        // Prefill sets based on PlanExercises
-        let sortedExercises = (plan.planExercises ?? []).sorted(by: { $0.sortOrder < $1.sortOrder })
         for planEx in sortedExercises {
             for setIndex in 0..<planEx.targetSets {
                 let workoutSet = WorkoutSet(
                     setNumber: setIndex + 1,
                     actualWeight: planEx.targetWeight ?? 0.0,
-                    actualReps: planEx.targetReps,
-                    session: newSession,
-                    exercise: planEx.exercise,
-                    planExercise: planEx
+                    actualReps: planEx.targetReps
                 )
                 modelContext.insert(workoutSet)
+                // Fix SwiftData relationship dropping by assigning after insertion
+                workoutSet.exercise = planEx.exercise
+                workoutSet.planExercise = planEx
             }
         }
         
+        try? modelContext.save()
         activeSession = newSession
+    }
     }
     
     private func deleteExercises(offsets: IndexSet, from group: ExerciseGroup) {

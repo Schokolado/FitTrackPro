@@ -7,6 +7,7 @@ struct ExerciseSelectionView: View {
     
     let plan: TrainingPlan?
     var onSelect: ((Exercise) -> Void)? = nil
+    var onExerciseAdded: ((PlanExercise) -> Void)? = nil
     
     @Query(sort: \Exercise.sortOrder) private var allExercises: [Exercise]
     @State private var searchText: String = ""
@@ -109,6 +110,7 @@ struct ExerciseSelectionView: View {
                 exercise: exercise
             )
             modelContext.insert(newPlanExercise)
+            onExerciseAdded?(newPlanExercise)
         }
         dismiss()
     }
