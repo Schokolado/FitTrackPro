@@ -64,7 +64,7 @@ struct WorkoutSessionView: View {
                 // Workout Sets List
                 List {
                     ForEach(groupedSets, id: \.0.id) { (exercise, sets) in
-                        Section(header: Text(exercise.name).font(.headline).foregroundColor(.primary)) {
+                        Section(header: ExerciseSectionHeader(exercise: exercise, currentSessionId: session.id)) {
                             ForEach(sets) { workoutSet in
                                 WorkoutSetRowView(workoutSet: workoutSet) {
                                     // Trigger Rest Timer
@@ -164,6 +164,58 @@ struct WorkoutSessionView: View {
         let remainingSets = sets.enumerated().filter { !offsets.contains($0.offset) }.map { $0.element }
         for (index, set) in remainingSets.sorted(by: { $0.setNumber < $1.setNumber }).enumerated() {
             set.setNumber = index + 1
+        }
+    }
+}
+
+struct ExerciseSectionHeader: View {
+    let exercise: Exercise
+    let currentSessionId: UUID
+    
+    @Query private var pastSets: [WorkoutSet]
+    @State private var showingHistory = false
+    
+    init(exercise: Exercise, currentSessionId: UUID) {
+        self.exercise = exercise
+        self.currentSessionId = currentSessionId
+        let exerciseId = exercise.id
+        
+        _pastSets = Query(
+            filter: #Predicate<WorkoutSet> { set in
+                set.exercise?.id == exerciseId && set.isCompleted == true && set.session?.id != currentSessionId
+            },
+            sort: \.timestamp, order: .reverse
+        )
+    }
+    
+    var body: some View {
+        HStack {
+            Text(exercise.name)
+                .font(.headline)
+                .foregroundColor(.primary)
+                
+            Spacer()
+            
+            Button(action: { showingHistory = true }) {
+                if let lastSet = pastSets.first {
+                    Text("Zuletzt: \(lastSet.actualWeight, specifier: "%.1f") kg × \(lastSet.actualReps)")
+                        .font(.caption)
+                        .foregroundColor(.brand)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color.brand.opacity(0.1))
+                        .cornerRadius(8)
+                } else {
+                    Image(systemName: "clock.arrow.circlepath")
+                        .foregroundColor(.brand)
+                }
+            }
+            .textCase(nil)
+        }
+        .sheet(isPresented: $showingHistory) {
+            NavigationStack {
+                ExerciseHistoryView(exercise: exercise)
+            }
         }
     }
 }
