@@ -118,6 +118,12 @@ struct WorkoutSummaryView: View {
             }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Abbrechen") {
+                        cancelWorkout()
+                    }
+                    .foregroundColor(.red)
+                }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Speichern") {
                         saveAndClose()
@@ -152,6 +158,16 @@ struct WorkoutSummaryView: View {
         // In this architecture, we dismiss the sheet. The parent (WorkoutSessionView)
         // should observe the session's state or we dismiss the parent as well.
         // Easiest way: Post a notification or use a binding.
+        NotificationCenter.default.post(name: NSNotification.Name("WorkoutFinished"), object: nil)
+    }
+    
+    private func cancelWorkout() {
+        modelContext.delete(session)
+        do {
+            try modelContext.save()
+        } catch {
+            print("Error deleting session: \(error)")
+        }
         NotificationCenter.default.post(name: NSNotification.Name("WorkoutFinished"), object: nil)
     }
 }

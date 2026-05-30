@@ -28,9 +28,18 @@ struct ExerciseDetailView: View {
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
-                    
-                    PlanExerciseHistoryButton(exercise: exercise)
                 }
+                .padding(.horizontal)
+                
+                VStack(alignment: .leading, spacing: Spacing.sm) {
+                    HStack {
+                        Text("Historie")
+                            .font(.headline)
+                        Spacer()
+                        PlanExerciseHistoryButton(exercise: exercise)
+                    }
+                }
+                .cardStyle()
                 .padding(.horizontal)
                 
                 VStack(alignment: .leading, spacing: Spacing.sm) {

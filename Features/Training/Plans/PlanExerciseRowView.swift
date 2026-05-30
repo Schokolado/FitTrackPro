@@ -2,6 +2,7 @@ import SwiftUI
 import SwiftData
 
 struct PlanExerciseRowView: View {
+    @Environment(\.modelContext) private var modelContext
     @Bindable var planExercise: PlanExercise
     
     var body: some View {
@@ -9,13 +10,9 @@ struct PlanExerciseRowView: View {
             HStack {
                 if let exercise = planExercise.exercise {
                     NavigationLink(destination: ExerciseDetailView(exercise: exercise)) {
-                        HStack(spacing: 4) {
-                            Text(exercise.name)
-                                .font(.headline)
-                            Image(systemName: "info.circle")
-                                .font(.caption)
-                        }
-                        .foregroundColor(.brand)
+                        Text(exercise.name)
+                            .font(.headline)
+                            .foregroundColor(.brand)
                     }
                     .buttonStyle(.borderless)
                 } else {
@@ -23,15 +20,6 @@ struct PlanExerciseRowView: View {
                         .font(.headline)
                 }
                 Spacer()
-                
-                if let exercise = planExercise.exercise {
-                    PlanExerciseHistoryButton(exercise: exercise)
-                }
-                
-                if planExercise.supersetGroup != nil {
-                    Image(systemName: "link")
-                        .foregroundColor(.brandSecondary)
-                }
             }
             
             HStack(spacing: 16) {
@@ -39,33 +27,38 @@ struct PlanExerciseRowView: View {
                     Text("Sätze")
                         .font(.caption)
                         .foregroundColor(.secondary)
-                    Stepper("\(planExercise.targetSets)", value: $planExercise.targetSets, in: 0...20)
+                    TextField("Sätze", value: $planExercise.targetSets, format: .number)
+                        .keyboardType(.numberPad)
+                        .textFieldStyle(.roundedBorder)
                 }
                 
                 VStack(alignment: .leading) {
                     Text("Wdh.")
                         .font(.caption)
                         .foregroundColor(.secondary)
-                    Stepper("\(planExercise.targetReps)", value: $planExercise.targetReps, in: 0...100)
+                    TextField("Wdh.", value: $planExercise.targetReps, format: .number)
+                        .keyboardType(.numberPad)
+                        .textFieldStyle(.roundedBorder)
                 }
             }
             
             HStack(spacing: 16) {
                 VStack(alignment: .leading) {
-                    Text("Ziel-Gewicht (kg)")
+                    Text("Gewicht (kg)")
                         .font(.caption)
                         .foregroundColor(.secondary)
                     TextField("0", value: $planExercise.targetWeight, format: .number)
                         .keyboardType(.decimalPad)
                         .textFieldStyle(.roundedBorder)
-                        .frame(maxWidth: 100)
                 }
                 
                 VStack(alignment: .leading) {
                     Text("Pause (s)")
                         .font(.caption)
                         .foregroundColor(.secondary)
-                    Stepper("\(Int(planExercise.restDuration))", value: $planExercise.restDuration, in: 0...300, step: 10)
+                    TextField("Pause", value: $planExercise.restDuration, format: .number)
+                        .keyboardType(.numberPad)
+                        .textFieldStyle(.roundedBorder)
                 }
             }
             
@@ -79,7 +72,7 @@ struct PlanExerciseRowView: View {
                             .foregroundColor(.secondary)
                         Spacer()
                         Menu {
-                            Button("Kein Supersatz", role: .destructive) {
+                            Button("Kein Supersatz") {
                                 planExercise.supersetGroup = nil
                             }
                             Divider()
@@ -89,6 +82,10 @@ struct PlanExerciseRowView: View {
                                     planExercise.supersetGroup = newGroupId
                                     other.supersetGroup = newGroupId
                                 }
+                            }
+                            Divider()
+                            Button("Übung entfernen", role: .destructive) {
+                                modelContext.delete(planExercise)
                             }
                         } label: {
                             if let currentGroup = planExercise.supersetGroup, 

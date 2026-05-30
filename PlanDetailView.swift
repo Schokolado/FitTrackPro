@@ -35,48 +35,57 @@ struct PlanDetailView: View {
     }
     
     var body: some View {
-        List {
-            Section {
+        ScrollView {
+            VStack(spacing: Spacing.lg) {
                 Button(action: { startWorkout() }) {
                     Label("Workout Starten", systemImage: "play.fill")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 4)
                 }
-                .listRowBackground(Color.brand)
-            }
-            
-            ForEach(groupedExercises) { group in
-                Section {
-                    ForEach(group.exercises) { planEx in
-                        PlanExerciseRowView(planExercise: planEx)
-                    }
-                    .onDelete(perform: { offsets in
-                        deleteExercises(offsets: offsets, from: group)
-                    })
-                } header: {
-                    if group.supersetGroupId != nil {
-                        HStack {
-                            Image(systemName: "link")
-                            Text("Supersatz")
+                .primaryButtonStyle()
+                .padding(.horizontal)
+                
+                ForEach(groupedExercises) { group in
+                    VStack(alignment: .leading, spacing: 0) {
+                        if group.supersetGroupId != nil {
+                            HStack {
+                                Image(systemName: "link")
+                                Text("Supersatz")
+                            }
+                            .font(.caption)
+                            .foregroundColor(.brandSecondary)
+                            .padding(.horizontal)
+                            .padding(.top, Spacing.sm)
+                            .padding(.bottom, 4)
                         }
-                        .font(.caption)
-                        .foregroundColor(.brandSecondary)
-                        .padding(.bottom, 2)
+                        
+                        ForEach(Array(group.exercises.enumerated()), id: \.element.id) { index, planEx in
+                            PlanExerciseRowView(planExercise: planEx)
+                                .padding(.horizontal)
+                                .padding(.vertical, 8)
+                            
+                            if index < group.exercises.count - 1 {
+                                Divider()
+                                    .padding(.leading)
+                            }
+                        }
                     }
+                    .cardStyle()
+                    .padding(.horizontal)
                 }
-            }
-            
-            Section {
+                
                 Button(action: { showingExerciseSelection = true }) {
                     Label("Übung hinzufügen", systemImage: "plus.circle.fill")
                         .font(.headline)
                         .foregroundColor(.brand)
                 }
+                .padding()
+                .frame(maxWidth: .infinity)
+                .background(Color.brandSecondary.opacity(0.1))
+                .cornerRadius(12)
+                .padding(.horizontal)
             }
+            .padding(.vertical)
         }
-        .listStyle(.insetGrouped)
+        .background(Color.backgroundPrimary)
         .navigationTitle(plan.name)
         .navigationBarTitleDisplayMode(.large)
         .toolbar {
