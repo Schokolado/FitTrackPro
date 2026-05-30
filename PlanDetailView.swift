@@ -343,17 +343,7 @@ struct PlanDetailView: View {
     }
 }
 
-struct ExerciseGroup: Identifiable {
-    var id: String {
-        if let groupId = supersetGroupId {
-            return "superset-\(groupId)"
-        } else {
-            return "single-\(exercises.first?.id.uuidString ?? UUID().uuidString)"
-        }
-    }
-    var exercises: [PlanExercise]
-    var supersetGroupId: Int?
-}
+
 
 struct PlanExerciseReorderView: View {
     @Environment(\.modelContext) private var modelContext

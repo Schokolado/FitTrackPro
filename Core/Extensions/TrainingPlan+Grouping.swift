@@ -4,7 +4,13 @@ import Foundation
 // Represents either a single exercise or a group of exercises linked as a superset.
 
 struct ExerciseGroup: Identifiable {
-    let id = UUID()
+    var id: String {
+        if let groupId = supersetGroupId {
+            return "superset-\(groupId)"
+        } else {
+            return "single-\(exercises.first?.id.uuidString ?? UUID().uuidString)"
+        }
+    }
     var exercises: [PlanExercise]
     var supersetGroupId: Int?
 }
