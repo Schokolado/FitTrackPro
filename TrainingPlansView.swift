@@ -5,15 +5,13 @@ struct TrainingPlansView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \TrainingPlan.sortOrder) private var plans: [TrainingPlan]
     
-    @State private var showingAddAlert = false
+    @Binding var triggerAddAlert: Bool
     @State private var showingRenameAlert = false
     @State private var newPlanName = ""
     @State private var planToRename: TrainingPlan? = nil
-    @State private var isFabExpanded = false
     
     var body: some View {
-        NavigationStack {
-            Group {
+        Group {
                 if plans.isEmpty {
                     ContentUnavailableView(
                         "Keine Trainingspläne",
@@ -83,90 +81,9 @@ struct TrainingPlansView: View {
                 }
             }
             .background(Color.backgroundPrimary)
-            .overlay {
-                if isFabExpanded {
-                    Color.black.opacity(0.4)
-                        .ignoresSafeArea()
-                        .onTapGesture {
-                            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                                isFabExpanded = false
-                            }
-                        }
-                }
-            }
-            .overlay(alignment: .bottomTrailing) {
-                VStack(alignment: .trailing, spacing: 16) {
-                    if isFabExpanded {
-                        NavigationLink(destination: ExerciseLibraryView()) {
-                            HStack {
-                                Text("Übungen")
-                                    .font(.subheadline)
-                                    .fontWeight(.medium)
-                                    .padding(.horizontal, 12)
-                                    .padding(.vertical, 8)
-                                    .background(Color.white)
-                                    .foregroundColor(.primary)
-                                    .cornerRadius(8)
-                                    .shadow(color: Color.black.opacity(0.1), radius: 3, x: 0, y: 2)
-                                
-                                Image(systemName: "dumbbell.fill")
-                                    .font(.title3)
-                                    .foregroundColor(.white)
-                                    .frame(width: 48, height: 48)
-                                    .background(Color.brand)
-                                    .clipShape(Circle())
-                                    .shadow(color: Color.black.opacity(0.2), radius: 4, x: 0, y: 2)
-                            }
-                        }
-                        
-                        Button(action: {
-                            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                                isFabExpanded = false
-                            }
-                            newPlanName = ""
-                            showingAddAlert = true
-                        }) {
-                            HStack {
-                                Text("Neuer Plan")
-                                    .font(.subheadline)
-                                    .fontWeight(.medium)
-                                    .padding(.horizontal, 12)
-                                    .padding(.vertical, 8)
-                                    .background(Color.white)
-                                    .foregroundColor(.primary)
-                                    .cornerRadius(8)
-                                    .shadow(color: Color.black.opacity(0.1), radius: 3, x: 0, y: 2)
-                                
-                                Image(systemName: "doc.badge.plus")
-                                    .font(.title3)
-                                    .foregroundColor(.white)
-                                    .frame(width: 48, height: 48)
-                                    .background(Color.brandSecondary)
-                                    .clipShape(Circle())
-                                    .shadow(color: Color.black.opacity(0.2), radius: 4, x: 0, y: 2)
-                            }
-                        }
-                    }
-                    
-                    Button(action: {
-                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                            isFabExpanded.toggle()
-                        }
-                    }) {
-                        Image(systemName: "plus")
-                            .font(.title)
-                            .foregroundColor(.white)
-                            .frame(width: 60, height: 60)
-                            .background(Color.brand)
-                            .clipShape(Circle())
-                            .shadow(color: Color.black.opacity(0.3), radius: 5, x: 0, y: 3)
-                            .rotationEffect(.degrees(isFabExpanded ? 45 : 0))
-                    }
-                }
-                .padding(20)
-            }
             .navigationTitle("Trainingspläne")
-            .alert("Neuer Trainingsplan", isPresented: $showingAddAlert) {
+            .navigationBarTitleDisplayMode(.inline)
+            .alert("Neuer Trainingsplan", isPresented: $triggerAddAlert) {
                 TextField("Name", text: $newPlanName)
                 Button("Abbrechen", role: .cancel) { }
                 Button("Erstellen") {
@@ -184,7 +101,6 @@ struct TrainingPlansView: View {
                 }
                 .disabled(newPlanName.trimmingCharacters(in: .whitespaces).isEmpty)
             }
-        }
     }
     
     private func createPlan() {
@@ -219,6 +135,135 @@ struct TrainingPlansView: View {
         
         for (index, item) in revisedItems.enumerated() {
             item.sortOrder = index
+        }
+    }
+}
+import SwiftUI
+
+struct TrainingMainView: View {
+    @State private var selectedTab = 0
+    @State private var isFabExpanded = false
+    
+    @State private var triggerAddPlan = false
+    @State private var triggerAddExercise = false
+    
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 0) {
+                Picker("Ansicht", selection: $selectedTab) {
+                    Text("Pläne").tag(0)
+                    Text("Übungen").tag(1)
+                }
+                .pickerStyle(.segmented)
+                .padding()
+                .background(Color.backgroundPrimary)
+                
+                if selectedTab == 0 {
+                    TrainingPlansView(triggerAddAlert: $triggerAddPlan)
+                } else {
+                    ExerciseLibraryView(triggerAddExercise: $triggerAddExercise)
+                }
+                
+                Spacer(minLength: 0)
+            }
+            .background(Color.backgroundPrimary)
+            .overlay {
+                if isFabExpanded {
+                    Color.black.opacity(0.4)
+                        .ignoresSafeArea()
+                        .onTapGesture {
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                isFabExpanded = false
+                            }
+                        }
+                }
+            }
+            .overlay(alignment: .bottomTrailing) {
+                VStack(alignment: .trailing, spacing: 16) {
+                    if isFabExpanded {
+                        // Neue Übung Button
+                        Button(action: {
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                isFabExpanded = false
+                            }
+                            selectedTab = 1
+                            // Delay slightly to allow tab switch
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                triggerAddExercise = true
+                            }
+                        }) {
+                            HStack {
+                                Text("Neue Übung")
+                                    .font(.subheadline)
+                                    .fontWeight(.medium)
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 8)
+                                    .background(Color.white)
+                                    .foregroundColor(.primary)
+                                    .cornerRadius(8)
+                                    .shadow(color: Color.black.opacity(0.1), radius: 3, x: 0, y: 2)
+                                
+                                Image(systemName: "dumbbell.fill")
+                                    .font(.title3)
+                                    .foregroundColor(.white)
+                                    .frame(width: 48, height: 48)
+                                    .background(Color.brand)
+                                    .clipShape(Circle())
+                                    .shadow(color: Color.black.opacity(0.2), radius: 4, x: 0, y: 2)
+                            }
+                        }
+                        
+                        // Neuer Plan Button
+                        Button(action: {
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                isFabExpanded = false
+                            }
+                            selectedTab = 0
+                            // Delay slightly to allow tab switch
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                triggerAddPlan = true
+                            }
+                        }) {
+                            HStack {
+                                Text("Neuer Plan")
+                                    .font(.subheadline)
+                                    .fontWeight(.medium)
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 8)
+                                    .background(Color.white)
+                                    .foregroundColor(.primary)
+                                    .cornerRadius(8)
+                                    .shadow(color: Color.black.opacity(0.1), radius: 3, x: 0, y: 2)
+                                
+                                Image(systemName: "doc.badge.plus")
+                                    .font(.title3)
+                                    .foregroundColor(.white)
+                                    .frame(width: 48, height: 48)
+                                    .background(Color.brandSecondary)
+                                    .clipShape(Circle())
+                                    .shadow(color: Color.black.opacity(0.2), radius: 4, x: 0, y: 2)
+                            }
+                        }
+                    }
+                    
+                    // Main FAB
+                    Button(action: {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                            isFabExpanded.toggle()
+                        }
+                    }) {
+                        Image(systemName: "plus")
+                            .font(.title)
+                            .foregroundColor(.white)
+                            .frame(width: 60, height: 60)
+                            .background(Color.brand)
+                            .clipShape(Circle())
+                            .shadow(color: Color.black.opacity(0.3), radius: 5, x: 0, y: 3)
+                            .rotationEffect(.degrees(isFabExpanded ? 45 : 0))
+                    }
+                }
+                .padding(20)
+            }
         }
     }
 }

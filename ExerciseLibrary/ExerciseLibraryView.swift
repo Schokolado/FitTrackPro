@@ -10,11 +10,10 @@ struct ExerciseLibraryView: View {
     }
     
     @State private var viewModel = ExerciseLibraryViewModel()
-    @State private var showingAddForm = false
+    @Binding var triggerAddExercise: Bool
     
     var body: some View {
-        NavigationStack {
-            VStack {
+        VStack {
                 // Category Filter Dropdown
                 HStack {
                     Text("Kategorie:")
@@ -46,17 +45,13 @@ struct ExerciseLibraryView: View {
                     .onDelete(perform: deleteExercises)
                 }
                 .listStyle(.plain)
+                .scrollContentBackground(.hidden)
                 .searchable(text: $viewModel.searchText, prompt: "Übung suchen...")
             }
+            .background(Color.backgroundPrimary)
             .navigationTitle("Übungen")
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: { showingAddForm = true }) {
-                        Image(systemName: "plus")
-                    }
-                }
-            }
-            .sheet(isPresented: $showingAddForm) {
+            .navigationBarTitleDisplayMode(.inline)
+            .sheet(isPresented: $triggerAddExercise) {
                 NavigationStack {
                     ExerciseFormView()
                 }
@@ -64,14 +59,13 @@ struct ExerciseLibraryView: View {
             .onAppear {
                 SeedDataService.shared.seedExercisesIfNeeded(context: modelContext)
             }
-        }
     }
     
     private func deleteExercises(offsets: IndexSet) {
         let filtered = viewModel.filterExercises(allExercises)
         for index in offsets {
             let exercise = filtered[index]
-            modelContext.delete(exercise)
+            exercise.deleteCascading(in: modelContext)
         }
     }
 }
