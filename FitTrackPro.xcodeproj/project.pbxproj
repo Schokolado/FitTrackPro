@@ -36,6 +36,7 @@
 		C3FDAE0B2FCADF8E00E8767F /* WorkoutSessionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3FDAE072FCADF8E00E8767F /* WorkoutSessionView.swift */; };
 		C3FDAE0C2FCADF8E00E8767F /* WorkoutSetRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3FDAE092FCADF8E00E8767F /* WorkoutSetRowView.swift */; };
 		C3FDAE0E2FCADF8E00E8767F /* WorkoutSessionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3FDAE082FCADF8E00E8767F /* WorkoutSessionViewModel.swift */; };
+		C3FDAE102FCAE41100E8767F /* WorkoutSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3FDAE0F2FCAE41100E8767F /* WorkoutSummaryView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -71,6 +72,7 @@
 		C3FDAE072FCADF8E00E8767F /* WorkoutSessionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutSessionView.swift; sourceTree = "<group>"; };
 		C3FDAE082FCADF8E00E8767F /* WorkoutSessionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutSessionViewModel.swift; sourceTree = "<group>"; };
 		C3FDAE092FCADF8E00E8767F /* WorkoutSetRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutSetRowView.swift; sourceTree = "<group>"; };
+		C3FDAE0F2FCAE41100E8767F /* WorkoutSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutSummaryView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -87,6 +89,7 @@
 		C3FDADA52FCAD62A00E8767F = {
 			isa = PBXGroup;
 			children = (
+				C3FDAE0F2FCAE41100E8767F /* WorkoutSummaryView.swift */,
 				C3FDADF42FCADE4800E8767F /* ExerciseLibrary */,
 				C3FDADF52FCADE4800E8767F /* Plans */,
 				C3FDADF62FCADE4800E8767F /* SeedDataService.swift */,
@@ -357,6 +360,7 @@
 			files = (
 				C3FDADD82FCAD75500E8767F /* View+Modifiers.swift in Sources */,
 				C3FDADD92FCAD75500E8767F /* FitTrackProApp.swift in Sources */,
+				C3FDAE102FCAE41100E8767F /* WorkoutSummaryView.swift in Sources */,
 				C3FDADDA2FCAD75500E8767F /* Color+Theme.swift in Sources */,
 				C3FDADDB2FCAD75500E8767F /* AppStorageKeys.swift in Sources */,
 				C3FDADDC2FCAD75500E8767F /* AppRouter.swift in Sources */,
