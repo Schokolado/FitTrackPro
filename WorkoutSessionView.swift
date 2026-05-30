@@ -23,6 +23,9 @@ struct WorkoutSessionView: View {
     @State private var showingCustomTimerAlert = false
     @State private var customTimerSeconds: String = ""
     
+    @State private var showingAutoFinishAlert = false
+    @State private var hasShownAutoFinishAlert = false
+    
     private struct GroupKey: Hashable {
         let planExerciseId: UUID?
         let exerciseId: UUID
@@ -71,6 +74,11 @@ struct WorkoutSessionView: View {
         }
         
         return result
+    }
+    
+    private var allSetsCompleted: Bool {
+        guard let sets = session.sets, !sets.isEmpty else { return false }
+        return sets.allSatisfy { $0.isCompleted }
     }
     
     var body: some View {
@@ -188,6 +196,27 @@ struct WorkoutSessionView: View {
                 }
             } message: {
                 Text("Gib die gewünschte Pausenzeit in Sekunden ein.")
+            }
+            .alert("Glückwunsch!", isPresented: $showingAutoFinishAlert) {
+                Button("Workout beenden") {
+                    viewModel.pauseWorkout()
+                    showingFinishSheet = true
+                }
+                Button("Cooldown fortsetzen", role: .cancel) { }
+            } message: {
+                Text("Du hast alle Übungen erfolgreich abgeschlossen. Möchtest du das Workout jetzt beenden oder weiterlaufen lassen (z.B. für Cooldown)?")
+            }
+            .onChange(of: allSetsCompleted) { oldValue, newValue in
+                if newValue {
+                    if !hasShownAutoFinishAlert {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                            showingAutoFinishAlert = true
+                        }
+                        hasShownAutoFinishAlert = true
+                    }
+                } else {
+                    hasShownAutoFinishAlert = false
+                }
             }
             .onAppear {
                 NotificationService.shared.requestAuthorization()
