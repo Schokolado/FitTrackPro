@@ -163,24 +163,55 @@ struct ExerciseGroup: Identifiable {
 }
 
 struct PlanExerciseReorderView: View {
+    @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     @Bindable var plan: TrainingPlan
+    
+    private var groupedExercises: [ExerciseGroup] {
+        let sorted = (plan.planExercises ?? []).sorted(by: { $0.sortOrder < $1.sortOrder })
+        var groups: [ExerciseGroup] = []
+        var currentGroup: ExerciseGroup?
+        
+        for ex in sorted {
+            if let groupId = ex.supersetGroup {
+                if currentGroup?.supersetGroupId == groupId {
+                    currentGroup?.exercises.append(ex)
+                } else {
+                    if let cg = currentGroup { groups.append(cg) }
+                    currentGroup = ExerciseGroup(exercises: [ex], supersetGroupId: groupId)
+                }
+            } else {
+                if let cg = currentGroup { groups.append(cg) }
+                currentGroup = nil
+                groups.append(ExerciseGroup(exercises: [ex], supersetGroupId: nil))
+            }
+        }
+        if let cg = currentGroup { groups.append(cg) }
+        return groups
+    }
     
     var body: some View {
         NavigationStack {
             List {
-                let sortedExercises = (plan.planExercises ?? []).sorted(by: { $0.sortOrder < $1.sortOrder })
-                ForEach(sortedExercises) { planEx in
-                    HStack {
-                        Text(planEx.exercise?.name ?? "Gelöschte Übung")
-                        Spacer()
-                        if planEx.supersetGroup != nil {
-                            Image(systemName: "link")
-                                .foregroundColor(.brandSecondary)
+                ForEach(groupedExercises) { group in
+                    VStack(alignment: .leading, spacing: 4) {
+                        if group.supersetGroupId != nil {
+                            HStack {
+                                Image(systemName: "link")
+                                Text("Supersatz")
+                            }
+                            .font(.caption)
+                            .foregroundColor(.brandSecondary)
+                        }
+                        
+                        ForEach(group.exercises) { planEx in
+                            Text(planEx.exercise?.name ?? "Gelöschte Übung")
+                                .padding(.leading, group.supersetGroupId != nil ? 16 : 0)
                         }
                     }
                 }
-                .onMove(perform: moveExercises)
+                .onDelete(perform: deleteGroups)
+                .onMove(perform: moveGroups)
             }
             .navigationTitle("Reihenfolge ändern")
             .navigationBarTitleDisplayMode(.inline)
@@ -196,12 +227,29 @@ struct PlanExerciseReorderView: View {
         }
     }
     
-    private func moveExercises(from source: IndexSet, to destination: Int) {
-        var revisedItems = (plan.planExercises ?? []).sorted(by: { $0.sortOrder < $1.sortOrder })
-        revisedItems.move(fromOffsets: source, toOffset: destination)
+    private func moveGroups(from source: IndexSet, to destination: Int) {
+        var groups = groupedExercises
+        groups.move(fromOffsets: source, toOffset: destination)
         
-        for (index, item) in revisedItems.enumerated() {
-            item.sortOrder = index
+        let flattened = groups.flatMap { $0.exercises }
+        for (index, planEx) in flattened.enumerated() {
+            planEx.sortOrder = index
+        }
+    }
+    
+    private func deleteGroups(at offsets: IndexSet) {
+        let groups = groupedExercises
+        for index in offsets {
+            let group = groups[index]
+            for planEx in group.exercises {
+                plan.planExercises?.removeAll(where: { $0.id == planEx.id })
+                modelContext.delete(planEx)
+            }
+        }
+        
+        let remaining = groupedExercises.flatMap { $0.exercises }
+        for (index, planEx) in remaining.enumerated() {
+            planEx.sortOrder = index
         }
     }
 }
