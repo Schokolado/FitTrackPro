@@ -10,6 +10,11 @@ struct PlanExerciseRowView: View {
                 Text(planExercise.exercise?.name ?? "Gelöschte Übung")
                     .font(.headline)
                 Spacer()
+                
+                if let exercise = planExercise.exercise {
+                    PlanExerciseHistoryButton(exercise: exercise)
+                }
+                
                 if planExercise.supersetGroup != nil {
                     Image(systemName: "link")
                         .foregroundColor(.brandSecondary)
@@ -51,24 +56,86 @@ struct PlanExerciseRowView: View {
                 }
             }
             
-            // Supersatz Toggle
-            Toggle(isOn: Binding(
-                get: { planExercise.supersetGroup != nil },
-                set: { isSuper in
-                    // Simple logic: if true, group it with the previous exercise (same group ID)
-                    // In a real complex app, you'd select which group to join. For now, simple toggle assigning an ID.
-                    if isSuper {
-                        planExercise.supersetGroup = 1 // Simplified: just assign group 1 for UI representation
-                    } else {
-                        planExercise.supersetGroup = nil
+            // Supersatz Picker
+            if let plan = planExercise.plan, let planExercises = plan.planExercises {
+                let otherExercises = planExercises.filter { $0.id != planExercise.id }.sorted(by: { $0.sortOrder < $1.sortOrder })
+                if !otherExercises.isEmpty {
+                    HStack {
+                        Text("Supersatz mit:")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        Spacer()
+                        Menu {
+                            Button("Kein Supersatz", role: .destructive) {
+                                planExercise.supersetGroup = nil
+                            }
+                            Divider()
+                            ForEach(otherExercises) { other in
+                                Button(other.exercise?.name ?? "Unbekannt") {
+                                    let newGroupId = other.supersetGroup ?? (planExercise.supersetGroup ?? Int.random(in: 1...100000))
+                                    planExercise.supersetGroup = newGroupId
+                                    other.supersetGroup = newGroupId
+                                }
+                            }
+                        } label: {
+                            if let currentGroup = planExercise.supersetGroup, 
+                               let linked = otherExercises.first(where: { $0.supersetGroup == currentGroup }) {
+                                Text(linked.exercise?.name ?? "Verbunden")
+                                    .font(.caption)
+                                    .foregroundColor(.brand)
+                                    .multilineTextAlignment(.trailing)
+                            } else {
+                                Text("Auswählen...")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                        }
                     }
                 }
-            )) {
-                Text("Als Supersatz markieren")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
             }
         }
         .padding(.vertical, 4)
+    }
+}
+
+struct PlanExerciseHistoryButton: View {
+    let exercise: Exercise
+    
+    @Query private var pastSets: [WorkoutSet]
+    @State private var showingHistory = false
+    
+    init(exercise: Exercise) {
+        self.exercise = exercise
+        let exerciseId = exercise.id
+        
+        _pastSets = Query(
+            filter: #Predicate<WorkoutSet> { set in
+                set.exercise?.id == exerciseId && set.isCompleted == true
+            },
+            sort: \.timestamp, order: .reverse
+        )
+    }
+    
+    var body: some View {
+        Button(action: { showingHistory = true }) {
+            if let lastSet = pastSets.first {
+                Text("Zuletzt: \(lastSet.actualWeight, specifier: "%.1f") kg × \(lastSet.actualReps)")
+                    .font(.caption)
+                    .foregroundColor(.brand)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(Color.brand.opacity(0.1))
+                    .cornerRadius(8)
+            } else {
+                Image(systemName: "clock.arrow.circlepath")
+                    .foregroundColor(.brand)
+            }
+        }
+        .textCase(nil)
+        .sheet(isPresented: $showingHistory) {
+            NavigationStack {
+                ExerciseHistoryView(exercise: exercise)
+            }
+        }
     }
 }
