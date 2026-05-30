@@ -209,7 +209,13 @@ struct WorkoutSessionView: View {
         ScrollView {
             VStack(spacing: Spacing.lg) {
                 ForEach(groupedSets, id: \.id) { group in
-                    exerciseSection(for: group.exercise, planExercise: group.planExercise, sets: group.sets)
+                    WorkoutExerciseCardView(
+                        exercise: group.exercise,
+                        planExercise: group.planExercise,
+                        sets: group.sets,
+                        session: session,
+                        viewModel: viewModel
+                    )
                 }
                 
                 Button(action: {
@@ -239,52 +245,115 @@ struct WorkoutSessionView: View {
         .background(Color.backgroundPrimary)
     }
     
-    @ViewBuilder
-    private func exerciseSection(for exercise: Exercise, planExercise: PlanExercise?, sets: [WorkoutSet]) -> some View {
+    private func handleAdhocExercise(_ exercise: Exercise) {
+        // Add one empty set so it appears in the active session
+        let newSet = WorkoutSet(setNumber: 1, session: session, exercise: exercise)
+        modelContext.insert(newSet)
+        
+        // Ask if it should be saved to the underlying plan
+        if session.plan != nil {
+            self.pendingExerciseToAdd = exercise
+            // Delay alert to avoid sheet presentation conflict
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                self.showingAddToPlanAlert = true
+            }
+        }
+    }
+}
+
+struct WorkoutExerciseCardView: View {
+    @Environment(\.modelContext) private var modelContext
+    let exercise: Exercise
+    let planExercise: PlanExercise?
+    let sets: [WorkoutSet]
+    let session: WorkoutSession
+    let viewModel: WorkoutSessionViewModel
+    
+    @State private var isManuallyExpanded: Bool = false
+    
+    private var isCompleted: Bool {
+        !sets.isEmpty && sets.allSatisfy { $0.isCompleted }
+    }
+    
+    private var isCollapsed: Bool {
+        isCompleted && !isManuallyExpanded
+    }
+    
+    var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            ExerciseSectionHeader(exercise: exercise, currentSessionId: session.id)
-                .padding(.horizontal)
-                .padding(.top, Spacing.sm)
-                .padding(.bottom, 8)
-            
-            ForEach(Array(sets.enumerated()), id: \.element.id) { index, workoutSet in
-                WorkoutSetRowView(workoutSet: workoutSet) {
-                    let duration = workoutSet.planExercise?.restDuration ?? exercise.defaultRestDuration
-                    viewModel.startRestTimer(duration: duration)
+            HStack {
+                NavigationLink(destination: ExerciseDetailView(exercise: exercise)) {
+                    HStack {
+                        Text(exercise.name)
+                            .font(.headline)
+                            .foregroundColor(.brand)
+                        Spacer()
+                    }
+                    .contentShape(Rectangle())
                 }
-                .contextMenu {
-                    Button(role: .destructive) {
-                        deleteSet(workoutSet, from: sets)
-                    } label: {
-                        Label("Satz löschen", systemImage: "trash")
+                .buttonStyle(.borderless)
+                
+                if isCompleted {
+                    Button(action: {
+                        withAnimation { isManuallyExpanded.toggle() }
+                    }) {
+                        Image(systemName: isManuallyExpanded ? "chevron.up" : "chevron.down")
+                            .foregroundColor(.secondary)
+                            .padding(.leading, 12)
+                            .padding(.vertical, 4)
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.borderless)
+                }
+            }
+            .padding(.horizontal)
+            .padding(.top, Spacing.sm)
+            .padding(.bottom, isCollapsed ? Spacing.sm : 8)
+            
+            if !isCollapsed {
+                ForEach(Array(sets.enumerated()), id: \.element.id) { index, workoutSet in
+                    WorkoutSetRowView(workoutSet: workoutSet) {
+                        let duration = workoutSet.planExercise?.restDuration ?? exercise.defaultRestDuration
+                        viewModel.startRestTimer(duration: duration)
+                    }
+                    .contextMenu {
+                        Button(role: .destructive) {
+                            deleteSet(workoutSet, from: sets)
+                        } label: {
+                            Label("Satz löschen", systemImage: "trash")
+                        }
+                    }
+                    .padding(.horizontal)
+                    .padding(.vertical, 8)
+                    
+                    if index < sets.count - 1 {
+                        Divider()
+                            .padding(.leading)
                     }
                 }
-                .padding(.horizontal)
-                .padding(.vertical, 8)
                 
-                if index < sets.count - 1 {
-                    Divider()
-                        .padding(.leading)
+                Button(action: {
+                    addSet(for: exercise, planExercise: planExercise)
+                }) {
+                    Label("Satz hinzufügen", systemImage: "plus")
+                        .font(.subheadline)
+                        .foregroundColor(.brand)
+                        .frame(maxWidth: .infinity, alignment: .center)
                 }
+                .padding(.vertical, 12)
             }
-            
-            Button(action: {
-                addSet(for: exercise, planExercise: planExercise)
-            }) {
-                Label("Satz hinzufügen", systemImage: "plus")
-                    .font(.subheadline)
-                    .foregroundColor(.brand)
-                    .frame(maxWidth: .infinity, alignment: .center)
-            }
-            .padding(.vertical, 12)
         }
         .cardStyle()
         .padding(.horizontal)
+        .onChange(of: isCompleted) { oldValue, newValue in
+            if newValue == true {
+                withAnimation { isManuallyExpanded = false }
+            }
+        }
     }
     
     private func addSet(for exercise: Exercise, planExercise: PlanExercise?) {
-        guard let sets = session.sets else { return }
-        
+        guard let sessionSets = session.sets else { return }
         let existingSets: [WorkoutSet]
         if let planEx = planExercise {
             existingSets = sets.filter { $0.planExercise?.id == planEx.id }
@@ -309,21 +378,6 @@ struct WorkoutSessionView: View {
         let remainingSets = sets.filter { $0.id != setToDelete.id }.sorted(by: { $0.setNumber < $1.setNumber })
         for (index, set) in remainingSets.enumerated() {
             set.setNumber = index + 1
-        }
-    }
-    
-    private func handleAdhocExercise(_ exercise: Exercise) {
-        // Add one empty set so it appears in the active session
-        let newSet = WorkoutSet(setNumber: 1, session: session, exercise: exercise)
-        modelContext.insert(newSet)
-        
-        // Ask if it should be saved to the underlying plan
-        if session.plan != nil {
-            self.pendingExerciseToAdd = exercise
-            // Delay alert to avoid sheet presentation conflict
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                self.showingAddToPlanAlert = true
-            }
         }
     }
 }

@@ -71,9 +71,9 @@ struct PlanDetailView: View {
                     }
                     .cardStyle()
                     .contentShape(Rectangle())
-                    .onLongPressGesture {
+                    .simultaneousGesture(LongPressGesture().onEnded { _ in
                         showingReorderSheet = true
-                    }
+                    })
                     .padding(.horizontal)
                 }
                 
