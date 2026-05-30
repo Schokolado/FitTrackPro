@@ -43,7 +43,7 @@ struct PlanDetailView: View {
     var body: some View {
         ScrollView {
             ScrollViewReader { proxy in
-                VStack(spacing: Spacing.lg) {
+                VStack(spacing: Spacing.md) {
                     if !groupedExercises.isEmpty {
                         Button(action: { startWorkout() }) {
                             Label("Workout Starten", systemImage: "play.fill")
@@ -253,8 +253,7 @@ struct PlanDetailView: View {
                     .font(.caption)
                     .foregroundColor(.brandSecondary)
                     .padding(.horizontal)
-                    .padding(.top, Spacing.md)
-                    .padding(.bottom, 8)
+                    .padding(.vertical, Spacing.md)
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
