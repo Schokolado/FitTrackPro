@@ -9,6 +9,7 @@ struct ExerciseSelectionView: View {
     
     @Query(sort: \Exercise.sortOrder) private var allExercises: [Exercise]
     @State private var searchText: String = ""
+    @State private var showingAddExercise = false
     
     var filteredExercises: [Exercise] {
         if searchText.isEmpty {
@@ -19,17 +20,29 @@ struct ExerciseSelectionView: View {
     }
     
     var body: some View {
-        List(filteredExercises) { exercise in
-            Button(action: {
-                addExerciseToPlan(exercise)
-            }) {
-                VStack(alignment: .leading) {
-                    Text(exercise.name)
+        List {
+            Section {
+                Button(action: { showingAddExercise = true }) {
+                    Label("Neue Übung erstellen", systemImage: "plus.circle.fill")
                         .font(.headline)
-                        .foregroundColor(.primary)
-                    Text(exercise.category.rawValue)
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(.brand)
+                }
+            }
+            
+            Section {
+                ForEach(filteredExercises) { exercise in
+                    Button(action: {
+                        addExerciseToPlan(exercise)
+                    }) {
+                        VStack(alignment: .leading) {
+                            Text(exercise.name)
+                                .font(.headline)
+                                .foregroundColor(.primary)
+                            Text(exercise.category.rawValue)
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                        }
+                    }
                 }
             }
         }
@@ -40,6 +53,13 @@ struct ExerciseSelectionView: View {
             ToolbarItem(placement: .cancellationAction) {
                 Button("Abbrechen") {
                     dismiss()
+                }
+            }
+        }
+        .sheet(isPresented: $showingAddExercise) {
+            NavigationStack {
+                ExerciseFormView { newExercise in
+                    addExerciseToPlan(newExercise)
                 }
             }
         }

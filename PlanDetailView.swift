@@ -8,9 +8,21 @@ struct PlanDetailView: View {
     @State private var showingExerciseSelection = false
     @State private var showingEditNameAlert = false
     @State private var editName = ""
+    @State private var activeSession: WorkoutSession? = nil
     
     var body: some View {
         List {
+            Section {
+                Button(action: { startWorkout() }) {
+                    Label("Workout Starten", systemImage: "play.fill")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 4)
+                }
+                .listRowBackground(Color.brand)
+            }
+            
             let sortedExercises = (plan.planExercises ?? []).sorted(by: { $0.sortOrder < $1.sortOrder })
             
             ForEach(sortedExercises) { planEx in
@@ -58,6 +70,33 @@ struct PlanDetailView: View {
                 ExerciseSelectionView(plan: plan)
             }
         }
+        .fullScreenCover(item: $activeSession) { session in
+            WorkoutSessionView(session: session)
+        }
+    }
+    
+    private func startWorkout() {
+        // Create a new session for this plan
+        let newSession = WorkoutSession(plan: plan)
+        modelContext.insert(newSession)
+        
+        // Prefill sets based on PlanExercises
+        let sortedExercises = (plan.planExercises ?? []).sorted(by: { $0.sortOrder < $1.sortOrder })
+        for planEx in sortedExercises {
+            for setIndex in 0..<planEx.targetSets {
+                let workoutSet = WorkoutSet(
+                    setNumber: setIndex + 1,
+                    actualWeight: planEx.targetWeight ?? 0.0,
+                    actualReps: planEx.targetReps,
+                    session: newSession,
+                    exercise: planEx.exercise,
+                    planExercise: planEx
+                )
+                modelContext.insert(workoutSet)
+            }
+        }
+        
+        activeSession = newSession
     }
     
     private func moveExercises(from source: IndexSet, to destination: Int) {
