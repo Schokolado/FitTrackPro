@@ -47,14 +47,18 @@ struct WorkoutSessionView: View {
                         .font(.subheadline)
                         .padding(.horizontal, 12)
                         .padding(.vertical, 6)
-                        .background(Color.white.opacity(0.2))
+                        .background(Color.brand.opacity(0.1))
                         .cornerRadius(16)
                     }
                     .padding()
-                    .background(Color.brand)
-                    .foregroundColor(.white)
-                    .transition(.move(edge: .top))
-                    .animation(.easeInOut, value: viewModel.restTimerActive)
+                    .background(Color.backgroundCard)
+                    .foregroundColor(.brand)
+                    .cornerRadius(16)
+                    .shadow(color: .black.opacity(0.05), radius: 5, y: 2)
+                    .padding(.horizontal)
+                    .padding(.top, 8)
+                    .transition(.move(edge: .top).combined(with: .opacity))
+                    .animation(.spring(response: 0.4, dampingFraction: 0.7), value: viewModel.restTimerActive)
                 }
                 
                 // Workout Sets List
@@ -99,7 +103,7 @@ struct WorkoutSessionView: View {
                             .foregroundColor(.secondary)
                         Text(viewModel.formatTime(viewModel.elapsedTime))
                             .font(.headline.monospacedDigit())
-                            .foregroundColor(.brand)
+                            .foregroundColor(.primary)
                     }
                 }
                 
