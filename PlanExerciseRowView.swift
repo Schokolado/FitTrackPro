@@ -17,7 +17,7 @@ struct PlanExerciseRowView: View {
                         }
                         .foregroundColor(.brand)
                     }
-                    .buttonStyle(.plain) // Prevents the whole row from becoming a button
+                    .buttonStyle(.borderless)
                 } else {
                     Text("Gelöschte Übung")
                         .font(.headline)
@@ -144,6 +144,7 @@ struct PlanExerciseHistoryButton: View {
                     .foregroundColor(.brand)
             }
         }
+        .buttonStyle(.borderless)
         .textCase(nil)
         .sheet(isPresented: $showingHistory) {
             NavigationStack {
