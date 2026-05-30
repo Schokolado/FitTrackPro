@@ -46,44 +46,31 @@ struct PlanExerciseRowView: View {
                                         onSupersetChanged?()
                                     }
                                     Divider()
-                                    ForEach(otherExercises) { other in
-                                        Button(action: {
-                                            let newGroupId = other.supersetGroup ?? (planExercise.supersetGroup ?? Int.random(in: 1...100000))
-                                            planExercise.supersetGroup = newGroupId
-                                            other.supersetGroup = newGroupId
-                                            
-                                            // Always move the later exercise to immediately follow the earlier exercise
-                                            let first = planExercise.sortOrder < other.sortOrder ? planExercise : other
-                                            let second = planExercise.sortOrder < other.sortOrder ? other : planExercise
-                                            
-                                            var sorted = planExercises.sorted(by: { $0.sortOrder < $1.sortOrder })
-                                            sorted.removeAll(where: { $0.id == second.id })
-                                            
-                                            if let insertIndex = sorted.firstIndex(where: { $0.id == first.id }) {
-                                                // Find the last exercise in the same superset to append after the whole group
-                                                // Actually, just inserting after 'first' is fine because 'first' might already be part of a group
-                                                // To be perfectly safe, insert after the last item of first's group
-                                                var targetIndex = insertIndex
-                                                while targetIndex + 1 < sorted.count, sorted[targetIndex + 1].supersetGroup == newGroupId {
-                                                    targetIndex += 1
+                                    let grouped = Dictionary(grouping: otherExercises.filter { $0.supersetGroup != nil }, by: { $0.supersetGroup! })
+                                    let standalone = otherExercises.filter { $0.supersetGroup == nil }
+                                    
+                                    ForEach(Array(grouped.keys.sorted()), id: \.self) { groupId in
+                                        if let groupExs = grouped[groupId] {
+                                            Section("Supersatz: " + groupExs.compactMap { $0.exercise?.name }.joined(separator: " + ")) {
+                                                ForEach(groupExs) { other in
+                                                    Button(action: {
+                                                        createSuperset(with: other, in: planExercises, plan: plan)
+                                                    }) {
+                                                        Label(other.exercise?.name ?? "Unbekannt", systemImage: "link")
+                                                    }
                                                 }
-                                                sorted.insert(second, at: targetIndex + 1)
-                                            } else {
-                                                sorted.append(second)
                                             }
-                                            
-                                            for (i, ex) in sorted.enumerated() {
-                                                ex.sortOrder = i
-                                            }
-                                            
-                                            plan.planExercises = sorted // Force UI update
-                                            try? modelContext.save()
-                                            onSupersetChanged?()
-                                        }) {
-                                            if other.supersetGroup != nil {
-                                                Label(other.exercise?.name ?? "Unbekannt", systemImage: "link")
-                                            } else {
-                                                Text(other.exercise?.name ?? "Unbekannt")
+                                        }
+                                    }
+                                    
+                                    if !standalone.isEmpty {
+                                        Section("Einzelne Übungen") {
+                                            ForEach(standalone) { other in
+                                                Button(action: {
+                                                    createSuperset(with: other, in: planExercises, plan: plan)
+                                                }) {
+                                                    Text(other.exercise?.name ?? "Unbekannt")
+                                                }
                                             }
                                         }
                                     }
@@ -197,6 +184,40 @@ struct PlanExerciseRowView: View {
         } message: {
             Text("Möchtest du diese Übung wirklich aus dem Plan entfernen?")
         }
+    }
+    
+    private func createSuperset(with other: PlanExercise, in planExercises: [PlanExercise], plan: TrainingPlan) {
+        let newGroupId = other.supersetGroup ?? (planExercise.supersetGroup ?? Int.random(in: 1...100000))
+        planExercise.supersetGroup = newGroupId
+        other.supersetGroup = newGroupId
+        
+        // Always move the later exercise to immediately follow the earlier exercise
+        let first = planExercise.sortOrder < other.sortOrder ? planExercise : other
+        let second = planExercise.sortOrder < other.sortOrder ? other : planExercise
+        
+        var sorted = planExercises.sorted(by: { $0.sortOrder < $1.sortOrder })
+        sorted.removeAll(where: { $0.id == second.id })
+        
+        if let insertIndex = sorted.firstIndex(where: { $0.id == first.id }) {
+            // Find the last exercise in the same superset to append after the whole group
+            // Actually, just inserting after 'first' is fine because 'first' might already be part of a group
+            // To be perfectly safe, insert after the last item of first's group
+            var targetIndex = insertIndex
+            while targetIndex + 1 < sorted.count, sorted[targetIndex + 1].supersetGroup == newGroupId {
+                targetIndex += 1
+            }
+            sorted.insert(second, at: targetIndex + 1)
+        } else {
+            sorted.append(second)
+        }
+        
+        for (i, ex) in sorted.enumerated() {
+            ex.sortOrder = i
+        }
+        
+        plan.planExercises = sorted // Force UI update
+        try? modelContext.save()
+        onSupersetChanged?()
     }
 }
 
