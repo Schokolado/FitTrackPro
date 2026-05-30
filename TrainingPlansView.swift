@@ -15,53 +15,56 @@ struct TrainingPlansView: View {
         ScrollView {
             VStack(spacing: Spacing.md) {
                 ForEach(plans) { plan in
-                    NavigationLink(destination: PlanDetailView(plan: plan)) {
-                        VStack(alignment: .leading, spacing: 4) {
-                            HStack {
-                                Text(plan.name)
-                                    .font(.headline)
-                                    .foregroundColor(.brand)
-                                Spacer()
-                                
-                                Menu {
-                                    Button {
-                                        planToRename = plan
-                                        newPlanName = plan.name
-                                        showingRenameAlert = true
-                                    } label: {
-                                        Label("Umbenennen", systemImage: "pencil")
-                                    }
-                                    
-                                    Button {
-                                        duplicate(plan: plan)
-                                    } label: {
-                                        Label("Duplizieren", systemImage: "doc.on.doc")
-                                    }
-                                    
-                                    Divider()
-                                    
-                                    Button(role: .destructive) {
-                                        modelContext.delete(plan)
-                                    } label: {
-                                        Label("Löschen", systemImage: "trash")
-                                    }
-                                } label: {
-                                    Image(systemName: "ellipsis")
-                                        .font(.system(size: 20))
-                                        .foregroundColor(.secondary)
-                                        .padding(.leading, 8)
-                                        .padding(.vertical, 4)
-                                        .contentShape(Rectangle())
+                    ZStack(alignment: .topTrailing) {
+                        NavigationLink(destination: PlanDetailView(plan: plan)) {
+                            VStack(alignment: .leading, spacing: 4) {
+                                HStack {
+                                    Text(plan.name)
+                                        .font(.headline)
+                                        .foregroundColor(.brand)
+                                    Spacer()
                                 }
-                                .buttonStyle(.borderless)
+                                
+                                Text("\(plan.planExercises?.count ?? 0) Übungen")
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary)
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .contentShape(Rectangle())
+                        }
+                        .buttonStyle(.plain)
+                        
+                        Menu {
+                            Button {
+                                planToRename = plan
+                                newPlanName = plan.name
+                                showingRenameAlert = true
+                            } label: {
+                                Label("Umbenennen", systemImage: "pencil")
                             }
                             
-                            Text("\(plan.planExercises?.count ?? 0) Übungen")
-                                .font(.subheadline)
+                            Button {
+                                duplicate(plan: plan)
+                            } label: {
+                                Label("Duplizieren", systemImage: "doc.on.doc")
+                            }
+                            
+                            Divider()
+                            
+                            Button(role: .destructive) {
+                                modelContext.delete(plan)
+                            } label: {
+                                Label("Löschen", systemImage: "trash")
+                            }
+                        } label: {
+                            Image(systemName: "ellipsis")
+                                .font(.system(size: 20))
                                 .foregroundColor(.secondary)
+                                .padding(.leading, 20)
+                                .padding(.bottom, 20)
+                                .contentShape(Rectangle())
                         }
                     }
-                    .buttonStyle(.plain)
                     .cardStyle()
                     .padding(.horizontal)
                 }
@@ -81,7 +84,7 @@ struct TrainingPlansView: View {
                 }
                 ToolbarItem(placement: .navigationBarLeading) {
                     NavigationLink(destination: ExerciseLibraryView()) {
-                        Image(systemName: "book.pages")
+                        Image(systemName: "dumbbell.fill")
                     }
                 }
             }
