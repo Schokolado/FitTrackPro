@@ -17,7 +17,7 @@
 | M1 – Datenmodell | ✅ Abgeschlossen |
 | M2 – Übungs-Mediathek | ✅ Abgeschlossen |
 | M3 – Trainingspläne | ✅ Abgeschlossen |
-| M4 – Workout-Modus | ⏳ Ausstehend |
+| M4 – Workout-Modus | ✅ Abgeschlossen |
 | M5 – Workout-Abschluss | ⏳ Ausstehend |
 | M6 – Ernährung + Barcode | ⏳ Ausstehend |
 | M7 – Gewichtstracker | ⏳ Ausstehend |
@@ -35,6 +35,22 @@
 ---
 
 ## Einträge
+
+### 2026-05-30 – Milestone 4 abgeschlossen
+
+**Status:** ✅ Fertig  
+**Bearbeitet:** Workout-Modus (Timer, Sätze, Pausen)
+
+**Implementiert:**
+- `WorkoutSessionViewModel`: Steuert den Workout-Timer (Gesamtdauer) und den Pausen-Timer via `Date()`.
+- `NotificationService`: Plant lokale Benachrichtigungen (`UNUserNotificationCenter`) für ablaufende Pausen.
+- `WorkoutSessionView`: Stellt den laufenden Workout dar. Gruppiert die Sätze nach Übungen. 
+- Rest-Timer UI taucht als rotes Banner am oberen Rand auf und lässt sich überspringen.
+- `WorkoutSetRowView`: Pre-filled Soll-Werte für Sätze, die editierbar sind, bevor sie mit dem ✅ Checkmark bestätigt werden.
+- Abbrechen-Dialog (verwirft die Session in SwiftData) und vorläufiger Beenden-Button.
+- Start des Workouts aus dem Plan: Beim Klick auf "Workout Starten" in `PlanDetailView` wird die Session anhand der PlanExercises im Hintergrund vorausgefüllt und geöffnet.
+
+**Nächster Schritt:** Milestone 5 (Workout-Abschluss & Rating)
 
 ### 2026-05-30 – Milestone 3 abgeschlossen
 

@@ -28,6 +28,10 @@
 		C3FDADFA2FCADE4800E8767F /* ExerciseDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3FDADF02FCADE4800E8767F /* ExerciseDetailView.swift */; };
 		C3FDADFB2FCADE4800E8767F /* SeedDataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3FDADF62FCADE4800E8767F /* SeedDataService.swift */; };
 		C3FDADFC2FCADE4800E8767F /* ExerciseLibraryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3FDADF32FCADE4800E8767F /* ExerciseLibraryViewModel.swift */; };
+		C3FDAE012FCADF0300E8767F /* PlanDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3FDADFE2FCADF0300E8767F /* PlanDetailView.swift */; };
+		C3FDAE022FCADF0300E8767F /* PlanExerciseRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3FDADFF2FCADF0300E8767F /* PlanExerciseRowView.swift */; };
+		C3FDAE032FCADF0300E8767F /* ExerciseSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3FDADFD2FCADF0300E8767F /* ExerciseSelectionView.swift */; };
+		C3FDAE042FCADF0300E8767F /* TrainingPlansView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3FDAE002FCADF0300E8767F /* TrainingPlansView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -55,6 +59,10 @@
 		C3FDADF22FCADE4800E8767F /* ExerciseLibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseLibraryView.swift; sourceTree = "<group>"; };
 		C3FDADF32FCADE4800E8767F /* ExerciseLibraryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseLibraryViewModel.swift; sourceTree = "<group>"; };
 		C3FDADF62FCADE4800E8767F /* SeedDataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeedDataService.swift; sourceTree = "<group>"; };
+		C3FDADFD2FCADF0300E8767F /* ExerciseSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseSelectionView.swift; sourceTree = "<group>"; };
+		C3FDADFE2FCADF0300E8767F /* PlanDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanDetailView.swift; sourceTree = "<group>"; };
+		C3FDADFF2FCADF0300E8767F /* PlanExerciseRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanExerciseRowView.swift; sourceTree = "<group>"; };
+		C3FDAE002FCADF0300E8767F /* TrainingPlansView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingPlansView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -74,6 +82,10 @@
 				C3FDADF42FCADE4800E8767F /* ExerciseLibrary */,
 				C3FDADF52FCADE4800E8767F /* Plans */,
 				C3FDADF62FCADE4800E8767F /* SeedDataService.swift */,
+				C3FDADFD2FCADF0300E8767F /* ExerciseSelectionView.swift */,
+				C3FDADFE2FCADF0300E8767F /* PlanDetailView.swift */,
+				C3FDADFF2FCADF0300E8767F /* PlanExerciseRowView.swift */,
+				C3FDAE002FCADF0300E8767F /* TrainingPlansView.swift */,
 				C3FDADF72FCADE4800E8767F /* Workout */,
 				C3FDADBE2FCAD75500E8767F /* App */,
 				C3FDADC52FCAD75500E8767F /* Core */,
@@ -344,6 +356,10 @@
 				C3FDADFB2FCADE4800E8767F /* SeedDataService.swift in Sources */,
 				C3FDADFC2FCADE4800E8767F /* ExerciseLibraryViewModel.swift in Sources */,
 				C3FDADEA2FCADD8C00E8767F /* TrainingPlan.swift in Sources */,
+				C3FDAE012FCADF0300E8767F /* PlanDetailView.swift in Sources */,
+				C3FDAE022FCADF0300E8767F /* PlanExerciseRowView.swift in Sources */,
+				C3FDAE032FCADF0300E8767F /* ExerciseSelectionView.swift in Sources */,
+				C3FDAE042FCADF0300E8767F /* TrainingPlansView.swift in Sources */,
 				C3FDADEB2FCADD8C00E8767F /* FoodEntry.swift in Sources */,
 				C3FDADEC2FCADD8C00E8767F /* WeightEntry.swift in Sources */,
 				C3FDADED2FCADD8C00E8767F /* WorkoutSet.swift in Sources */,

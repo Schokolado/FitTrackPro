@@ -74,19 +74,19 @@
 
 ## Milestone 4 – Workout-Modus (Kern-Feature)
 
-- [ ] `WorkoutSessionViewModel.swift` – Zustandsmaschine für den Workout-Ablauf
-- [ ] `WorkoutSessionView.swift` als `.fullScreenCover`
-- [ ] Workout-Timer (Gesamtzeit, läuft im Hintergrund weiter)
-- [ ] Aktuelle Uhrzeit permanent anzeigen (Header)
-- [ ] Satz-Zeilen mit Soll-Werten (prefilled) und Ist-Werten (editierbar)
-- [ ] „Confirm/Check"-Button pro Satz
-- [ ] Nach Bestätigung: Pausen-Timer starten (übungsspezifische Dauer)
-- [ ] Push-Benachrichtigung bei Ablauf des Pausen-Timers (`NotificationService`)
-- [ ] Manueller Pausen-Timer (Top of Screen, unabhängig)
-- [ ] Supersatz-Darstellung (visuell gruppierte Übungen)
-- [ ] Workout abbrechen (Alert + Fortschritt verwerfen)
-- [ ] Hintergrundverarbeitung: Timer läuft weiter wenn App minimiert
-- [ ] `WorkoutSetRowView.swift` – einzelne Satz-Zeile
+- [x] `WorkoutSessionViewModel.swift` – Zustandsmaschine für den Workout-Ablauf
+- [x] `WorkoutSessionView.swift` als `.fullScreenCover`
+- [x] Workout-Timer (Gesamtzeit, läuft im Hintergrund weiter)
+- [x] Aktuelle Uhrzeit permanent anzeigen (Header)
+- [x] Satz-Zeilen mit Soll-Werten (prefilled) und Ist-Werten (editierbar)
+- [x] „Confirm/Check"-Button pro Satz
+- [x] Nach Bestätigung: Pausen-Timer starten (übungsspezifische Dauer)
+- [x] Push-Benachrichtigung bei Ablauf des Pausen-Timers (`NotificationService`)
+- [x] Manueller Pausen-Timer (Top of Screen, unabhängig)
+- [x] Supersatz-Darstellung (visuell gruppierte Übungen)
+- [x] Workout abbrechen (Alert + Fortschritt verwerfen)
+- [x] Hintergrundverarbeitung: Timer läuft weiter wenn App minimiert
+- [x] `WorkoutSetRowView.swift` – einzelne Satz-Zeile
 
 ---
 
