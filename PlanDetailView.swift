@@ -72,6 +72,7 @@ struct PlanDetailView: View {
                             if index < group.exercises.count - 1 {
                                 Divider()
                                     .padding(.leading)
+                                    .padding(.vertical, 8)
                             }
                         }
                     }

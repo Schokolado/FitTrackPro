@@ -369,14 +369,21 @@ struct WorkoutSupersetGroupCard: View {
                         if index < sessionGroup.exerciseGroups.count - 1 {
                             Divider()
                                 .padding(.leading)
+                                .padding(.vertical, 8)
                         }
                     }
                 } else {
                     VStack(alignment: .leading, spacing: 4) {
-                        ForEach(sessionGroup.exerciseGroups) { g in
+                        ForEach(Array(sessionGroup.exerciseGroups.enumerated()), id: \.element.id) { index, g in
                             Text(g.exercise.name)
                                 .font(.headline)
                                 .foregroundColor(.brand)
+                            
+                            if index < sessionGroup.exerciseGroups.count - 1 {
+                                Divider()
+                                    .padding(.leading)
+                                    .padding(.vertical, 8)
+                            }
                         }
                     }
                     .padding(.horizontal)
