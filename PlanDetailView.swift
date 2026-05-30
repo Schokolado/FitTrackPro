@@ -187,19 +187,28 @@ struct PlanDetailView: View {
         var newOrder: [PlanExercise] = []
         var processedIds: Set<UUID> = []
         
+        var changed = false
+
         for ex in sorted {
             if processedIds.contains(ex.id) { continue }
             if let groupId = ex.supersetGroup {
                 let related = sorted.filter { $0.supersetGroup == groupId }
-                newOrder.append(contentsOf: related)
-                for r in related { processedIds.insert(r.id) }
+                if related.count == 1 {
+                    // Orphaned superset! Remove the group id.
+                    ex.supersetGroup = nil
+                    changed = true
+                    newOrder.append(ex)
+                    processedIds.insert(ex.id)
+                } else {
+                    newOrder.append(contentsOf: related)
+                    for r in related { processedIds.insert(r.id) }
+                }
             } else {
                 newOrder.append(ex)
                 processedIds.insert(ex.id)
             }
         }
         
-        var changed = false
         for (i, ex) in newOrder.enumerated() {
             if ex.sortOrder != i {
                 ex.sortOrder = i
