@@ -352,36 +352,30 @@ struct WorkoutSupersetGroupCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             if sessionGroup.supersetGroupId != nil {
-                HStack {
+                Button(action: {
+                    withAnimation { isCollapsed.toggle() }
+                }) {
                     HStack {
-                        Image(systemName: "link")
-                        Text("Supersatz")
-                    }
-                    .font(.caption)
-                    .foregroundColor(.brandSecondary)
-                    
-                    Spacer()
-                    
-                    HStack(spacing: 8) {
+                        HStack {
+                            Image(systemName: "link")
+                            Text("Supersatz")
+                        }
+                        .font(.caption)
+                        .foregroundColor(.brandSecondary)
+                        
+                        Spacer()
+                        
                         if isCompleted {
                             Image(systemName: "checkmark.circle.fill")
                                 .foregroundColor(.green)
                         }
-                        Button(action: {
-                            withAnimation { isCollapsed.toggle() }
-                        }) {
-                            Image(systemName: isCollapsed ? "chevron.down" : "chevron.up")
-                                .foregroundColor(.secondary)
-                                .padding(.leading, 4)
-                                .padding(.vertical, 4)
-                                .contentShape(Rectangle())
-                        }
-                        .buttonStyle(.borderless)
                     }
+                    .padding(.horizontal)
+                    .padding(.top, Spacing.md)
+                    .padding(.bottom, isCollapsed ? Spacing.sm : 8)
+                    .contentShape(Rectangle())
                 }
-                .padding(.horizontal)
-                .padding(.top, Spacing.md)
-                .padding(.bottom, isCollapsed ? Spacing.sm : 8)
+                .buttonStyle(.plain)
                 
                 if !isCollapsed {
                     ForEach(Array(sessionGroup.exerciseGroups.enumerated()), id: \.element.id) { index, group in
@@ -458,7 +452,9 @@ struct WorkoutExerciseInnerView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack {
-                NavigationLink(destination: ExerciseDetailView(exercise: exercise)) {
+                Button(action: {
+                    withAnimation { groupIsCollapsed.toggle() }
+                }) {
                     HStack {
                         Text(exercise.name)
                             .font(.headline)
@@ -467,31 +463,26 @@ struct WorkoutExerciseInnerView: View {
                     }
                     .contentShape(Rectangle())
                 }
-                .buttonStyle(.borderless)
+                .buttonStyle(.plain)
                 
-                if !isSuperset {
-                    HStack(spacing: 8) {
-                        if isCompleted {
-                            Image(systemName: "checkmark.circle.fill")
-                                .foregroundColor(.green)
-                        }
-                        Button(action: {
-                            withAnimation { groupIsCollapsed.toggle() }
-                        }) {
-                            Image(systemName: groupIsCollapsed ? "chevron.down" : "chevron.up")
-                                .foregroundColor(.secondary)
-                                .padding(.leading, 4)
-                                .padding(.vertical, 4)
-                                .contentShape(Rectangle())
-                        }
-                        .buttonStyle(.borderless)
-                    }
-                } else {
-                    if isCompleted {
-                        Image(systemName: "checkmark.circle.fill")
-                            .foregroundColor(.green)
-                    }
+                if isCompleted {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundColor(.green)
                 }
+                
+                Menu {
+                    NavigationLink(destination: ExerciseDetailView(exercise: exercise)) {
+                        Label("Übungsdetails ansehen", systemImage: "info.circle")
+                    }
+                } label: {
+                    Image(systemName: "ellipsis")
+                        .font(.system(size: 20))
+                        .foregroundColor(.secondary)
+                        .padding(.leading, 8)
+                        .padding(.vertical, 4)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.borderless)
             }
             .padding(.horizontal)
             .padding(.top, isSuperset ? 8 : Spacing.sm)

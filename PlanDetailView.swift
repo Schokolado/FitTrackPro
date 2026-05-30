@@ -255,11 +255,6 @@ struct PlanDetailView: View {
                         .foregroundColor(.brandSecondary)
                         
                         Spacer()
-                        
-                        Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
-                            .foregroundColor(.secondary)
-                            .padding(.leading, 4)
-                            .padding(.vertical, 4)
                     }
                     .padding(.horizontal)
                     .padding(.top, Spacing.md)
