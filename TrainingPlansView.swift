@@ -79,8 +79,20 @@ struct TrainingPlansView: View {
                         }
                         .padding(.vertical)
                     }
-                    .background(Color.backgroundPrimary)
                 }
+            }
+            .background(Color.backgroundPrimary)
+            .overlay(alignment: .bottomTrailing) {
+                NavigationLink(destination: ExerciseLibraryView()) {
+                    Image(systemName: "dumbbell.fill")
+                        .font(.title2)
+                        .foregroundColor(.white)
+                        .padding(16)
+                        .background(Color.brand)
+                        .clipShape(Circle())
+                        .shadow(color: Color.black.opacity(0.2), radius: 5, x: 0, y: 3)
+                }
+                .padding(20)
             }
             .navigationTitle("Trainingspläne")
             .toolbar {
@@ -90,11 +102,6 @@ struct TrainingPlansView: View {
                         showingAddAlert = true
                     }) {
                         Image(systemName: "plus")
-                    }
-                }
-                ToolbarItem(placement: .navigationBarLeading) {
-                    NavigationLink(destination: ExerciseLibraryView()) {
-                        Image(systemName: "dumbbell.fill")
                     }
                 }
             }
@@ -115,11 +122,6 @@ struct TrainingPlansView: View {
                     }
                 }
                 .disabled(newPlanName.trimmingCharacters(in: .whitespaces).isEmpty)
-            }
-            .overlay {
-                if plans.isEmpty {
-                    ContentUnavailableView("Keine Pläne", systemImage: "list.clipboard", description: Text("Erstelle deinen ersten Trainingsplan."))
-                }
             }
         }
     }

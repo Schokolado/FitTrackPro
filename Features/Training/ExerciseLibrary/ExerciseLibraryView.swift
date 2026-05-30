@@ -46,8 +46,10 @@ struct ExerciseLibraryView: View {
                     .onDelete(perform: deleteExercises)
                 }
                 .listStyle(.plain)
+                .scrollContentBackground(.hidden)
                 .searchable(text: $viewModel.searchText, prompt: "Übung suchen...")
             }
+            .background(Color.backgroundPrimary)
             .navigationTitle("Übungen")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
