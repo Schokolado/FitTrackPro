@@ -372,7 +372,7 @@ struct WorkoutSupersetGroupCard: View {
                     }
                     .padding(.horizontal)
                     .padding(.top, Spacing.md)
-                    .padding(.bottom, isCollapsed ? Spacing.sm : 8)
+                    .padding(.bottom, 0)
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
@@ -409,7 +409,8 @@ struct WorkoutSupersetGroupCard: View {
                         }
                     }
                     .padding(.horizontal)
-                    .padding(.bottom, Spacing.md)
+                    .padding(.top, 8)
+                    .padding(.bottom, 8)
                 }
             } else {
                 if let group = sessionGroup.exerciseGroups.first {

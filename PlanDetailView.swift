@@ -258,7 +258,7 @@ struct PlanDetailView: View {
                     }
                     .padding(.horizontal)
                     .padding(.top, Spacing.md)
-                    .padding(.bottom, isExpanded ? Spacing.sm : 8)
+                    .padding(.bottom, 0)
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
@@ -277,7 +277,8 @@ struct PlanDetailView: View {
                     }
                 }
                 .padding(.horizontal)
-                .padding(.bottom, Spacing.md)
+                .padding(.top, 8)
+                .padding(.bottom, 8)
             } else {
                 ForEach(Array(group.exercises.enumerated()), id: \.element.id) { index, planEx in
                     exerciseRow(for: planEx, in: group)
