@@ -6,29 +6,44 @@ struct PlanExerciseRowView: View {
     @Bindable var planExercise: PlanExercise
     var onReorder: (() -> Void)? = nil
     var onSupersetChanged: (() -> Void)? = nil
+    @State private var isExpanded: Bool = false
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             if let exercise = planExercise.exercise {
                 HStack {
-                    NavigationLink(destination: ExerciseDetailView(exercise: exercise)) {
+                    Button(action: {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                            isExpanded.toggle()
+                        }
+                    }) {
                         HStack {
                             Text(exercise.name)
                                 .font(.headline)
                                 .foregroundColor(.brand)
+                            
+                            Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                            
                             Spacer()
                         }
                         .contentShape(Rectangle())
                     }
-                    .buttonStyle(.borderless)
+                    .buttonStyle(.plain)
                     
                     Menu {
+                        NavigationLink(destination: ExerciseDetailView(exercise: exercise)) {
+                            Label("Übungsdetails", systemImage: "info.circle")
+                        }
+                        
+                        Divider()
+                        
                         Button {
                             onReorder?()
                         } label: {
                             Label("Übung verschieben", systemImage: "arrow.up.arrow.down")
                         }
-                        
                         
                         Divider()
                         
@@ -58,47 +73,51 @@ struct PlanExerciseRowView: View {
                 }
             }
             
-            HStack(spacing: 16) {
-                VStack(alignment: .leading) {
-                    Text("Sätze")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                    TextField("Sätze", value: $planExercise.targetSets, format: .number)
-                        .keyboardType(.numberPad)
-                        .textFieldStyle(.roundedBorder)
+            if isExpanded {
+                VStack(spacing: 16) {
+                    HStack(spacing: 16) {
+                        VStack(alignment: .leading) {
+                            Text("Sätze")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                            TextField("Sätze", value: $planExercise.targetSets, format: .number)
+                                .keyboardType(.numberPad)
+                                .textFieldStyle(.roundedBorder)
+                        }
+                        
+                        VStack(alignment: .leading) {
+                            Text("Wdh.")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                            TextField("Wdh.", value: $planExercise.targetReps, format: .number)
+                                .keyboardType(.numberPad)
+                                .textFieldStyle(.roundedBorder)
+                        }
+                    }
+                    
+                    HStack(spacing: 16) {
+                        VStack(alignment: .leading) {
+                            Text("Gewicht (kg)")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                            TextField("Gewicht", value: $planExercise.targetWeight, format: .number)
+                                .keyboardType(.decimalPad)
+                                .textFieldStyle(.roundedBorder)
+                        }
+                        
+                        VStack(alignment: .leading) {
+                            Text("Pause (sek)")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                            TextField("Pause", value: $planExercise.restDuration, format: .number)
+                                .keyboardType(.numberPad)
+                                .textFieldStyle(.roundedBorder)
+                        }
+                    }
                 }
-                
-                VStack(alignment: .leading) {
-                    Text("Wdh.")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                    TextField("Wdh.", value: $planExercise.targetReps, format: .number)
-                        .keyboardType(.numberPad)
-                        .textFieldStyle(.roundedBorder)
-                }
+                .padding(.top, 8)
+                .transition(.opacity.combined(with: .move(edge: .top)))
             }
-            
-            HStack(spacing: 16) {
-                VStack(alignment: .leading) {
-                    Text("Gewicht (kg)")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                    TextField("0", value: $planExercise.targetWeight, format: .number)
-                        .keyboardType(.decimalPad)
-                        .textFieldStyle(.roundedBorder)
-                }
-                
-                VStack(alignment: .leading) {
-                    Text("Pause (s)")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                    TextField("Pause", value: $planExercise.restDuration, format: .number)
-                        .keyboardType(.numberPad)
-                        .textFieldStyle(.roundedBorder)
-                }
-            }
-            
-
         }
         .padding(.vertical, 4)
     }
