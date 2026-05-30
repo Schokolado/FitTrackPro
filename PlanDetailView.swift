@@ -97,37 +97,21 @@ struct PlanDetailView: View {
         .navigationBarTitleDisplayMode(.large)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                HStack(spacing: 12) {
-                    Button(action: { showingReorderSheet = true }) {
-                        Image(systemName: "arrow.up.arrow.down")
-                            .font(.system(size: 14, weight: .bold))
-                            .foregroundColor(.brand)
-                            .frame(width: 32, height: 32)
-                            .background(Color.brandSecondary.opacity(0.15))
-                            .clipShape(Circle())
+                Menu {
+                    Button {
+                        editName = plan.name
+                        showingEditNameAlert = true
+                    } label: {
+                        Label("Plan umbenennen", systemImage: "character.cursor.ibeam")
                     }
                     
-                    Menu {
-                        Button {
-                            editName = plan.name
-                            showingEditNameAlert = true
-                        } label: {
-                            Label("Plan umbenennen", systemImage: "character.cursor.ibeam")
-                        }
-                        
-                        Button {
-                            showingReorderSheet = true
-                        } label: {
-                            Label("Reihenfolge ändern", systemImage: "arrow.up.arrow.down")
-                        }
+                    Button {
+                        showingReorderSheet = true
                     } label: {
-                        Image(systemName: "pencil")
-                            .font(.system(size: 14, weight: .bold))
-                            .foregroundColor(.brand)
-                            .frame(width: 32, height: 32)
-                            .background(Color.brandSecondary.opacity(0.15))
-                            .clipShape(Circle())
+                        Label("Reihenfolge ändern", systemImage: "arrow.up.arrow.down")
                     }
+                } label: {
+                    Image(systemName: "pencil")
                 }
             }
         }
