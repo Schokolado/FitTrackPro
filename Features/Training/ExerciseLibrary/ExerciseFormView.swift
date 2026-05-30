@@ -6,14 +6,16 @@ struct ExerciseFormView: View {
     @Environment(\.dismiss) private var dismiss
     
     let exerciseToEdit: Exercise?
+    var onSave: ((Exercise) -> Void)?
     
     @State private var name: String = ""
     @State private var category: ExerciseCategory = .freeWeight
     @State private var defaultRestDuration: Double = 90
     @State private var notes: String = ""
     
-    init(exerciseToEdit: Exercise? = nil) {
+    init(exerciseToEdit: Exercise? = nil, onSave: ((Exercise) -> Void)? = nil) {
         self.exerciseToEdit = exerciseToEdit
+        self.onSave = onSave
         if let exercise = exerciseToEdit {
             _name = State(initialValue: exercise.name)
             _category = State(initialValue: exercise.category)
@@ -68,6 +70,7 @@ struct ExerciseFormView: View {
             exercise.category = category
             exercise.defaultRestDuration = defaultRestDuration
             exercise.notes = notes
+            onSave?(exercise)
         } else {
             let newExercise = Exercise(
                 name: name,
@@ -77,6 +80,7 @@ struct ExerciseFormView: View {
                 isCustom: true
             )
             modelContext.insert(newExercise)
+            onSave?(newExercise)
         }
         dismiss()
     }
