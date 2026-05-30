@@ -13,6 +13,7 @@ struct PlanDetailView: View {
     @State private var activeSession: WorkoutSession? = nil
     @State private var showingReorderSheet = false
     @State private var refreshId = UUID()
+    @State private var newlyAddedExerciseIds: Set<UUID> = []
     
     private var groupedExercises: [ExerciseGroup] {
         plan.groupedPlanExercises
@@ -45,11 +46,16 @@ struct PlanDetailView: View {
                         }
                         
                         ForEach(Array(group.exercises.enumerated()), id: \.element.id) { index, planEx in
-                            PlanExerciseRowView(planExercise: planEx, onReorder: {
-                                showingReorderSheet = true
-                            }, onSupersetChanged: {
-                                refreshId = UUID()
-                            })
+                            PlanExerciseRowView(
+                                planExercise: planEx,
+                                startExpanded: newlyAddedExerciseIds.contains(planEx.id),
+                                onReorder: {
+                                    showingReorderSheet = true
+                                },
+                                onSupersetChanged: {
+                                    refreshId = UUID()
+                                }
+                            )
                                 .padding(.horizontal)
                             
                             if index < group.exercises.count - 1 {
@@ -126,7 +132,9 @@ struct PlanDetailView: View {
         }
         .sheet(isPresented: $showingExerciseSelection) {
             NavigationStack {
-                ExerciseSelectionView(plan: plan)
+                ExerciseSelectionView(plan: plan, onExerciseAdded: { newPlanEx in
+                    newlyAddedExerciseIds.insert(newPlanEx.id)
+                })
             }
         }
         .sheet(isPresented: $showingReorderSheet) {

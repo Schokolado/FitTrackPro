@@ -4,6 +4,7 @@ import SwiftData
 struct PlanExerciseRowView: View {
     @Environment(\.modelContext) private var modelContext
     @Bindable var planExercise: PlanExercise
+    var startExpanded: Bool = false
     var onReorder: (() -> Void)? = nil
     var onSupersetChanged: (() -> Void)? = nil
     @State private var isExpanded: Bool = false
@@ -177,6 +178,11 @@ struct PlanExerciseRowView: View {
             }
         }
         .padding(.vertical, 4)
+        .onAppear {
+            if startExpanded {
+                isExpanded = true
+            }
+        }
     }
 }
 
