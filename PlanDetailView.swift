@@ -264,21 +264,29 @@ struct PlanDetailView: View {
                 .buttonStyle(.plain)
             }
             if group.supersetGroupId != nil && !isExpanded {
-                VStack(alignment: .leading, spacing: 4) {
-                    ForEach(Array(group.exercises.enumerated()), id: \.element.id) { index, planEx in
-                        Text(planEx.exercise?.name ?? "Unbekannt")
-                            .font(.headline)
-                            .foregroundColor(.brand)
-                        
-                        if index < group.exercises.count - 1 {
-                            Divider()
-                                .padding(.leading)
+                Button(action: {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                        _ = expandedGroups.insert(group.id)
+                    }
+                }) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        ForEach(Array(group.exercises.enumerated()), id: \.element.id) { index, planEx in
+                            Text(planEx.exercise?.name ?? "Unbekannt")
+                                .font(.headline)
+                                .foregroundColor(.brand)
+                            
+                            if index < group.exercises.count - 1 {
+                                Divider()
+                                    .padding(.leading)
+                            }
                         }
                     }
+                    .padding(.horizontal)
+                    .padding(.top, 8)
+                    .padding(.bottom, 8)
+                    .contentShape(Rectangle())
                 }
-                .padding(.horizontal)
-                .padding(.top, 8)
-                .padding(.bottom, 8)
+                .buttonStyle(.plain)
             } else {
                 ForEach(Array(group.exercises.enumerated()), id: \.element.id) { index, planEx in
                     exerciseRow(for: planEx, in: group)

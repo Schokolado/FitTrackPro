@@ -396,21 +396,27 @@ struct WorkoutSupersetGroupCard: View {
                         }
                     }
                 } else {
-                    VStack(alignment: .leading, spacing: 4) {
-                        ForEach(Array(sessionGroup.exerciseGroups.enumerated()), id: \.element.id) { index, g in
-                            Text(g.exercise.name)
-                                .font(.headline)
-                                .foregroundColor(.brand)
-                            
-                            if index < sessionGroup.exerciseGroups.count - 1 {
-                                Divider()
-                                    .padding(.leading)
+                    Button(action: {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) { isCollapsed.toggle() }
+                    }) {
+                        VStack(alignment: .leading, spacing: 4) {
+                            ForEach(Array(sessionGroup.exerciseGroups.enumerated()), id: \.element.id) { index, g in
+                                Text(g.exercise.name)
+                                    .font(.headline)
+                                    .foregroundColor(.brand)
+                                
+                                if index < sessionGroup.exerciseGroups.count - 1 {
+                                    Divider()
+                                        .padding(.leading)
+                                }
                             }
                         }
+                        .padding(.horizontal)
+                        .padding(.top, 8)
+                        .padding(.bottom, 8)
+                        .contentShape(Rectangle())
                     }
-                    .padding(.horizontal)
-                    .padding(.top, 8)
-                    .padding(.bottom, 8)
+                    .buttonStyle(.plain)
                 }
             } else {
                 if let group = sessionGroup.exerciseGroups.first {
