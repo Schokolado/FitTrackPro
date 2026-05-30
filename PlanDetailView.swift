@@ -18,9 +18,23 @@ struct PlanDetailView: View {
     private var groupedExercises: [ExerciseGroup] {
         let sorted = (plan.planExercises ?? []).sorted(by: { $0.sortOrder < $1.sortOrder })
         var groups: [ExerciseGroup] = []
+        var currentGroup: ExerciseGroup?
+        
         for ex in sorted {
-            groups.append(ExerciseGroup(exercises: [ex], supersetGroupId: nil))
+            if let groupId = ex.supersetGroup {
+                if currentGroup?.supersetGroupId == groupId {
+                    currentGroup?.exercises.append(ex)
+                } else {
+                    if let cg = currentGroup { groups.append(cg) }
+                    currentGroup = ExerciseGroup(exercises: [ex], supersetGroupId: groupId)
+                }
+            } else {
+                if let cg = currentGroup { groups.append(cg) }
+                currentGroup = nil
+                groups.append(ExerciseGroup(exercises: [ex], supersetGroupId: nil))
+            }
         }
+        if let cg = currentGroup { groups.append(cg) }
         return groups
     }
     
