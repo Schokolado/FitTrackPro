@@ -59,7 +59,9 @@ struct PlanDetailView: View {
                         }
                         
                         ForEach(Array(group.exercises.enumerated()), id: \.element.id) { index, planEx in
-                            PlanExerciseRowView(planExercise: planEx)
+                            PlanExerciseRowView(planExercise: planEx) {
+                                showingReorderSheet = true
+                            }
                                 .padding(.horizontal)
                                 .padding(.vertical, 8)
                             
@@ -95,15 +97,36 @@ struct PlanDetailView: View {
         .navigationBarTitleDisplayMode(.large)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                HStack {
+                HStack(spacing: 12) {
                     Button(action: { showingReorderSheet = true }) {
                         Image(systemName: "arrow.up.arrow.down")
+                            .font(.system(size: 14, weight: .bold))
+                            .foregroundColor(.brand)
+                            .frame(width: 32, height: 32)
+                            .background(Color.brandSecondary.opacity(0.15))
+                            .clipShape(Circle())
                     }
-                    Button(action: {
-                        editName = plan.name
-                        showingEditNameAlert = true
-                    }) {
+                    
+                    Menu {
+                        Button {
+                            editName = plan.name
+                            showingEditNameAlert = true
+                        } label: {
+                            Label("Plan umbenennen", systemImage: "character.cursor.ibeam")
+                        }
+                        
+                        Button {
+                            showingReorderSheet = true
+                        } label: {
+                            Label("Reihenfolge ändern", systemImage: "arrow.up.arrow.down")
+                        }
+                    } label: {
                         Image(systemName: "pencil")
+                            .font(.system(size: 14, weight: .bold))
+                            .foregroundColor(.brand)
+                            .frame(width: 32, height: 32)
+                            .background(Color.brandSecondary.opacity(0.15))
+                            .clipShape(Circle())
                     }
                 }
             }

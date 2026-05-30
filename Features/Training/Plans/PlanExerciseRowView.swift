@@ -4,20 +4,46 @@ import SwiftData
 struct PlanExerciseRowView: View {
     @Environment(\.modelContext) private var modelContext
     @Bindable var planExercise: PlanExercise
+    var onReorder: (() -> Void)? = nil
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             if let exercise = planExercise.exercise {
-                NavigationLink(destination: ExerciseDetailView(exercise: exercise)) {
-                    HStack {
+                HStack {
+                    NavigationLink(destination: ExerciseDetailView(exercise: exercise)) {
                         Text(exercise.name)
                             .font(.headline)
                             .foregroundColor(.brand)
-                        Spacer()
                     }
-                    .contentShape(Rectangle())
+                    .buttonStyle(.borderless)
+                    
+                    Spacer()
+                    
+                    Menu {
+                        Button {
+                            onReorder?()
+                        } label: {
+                            Label("Übung verschieben", systemImage: "arrow.up.arrow.down")
+                        }
+                        
+                        Button(role: .destructive) {
+                            if let plan = planExercise.plan {
+                                plan.planExercises?.removeAll(where: { $0.id == planExercise.id })
+                            }
+                            modelContext.delete(planExercise)
+                        } label: {
+                            Label("Übung löschen", systemImage: "trash")
+                        }
+                    } label: {
+                        Image(systemName: "ellipsis")
+                            .font(.system(size: 20))
+                            .foregroundColor(.secondary)
+                            .padding(.leading, 8)
+                            .padding(.vertical, 4)
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.borderless)
                 }
-                .buttonStyle(.borderless)
             } else {
                 HStack {
                     Text("Gelöschte Übung")

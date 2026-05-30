@@ -4,21 +4,46 @@ import SwiftData
 struct PlanExerciseRowView: View {
     @Environment(\.modelContext) private var modelContext
     @Bindable var planExercise: PlanExercise
+    var onReorder: (() -> Void)? = nil
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                if let exercise = planExercise.exercise {
+            if let exercise = planExercise.exercise {
+                HStack {
                     NavigationLink(destination: ExerciseDetailView(exercise: exercise)) {
                         Text(exercise.name)
                             .font(.headline)
                             .foregroundColor(.brand)
                     }
                     .buttonStyle(.borderless)
-                } else {
-                    Text("Gelöschte Übung")
-                        .font(.headline)
+                    
+                    Spacer()
+                    
+                    Menu {
+                        Button {
+                            onReorder?()
+                        } label: {
+                            Label("Übung verschieben", systemImage: "arrow.up.arrow.down")
+                        }
+                        
+                        Button(role: .destructive) {
+                            modelContext.delete(planExercise)
+                        } label: {
+                            Label("Übung löschen", systemImage: "trash")
+                        }
+                    } label: {
+                        Image(systemName: "ellipsis")
+                            .font(.system(size: 20))
+                            .foregroundColor(.secondary)
+                            .padding(.leading, 8)
+                            .padding(.vertical, 4)
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.borderless)
                 }
+            } else {
+                Text("Gelöschte Übung")
+                    .font(.headline)
                 Spacer()
             }
             
