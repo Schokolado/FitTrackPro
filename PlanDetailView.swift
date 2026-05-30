@@ -40,65 +40,77 @@ struct PlanDetailView: View {
     
     var body: some View {
         ScrollView {
-            VStack(spacing: Spacing.lg) {
-                if !groupedExercises.isEmpty {
-                    Button(action: { startWorkout() }) {
-                        Label("Workout Starten", systemImage: "play.fill")
-                            .frame(maxWidth: .infinity)
-                    }
-                    .primaryButtonStyle()
-                    .padding(.horizontal)
-                }
-                
-                ForEach(groupedExercises) { group in
-                    VStack(alignment: .leading, spacing: 0) {
-                        if group.supersetGroupId != nil {
-                            HStack {
-                                Image(systemName: "link")
-                                Text("Supersatz")
-                            }
-                            .font(.caption)
-                            .foregroundColor(.brandSecondary)
-                            .padding(.horizontal)
-                            .padding(.top, Spacing.md)
-                            .padding(.bottom, 8)
+            ScrollViewReader { proxy in
+                VStack(spacing: Spacing.lg) {
+                    if !groupedExercises.isEmpty {
+                        Button(action: { startWorkout() }) {
+                            Label("Workout Starten", systemImage: "play.fill")
+                                .frame(maxWidth: .infinity)
                         }
-                        
-                        ForEach(Array(group.exercises.enumerated()), id: \.element.id) { index, planEx in
-                            PlanExerciseRowView(
-                                planExercise: planEx,
-                                startExpanded: newlyAddedExerciseIds.contains(planEx.id),
-                                onReorder: {
-                                    showingReorderSheet = true
-                                },
-                                onSupersetChanged: {
-                                    refreshId = UUID()
+                        .primaryButtonStyle()
+                        .padding(.horizontal)
+                    }
+                    
+                    ForEach(groupedExercises) { group in
+                        VStack(alignment: .leading, spacing: 0) {
+                            if group.supersetGroupId != nil {
+                                HStack {
+                                    Image(systemName: "link")
+                                    Text("Supersatz")
                                 }
-                            )
+                                .font(.caption)
+                                .foregroundColor(.brandSecondary)
                                 .padding(.horizontal)
+                                .padding(.top, Spacing.md)
+                                .padding(.bottom, 8)
+                            }
                             
-                            if index < group.exercises.count - 1 {
-                                Divider()
-                                    .padding(.leading)
+                            ForEach(Array(group.exercises.enumerated()), id: \.element.id) { index, planEx in
+                                PlanExerciseRowView(
+                                    planExercise: planEx,
+                                    startExpanded: newlyAddedExerciseIds.contains(planEx.id),
+                                    onReorder: {
+                                        showingReorderSheet = true
+                                    },
+                                    onSupersetChanged: {
+                                        refreshId = UUID()
+                                    }
+                                )
+                                    .id(planEx.id)
+                                    .padding(.horizontal)
+                                
+                                if index < group.exercises.count - 1 {
+                                    Divider()
+                                        .padding(.leading)
+                                }
+                            }
+                        }
+                        .cardStyle()
+                        .padding(.horizontal)
+                    }
+                    
+                    Button(action: { showingExerciseSelection = true }) {
+                        Label("Übung hinzufügen", systemImage: "plus.circle.fill")
+                            .font(.headline)
+                            .foregroundColor(.brand)
+                    }
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(Color.brandSecondary.opacity(0.1))
+                    .cornerRadius(12)
+                    .padding(.horizontal)
+                }
+                .padding(.vertical)
+                .onChange(of: newlyAddedExerciseIds) { oldValue, newValue in
+                    if let newId = newValue.subtracting(oldValue).first {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                            withAnimation(.spring()) {
+                                proxy.scrollTo(newId, anchor: .center)
                             }
                         }
                     }
-                    .cardStyle()
-                    .padding(.horizontal)
                 }
-                
-                Button(action: { showingExerciseSelection = true }) {
-                    Label("Übung hinzufügen", systemImage: "plus.circle.fill")
-                        .font(.headline)
-                        .foregroundColor(.brand)
-                }
-                .padding()
-                .frame(maxWidth: .infinity)
-                .background(Color.brandSecondary.opacity(0.1))
-                .cornerRadius(12)
-                .padding(.horizontal)
             }
-            .padding(.vertical)
         }
         .id(refreshId)
         .background(Color.backgroundPrimary)

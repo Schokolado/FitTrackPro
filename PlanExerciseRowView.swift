@@ -23,10 +23,6 @@ struct PlanExerciseRowView: View {
                                 .font(.headline)
                                 .foregroundColor(.brand)
                             
-                            Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                            
                             Spacer()
                         }
                         .contentShape(Rectangle())
