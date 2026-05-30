@@ -13,6 +13,10 @@ struct WorkoutSessionView: View {
     @State private var showingSkipRestAlert = false
     @AppStorage("requireRestTimerConfirm") private var requireRestTimerConfirm = true
     
+    @State private var showingExerciseSelection = false
+    @State private var pendingExerciseToAdd: Exercise?
+    @State private var showingAddToPlanAlert = false
+    
     // Group sets by Exercise for UI
     private var groupedSets: [(Exercise, [WorkoutSet])] {
         guard let sets = session.sets else { return [] }
@@ -69,6 +73,17 @@ struct WorkoutSessionView: View {
                                     .font(.subheadline)
                                     .foregroundColor(.brand)
                             }
+                        }
+                    }
+                    
+                    Section {
+                        Button(action: {
+                            showingExerciseSelection = true
+                        }) {
+                            Label("Übung zum Workout hinzufügen", systemImage: "plus.circle.fill")
+                                .font(.headline)
+                                .foregroundColor(.brand)
+                                .frame(maxWidth: .infinity, alignment: .center)
                         }
                     }
                     
@@ -149,6 +164,25 @@ struct WorkoutSessionView: View {
             } message: {
                 Text("Möchtest du die Pause wirklich überspringen?")
             }
+            .sheet(isPresented: $showingExerciseSelection) {
+                NavigationStack {
+                    ExerciseSelectionView(plan: nil) { exercise in
+                        handleAdhocExercise(exercise)
+                    }
+                }
+            }
+            .alert("Zum Plan hinzufügen?", isPresented: $showingAddToPlanAlert) {
+                Button("Ja, im Plan speichern") {
+                    if let ex = pendingExerciseToAdd, let plan = session.plan {
+                        let currentCount = plan.planExercises?.count ?? 0
+                        let newPlanEx = PlanExercise(sortOrder: currentCount, targetSets: 3, targetReps: 10, restDuration: ex.defaultRestDuration, plan: plan, exercise: ex)
+                        modelContext.insert(newPlanEx)
+                    }
+                }
+                Button("Nein, nur heute", role: .cancel) {}
+            } message: {
+                Text("Möchtest du diese Übung dauerhaft zu '\(session.plan?.name ?? "deinem Plan")' hinzufügen?")
+            }
             .onAppear {
                 NotificationService.shared.requestAuthorization()
                 viewModel.startWorkout()
@@ -188,6 +222,21 @@ struct WorkoutSessionView: View {
         let remainingSets = sets.enumerated().filter { !offsets.contains($0.offset) }.map { $0.element }
         for (index, set) in remainingSets.sorted(by: { $0.setNumber < $1.setNumber }).enumerated() {
             set.setNumber = index + 1
+        }
+    }
+    
+    private func handleAdhocExercise(_ exercise: Exercise) {
+        // Add one empty set so it appears in the active session
+        let newSet = WorkoutSet(setNumber: 1, session: session, exercise: exercise)
+        modelContext.insert(newSet)
+        
+        // Ask if it should be saved to the underlying plan
+        if session.plan != nil {
+            self.pendingExerciseToAdd = exercise
+            // Delay alert to avoid sheet presentation conflict
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                self.showingAddToPlanAlert = true
+            }
         }
     }
 }

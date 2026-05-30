@@ -5,7 +5,8 @@ struct ExerciseSelectionView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     
-    let plan: TrainingPlan
+    let plan: TrainingPlan?
+    var onSelect: ((Exercise) -> Void)? = nil
     
     @Query(sort: \Exercise.sortOrder) private var allExercises: [Exercise]
     @State private var searchText: String = ""
@@ -66,16 +67,24 @@ struct ExerciseSelectionView: View {
     }
     
     private func addExerciseToPlan(_ exercise: Exercise) {
-        let currentCount = plan.planExercises?.count ?? 0
-        let newPlanExercise = PlanExercise(
-            sortOrder: currentCount,
-            targetSets: 3,
-            targetReps: 10,
-            restDuration: exercise.defaultRestDuration,
-            plan: plan,
-            exercise: exercise
-        )
-        modelContext.insert(newPlanExercise)
+        if let onSelect = onSelect {
+            onSelect(exercise)
+            dismiss()
+            return
+        }
+        
+        if let plan = plan {
+            let currentCount = plan.planExercises?.count ?? 0
+            let newPlanExercise = PlanExercise(
+                sortOrder: currentCount,
+                targetSets: 3,
+                targetReps: 10,
+                restDuration: exercise.defaultRestDuration,
+                plan: plan,
+                exercise: exercise
+            )
+            modelContext.insert(newPlanExercise)
+        }
         dismiss()
     }
 }
