@@ -1,0 +1,83 @@
+# ========================
+# Xcode
+# ========================
+build/
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+xcuserdata/
+*.xccheckout
+*.moved-aside
+DerivedData/
+*.hmap
+*.ipa
+*.xcuserstate
+*.xcscmblueprint
+
+# ========================
+# Swift Package Manager
+# ========================
+.build/
+.swiftpm/
+Packages/
+Package.resolved
+
+# ========================
+# CocoaPods (falls verwendet)
+# ========================
+Pods/
+
+# ========================
+# Xcode Cloud / CI
+# ========================
+*.log
+
+# ========================
+# macOS
+# ========================
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# ========================
+# JetBrains IDEs
+# ========================
+.idea/
+
+# ========================
+# VS Code
+# ========================
+.vscode/
+
+# ========================
+# Carthage (falls verwendet)
+# ========================
+Carthage/Build/
+
+# ========================
+# Fastlane
+# ========================
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output
+
+# ========================
+# App-spezifisch
+# ========================
+*.env
+Secrets.swift
+APIKeys.swift
