@@ -269,14 +269,10 @@ struct WorkoutExerciseCardView: View {
     let session: WorkoutSession
     let viewModel: WorkoutSessionViewModel
     
-    @State private var isManuallyExpanded: Bool = false
+    @State private var isCollapsed: Bool = false
     
     private var isCompleted: Bool {
         !sets.isEmpty && sets.allSatisfy { $0.isCompleted }
-    }
-    
-    private var isCollapsed: Bool {
-        isCompleted && !isManuallyExpanded
     }
     
     var body: some View {
@@ -293,13 +289,17 @@ struct WorkoutExerciseCardView: View {
                 }
                 .buttonStyle(.borderless)
                 
-                if isCompleted {
+                HStack(spacing: 8) {
+                    if isCompleted {
+                        Image(systemName: "checkmark.circle.fill")
+                            .foregroundColor(.green)
+                    }
                     Button(action: {
-                        withAnimation { isManuallyExpanded.toggle() }
+                        withAnimation { isCollapsed.toggle() }
                     }) {
-                        Image(systemName: isManuallyExpanded ? "chevron.up" : "chevron.down")
+                        Image(systemName: isCollapsed ? "chevron.down" : "chevron.up")
                             .foregroundColor(.secondary)
-                            .padding(.leading, 12)
+                            .padding(.leading, 4)
                             .padding(.vertical, 4)
                             .contentShape(Rectangle())
                     }
@@ -347,7 +347,7 @@ struct WorkoutExerciseCardView: View {
         .padding(.horizontal)
         .onChange(of: isCompleted) { oldValue, newValue in
             if newValue == true {
-                withAnimation { isManuallyExpanded = false }
+                withAnimation { isCollapsed = true }
             }
         }
     }

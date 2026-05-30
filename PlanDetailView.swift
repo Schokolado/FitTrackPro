@@ -7,6 +7,7 @@ struct PlanDetailView: View {
     
     @State private var showingExerciseSelection = false
     @State private var showingEditNameAlert = false
+    @State private var showingDeleteAlert = false
     @State private var editName = ""
     @State private var activeSession: WorkoutSession? = nil
     @State private var showingReorderSheet = false
@@ -72,10 +73,6 @@ struct PlanDetailView: View {
                         }
                     }
                     .cardStyle()
-                    .contentShape(Rectangle())
-                    .simultaneousGesture(LongPressGesture().onEnded { _ in
-                        showingReorderSheet = true
-                    })
                     .padding(.horizontal)
                 }
                 
@@ -110,6 +107,14 @@ struct PlanDetailView: View {
                     } label: {
                         Label("Reihenfolge ändern", systemImage: "arrow.up.arrow.down")
                     }
+                    
+                    Divider()
+                    
+                    Button(role: .destructive) {
+                        showingDeleteAlert = true
+                    } label: {
+                        Label("Plan löschen", systemImage: "trash")
+                    }
                 } label: {
                     Image(systemName: "pencil")
                 }
@@ -122,6 +127,18 @@ struct PlanDetailView: View {
                 plan.name = editName
             }
             .disabled(editName.trimmingCharacters(in: .whitespaces).isEmpty)
+        }
+        .alert("Plan löschen", isPresented: $showingDeleteAlert) {
+            Button("Löschen", role: .destructive) {
+                if let env = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                   let root = env.windows.first?.rootViewController {
+                    modelContext.delete(plan)
+                    root.dismiss(animated: true)
+                }
+            }
+            Button("Abbrechen", role: .cancel) { }
+        } message: {
+            Text("Möchtest du diesen Trainingsplan wirklich löschen?")
         }
         .sheet(isPresented: $showingExerciseSelection) {
             NavigationStack {

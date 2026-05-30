@@ -43,17 +43,21 @@ struct ExerciseDetailView: View {
                 .cardStyle()
                 .padding(.horizontal)
                 
-                if !exercise.notes.isEmpty {
-                    VStack(alignment: .leading, spacing: Spacing.sm) {
-                        Text("Notizen")
-                            .font(.headline)
+                VStack(alignment: .leading, spacing: Spacing.sm) {
+                    Text("Notizen")
+                        .font(.headline)
+                    if exercise.notes.isEmpty {
+                        Text("Keine Notizen hinzugefügt.")
+                            .foregroundColor(.secondary)
+                            .italic()
+                    } else {
                         Text(exercise.notes)
                             .foregroundColor(.secondary)
                     }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .cardStyle()
-                    .padding(.horizontal)
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .cardStyle()
+                .padding(.horizontal)
                 
                 // Placeholder für Video/Bilder Upload
                 VStack(alignment: .center, spacing: Spacing.md) {
