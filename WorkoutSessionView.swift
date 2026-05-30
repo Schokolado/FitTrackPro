@@ -95,7 +95,18 @@ struct WorkoutSessionView: View {
                             }) {
                                 Label("Satz hinzufügen", systemImage: "plus")
                                     .font(.subheadline)
+                                    .foregroundColor(.brand)
                             }
+                        }
+                    }
+                    
+                    Section {
+                        Button(action: {
+                            showingCancelAlert = true
+                        }) {
+                            Text("Workout abbrechen")
+                                .foregroundColor(.red)
+                                .frame(maxWidth: .infinity, alignment: .center)
                         }
                     }
                 }
@@ -103,13 +114,6 @@ struct WorkoutSessionView: View {
             }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Abbrechen") {
-                        showingCancelAlert = true
-                    }
-                    .foregroundColor(.red)
-                }
-                
                 ToolbarItem(placement: .principal) {
                     VStack {
                         Text(session.plan?.name ?? "Freies Workout")
