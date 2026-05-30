@@ -71,7 +71,7 @@ struct ExerciseLibraryView: View {
         let filtered = viewModel.filterExercises(allExercises)
         for index in offsets {
             let exercise = filtered[index]
-            modelContext.delete(exercise)
+            exercise.deleteCascading(in: modelContext)
         }
     }
 }

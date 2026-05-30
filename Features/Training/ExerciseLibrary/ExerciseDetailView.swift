@@ -85,7 +85,7 @@ struct ExerciseDetailView: View {
                     }
                     
                     Button(role: .destructive) {
-                        modelContext.delete(exercise)
+                        exercise.deleteCascading(in: modelContext)
                         dismiss()
                     } label: {
                         Label("Löschen", systemImage: "trash")
