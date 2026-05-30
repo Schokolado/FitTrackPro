@@ -103,9 +103,17 @@ struct PlanExerciseRowView: View {
                         
                         Button(role: .destructive) {
                             if let plan = planExercise.plan {
+                                // Clean up supersets if needed
+                                if let groupId = planExercise.supersetGroup {
+                                    let remainingInGroup = plan.planExercises?.filter { $0.id != planExercise.id && $0.supersetGroup == groupId } ?? []
+                                    if remainingInGroup.count == 1 {
+                                        remainingInGroup[0].supersetGroup = nil
+                                    }
+                                }
                                 plan.planExercises?.removeAll(where: { $0.id == planExercise.id })
                             }
                             modelContext.delete(planExercise)
+                            onSupersetChanged?()
                         } label: {
                             Label("Übung löschen", systemImage: "trash")
                         }
