@@ -17,6 +17,12 @@ struct WorkoutSessionView: View {
     @State private var pendingExerciseToAdd: Exercise?
     @State private var showingAddToPlanAlert = false
     
+    @AppStorage("timerFav1") private var timerFav1: Int = 30
+    @AppStorage("timerFav2") private var timerFav2: Int = 60
+    @AppStorage("timerFav3") private var timerFav3: Int = 90
+    @State private var showingCustomTimerAlert = false
+    @State private var customTimerSeconds: String = ""
+    
     // Group sets by Exercise for UI
     private var groupedSets: [(Exercise, [WorkoutSet])] {
         guard let sets = session.sets else { return [] }
@@ -115,11 +121,21 @@ struct WorkoutSessionView: View {
                                 Text(viewModel.formatTime(viewModel.restTimeRemaining))
                             }
                             .font(.subheadline.monospacedDigit().bold())
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, 4)
-                            .background(Color.green)
-                            .foregroundColor(.white)
-                            .cornerRadius(6)
+                            .foregroundColor(.green)
+                        }
+                    } else {
+                        Menu {
+                            Button("\(timerFav1) Sek") { viewModel.startRestTimer(duration: timerFav1) }
+                            Button("\(timerFav2) Sek") { viewModel.startRestTimer(duration: timerFav2) }
+                            Button("\(timerFav3) Sek") { viewModel.startRestTimer(duration: timerFav3) }
+                            Divider()
+                            Button("Individuell...") {
+                                showingCustomTimerAlert = true
+                            }
+                        } label: {
+                            Image(systemName: "timer")
+                                .font(.headline)
+                                .foregroundColor(.brand)
                         }
                     }
                 }
@@ -182,6 +198,21 @@ struct WorkoutSessionView: View {
                 Button("Nein, nur heute", role: .cancel) {}
             } message: {
                 Text("Möchtest du diese Übung dauerhaft zu '\(session.plan?.name ?? "deinem Plan")' hinzufügen?")
+            }
+            .alert("Eigener Timer", isPresented: $showingCustomTimerAlert) {
+                TextField("Sekunden", text: $customTimerSeconds)
+                    .keyboardType(.numberPad)
+                Button("Starten") {
+                    if let seconds = Int(customTimerSeconds), seconds > 0 {
+                        viewModel.startRestTimer(duration: seconds)
+                    }
+                    customTimerSeconds = ""
+                }
+                Button("Abbrechen", role: .cancel) {
+                    customTimerSeconds = ""
+                }
+            } message: {
+                Text("Gib die gewünschte Pausenzeit in Sekunden ein.")
             }
             .onAppear {
                 NotificationService.shared.requestAuthorization()
