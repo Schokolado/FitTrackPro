@@ -28,6 +28,8 @@ struct ExerciseDetailView: View {
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
+                    
+                    PlanExerciseHistoryButton(exercise: exercise)
                 }
                 .padding(.horizontal)
                 
