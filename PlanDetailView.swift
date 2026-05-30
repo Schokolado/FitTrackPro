@@ -39,6 +39,7 @@ struct PlanDetailView: View {
             VStack(spacing: Spacing.lg) {
                 Button(action: { startWorkout() }) {
                     Label("Workout Starten", systemImage: "play.fill")
+                        .frame(maxWidth: .infinity)
                 }
                 .primaryButtonStyle()
                 .padding(.horizontal)
