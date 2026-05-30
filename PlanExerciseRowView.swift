@@ -47,7 +47,7 @@ struct PlanExerciseRowView: View {
                                     }
                                     Divider()
                                     ForEach(otherExercises) { other in
-                                        Button(other.exercise?.name ?? "Unbekannt") {
+                                        Button(action: {
                                             let newGroupId = other.supersetGroup ?? (planExercise.supersetGroup ?? Int.random(in: 1...100000))
                                             planExercise.supersetGroup = newGroupId
                                             other.supersetGroup = newGroupId
@@ -79,6 +79,12 @@ struct PlanExerciseRowView: View {
                                             plan.planExercises = sorted // Force UI update
                                             try? modelContext.save()
                                             onSupersetChanged?()
+                                        }) {
+                                            if other.supersetGroup != nil {
+                                                Label(other.exercise?.name ?? "Unbekannt", systemImage: "link")
+                                            } else {
+                                                Text(other.exercise?.name ?? "Unbekannt")
+                                            }
                                         }
                                     }
                                 } label: {
