@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import os
 
 struct WorkoutSummaryView: View {
     @Environment(\.dismiss) private var dismiss
@@ -35,10 +36,11 @@ struct WorkoutSummaryView: View {
         return "\(minutes) Min."
     }
     
+    // MARK: - Body
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: 24) {
+                VStack(spacing: Spacing.xxl) {
                     
                     // Success Header
                     VStack(spacing: 8) {
@@ -52,7 +54,7 @@ struct WorkoutSummaryView: View {
                         Text("Workout abgeschlossen!")
                             .font(.title2.bold())
                     }
-                    .padding(.top, 20)
+                    .padding(.top, Spacing.lg)
                     
                     // Stats Card
                     HStack(spacing: 20) {
@@ -165,14 +167,14 @@ struct WorkoutSummaryView: View {
         do {
             try modelContext.save()
         } catch {
-            print("Error saving session: \(error)")
+            AppLogger.workout.error("Error saving session: \(error)")
         }
         
         // Let the caller know we're done so the fullScreenCover can be dismissed
         // In this architecture, we dismiss the sheet. The parent (WorkoutSessionView)
         // should observe the session's state or we dismiss the parent as well.
         // Easiest way: Post a notification or use a binding.
-        NotificationCenter.default.post(name: NSNotification.Name("WorkoutFinished"), object: nil)
+        NotificationCenter.default.post(name: .workoutFinished, object: nil)
     }
     
     private func cancelWorkout() {
@@ -180,9 +182,9 @@ struct WorkoutSummaryView: View {
         do {
             try modelContext.save()
         } catch {
-            print("Error deleting session: \(error)")
+            AppLogger.workout.error("Error deleting session: \(error)")
         }
-        NotificationCenter.default.post(name: NSNotification.Name("WorkoutFinished"), object: nil)
+        NotificationCenter.default.post(name: .workoutFinished, object: nil)
     }
 }
 

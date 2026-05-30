@@ -19,6 +19,9 @@ final class Exercise {
     var defaultRestDuration: TimeInterval = 90.0
     var isCustom: Bool = false
     var sortOrder: Int = 0
+    /// When `true` the exercise is hidden from the library and plan selection,
+    /// but all historical workout data is preserved.
+    var isArchived: Bool = false
     var createdAt: Date = Date()
 
     @Relationship(deleteRule: .nullify, inverse: \PlanExercise.exercise)

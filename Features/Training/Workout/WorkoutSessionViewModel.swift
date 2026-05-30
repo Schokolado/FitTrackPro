@@ -1,107 +1,119 @@
 import SwiftUI
 import SwiftData
 
+// MARK: - WorkoutSessionViewModel
+
 @Observable
 class WorkoutSessionViewModel {
-    // Timer State
+
+    // MARK: - Workout Timer State
+
     var startTime: Date?
     var elapsedTime: TimeInterval = 0
     var timerActive = false
-    
-    // Rest Timer State
+
+    // MARK: - Rest Timer State
+
     var restTimeRemaining: TimeInterval = 0
     var restTimerActive = false
     var totalRestDuration: TimeInterval = 0
-    
-    // UI State
+
+    // MARK: - UI State
+
     var currentTimeString: String = ""
-    
+
+    // MARK: - Private
+
     private var timer: Timer?
-    private var restTimer: Timer?
-    
+
+    /// Shared formatter – created once, reused every timer tick to avoid repeated allocations.
+    private let timeFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.timeStyle = .short
+        return f
+    }()
+
+    // MARK: - Workout Control
+
     func startWorkout() {
         startTime = Date()
         timerActive = true
-        startTimers()
+        startTimer()
     }
-    
+
     func pauseWorkout() {
         timerActive = false
-        stopTimers()
+        stopTimer()
     }
-    
+
     func resumeWorkout() {
         timerActive = true
-        startTimers()
+        startTimer()
     }
-    
+
     func finishWorkout() {
-        stopTimers()
+        stopTimer()
         cancelRestTimer()
     }
-    
+
     // MARK: - Rest Timer
+
     func startRestTimer(duration: TimeInterval) {
         restTimeRemaining = duration
         totalRestDuration = duration
         restTimerActive = true
         NotificationService.shared.scheduleRestTimerNotification(duration: duration)
     }
-    
+
     func cancelRestTimer() {
         restTimerActive = false
         restTimeRemaining = 0
         NotificationService.shared.cancelRestTimerNotification()
     }
-    
+
     func skipRestTimer() {
         cancelRestTimer()
     }
-    
-    // MARK: - Internal Timers
-    private func startTimers() {
-        timer?.invalidate()
-        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
-            guard let self = self else { return }
-            self.updateTimes()
-        }
-    }
-    
-    private func stopTimers() {
-        timer?.invalidate()
-        timer = nil
-    }
-    
-    private func updateTimes() {
-        // Workout Duration
-        if timerActive, let start = startTime {
-            elapsedTime = Date().timeIntervalSince(start)
-        }
-        
-        // Real Time Header
-        let formatter = DateFormatter()
-        formatter.timeStyle = .short
-        currentTimeString = formatter.string(from: Date())
-        
-        // Rest Timer
-        if restTimerActive {
-            if restTimeRemaining > 0 {
-                restTimeRemaining -= 1
-            } else {
-                restTimerActive = false
-                // Auto-cancel notification logic triggers anyway since time passed
-            }
-        }
-    }
-    
-    // MARK: - Formatters
+
+    // MARK: - Formatting
+
     func formatTime(_ interval: TimeInterval) -> String {
-        let hours = Int(interval) / 3600
+        let hours   = Int(interval) / 3600
         let minutes = Int(interval) / 60 % 60
         let seconds = Int(interval) % 60
         if hours > 0 {
             return String(format: "%02i:%02i:%02i", hours, minutes, seconds)
         }
         return String(format: "%02i:%02i", minutes, seconds)
+    }
+
+    // MARK: - Private Timer Helpers
+
+    private func startTimer() {
+        timer?.invalidate()
+        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
+            self?.tick()
+        }
+    }
+
+    private func stopTimer() {
+        timer?.invalidate()
+        timer = nil
+    }
+
+    private func tick() {
+        if timerActive, let start = startTime {
+            elapsedTime = Date().timeIntervalSince(start)
+        }
+
+        currentTimeString = timeFormatter.string(from: Date())
+
+        if restTimerActive {
+            if restTimeRemaining > 0 {
+                restTimeRemaining -= 1
+            } else {
+                restTimerActive = false
+            }
+        }
     }
 }

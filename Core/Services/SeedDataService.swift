@@ -1,5 +1,6 @@
 import Foundation
 import SwiftData
+import os
 
 struct SeedExercise: Codable {
     let name: String
@@ -110,7 +111,7 @@ class SeedDataService {
         
         guard let data = jsonString.data(using: .utf8),
               let seedData = try? JSONDecoder().decode([SeedExercise].self, from: data) else {
-            print("Failed to parse inline seed data")
+            AppLogger.data.error("Failed to parse inline seed data")
             return
         }
         
@@ -135,9 +136,9 @@ class SeedDataService {
         do {
             try context.save()
             UserDefaults.standard.set(true, forKey: AppStorageKeys.hasSeededExercises)
-            print("Successfully seeded exercises.")
+            AppLogger.data.info("Successfully seeded exercises.")
         } catch {
-            print("Failed to save seed data: \(error)")
+            AppLogger.data.error("Failed to save seed data: \(error)")
         }
     }
 }

@@ -8,18 +8,19 @@ struct ExerciseSelectionView: View {
     let plan: TrainingPlan?
     var onSelect: ((Exercise) -> Void)? = nil
     
-    @Query(sort: \Exercise.sortOrder) private var allExercises: [Exercise]
+    /// Only active (non-archived) exercises are selectable for plan assignment.
+    @Query(
+        filter: #Predicate<Exercise> { !$0.isArchived },
+        sort: \Exercise.sortOrder
+    ) private var activeExercises: [Exercise]
     @State private var searchText: String = ""
     @State private var showingAddExercise = false
-    
-    @AppStorage("prefillExerciseHistory") private var prefillExerciseHistory = true
+
+    @AppStorage(AppStorageKeys.prefillExerciseHistory) private var prefillExerciseHistory = true
     
     var filteredExercises: [Exercise] {
-        if searchText.isEmpty {
-            return allExercises
-        } else {
-            return allExercises.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
-        }
+        guard !searchText.isEmpty else { return activeExercises }
+        return activeExercises.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
     }
     
     var body: some View {

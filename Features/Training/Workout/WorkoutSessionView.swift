@@ -11,15 +11,15 @@ struct WorkoutSessionView: View {
     @State private var showingCancelAlert = false
     @State private var showingFinishSheet = false
     @State private var showingSkipRestAlert = false
-    @AppStorage("requireRestTimerConfirm") private var requireRestTimerConfirm = true
-    
+    @AppStorage(AppStorageKeys.requireRestTimerConfirm) private var requireRestTimerConfirm = true
+
     @State private var showingExerciseSelection = false
     @State private var pendingExerciseToAdd: Exercise?
     @State private var showingAddToPlanAlert = false
-    
-    @AppStorage("timerFav1") private var timerFav1: Int = 30
-    @AppStorage("timerFav2") private var timerFav2: Int = 60
-    @AppStorage("timerFav3") private var timerFav3: Int = 90
+
+    @AppStorage(AppStorageKeys.timerFav1) private var timerFav1: Int = 30
+    @AppStorage(AppStorageKeys.timerFav2) private var timerFav2: Int = 60
+    @AppStorage(AppStorageKeys.timerFav3) private var timerFav3: Int = 90
     @State private var showingCustomTimerAlert = false
     @State private var customTimerSeconds: String = ""
     
@@ -196,43 +196,14 @@ struct WorkoutSessionView: View {
                 WorkoutSummaryView(session: session)
                     .interactiveDismissDisabled() // User must click "Speichern"
             }
-            .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("WorkoutFinished"))) { _ in
-                // Dismiss the full screen cover when the summary is saved
+            .onReceive(NotificationCenter.default.publisher(for: .workoutFinished)) { _ in
                 dismiss()
             }
         }
     }
     
-    private func addSet(for exercise: Exercise, planExercise: PlanExercise?) {
-        guard let sets = session.sets else { return }
-        
-        let existingSets: [WorkoutSet]
-        if let planEx = planExercise {
-            existingSets = sets.filter { $0.planExercise?.id == planEx.id }
-        } else {
-            existingSets = sets.filter { $0.exercise?.id == exercise.id && $0.planExercise == nil }
-        }
-        
-        let newSetNumber = (existingSets.max(by: { $0.setNumber < $1.setNumber })?.setNumber ?? 0) + 1
-        
-        let newSet = WorkoutSet(
-            setNumber: newSetNumber,
-            session: session,
-            exercise: exercise,
-            planExercise: planExercise
-        )
-        modelContext.insert(newSet)
-    }
-    
-    private func deleteSet(_ setToDelete: WorkoutSet, from sets: [WorkoutSet]) {
-        modelContext.delete(setToDelete)
-        
-        let remainingSets = sets.filter { $0.id != setToDelete.id }.sorted(by: { $0.setNumber < $1.setNumber })
-        for (index, set) in remainingSets.enumerated() {
-            set.setNumber = index + 1
-        }
-    }
-    
+    // MARK: - Ad-hoc Exercise
+
     private func handleAdhocExercise(_ exercise: Exercise) {
         // Add one empty set so it appears in the active session
         let newSet = WorkoutSet(setNumber: 1, session: session, exercise: exercise)

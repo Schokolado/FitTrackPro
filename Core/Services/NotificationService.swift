@@ -1,5 +1,6 @@
 import Foundation
 import UserNotifications
+import os
 
 class NotificationService {
     static let shared = NotificationService()
@@ -8,9 +9,9 @@ class NotificationService {
     func requestAuthorization() {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { granted, error in
             if granted {
-                print("Notification permission granted.")
+                AppLogger.services.info("Notification permission granted.")
             } else if let error = error {
-                print("Notification permission error: \(error.localizedDescription)")
+                AppLogger.services.error("Notification permission error: \(error.localizedDescription)")
             }
         }
     }
@@ -29,7 +30,7 @@ class NotificationService {
         
         UNUserNotificationCenter.current().add(request) { error in
             if let error = error {
-                print("Failed to schedule notification: \(error.localizedDescription)")
+                AppLogger.services.error("Failed to schedule notification: \(error.localizedDescription)")
             }
         }
     }

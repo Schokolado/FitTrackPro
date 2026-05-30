@@ -108,7 +108,20 @@ struct TrainingPlansView: View {
             }
             .overlay {
                 if plans.isEmpty {
-                    ContentUnavailableView("Keine Pläne", systemImage: "list.clipboard", description: Text("Erstelle deinen ersten Trainingsplan."))
+                    ContentUnavailableView {
+                        Label("Keine Pläne", systemImage: "list.clipboard")
+                    } description: {
+                        Text("Erstelle deinen ersten Trainingsplan, um durchzustarten.")
+                    } actions: {
+                        Button(action: {
+                            newPlanName = ""
+                            showingAddAlert = true
+                        }) {
+                            Text("Plan erstellen")
+                        }
+                        .primaryButtonStyle()
+                        .padding(.top, Spacing.md)
+                    }
                 }
             }
         }

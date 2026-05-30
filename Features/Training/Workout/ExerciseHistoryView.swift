@@ -73,7 +73,10 @@ struct ExerciseHistoryView: View {
                 }
             }
         }
-        .navigationTitle("\(exercise.name) Historie")
+        .navigationTitle(exercise.isArchived
+            ? "\(exercise.name) (archiviert)"
+            : "\(exercise.name) Historie"
+        )
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
