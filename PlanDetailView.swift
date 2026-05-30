@@ -16,7 +16,12 @@ struct PlanDetailView: View {
     @State private var newlyAddedExerciseIds: Set<UUID> = []
     
     private var groupedExercises: [ExerciseGroup] {
-        plan.groupedPlanExercises
+        let sorted = (plan.planExercises ?? []).sorted(by: { $0.sortOrder < $1.sortOrder })
+        var groups: [ExerciseGroup] = []
+        for ex in sorted {
+            groups.append(ExerciseGroup(exercises: [ex], supersetGroupId: nil))
+        }
+        return groups
     }
     
     var body: some View {
@@ -214,7 +219,6 @@ struct PlanDetailView: View {
         
         try? modelContext.save()
         activeSession = newSession
-    }
     }
     
     private func deleteExercises(offsets: IndexSet, from group: ExerciseGroup) {
