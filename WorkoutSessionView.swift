@@ -353,7 +353,7 @@ struct WorkoutSupersetGroupCard: View {
         VStack(alignment: .leading, spacing: 0) {
             if sessionGroup.supersetGroupId != nil {
                 Button(action: {
-                    withAnimation { isCollapsed.toggle() }
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) { isCollapsed.toggle() }
                 }) {
                     HStack {
                         HStack {
@@ -454,7 +454,7 @@ struct WorkoutExerciseInnerView: View {
         VStack(alignment: .leading, spacing: 0) {
             HStack {
                 Button(action: {
-                    withAnimation { groupIsCollapsed.toggle() }
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) { groupIsCollapsed.toggle() }
                 }) {
                     HStack {
                         Text(exercise.name)
