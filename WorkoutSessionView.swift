@@ -10,6 +10,8 @@ struct WorkoutSessionView: View {
     
     @State private var showingCancelAlert = false
     @State private var showingFinishSheet = false
+    @State private var showingSkipRestAlert = false
+    @AppStorage("requireRestTimerConfirm") private var requireRestTimerConfirm = true
     
     // Group sets by Exercise for UI
     private var groupedSets: [(Exercise, [WorkoutSet])] {
@@ -45,36 +47,6 @@ struct WorkoutSessionView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                // Rest Timer Banner
-                if viewModel.restTimerActive {
-                    HStack {
-                        Image(systemName: "timer")
-                        Text("Pause: \(viewModel.formatTime(viewModel.restTimeRemaining))")
-                            .font(.headline.monospacedDigit())
-                        
-                        Spacer()
-                        
-                        Button("Überspringen") {
-                            viewModel.skipRestTimer()
-                        }
-                        .font(.subheadline)
-                        .bold()
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 6)
-                        .background(Color.white.opacity(0.25))
-                        .cornerRadius(16)
-                    }
-                    .padding()
-                    .background(Color.green.gradient)
-                    .foregroundColor(.white)
-                    .cornerRadius(16)
-                    .shadow(color: .green.opacity(0.3), radius: 5, y: 3)
-                    .padding(.horizontal)
-                    .padding(.top, 8)
-                    .transition(.move(edge: .top).combined(with: .opacity))
-                    .animation(.spring(response: 0.4, dampingFraction: 0.7), value: viewModel.restTimerActive)
-                }
-                
                 // Workout Sets List
                 List {
                     ForEach(groupedSets, id: \.0.id) { (exercise, sets) in
@@ -115,13 +87,37 @@ struct WorkoutSessionView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .principal) {
-                    VStack {
+                    VStack(spacing: 2) {
                         Text(session.plan?.name ?? "Freies Workout")
                             .font(.caption)
                             .foregroundColor(.secondary)
-                        Text(viewModel.formatTime(viewModel.elapsedTime))
-                            .font(.headline.monospacedDigit())
-                            .foregroundColor(.primary)
+                        
+                        HStack(spacing: 8) {
+                            Text(viewModel.formatTime(viewModel.elapsedTime))
+                                .font(.headline.monospacedDigit())
+                                .foregroundColor(.primary)
+                            
+                            if viewModel.restTimerActive {
+                                Button(action: {
+                                    if requireRestTimerConfirm {
+                                        showingSkipRestAlert = true
+                                    } else {
+                                        viewModel.skipRestTimer()
+                                    }
+                                }) {
+                                    HStack(spacing: 4) {
+                                        Image(systemName: "timer")
+                                        Text(viewModel.formatTime(viewModel.restTimeRemaining))
+                                    }
+                                    .font(.subheadline.monospacedDigit().bold())
+                                    .padding(.horizontal, 6)
+                                    .padding(.vertical, 2)
+                                    .background(Color.green)
+                                    .foregroundColor(.white)
+                                    .cornerRadius(6)
+                                }
+                            }
+                        }
                     }
                 }
                 
@@ -135,13 +131,25 @@ struct WorkoutSessionView: View {
                 }
             }
             .alert("Workout abbrechen?", isPresented: $showingCancelAlert) {
-                Button("Nein", role: .cancel) { }
-                Button("Ja, verwerfen", role: .destructive) {
+                Button("Ja, abbrechen", role: .destructive) {
                     modelContext.delete(session)
                     dismiss()
                 }
+                Button("Zurück", role: .cancel) {}
             } message: {
                 Text("Dein bisheriger Fortschritt in diesem Workout geht verloren.")
+            }
+            .alert("Pause beenden?", isPresented: $showingSkipRestAlert) {
+                Button("Überspringen") {
+                    viewModel.skipRestTimer()
+                }
+                Button("Nicht mehr fragen") {
+                    requireRestTimerConfirm = false
+                    viewModel.skipRestTimer()
+                }
+                Button("Abbrechen", role: .cancel) {}
+            } message: {
+                Text("Möchtest du die Pause wirklich überspringen?")
             }
             .onAppear {
                 NotificationService.shared.requestAuthorization()
