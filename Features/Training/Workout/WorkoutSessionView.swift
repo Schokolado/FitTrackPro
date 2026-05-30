@@ -32,35 +32,6 @@ struct WorkoutSessionView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                // Top HUD
-                VStack(spacing: 8) {
-                    Text(viewModel.currentTimeString)
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                    
-                    HStack {
-                        VStack(alignment: .leading) {
-                            Text(session.plan?.name ?? "Freies Workout")
-                                .font(.headline)
-                            Text(viewModel.formatTime(viewModel.elapsedTime))
-                                .font(.title3.monospacedDigit())
-                                .foregroundColor(.brand)
-                        }
-                        
-                        Spacer()
-                        
-                        Button("Beenden") {
-                            viewModel.pauseWorkout()
-                            showingFinishSheet = true
-                        }
-                        .buttonStyle(.borderedProminent)
-                        .tint(.success)
-                    }
-                }
-                .padding()
-                .background(Color.backgroundCard)
-                .shadow(color: .black.opacity(0.05), radius: 5, y: 5)
-                
                 // Rest Timer Banner
                 if viewModel.restTimerActive {
                     HStack {
@@ -118,7 +89,27 @@ struct WorkoutSessionView: View {
                     Button("Abbrechen") {
                         showingCancelAlert = true
                     }
-                    .foregroundColor(.destructive)
+                    .foregroundColor(.red)
+                }
+                
+                ToolbarItem(placement: .principal) {
+                    VStack {
+                        Text(session.plan?.name ?? "Freies Workout")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        Text(viewModel.formatTime(viewModel.elapsedTime))
+                            .font(.headline.monospacedDigit())
+                            .foregroundColor(.brand)
+                    }
+                }
+                
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Beenden") {
+                        viewModel.pauseWorkout()
+                        showingFinishSheet = true
+                    }
+                    .bold()
+                    .foregroundColor(.brand)
                 }
             }
             .alert("Workout abbrechen?", isPresented: $showingCancelAlert) {
