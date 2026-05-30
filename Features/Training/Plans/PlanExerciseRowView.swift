@@ -41,6 +41,19 @@ struct PlanExerciseRowView: View {
                                             let newGroupId = other.supersetGroup ?? (planExercise.supersetGroup ?? Int.random(in: 1...100000))
                                             planExercise.supersetGroup = newGroupId
                                             other.supersetGroup = newGroupId
+                                            
+                                            // Reorder so they are adjacent
+                                            var sorted = planExercises.sorted(by: { $0.sortOrder < $1.sortOrder })
+                                            sorted.removeAll(where: { $0.id == other.id })
+                                            if let insertIndex = sorted.firstIndex(where: { $0.id == planExercise.id }) {
+                                                sorted.insert(other, at: insertIndex + 1)
+                                            } else {
+                                                sorted.append(other)
+                                            }
+                                            for (i, ex) in sorted.enumerated() {
+                                                ex.sortOrder = i
+                                            }
+                                            
                                             try? modelContext.save()
                                         }
                                     }

@@ -156,7 +156,10 @@ struct PlanDetailView: View {
         let newSession = WorkoutSession(plan: plan)
         modelContext.insert(newSession)
 
-        let sortedExercises = (plan.planExercises ?? []).sorted { $0.sortOrder < $1.sortOrder }
+        let sortedExercises = (plan.planExercises ?? [])
+            .filter { $0.exercise != nil }
+            .sorted { $0.sortOrder < $1.sortOrder }
+        
         for planEx in sortedExercises {
             for setIndex in 0..<planEx.targetSets {
                 let workoutSet = WorkoutSet(
