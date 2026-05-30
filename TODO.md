@@ -7,7 +7,7 @@
 ## Milestone 0 – Projektsetup & Fundament
 
 - [ ] Xcode-Projekt erstellen (SwiftUI, SwiftData, iOS 17+, Bundle-ID `com.fittrackpro.app`)
-- [ ] Ordnerstruktur gemäß ARCHITEKTUR.md anlegen (inkl. Widget-Target)
+- [x] Ordnerstruktur gemäß ARCHITEKTUR.md anlegen (inkl. Widget-Target)
 - [ ] **Capabilities** im App-Target aktivieren:
   - [ ] `iCloud` → CloudKit, Container `iCloud.com.fittrackpro.app`
   - [ ] `App Groups` → `group.com.fittrackpro.app`
@@ -17,11 +17,11 @@
 - [ ] **WidgetKit Extension Target** anlegen (`FitTrackProWidget`)
   - [ ] App Group auch im Widget-Target aktivieren
 - [ ] `Info.plist` Berechtigungen eintragen (HealthKit, Camera, Photo Library)
-- [ ] `de.lproj/` und `en.lproj/` Ordner + leere `Localizable.strings` und `InfoPlist.strings` anlegen
-- [ ] Design-System definieren (`Color+Theme.swift`, `View+Modifiers.swift`)
-- [ ] AppStorage-Keys für Einstellungen definieren
-- [ ] `FitTrackProApp.swift` mit `ModelContainer` (CloudKit `.automatic`) initialisieren
-- [ ] `AppRouter.swift` (TabView) mit Platzhalter-Tabs anlegen
+- [x] `de.lproj/` und `en.lproj/` Ordner + leere `Localizable.strings` und `InfoPlist.strings` anlegen
+- [x] Design-System definieren (`Color+Theme.swift`, `View+Modifiers.swift`)
+- [x] AppStorage-Keys für Einstellungen definieren
+- [x] `FitTrackProApp.swift` mit `ModelContainer` (CloudKit `.automatic`) initialisieren
+- [x] `AppRouter.swift` (TabView) mit Platzhalter-Tabs anlegen
 
 ---
 
