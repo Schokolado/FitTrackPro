@@ -29,7 +29,7 @@ struct WorkoutSessionView: View {
     }
     
     // Group sets by Exercise and PlanExercise for UI
-    private var groupedSets: [(id: UUID, exercise: Exercise, planExercise: PlanExercise?, sets: [WorkoutSet])] {
+    private var groupedSets: [ExerciseGroupData] {
         guard let sets = session.sets else { return [] }
         var dict: [GroupKey: [WorkoutSet]] = [:]
         
@@ -42,7 +42,7 @@ struct WorkoutSessionView: View {
             dict[key]?.append(set)
         }
         
-        var result: [(id: UUID, exercise: Exercise, planExercise: PlanExercise?, sets: [WorkoutSet])] = []
+        var result: [ExerciseGroupData] = []
         
         if let plan = session.plan, let planExercises = plan.planExercises {
             let orderedExercises = planExercises.sorted(by: { $0.sortOrder < $1.sortOrder })
@@ -50,7 +50,7 @@ struct WorkoutSessionView: View {
                 guard let exercise = planEx.exercise else { continue }
                 let key = GroupKey(planExerciseId: planEx.id, exerciseId: exercise.id)
                 if let groupSets = dict[key] {
-                    result.append((id: planEx.id, exercise: exercise, planExercise: planEx, sets: groupSets.sorted(by: { $0.setNumber < $1.setNumber })))
+                    result.append(ExerciseGroupData(id: planEx.id, exercise: exercise, planExercise: planEx, sets: groupSets.sorted(by: { $0.setNumber < $1.setNumber })))
                     dict.removeValue(forKey: key)
                 }
             }
@@ -66,7 +66,7 @@ struct WorkoutSessionView: View {
         for key in remainingKeys {
             if let groupSets = dict[key], let firstSet = groupSets.first, let exercise = firstSet.exercise {
                 let id = key.planExerciseId ?? exercise.id
-                result.append((id: id, exercise: exercise, planExercise: firstSet.planExercise, sets: groupSets.sorted(by: { $0.setNumber < $1.setNumber })))
+                result.append(ExerciseGroupData(id: id, exercise: exercise, planExercise: firstSet.planExercise, sets: groupSets.sorted(by: { $0.setNumber < $1.setNumber })))
             }
         }
         
@@ -205,14 +205,35 @@ struct WorkoutSessionView: View {
         }
     }
     
+    private var sessionExerciseGroups: [SessionExerciseGroupData] {
+        let sortedGroups = groupedSets
+        var groups: [SessionExerciseGroupData] = []
+        var currentGroup: SessionExerciseGroupData?
+        
+        for g in sortedGroups {
+            if let groupId = g.planExercise?.supersetGroup {
+                if currentGroup?.supersetGroupId == groupId {
+                    currentGroup?.exerciseGroups.append(g)
+                } else {
+                    if let cg = currentGroup { groups.append(cg) }
+                    currentGroup = SessionExerciseGroupData(id: UUID(), exerciseGroups: [g], supersetGroupId: groupId)
+                }
+            } else {
+                if let cg = currentGroup { groups.append(cg) }
+                currentGroup = nil
+                groups.append(SessionExerciseGroupData(id: UUID(), exerciseGroups: [g], supersetGroupId: nil))
+            }
+        }
+        if let cg = currentGroup { groups.append(cg) }
+        return groups
+    }
+
     private var workoutSetsList: some View {
         ScrollView {
             VStack(spacing: Spacing.lg) {
-                ForEach(groupedSets, id: \.id) { group in
-                    WorkoutExerciseCardView(
-                        exercise: group.exercise,
-                        planExercise: group.planExercise,
-                        sets: group.sets,
+                ForEach(sessionExerciseGroups, id: \.id) { sessionGroup in
+                    WorkoutSupersetGroupCard(
+                        sessionGroup: sessionGroup,
                         session: session,
                         viewModel: viewModel
                     )
@@ -261,15 +282,128 @@ struct WorkoutSessionView: View {
     }
 }
 
-struct WorkoutExerciseCardView: View {
+struct ExerciseGroupData: Identifiable {
+    let id: UUID
+    let exercise: Exercise
+    let planExercise: PlanExercise?
+    var sets: [WorkoutSet]
+}
+
+struct SessionExerciseGroupData: Identifiable {
+    let id: UUID
+    var exerciseGroups: [ExerciseGroupData]
+    var supersetGroupId: Int?
+}
+
+struct WorkoutSupersetGroupCard: View {
+    @Environment(\.modelContext) private var modelContext
+    let sessionGroup: SessionExerciseGroupData
+    let session: WorkoutSession
+    let viewModel: WorkoutSessionViewModel
+    
+    @State private var isCollapsed: Bool = false
+    
+    private var isCompleted: Bool {
+        sessionGroup.exerciseGroups.allSatisfy { g in
+            !g.sets.isEmpty && g.sets.allSatisfy { $0.isCompleted }
+        }
+    }
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            if sessionGroup.supersetGroupId != nil {
+                HStack {
+                    HStack {
+                        Image(systemName: "link")
+                        Text("Supersatz")
+                    }
+                    .font(.caption)
+                    .foregroundColor(.brandSecondary)
+                    
+                    Spacer()
+                    
+                    HStack(spacing: 8) {
+                        if isCompleted {
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundColor(.green)
+                        }
+                        Button(action: {
+                            withAnimation { isCollapsed.toggle() }
+                        }) {
+                            Image(systemName: isCollapsed ? "chevron.down" : "chevron.up")
+                                .foregroundColor(.secondary)
+                                .padding(.leading, 4)
+                                .padding(.vertical, 4)
+                                .contentShape(Rectangle())
+                        }
+                        .buttonStyle(.borderless)
+                    }
+                }
+                .padding(.horizontal)
+                .padding(.top, Spacing.md)
+                .padding(.bottom, isCollapsed ? Spacing.sm : 8)
+                
+                if !isCollapsed {
+                    ForEach(Array(sessionGroup.exerciseGroups.enumerated()), id: \.element.id) { index, group in
+                        WorkoutExerciseInnerView(
+                            exercise: group.exercise,
+                            planExercise: group.planExercise,
+                            sets: group.sets,
+                            session: session,
+                            viewModel: viewModel,
+                            isSuperset: true,
+                            groupIsCollapsed: .constant(false)
+                        )
+                        
+                        if index < sessionGroup.exerciseGroups.count - 1 {
+                            Divider()
+                                .padding(.leading)
+                        }
+                    }
+                } else {
+                    VStack(alignment: .leading, spacing: 4) {
+                        ForEach(sessionGroup.exerciseGroups) { g in
+                            Text(g.exercise.name)
+                                .font(.headline)
+                                .foregroundColor(.brand)
+                        }
+                    }
+                    .padding(.horizontal)
+                    .padding(.bottom, Spacing.md)
+                }
+            } else {
+                if let group = sessionGroup.exerciseGroups.first {
+                    WorkoutExerciseInnerView(
+                        exercise: group.exercise,
+                        planExercise: group.planExercise,
+                        sets: group.sets,
+                        session: session,
+                        viewModel: viewModel,
+                        isSuperset: false,
+                        groupIsCollapsed: $isCollapsed
+                    )
+                }
+            }
+        }
+        .cardStyle()
+        .padding(.horizontal)
+        .onChange(of: isCompleted) { oldValue, newValue in
+            if newValue == true {
+                withAnimation { isCollapsed = true }
+            }
+        }
+    }
+}
+
+struct WorkoutExerciseInnerView: View {
     @Environment(\.modelContext) private var modelContext
     let exercise: Exercise
     let planExercise: PlanExercise?
     let sets: [WorkoutSet]
     let session: WorkoutSession
     let viewModel: WorkoutSessionViewModel
-    
-    @State private var isCollapsed: Bool = false
+    let isSuperset: Bool
+    @Binding var groupIsCollapsed: Bool
     
     private var isCompleted: Bool {
         !sets.isEmpty && sets.allSatisfy { $0.isCompleted }
@@ -289,28 +423,35 @@ struct WorkoutExerciseCardView: View {
                 }
                 .buttonStyle(.borderless)
                 
-                HStack(spacing: 8) {
+                if !isSuperset {
+                    HStack(spacing: 8) {
+                        if isCompleted {
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundColor(.green)
+                        }
+                        Button(action: {
+                            withAnimation { groupIsCollapsed.toggle() }
+                        }) {
+                            Image(systemName: groupIsCollapsed ? "chevron.down" : "chevron.up")
+                                .foregroundColor(.secondary)
+                                .padding(.leading, 4)
+                                .padding(.vertical, 4)
+                                .contentShape(Rectangle())
+                        }
+                        .buttonStyle(.borderless)
+                    }
+                } else {
                     if isCompleted {
                         Image(systemName: "checkmark.circle.fill")
                             .foregroundColor(.green)
                     }
-                    Button(action: {
-                        withAnimation { isCollapsed.toggle() }
-                    }) {
-                        Image(systemName: isCollapsed ? "chevron.down" : "chevron.up")
-                            .foregroundColor(.secondary)
-                            .padding(.leading, 4)
-                            .padding(.vertical, 4)
-                            .contentShape(Rectangle())
-                    }
-                    .buttonStyle(.borderless)
                 }
             }
             .padding(.horizontal)
-            .padding(.top, Spacing.sm)
-            .padding(.bottom, isCollapsed ? Spacing.sm : 8)
+            .padding(.top, isSuperset ? 8 : Spacing.sm)
+            .padding(.bottom, (isSuperset ? false : groupIsCollapsed) ? Spacing.sm : 8)
             
-            if !isCollapsed {
+            if !(isSuperset ? false : groupIsCollapsed) {
                 ForEach(Array(sets.enumerated()), id: \.element.id) { index, workoutSet in
                     WorkoutSetRowView(workoutSet: workoutSet) {
                         let duration = workoutSet.planExercise?.restDuration ?? exercise.defaultRestDuration
@@ -341,13 +482,6 @@ struct WorkoutExerciseCardView: View {
                         .frame(maxWidth: .infinity, alignment: .center)
                 }
                 .padding(.vertical, 12)
-            }
-        }
-        .cardStyle()
-        .padding(.horizontal)
-        .onChange(of: isCompleted) { oldValue, newValue in
-            if newValue == true {
-                withAnimation { isCollapsed = true }
             }
         }
     }
