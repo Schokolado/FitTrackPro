@@ -1,0 +1,50 @@
+[
+  {
+    "name": "Barbell Bench Press",
+    "category": "Freie Gewichte",
+    "defaultRestDuration": 90,
+    "sortOrder": 1
+  },
+  {
+    "name": "Barbell Squat",
+    "category": "Freie Gewichte",
+    "defaultRestDuration": 120,
+    "sortOrder": 2
+  },
+  {
+    "name": "Deadlift",
+    "category": "Freie Gewichte",
+    "defaultRestDuration": 120,
+    "sortOrder": 3
+  },
+  {
+    "name": "Lat Pulldown",
+    "category": "Kabelzug",
+    "defaultRestDuration": 90,
+    "sortOrder": 4
+  },
+  {
+    "name": "Leg Press",
+    "category": "Maschinen",
+    "defaultRestDuration": 90,
+    "sortOrder": 5
+  },
+  {
+    "name": "Pull-ups",
+    "category": "Eigengewicht",
+    "defaultRestDuration": 90,
+    "sortOrder": 6
+  },
+  {
+    "name": "Dumbbell Bicep Curls",
+    "category": "Freie Gewichte",
+    "defaultRestDuration": 60,
+    "sortOrder": 7
+  },
+  {
+    "name": "Triceps Cable Pushdown",
+    "category": "Kabelzug",
+    "defaultRestDuration": 60,
+    "sortOrder": 8
+  }
+]

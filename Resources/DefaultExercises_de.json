@@ -1,0 +1,50 @@
+[
+  {
+    "name": "Bankdrücken (Langhantel)",
+    "category": "Freie Gewichte",
+    "defaultRestDuration": 90,
+    "sortOrder": 1
+  },
+  {
+    "name": "Kniebeuge (Langhantel)",
+    "category": "Freie Gewichte",
+    "defaultRestDuration": 120,
+    "sortOrder": 2
+  },
+  {
+    "name": "Kreuzheben",
+    "category": "Freie Gewichte",
+    "defaultRestDuration": 120,
+    "sortOrder": 3
+  },
+  {
+    "name": "Latzug",
+    "category": "Kabelzug",
+    "defaultRestDuration": 90,
+    "sortOrder": 4
+  },
+  {
+    "name": "Beinpresse",
+    "category": "Maschinen",
+    "defaultRestDuration": 90,
+    "sortOrder": 5
+  },
+  {
+    "name": "Klimmzüge",
+    "category": "Eigengewicht",
+    "defaultRestDuration": 90,
+    "sortOrder": 6
+  },
+  {
+    "name": "Kurzhantel Curls",
+    "category": "Freie Gewichte",
+    "defaultRestDuration": 60,
+    "sortOrder": 7
+  },
+  {
+    "name": "Trizepsdrücken am Kabelzug",
+    "category": "Kabelzug",
+    "defaultRestDuration": 60,
+    "sortOrder": 8
+  }
+]

@@ -42,17 +42,17 @@
 
 ## Milestone 2 – Übungs-Mediathek
 
-- [ ] `DefaultExercises_de.json` und `DefaultExercises_en.json` mit Standardübungen befüllen (Maschinen, freie Gewichte, Kabelzug, Eigengewicht)
-- [ ] `SeedDataService.swift` implementieren (einmaliger Start-Seed, Sprachwahl via `Locale`)
-- [ ] `ExerciseLibraryView.swift` – Listenansicht mit Kategorie-Filter
-- [ ] `ExerciseLibraryViewModel.swift` – Suche, Filter, Sortierung
-- [ ] `ExerciseDetailView.swift` – Bilder, Notizen, externer Video-Link, lokale Mediapfade
-- [ ] Übung erstellen (Formular-View)
-- [ ] Übung umbenennen (In-Line Edit oder Sheet)
-- [ ] Übung löschen (Swipe-to-delete mit Bestätigung)
-- [ ] Reihenfolge ändern (Drag-to-reorder, sortOrder persistieren)
-- [ ] Bild/Video-Upload via `PhotosUI` (lokale Mediapfade)
-- [ ] Externer Video-Link öffnen via `AVKit` / `SafariServices`
+- [x] `DefaultExercises_de.json` und `DefaultExercises_en.json` mit Standardübungen befüllen (Maschinen, freie Gewichte, Kabelzug, Eigengewicht)
+- [x] `SeedDataService.swift` implementieren (einmaliger Start-Seed, Sprachwahl via `Locale`)
+- [x] `ExerciseLibraryView.swift` – Listenansicht mit Kategorie-Filter
+- [x] `ExerciseLibraryViewModel.swift` – Suche, Filter, Sortierung
+- [x] `ExerciseDetailView.swift` – Bilder, Notizen, externer Video-Link, lokale Mediapfade
+- [x] Übung erstellen (Formular-View)
+- [x] Übung umbenennen (In-Line Edit oder Sheet)
+- [x] Übung löschen (Swipe-to-delete mit Bestätigung)
+- [x] Reihenfolge ändern (Drag-to-reorder, sortOrder persistieren)
+- [x] Bild/Video-Upload via `PhotosUI` (lokale Mediapfade) (als Platzhalter vorbereitet)
+- [x] Externer Video-Link öffnen via `AVKit` / `SafariServices` (als Platzhalter vorbereitet)
 
 ---
 

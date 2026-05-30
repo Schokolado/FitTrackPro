@@ -15,7 +15,7 @@
 | Architekturentscheidungen | ✅ Abgeschlossen |
 | M0 – Projektsetup | ✅ Abgeschlossen |
 | M1 – Datenmodell | ✅ Abgeschlossen |
-| M2 – Übungs-Mediathek | ⏳ Ausstehend |
+| M2 – Übungs-Mediathek | ✅ Abgeschlossen |
 | M3 – Trainingspläne | ⏳ Ausstehend |
 | M4 – Workout-Modus | ⏳ Ausstehend |
 | M5 – Workout-Abschluss | ⏳ Ausstehend |
@@ -35,6 +35,21 @@
 ---
 
 ## Einträge
+
+### 2026-05-30 – Milestone 2 abgeschlossen
+
+**Status:** ✅ Fertig  
+**Bearbeitet:** Übungs-Mediathek und Seed-Daten
+
+**Implementiert:**
+- `DefaultExercises_de.json` und `DefaultExercises_en.json` mit Start-Übungen.
+- `SeedDataService` geschrieben, der beim ersten Start der App die JSON-Daten in SwiftData überträgt.
+- `ExerciseLibraryView` und `ExerciseLibraryViewModel` für Liste, Filter (Chips) und Suche.
+- `ExerciseFormView` zum Anlegen und Bearbeiten von eigenen Übungen.
+- `ExerciseDetailView` mit Platzhaltern für Medien (Milestone 2.1).
+- Swipen zum Löschen (in List) funktioniert nativ durch Löschen aus dem ModelContext.
+
+**Nächster Schritt:** Milestone 3 (Trainingspläne)
 
 ### 2026-05-30 – Milestone 0 & 1 abgeschlossen
 

@@ -15,6 +15,14 @@
 		C3FDADDD2FCAD75500E8767F /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = C3FDADD32FCAD75500E8767F /* InfoPlist.strings */; };
 		C3FDADDE2FCAD75500E8767F /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = C3FDADD62FCAD75500E8767F /* Localizable.strings */; };
 		C3FDADDF2FCAD75500E8767F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C3FDADD02FCAD75500E8767F /* Assets.xcassets */; };
+		C3FDADE82FCADD8C00E8767F /* WorkoutSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3FDADE62FCADD8C00E8767F /* WorkoutSession.swift */; };
+		C3FDADE92FCADD8C00E8767F /* PlanExercise.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3FDADE32FCADD8C00E8767F /* PlanExercise.swift */; };
+		C3FDADEA2FCADD8C00E8767F /* TrainingPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3FDADE42FCADD8C00E8767F /* TrainingPlan.swift */; };
+		C3FDADEB2FCADD8C00E8767F /* FoodEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3FDADE22FCADD8C00E8767F /* FoodEntry.swift */; };
+		C3FDADEC2FCADD8C00E8767F /* WeightEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3FDADE52FCADD8C00E8767F /* WeightEntry.swift */; };
+		C3FDADED2FCADD8C00E8767F /* WorkoutSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3FDADE72FCADD8C00E8767F /* WorkoutSet.swift */; };
+		C3FDADEE2FCADD8C00E8767F /* DailyLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3FDADE02FCADD8C00E8767F /* DailyLog.swift */; };
+		C3FDADEF2FCADD8C00E8767F /* Exercise.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3FDADE12FCADD8C00E8767F /* Exercise.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,6 +37,14 @@
 		C3FDADD22FCAD75500E8767F /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		C3FDADD42FCAD75500E8767F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		C3FDADD52FCAD75500E8767F /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
+		C3FDADE02FCADD8C00E8767F /* DailyLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyLog.swift; sourceTree = "<group>"; };
+		C3FDADE12FCADD8C00E8767F /* Exercise.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Exercise.swift; sourceTree = "<group>"; };
+		C3FDADE22FCADD8C00E8767F /* FoodEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodEntry.swift; sourceTree = "<group>"; };
+		C3FDADE32FCADD8C00E8767F /* PlanExercise.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanExercise.swift; sourceTree = "<group>"; };
+		C3FDADE42FCADD8C00E8767F /* TrainingPlan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingPlan.swift; sourceTree = "<group>"; };
+		C3FDADE52FCADD8C00E8767F /* WeightEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeightEntry.swift; sourceTree = "<group>"; };
+		C3FDADE62FCADD8C00E8767F /* WorkoutSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutSession.swift; sourceTree = "<group>"; };
+		C3FDADE72FCADD8C00E8767F /* WorkoutSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutSet.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -83,6 +99,14 @@
 		C3FDADC32FCAD75500E8767F /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				C3FDADE02FCADD8C00E8767F /* DailyLog.swift */,
+				C3FDADE12FCADD8C00E8767F /* Exercise.swift */,
+				C3FDADE22FCADD8C00E8767F /* FoodEntry.swift */,
+				C3FDADE32FCADD8C00E8767F /* PlanExercise.swift */,
+				C3FDADE42FCADD8C00E8767F /* TrainingPlan.swift */,
+				C3FDADE52FCADD8C00E8767F /* WeightEntry.swift */,
+				C3FDADE62FCADD8C00E8767F /* WorkoutSession.swift */,
+				C3FDADE72FCADD8C00E8767F /* WorkoutSet.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -273,6 +297,14 @@
 				C3FDADDA2FCAD75500E8767F /* Color+Theme.swift in Sources */,
 				C3FDADDB2FCAD75500E8767F /* AppStorageKeys.swift in Sources */,
 				C3FDADDC2FCAD75500E8767F /* AppRouter.swift in Sources */,
+				C3FDADE82FCADD8C00E8767F /* WorkoutSession.swift in Sources */,
+				C3FDADE92FCADD8C00E8767F /* PlanExercise.swift in Sources */,
+				C3FDADEA2FCADD8C00E8767F /* TrainingPlan.swift in Sources */,
+				C3FDADEB2FCADD8C00E8767F /* FoodEntry.swift in Sources */,
+				C3FDADEC2FCADD8C00E8767F /* WeightEntry.swift in Sources */,
+				C3FDADED2FCADD8C00E8767F /* WorkoutSet.swift in Sources */,
+				C3FDADEE2FCADD8C00E8767F /* DailyLog.swift in Sources */,
+				C3FDADEF2FCADD8C00E8767F /* Exercise.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
