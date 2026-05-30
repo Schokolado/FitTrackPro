@@ -41,7 +41,7 @@ struct ExerciseSelectionView: View {
                             Text(exercise.name)
                                 .font(.headline)
                                 .foregroundColor(.primary)
-                            Text(exercise.category.rawValue)
+                            Text(exercise.category)
                                 .font(.subheadline)
                                 .foregroundColor(.secondary)
                         }

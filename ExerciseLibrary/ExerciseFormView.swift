@@ -8,8 +8,16 @@ struct ExerciseFormView: View {
     let exerciseToEdit: Exercise?
     var onSave: ((Exercise) -> Void)?
     
+    @Query private var allExercises: [Exercise]
+    
+    private var availableCategories: [String] {
+        Array(Set(allExercises.map { $0.category })).sorted()
+    }
+    
     @State private var name: String = ""
-    @State private var category: ExerciseCategory = .freeWeight
+    @State private var category: String = "Freie Gewichte"
+    @State private var isCustomCategory: Bool = false
+    @State private var customCategoryName: String = ""
     @State private var defaultRestDuration: Double = 90
     @State private var notes: String = ""
     
@@ -29,9 +37,32 @@ struct ExerciseFormView: View {
             Section(header: Text("Details")) {
                 TextField("Name der Übung", text: $name)
                 
-                Picker("Kategorie", selection: $category) {
-                    ForEach(ExerciseCategory.allCases, id: \.self) { cat in
-                        Text(cat.rawValue).tag(cat)
+                if !isCustomCategory {
+                    Picker("Kategorie", selection: $category) {
+                        ForEach(availableCategories, id: \.self) { cat in
+                            Text(cat).tag(cat)
+                        }
+                        Divider()
+                        Text("Neue Kategorie...").tag("new_custom_category_flag")
+                    }
+                    .onChange(of: category) { oldValue, newValue in
+                        if newValue == "new_custom_category_flag" {
+                            isCustomCategory = true
+                            category = availableCategories.first ?? "Freie Gewichte"
+                        }
+                    }
+                }
+                
+                if isCustomCategory {
+                    HStack {
+                        TextField("Neue Kategorie", text: $customCategoryName)
+                        Button(action: {
+                            isCustomCategory = false
+                            customCategoryName = ""
+                        }) {
+                            Image(systemName: "xmark.circle.fill")
+                                .foregroundColor(.secondary)
+                        }
                     }
                 }
             }
@@ -65,16 +96,18 @@ struct ExerciseFormView: View {
     }
     
     private func save() {
+        let finalCategory = isCustomCategory && !customCategoryName.trimmingCharacters(in: .whitespaces).isEmpty ? customCategoryName : category
+        
         if let exercise = exerciseToEdit {
             exercise.name = name
-            exercise.category = category
+            exercise.category = finalCategory
             exercise.defaultRestDuration = defaultRestDuration
             exercise.notes = notes
             onSave?(exercise)
         } else {
             let newExercise = Exercise(
                 name: name,
-                category: category,
+                category: finalCategory,
                 notes: notes,
                 defaultRestDuration: defaultRestDuration,
                 isCustom: true

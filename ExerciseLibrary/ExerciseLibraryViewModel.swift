@@ -4,7 +4,7 @@ import SwiftData
 @Observable
 class ExerciseLibraryViewModel {
     var searchText: String = ""
-    var selectedCategory: ExerciseCategory? = nil
+    var selectedCategory: String? = nil
     
     // Filtering logic to be applied on the queried exercises in the view
     func filterExercises(_ exercises: [Exercise]) -> [Exercise] {

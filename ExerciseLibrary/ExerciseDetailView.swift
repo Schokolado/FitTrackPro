@@ -13,7 +13,7 @@ struct ExerciseDetailView: View {
             VStack(alignment: .leading, spacing: Spacing.md) {
                 
                 HStack {
-                    Text(exercise.category.rawValue)
+                    Text(exercise.category)
                         .font(.subheadline)
                         .padding(.horizontal, 12)
                         .padding(.vertical, 6)
@@ -77,8 +77,21 @@ struct ExerciseDetailView: View {
         .navigationTitle(exercise.name)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                Button("Bearbeiten") {
-                    showingEditForm = true
+                Menu {
+                    Button {
+                        showingEditForm = true
+                    } label: {
+                        Label("Bearbeiten", systemImage: "pencil")
+                    }
+                    
+                    Button(role: .destructive) {
+                        modelContext.delete(exercise)
+                        dismiss()
+                    } label: {
+                        Label("Löschen", systemImage: "trash")
+                    }
+                } label: {
+                    Image(systemName: "ellipsis.circle")
                 }
             }
         }

@@ -28,7 +28,7 @@ class SeedDataService {
         }
         
         for seed in seedData {
-            let category = ExerciseCategory(rawValue: seed.category) ?? .freeWeight
+            let category = seed.category
             let exercise = Exercise(
                 name: seed.name,
                 category: category,
