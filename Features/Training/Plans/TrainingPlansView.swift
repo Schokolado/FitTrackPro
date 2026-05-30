@@ -6,47 +6,69 @@ struct TrainingPlansView: View {
     @Query(sort: \TrainingPlan.sortOrder) private var plans: [TrainingPlan]
     
     @State private var showingAddAlert = false
+    @State private var showingRenameAlert = false
     @State private var newPlanName = ""
-    @State private var editMode: EditMode = .inactive
+    @State private var planToRename: TrainingPlan? = nil
     
     var body: some View {
         NavigationStack {
-            List {
+        ScrollView {
+            VStack(spacing: Spacing.md) {
                 ForEach(plans) { plan in
                     NavigationLink(destination: PlanDetailView(plan: plan)) {
                         VStack(alignment: .leading, spacing: 4) {
-                            Text(plan.name)
-                                .font(.headline)
+                            HStack {
+                                Text(plan.name)
+                                    .font(.headline)
+                                    .foregroundColor(.brand)
+                                Spacer()
+                                
+                                Menu {
+                                    Button {
+                                        planToRename = plan
+                                        newPlanName = plan.name
+                                        showingRenameAlert = true
+                                    } label: {
+                                        Label("Umbenennen", systemImage: "pencil")
+                                    }
+                                    
+                                    Button {
+                                        duplicate(plan: plan)
+                                    } label: {
+                                        Label("Duplizieren", systemImage: "doc.on.doc")
+                                    }
+                                    
+                                    Divider()
+                                    
+                                    Button(role: .destructive) {
+                                        modelContext.delete(plan)
+                                    } label: {
+                                        Label("Löschen", systemImage: "trash")
+                                    }
+                                } label: {
+                                    Image(systemName: "ellipsis")
+                                        .font(.system(size: 20))
+                                        .foregroundColor(.secondary)
+                                        .padding(.leading, 8)
+                                        .padding(.vertical, 4)
+                                        .contentShape(Rectangle())
+                                }
+                                .buttonStyle(.borderless)
+                            }
+                            
                             Text("\(plan.planExercises?.count ?? 0) Übungen")
                                 .font(.subheadline)
                                 .foregroundColor(.secondary)
                         }
-                        .contentShape(Rectangle())
-                        .onLongPressGesture {
-                            withAnimation {
-                                editMode = .active
-                            }
-                        }
                     }
-                    .swipeActions(edge: .trailing) {
-                        Button(role: .destructive) {
-                            modelContext.delete(plan)
-                        } label: {
-                            Label("Löschen", systemImage: "trash")
-                        }
-                        
-                        Button {
-                            duplicate(plan: plan)
-                        } label: {
-                            Label("Duplizieren", systemImage: "doc.on.doc")
-                        }
-                        .tint(.blue)
-                    }
+                    .buttonStyle(.plain)
+                    .cardStyle()
+                    .padding(.horizontal)
                 }
-                .onMove(perform: movePlan)
             }
-            .listStyle(.plain)
-            .environment(\.editMode, $editMode)
+            .padding(.vertical)
+        }
+        .background(Color.backgroundPrimary)
             .navigationTitle("Trainingspläne")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -68,6 +90,16 @@ struct TrainingPlansView: View {
                 Button("Abbrechen", role: .cancel) { }
                 Button("Erstellen") {
                     createPlan()
+                }
+                .disabled(newPlanName.trimmingCharacters(in: .whitespaces).isEmpty)
+            }
+            .alert("Plan umbenennen", isPresented: $showingRenameAlert) {
+                TextField("Name", text: $newPlanName)
+                Button("Abbrechen", role: .cancel) { }
+                Button("Speichern") {
+                    if let plan = planToRename {
+                        plan.name = newPlanName
+                    }
                 }
                 .disabled(newPlanName.trimmingCharacters(in: .whitespaces).isEmpty)
             }

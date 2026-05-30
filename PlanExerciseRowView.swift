@@ -11,13 +11,15 @@ struct PlanExerciseRowView: View {
             if let exercise = planExercise.exercise {
                 HStack {
                     NavigationLink(destination: ExerciseDetailView(exercise: exercise)) {
-                        Text(exercise.name)
-                            .font(.headline)
-                            .foregroundColor(.brand)
+                        HStack {
+                            Text(exercise.name)
+                                .font(.headline)
+                                .foregroundColor(.brand)
+                            Spacer()
+                        }
+                        .contentShape(Rectangle())
                     }
                     .buttonStyle(.borderless)
-                    
-                    Spacer()
                     
                     Menu {
                         Button {

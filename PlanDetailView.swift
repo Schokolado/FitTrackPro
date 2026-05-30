@@ -3,6 +3,7 @@ import SwiftData
 
 struct PlanDetailView: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.dismiss) private var dismiss
     @Bindable var plan: TrainingPlan
     
     @State private var showingExerciseSelection = false
@@ -38,12 +39,14 @@ struct PlanDetailView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: Spacing.lg) {
-                Button(action: { startWorkout() }) {
-                    Label("Workout Starten", systemImage: "play.fill")
-                        .frame(maxWidth: .infinity)
+                if !groupedExercises.isEmpty {
+                    Button(action: { startWorkout() }) {
+                        Label("Workout Starten", systemImage: "play.fill")
+                            .frame(maxWidth: .infinity)
+                    }
+                    .primaryButtonStyle()
+                    .padding(.horizontal)
                 }
-                .primaryButtonStyle()
-                .padding(.horizontal)
                 
                 ForEach(groupedExercises) { group in
                     VStack(alignment: .leading, spacing: 0) {
@@ -55,8 +58,8 @@ struct PlanDetailView: View {
                             .font(.caption)
                             .foregroundColor(.brandSecondary)
                             .padding(.horizontal)
-                            .padding(.top, Spacing.sm)
-                            .padding(.bottom, 4)
+                            .padding(.top, Spacing.md)
+                            .padding(.bottom, 8)
                         }
                         
                         ForEach(Array(group.exercises.enumerated()), id: \.element.id) { index, planEx in
@@ -130,11 +133,8 @@ struct PlanDetailView: View {
         }
         .alert("Plan löschen", isPresented: $showingDeleteAlert) {
             Button("Löschen", role: .destructive) {
-                if let env = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                   let root = env.windows.first?.rootViewController {
-                    modelContext.delete(plan)
-                    root.dismiss(animated: true)
-                }
+                modelContext.delete(plan)
+                dismiss()
             }
             Button("Abbrechen", role: .cancel) { }
         } message: {
