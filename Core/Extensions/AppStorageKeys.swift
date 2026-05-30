@@ -2,7 +2,7 @@ import Foundation
 
 enum AppStorageKeys {
     static let healthKitAutoSync    = "healthkit_auto_sync"       // Bool, default: true
-    static let hasSeededExercises   = "has_seeded_exercises"      // Bool, default: false
+    static let hasSeededExercises   = "has_seeded_exercises_v2"      // Bool, default: false
     static let weightUnit           = "weight_unit"               // String: "kg" | "lbs", default: "kg"
     static let notificationsEnabled = "notifications_enabled"     // Bool, default: true
     static let targetCalories       = "target_calories"           // Double

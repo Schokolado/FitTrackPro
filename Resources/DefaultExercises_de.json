@@ -1,50 +1,43 @@
 [
-  {
-    "name": "Bankdrücken (Langhantel)",
-    "category": "Freie Gewichte",
-    "defaultRestDuration": 90,
-    "sortOrder": 1
-  },
-  {
-    "name": "Kniebeuge (Langhantel)",
-    "category": "Freie Gewichte",
-    "defaultRestDuration": 120,
-    "sortOrder": 2
-  },
-  {
-    "name": "Kreuzheben",
-    "category": "Freie Gewichte",
-    "defaultRestDuration": 120,
-    "sortOrder": 3
-  },
-  {
-    "name": "Latzug",
-    "category": "Kabelzug",
-    "defaultRestDuration": 90,
-    "sortOrder": 4
-  },
-  {
-    "name": "Beinpresse",
-    "category": "Maschinen",
-    "defaultRestDuration": 90,
-    "sortOrder": 5
-  },
-  {
-    "name": "Klimmzüge",
-    "category": "Eigengewicht",
-    "defaultRestDuration": 90,
-    "sortOrder": 6
-  },
-  {
-    "name": "Kurzhantel Curls",
-    "category": "Freie Gewichte",
-    "defaultRestDuration": 60,
-    "sortOrder": 7
-  },
-  {
-    "name": "Trizepsdrücken am Kabelzug",
-    "category": "Kabelzug",
-    "defaultRestDuration": 60,
-    "sortOrder": 8
-  }
+  { "name": "Bankdrücken (Langhantel)", "category": "Brust", "defaultRestDuration": 90, "sortOrder": 1 },
+  { "name": "Schrägbankdrücken (Kurzhanteln)", "category": "Brust", "defaultRestDuration": 90, "sortOrder": 2 },
+  { "name": "Butterfly (Maschine)", "category": "Brust", "defaultRestDuration": 90, "sortOrder": 3 },
+  { "name": "Fliegende am Kabelzug", "category": "Brust", "defaultRestDuration": 90, "sortOrder": 4 },
+  { "name": "Liegestütze", "category": "Brust", "defaultRestDuration": 60, "sortOrder": 5 },
+  
+  { "name": "Kreuzheben", "category": "Rücken", "defaultRestDuration": 120, "sortOrder": 10 },
+  { "name": "Klimmzüge", "category": "Rücken", "defaultRestDuration": 90, "sortOrder": 11 },
+  { "name": "Latzug", "category": "Rücken", "defaultRestDuration": 90, "sortOrder": 12 },
+  { "name": "Rudern vorgebeugt (Langhantel)", "category": "Rücken", "defaultRestDuration": 90, "sortOrder": 13 },
+  { "name": "Rudern sitzend (Kabelzug)", "category": "Rücken", "defaultRestDuration": 90, "sortOrder": 14 },
+  
+  { "name": "Kniebeugen (Langhantel)", "category": "Beine", "defaultRestDuration": 120, "sortOrder": 20 },
+  { "name": "Beinpresse", "category": "Beine", "defaultRestDuration": 120, "sortOrder": 21 },
+  { "name": "Beinbeuger (Maschine)", "category": "Beine", "defaultRestDuration": 90, "sortOrder": 22 },
+  { "name": "Beinstrecker (Maschine)", "category": "Beine", "defaultRestDuration": 90, "sortOrder": 23 },
+  { "name": "Ausfallschritte (Lunges)", "category": "Beine", "defaultRestDuration": 90, "sortOrder": 24 },
+  { "name": "Wadenheben", "category": "Beine", "defaultRestDuration": 60, "sortOrder": 25 },
+  
+  { "name": "Schulterdrücken (Kurzhanteln)", "category": "Schultern", "defaultRestDuration": 90, "sortOrder": 30 },
+  { "name": "Military Press (Langhantel)", "category": "Schultern", "defaultRestDuration": 90, "sortOrder": 31 },
+  { "name": "Seitheben (Kurzhanteln)", "category": "Schultern", "defaultRestDuration": 60, "sortOrder": 32 },
+  { "name": "Face Pulls (Kabelzug)", "category": "Schultern", "defaultRestDuration": 60, "sortOrder": 33 },
+  
+  { "name": "Bizeps Curls (Kurzhanteln)", "category": "Arme", "defaultRestDuration": 60, "sortOrder": 40 },
+  { "name": "Hammer Curls", "category": "Arme", "defaultRestDuration": 60, "sortOrder": 41 },
+  { "name": "Trizepsdrücken (Kabelzug)", "category": "Arme", "defaultRestDuration": 60, "sortOrder": 42 },
+  { "name": "Dips", "category": "Arme", "defaultRestDuration": 90, "sortOrder": 43 },
+  { "name": "French Press (SZ-Stange)", "category": "Arme", "defaultRestDuration": 60, "sortOrder": 44 },
+  
+  { "name": "Crunches", "category": "Bauch / Core", "defaultRestDuration": 60, "sortOrder": 50 },
+  { "name": "Beinheben (hängend)", "category": "Bauch / Core", "defaultRestDuration": 60, "sortOrder": 51 },
+  { "name": "Plank (Unterarmstütz)", "category": "Bauch / Core", "defaultRestDuration": 60, "sortOrder": 52 },
+  { "name": "Cable Crunches", "category": "Bauch / Core", "defaultRestDuration": 60, "sortOrder": 53 },
+  
+  { "name": "Laufband", "category": "Cardio", "defaultRestDuration": 0, "sortOrder": 60 },
+  { "name": "Rudergerät", "category": "Cardio", "defaultRestDuration": 0, "sortOrder": 61 },
+  { "name": "Fahrrad-Ergometer", "category": "Cardio", "defaultRestDuration": 0, "sortOrder": 62 },
+  { "name": "Stairmaster", "category": "Cardio", "defaultRestDuration": 0, "sortOrder": 63 },
+  
+  { "name": "Burpees", "category": "Nicht zugeordnet", "defaultRestDuration": 60, "sortOrder": 70 }
 ]

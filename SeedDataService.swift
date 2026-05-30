@@ -27,16 +27,22 @@ class SeedDataService {
             return
         }
         
+        let fetchDescriptor = FetchDescriptor<Exercise>()
+        let existingExercises = (try? context.fetch(fetchDescriptor)) ?? []
+        let existingNames = Set(existingExercises.map { $0.name })
+        
         for seed in seedData {
-            let category = seed.category
-            let exercise = Exercise(
-                name: seed.name,
-                category: category,
-                defaultRestDuration: seed.defaultRestDuration,
-                isCustom: false,
-                sortOrder: seed.sortOrder
-            )
-            context.insert(exercise)
+            if !existingNames.contains(seed.name) {
+                let category = seed.category
+                let exercise = Exercise(
+                    name: seed.name,
+                    category: category,
+                    defaultRestDuration: seed.defaultRestDuration,
+                    isCustom: false,
+                    sortOrder: seed.sortOrder
+                )
+                context.insert(exercise)
+            }
         }
         
         do {
