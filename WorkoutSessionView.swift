@@ -57,53 +57,7 @@ struct WorkoutSessionView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                // Workout Sets List
-                List {
-                    ForEach(groupedSets, id: \.0.id) { (exercise, sets) in
-                        Section(header: ExerciseSectionHeader(exercise: exercise, currentSessionId: session.id)) {
-                            ForEach(sets) { workoutSet in
-                                WorkoutSetRowView(workoutSet: workoutSet) {
-                                    // Trigger Rest Timer
-                                    let duration = workoutSet.planExercise?.restDuration ?? exercise.defaultRestDuration
-                                    viewModel.startRestTimer(duration: duration)
-                                }
-                            }
-                            .onDelete { offsets in
-                                deleteSets(at: offsets, from: sets)
-                            }
-                            
-                            Button(action: {
-                                addSet(for: exercise)
-                            }) {
-                                Label("Satz hinzufügen", systemImage: "plus")
-                                    .font(.subheadline)
-                                    .foregroundColor(.brand)
-                            }
-                        }
-                    }
-                    
-                    Section {
-                        Button(action: {
-                            showingExerciseSelection = true
-                        }) {
-                            Label("Übung zum Workout hinzufügen", systemImage: "plus.circle.fill")
-                                .font(.headline)
-                                .foregroundColor(.brand)
-                                .frame(maxWidth: .infinity, alignment: .center)
-                        }
-                    }
-                    
-                    Section {
-                        Button(action: {
-                            showingCancelAlert = true
-                        }) {
-                            Text("Workout abbrechen")
-                                .foregroundColor(.red)
-                                .frame(maxWidth: .infinity, alignment: .center)
-                        }
-                    }
-                }
-                .listStyle(.insetGrouped)
+                workoutSetsList
             }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -125,9 +79,9 @@ struct WorkoutSessionView: View {
                         }
                     } else {
                         Menu {
-                            Button("\(timerFav1) Sek") { viewModel.startRestTimer(duration: timerFav1) }
-                            Button("\(timerFav2) Sek") { viewModel.startRestTimer(duration: timerFav2) }
-                            Button("\(timerFav3) Sek") { viewModel.startRestTimer(duration: timerFav3) }
+                            Button("\(timerFav1) Sek") { viewModel.startRestTimer(duration: TimeInterval(timerFav1)) }
+                            Button("\(timerFav2) Sek") { viewModel.startRestTimer(duration: TimeInterval(timerFav2)) }
+                            Button("\(timerFav3) Sek") { viewModel.startRestTimer(duration: TimeInterval(timerFav3)) }
                             Divider()
                             Button("Individuell...") {
                                 showingCustomTimerAlert = true
@@ -206,7 +160,7 @@ struct WorkoutSessionView: View {
                     .keyboardType(.numberPad)
                 Button("Starten") {
                     if let seconds = Int(customTimerSeconds), seconds > 0 {
-                        viewModel.startRestTimer(duration: seconds)
+                        viewModel.startRestTimer(duration: TimeInterval(seconds))
                     }
                     customTimerSeconds = ""
                 }
@@ -228,6 +182,60 @@ struct WorkoutSessionView: View {
             .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("WorkoutFinished"))) { _ in
                 // Dismiss the full screen cover when the summary is saved
                 dismiss()
+            }
+        }
+    }
+    
+    private var workoutSetsList: some View {
+        List {
+            ForEach(groupedSets, id: \.0.id) { (exercise, sets) in
+                exerciseSection(for: exercise, sets: sets)
+            }
+            
+            Section {
+                Button(action: {
+                    showingExerciseSelection = true
+                }) {
+                    Label("Übung zum Workout hinzufügen", systemImage: "plus.circle.fill")
+                        .font(.headline)
+                        .foregroundColor(.brand)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                }
+            }
+            
+            Section {
+                Button(action: {
+                    showingCancelAlert = true
+                }) {
+                    Text("Workout abbrechen")
+                        .foregroundColor(.red)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                }
+            }
+        }
+        .listStyle(.insetGrouped)
+    }
+    
+    @ViewBuilder
+    private func exerciseSection(for exercise: Exercise, sets: [WorkoutSet]) -> some View {
+        Section(header: ExerciseSectionHeader(exercise: exercise, currentSessionId: session.id)) {
+            ForEach(sets) { workoutSet in
+                WorkoutSetRowView(workoutSet: workoutSet) {
+                    // Trigger Rest Timer
+                    let duration = workoutSet.planExercise?.restDuration ?? exercise.defaultRestDuration
+                    viewModel.startRestTimer(duration: duration)
+                }
+            }
+            .onDelete { offsets in
+                deleteSets(at: offsets, from: sets)
+            }
+            
+            Button(action: {
+                addSet(for: exercise)
+            }) {
+                Label("Satz hinzufügen", systemImage: "plus")
+                    .font(.subheadline)
+                    .foregroundColor(.brand)
             }
         }
     }
