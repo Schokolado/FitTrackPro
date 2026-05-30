@@ -12,6 +12,8 @@ struct ExerciseSelectionView: View {
     @State private var searchText: String = ""
     @State private var showingAddExercise = false
     
+    @AppStorage("prefillExerciseHistory") private var prefillExerciseHistory = true
+    
     var filteredExercises: [Exercise] {
         if searchText.isEmpty {
             return allExercises
@@ -75,10 +77,33 @@ struct ExerciseSelectionView: View {
         
         if let plan = plan {
             let currentCount = plan.planExercises?.count ?? 0
+            
+            var targetSets = 3
+            var targetReps = 10
+            var targetWeight: Double? = nil
+            
+            if prefillExerciseHistory {
+                let exerciseId = exercise.id
+                let descriptor = FetchDescriptor<WorkoutSet>(
+                    predicate: #Predicate { $0.exercise?.id == exerciseId && $0.isCompleted == true },
+                    sortBy: [SortDescriptor(\.timestamp, order: .reverse)]
+                )
+                
+                if let pastSets = try? modelContext.fetch(descriptor), !pastSets.isEmpty {
+                    if let lastSessionId = pastSets.first?.session?.id {
+                        let setsFromLastSession = pastSets.filter { $0.session?.id == lastSessionId }
+                        targetSets = max(1, setsFromLastSession.count)
+                        targetReps = pastSets.first?.actualReps ?? 10
+                        targetWeight = pastSets.first?.actualWeight
+                    }
+                }
+            }
+            
             let newPlanExercise = PlanExercise(
                 sortOrder: currentCount,
-                targetSets: 3,
-                targetReps: 10,
+                targetSets: targetSets,
+                targetReps: targetReps,
+                targetWeight: targetWeight,
                 restDuration: exercise.defaultRestDuration,
                 plan: plan,
                 exercise: exercise

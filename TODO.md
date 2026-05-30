@@ -196,7 +196,7 @@
 
 ## Milestone 12 – Einstellungen
 
-- [ ] `SettingsView.swift` – vollständige Einstellungsseite
+- [x] `SettingsView.swift` – vollständige Einstellungsseite
 - [ ] HealthKit Sync-Modus (Auto / Manuell)
 - [ ] Kalorien- und Makroziele
 - [ ] Standard-Pausendauer konfigurieren
