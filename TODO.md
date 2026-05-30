@@ -25,18 +25,18 @@
 
 ---
 
-## Milestone 1 – SwiftData Datenmodell
+## Milestone 1 – SwiftData Datenmodell (CloudKit Ready)
 
-- [ ] `Exercise.swift` – `@Model` inkl. ExerciseCategory Enum
-- [ ] `TrainingPlan.swift` – `@Model` mit `@Relationship` zu PlanExercise & Session
-- [ ] `PlanExercise.swift` – `@Model` mit supersetGroup-Logik
-- [ ] `WorkoutSession.swift` – `@Model` mit Mood/Intensity-Ratings
-- [ ] `WorkoutSet.swift` – `@Model` mit Soll/Ist-Werten
-- [ ] `FoodEntry.swift` – `@Model` mit Makros & MealType Enum
-- [ ] `DailyLog.swift` – `@Model` als Container für tägliche Einträge
-- [ ] `WeightEntry.swift` – `@Model`
-- [ ] Alle `@Relationship`-Verknüpfungen und Inverse testen
-- [ ] SwiftData-Migrationsplan (Schema versioning) vorbereiten
+- [x] `Exercise.swift` – `@Model` inkl. `ExerciseCategory` Enum
+- [x] `TrainingPlan.swift` – `@Model` mit `@Relationship` zu `PlanExercise` & `Session`
+- [x] `PlanExercise.swift` – `@Model` mit `supersetGroup`-Logik
+- [x] `WorkoutSession.swift` – `@Model` mit Mood/Intensity-Ratings
+- [x] `WorkoutSet.swift` – `@Model` mit Soll/Ist-Werten
+- [x] `FoodEntry.swift` – `@Model` mit Makros & `MealType` Enum
+- [x] `DailyLog.swift` – `@Model` als Container für tägliche Einträge
+- [x] `WeightEntry.swift` – `@Model`
+- [x] Alle `@Relationship`-Verknüpfungen und Inverse testen
+- [x] Modell in `FitTrackProApp.swift` registrieren
 
 ---
 

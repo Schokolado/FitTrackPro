@@ -13,8 +13,8 @@
 |-----------|--------|
 | Dokumentation | ✅ Abgeschlossen |
 | Architekturentscheidungen | ✅ Abgeschlossen |
-| M0 – Projektsetup | ⏳ Ausstehend |
-| M1 – Datenmodell | ⏳ Ausstehend |
+| M0 – Projektsetup | ✅ Abgeschlossen |
+| M1 – Datenmodell | ✅ Abgeschlossen |
 | M2 – Übungs-Mediathek | ⏳ Ausstehend |
 | M3 – Trainingspläne | ⏳ Ausstehend |
 | M4 – Workout-Modus | ⏳ Ausstehend |
@@ -35,6 +35,23 @@
 ---
 
 ## Einträge
+
+### 2026-05-30 – Milestone 0 & 1 abgeschlossen
+
+**Status:** ✅ Fertig  
+**Bearbeitet:** Xcode-Projekt Fundament und komplettes SwiftData-Datenmodell
+
+**Implementiert:**
+- Ordnerstruktur, Design System (`Color+Theme.swift`), `AppRouter` und Lokalisierungsdateien.
+- App Icon Asset Catalog repariert.
+- `Exercise`, `TrainingPlan`, `PlanExercise`, `WorkoutSession`, `WorkoutSet`, `FoodEntry`, `DailyLog`, `WeightEntry` in `Core/Models/` als `@Model` Klassen angelegt.
+- Korrekte optionale Attribute und Default-Werte für CloudKit-Kompatibilität (`NSPersistentCloudKitContainer`) gesetzt.
+- Inverse `@Relationship`s (Nullify / Cascade) definiert.
+- `FitTrackProApp.swift` mit dem `ModelContainer` konfiguriert.
+
+**Nächster Schritt:** Milestone 2 (Übungs-Mediathek)
+
+---
 
 ### 2026-05-29 – Dokumentationsphase abgeschlossen
 
