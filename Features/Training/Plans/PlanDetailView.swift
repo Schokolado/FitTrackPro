@@ -153,15 +153,17 @@ struct PlanDetailView: View {
                 let workoutSet = WorkoutSet(
                     setNumber: setIndex + 1,
                     actualWeight: planEx.targetWeight ?? 0.0,
-                    actualReps: planEx.targetReps,
-                    session: newSession,
-                    exercise: planEx.exercise,
-                    planExercise: planEx
+                    actualReps: planEx.targetReps
                 )
                 modelContext.insert(workoutSet)
+                // Fix SwiftData relationship dropping by assigning after insertion
+                workoutSet.session = newSession
+                workoutSet.exercise = planEx.exercise
+                workoutSet.planExercise = planEx
             }
         }
-
+        
+        try? modelContext.save()
         activeSession = newSession
     }
 }
