@@ -14,19 +14,32 @@ struct WorkoutSessionView: View {
     // Group sets by Exercise for UI
     private var groupedSets: [(Exercise, [WorkoutSet])] {
         guard let sets = session.sets else { return [] }
-        var dict: [UUID: [WorkoutSet]] = [:]
-        var exercises: [Exercise] = []
+        var dict: [Exercise: [WorkoutSet]] = [:]
         
-        for set in sets.sorted(by: { $0.setNumber < $1.setNumber }) {
+        for set in sets {
             guard let exercise = set.exercise else { continue }
-            if dict[exercise.id] == nil {
-                dict[exercise.id] = []
-                exercises.append(exercise)
+            if dict[exercise] == nil {
+                dict[exercise] = []
             }
-            dict[exercise.id]?.append(set)
+            dict[exercise]?.append(set)
         }
         
-        return exercises.map { ($0, dict[$0.id]!) }
+        var sortedExercises: [Exercise] = []
+        if let plan = session.plan, let planExercises = plan.planExercises {
+            let orderedExercises = planExercises.sorted(by: { $0.sortOrder < $1.sortOrder }).compactMap { $0.exercise }
+            sortedExercises = orderedExercises.filter { dict.keys.contains($0) }
+            let remaining = dict.keys.filter { !orderedExercises.contains($0) }.sorted(by: { $0.name < $1.name })
+            sortedExercises.append(contentsOf: remaining)
+        } else {
+            // Sort by earliest timestamp of their sets as fallback
+            sortedExercises = dict.keys.sorted { e1, e2 in
+                let t1 = dict[e1]?.first?.timestamp ?? Date.distantFuture
+                let t2 = dict[e2]?.first?.timestamp ?? Date.distantFuture
+                return t1 < t2
+            }
+        }
+        
+        return sortedExercises.map { ($0, dict[$0]!.sorted(by: { $0.setNumber < $1.setNumber })) }
     }
     
     var body: some View {
