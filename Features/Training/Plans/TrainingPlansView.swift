@@ -7,6 +7,7 @@ struct TrainingPlansView: View {
     
     @State private var showingAddAlert = false
     @State private var newPlanName = ""
+    @State private var editMode: EditMode = .inactive
     
     var body: some View {
         NavigationStack {
@@ -19,6 +20,12 @@ struct TrainingPlansView: View {
                             Text("\(plan.planExercises?.count ?? 0) Übungen")
                                 .font(.subheadline)
                                 .foregroundColor(.secondary)
+                        }
+                        .contentShape(Rectangle())
+                        .onLongPressGesture {
+                            withAnimation {
+                                editMode = .active
+                            }
                         }
                     }
                     .swipeActions(edge: .trailing) {
@@ -39,6 +46,7 @@ struct TrainingPlansView: View {
                 .onMove(perform: movePlan)
             }
             .listStyle(.plain)
+            .environment(\.editMode, $editMode)
             .navigationTitle("Trainingspläne")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -50,8 +58,11 @@ struct TrainingPlansView: View {
                     }
                 }
                 ToolbarItem(placement: .navigationBarLeading) {
-                    NavigationLink(destination: ExerciseLibraryView()) {
-                        Image(systemName: "book.pages")
+                    HStack {
+                        NavigationLink(destination: ExerciseLibraryView()) {
+                            Image(systemName: "book.pages")
+                        }
+                        EditButton()
                     }
                 }
             }

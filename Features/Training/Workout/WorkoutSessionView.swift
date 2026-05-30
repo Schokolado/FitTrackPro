@@ -224,15 +224,11 @@ struct WorkoutSessionView: View {
         modelContext.insert(newSet)
     }
     
-    private func deleteSets(at offsets: IndexSet, from sets: [WorkoutSet]) {
-        for index in offsets {
-            let setToDelete = sets[index]
-            modelContext.delete(setToDelete)
-        }
+    private func deleteSet(_ setToDelete: WorkoutSet, from sets: [WorkoutSet]) {
+        modelContext.delete(setToDelete)
         
-        // Renumber remaining sets for this exercise
-        let remainingSets = sets.enumerated().filter { !offsets.contains($0.offset) }.map { $0.element }
-        for (index, set) in remainingSets.sorted(by: { $0.setNumber < $1.setNumber }).enumerated() {
+        let remainingSets = sets.filter { $0.id != setToDelete.id }.sorted(by: { $0.setNumber < $1.setNumber })
+        for (index, set) in remainingSets.enumerated() {
             set.setNumber = index + 1
         }
     }
@@ -253,23 +249,25 @@ struct WorkoutSessionView: View {
     }
     
     private var workoutSetsList: some View {
-        List {
-            ForEach(groupedSets, id: \.id) { group in
-                exerciseSection(for: group.exercise, planExercise: group.planExercise, sets: group.sets)
-            }
-            
-            Section {
+        ScrollView {
+            VStack(spacing: Spacing.lg) {
+                ForEach(groupedSets, id: \.id) { group in
+                    exerciseSection(for: group.exercise, planExercise: group.planExercise, sets: group.sets)
+                }
+                
                 Button(action: {
                     showingExerciseSelection = true
                 }) {
-                    Label("Übung zum Workout hinzufügen", systemImage: "plus.circle.fill")
+                    Label("Übung hinzufügen", systemImage: "plus.circle.fill")
                         .font(.headline)
                         .foregroundColor(.brand)
-                        .frame(maxWidth: .infinity, alignment: .center)
                 }
-            }
-            
-            Section {
+                .padding()
+                .frame(maxWidth: .infinity)
+                .background(Color.brandSecondary.opacity(0.1))
+                .cornerRadius(12)
+                .padding(.horizontal)
+                
                 Button(action: {
                     showingCancelAlert = true
                 }) {
@@ -277,23 +275,40 @@ struct WorkoutSessionView: View {
                         .foregroundColor(.red)
                         .frame(maxWidth: .infinity, alignment: .center)
                 }
+                .padding(.top, 16)
             }
+            .padding(.vertical)
         }
-        .listStyle(.insetGrouped)
+        .background(Color.backgroundPrimary)
     }
     
     @ViewBuilder
     private func exerciseSection(for exercise: Exercise, planExercise: PlanExercise?, sets: [WorkoutSet]) -> some View {
-        Section(header: ExerciseSectionHeader(exercise: exercise, currentSessionId: session.id)) {
-            ForEach(sets) { workoutSet in
+        VStack(alignment: .leading, spacing: 0) {
+            ExerciseSectionHeader(exercise: exercise, currentSessionId: session.id)
+                .padding(.horizontal)
+                .padding(.top, Spacing.sm)
+                .padding(.bottom, 8)
+            
+            ForEach(Array(sets.enumerated()), id: \.element.id) { index, workoutSet in
                 WorkoutSetRowView(workoutSet: workoutSet) {
-                    // Trigger Rest Timer
                     let duration = workoutSet.planExercise?.restDuration ?? exercise.defaultRestDuration
                     viewModel.startRestTimer(duration: duration)
                 }
-            }
-            .onDelete { offsets in
-                deleteSets(at: offsets, from: sets)
+                .contextMenu {
+                    Button(role: .destructive) {
+                        deleteSet(workoutSet, from: sets)
+                    } label: {
+                        Label("Satz löschen", systemImage: "trash")
+                    }
+                }
+                .padding(.horizontal)
+                .padding(.vertical, 8)
+                
+                if index < sets.count - 1 {
+                    Divider()
+                        .padding(.leading)
+                }
             }
             
             Button(action: {
@@ -302,8 +317,12 @@ struct WorkoutSessionView: View {
                 Label("Satz hinzufügen", systemImage: "plus")
                     .font(.subheadline)
                     .foregroundColor(.brand)
+                    .frame(maxWidth: .infinity, alignment: .center)
             }
+            .padding(.vertical, 12)
         }
+        .cardStyle()
+        .padding(.horizontal)
     }
 }
 
@@ -329,9 +348,12 @@ struct ExerciseSectionHeader: View {
     
     var body: some View {
         HStack {
-            Text(exercise.name)
-                .font(.headline)
-                .foregroundColor(.primary)
+            NavigationLink(destination: ExerciseDetailView(exercise: exercise)) {
+                Text(exercise.name)
+                    .font(.headline)
+                    .foregroundColor(.primary)
+            }
+            .buttonStyle(.plain)
                 
             Spacer()
             
