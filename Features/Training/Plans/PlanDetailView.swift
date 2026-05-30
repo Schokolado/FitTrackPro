@@ -90,21 +90,16 @@ struct PlanDetailView: View {
         .navigationBarTitleDisplayMode(.large)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                Menu {
+                HStack {
+                    Button(action: { showingReorderSheet = true }) {
+                        Image(systemName: "arrow.up.arrow.down")
+                    }
                     Button(action: {
                         editName = plan.name
                         showingEditNameAlert = true
                     }) {
-                        Label("Umbenennen", systemImage: "pencil")
+                        Image(systemName: "pencil")
                     }
-                    Button(action: {
-                        showingReorderSheet = true
-                    }) {
-                        Label("Sortieren", systemImage: "arrow.up.arrow.down")
-                    }
-                    EditButton()
-                } label: {
-                    Image(systemName: "ellipsis.circle")
                 }
             }
         }

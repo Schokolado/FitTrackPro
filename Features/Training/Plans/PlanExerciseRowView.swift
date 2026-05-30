@@ -105,6 +105,13 @@ struct PlanExerciseRowView: View {
             }
         }
         .padding(.vertical, 4)
+        .contextMenu {
+            Button(role: .destructive) {
+                modelContext.delete(planExercise)
+            } label: {
+                Label("Übung löschen", systemImage: "trash")
+            }
+        }
     }
 }
 

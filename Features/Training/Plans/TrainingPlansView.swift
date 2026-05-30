@@ -58,11 +58,8 @@ struct TrainingPlansView: View {
                     }
                 }
                 ToolbarItem(placement: .navigationBarLeading) {
-                    HStack {
-                        NavigationLink(destination: ExerciseLibraryView()) {
-                            Image(systemName: "book.pages")
-                        }
-                        EditButton()
+                    NavigationLink(destination: ExerciseLibraryView()) {
+                        Image(systemName: "book.pages")
                     }
                 }
             }
