@@ -27,6 +27,7 @@ struct WorkoutSessionView: View {
     @State private var hasShownAutoFinishAlert = false
     
     @State private var expandedGroupIds: Set<String> = []
+    @State private var scrollTarget: String? = nil
     
     private struct GroupKey: Hashable {
         let planExerciseId: UUID?
@@ -232,6 +233,9 @@ struct WorkoutSessionView: View {
                 
                 if let firstUncompleted = sessionExerciseGroups.first(where: { !isGroupCompleted($0) }) {
                     expandedGroupIds.insert(firstUncompleted.id)
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        scrollTarget = firstUncompleted.id
+                    }
                 }
             }
             // Milestone 5: Workout Summary
@@ -271,8 +275,9 @@ struct WorkoutSessionView: View {
 
     private var workoutSetsList: some View {
         ScrollView {
-            VStack(spacing: Spacing.md) {
-                ForEach(sessionExerciseGroups) { group in
+            ScrollViewReader { proxy in
+                VStack(spacing: Spacing.md) {
+                    ForEach(sessionExerciseGroups) { group in
                     WorkoutSupersetGroupCard(
                         sessionGroup: group,
                         session: session,
@@ -290,6 +295,7 @@ struct WorkoutSessionView: View {
                                     _ = expandedGroupIds.insert(next.id)
                                     _ = expandedGroupIds.remove(group.id)
                                 }
+                                scrollTarget = next.id
                             } else {
                                 withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                                     _ = expandedGroupIds.remove(group.id)
@@ -298,6 +304,7 @@ struct WorkoutSessionView: View {
                         }
                     )
                     .padding(.bottom, Spacing.sm)
+                    .id(group.id)
                 }
                 
                 Button(action: {
@@ -323,6 +330,16 @@ struct WorkoutSessionView: View {
                 .padding(.top, 16)
             }
             .padding(.vertical)
+            .onChange(of: scrollTarget) { _, newTarget in
+                if let target = newTarget {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                            proxy.scrollTo(target, anchor: .top)
+                        }
+                    }
+                }
+            }
+        }
         }
         .background(Color.backgroundPrimary)
     }
