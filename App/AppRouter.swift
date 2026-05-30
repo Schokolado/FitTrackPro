@@ -8,7 +8,7 @@ struct AppRouter: View {
                     Label("Home", systemImage: "house.fill")
                 }
             
-            ExerciseLibraryView()
+            TrainingPlansView()
                 .tabItem {
                     Label("Training", systemImage: "dumbbell.fill")
                 }

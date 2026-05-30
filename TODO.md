@@ -58,17 +58,17 @@
 
 ## Milestone 3 – Trainingspläne
 
-- [ ] `TrainingPlansView.swift` – Liste aller Pläne
-- [ ] Plan erstellen (Name + initiale Übungsauswahl)
-- [ ] Plan umbenennen
-- [ ] Plan duplizieren
-- [ ] Plan löschen
-- [ ] `PlanDetailView.swift` – Übungen im Plan anzeigen & bearbeiten
-- [ ] Übungen zum Plan hinzufügen (aus Mediathek auswählen)
-- [ ] Soll-Werte pro Übung setzen (Sätze, Wiederholungen, Gewicht, Pausendauer)
-- [ ] Übungen im Plan per Drag-to-reorder sortieren
-- [ ] Übungen aus dem Plan entfernen
-- [ ] Supersatz-Verknüpfung erstellen / lösen (UI: Toggle oder Gruppierung)
+- [x] `TrainingPlansView.swift` – Liste aller Pläne
+- [x] Plan erstellen (Name + initiale Übungsauswahl)
+- [x] Plan umbenennen
+- [x] Plan duplizieren
+- [x] Plan löschen
+- [x] `PlanDetailView.swift` – Übungen im Plan anzeigen & bearbeiten
+- [x] Übungen zum Plan hinzufügen (aus Mediathek auswählen)
+- [x] Soll-Werte pro Übung setzen (Sätze, Wiederholungen, Gewicht, Pausendauer)
+- [x] Übungen im Plan per Drag-to-reorder sortieren
+- [x] Übungen aus dem Plan entfernen
+- [x] Supersatz-Verknüpfung erstellen / lösen (UI: Toggle oder Gruppierung)
 
 ---
 

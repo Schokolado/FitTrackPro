@@ -16,7 +16,7 @@
 | M0 – Projektsetup | ✅ Abgeschlossen |
 | M1 – Datenmodell | ✅ Abgeschlossen |
 | M2 – Übungs-Mediathek | ✅ Abgeschlossen |
-| M3 – Trainingspläne | ⏳ Ausstehend |
+| M3 – Trainingspläne | ✅ Abgeschlossen |
 | M4 – Workout-Modus | ⏳ Ausstehend |
 | M5 – Workout-Abschluss | ⏳ Ausstehend |
 | M6 – Ernährung + Barcode | ⏳ Ausstehend |
@@ -35,6 +35,21 @@
 ---
 
 ## Einträge
+
+### 2026-05-30 – Milestone 3 abgeschlossen
+
+**Status:** ✅ Fertig  
+**Bearbeitet:** Trainingspläne und Übungs-Soll-Werte
+
+**Implementiert:**
+- `TrainingPlansView`: Anzeige aller Pläne mit Löschen- und Duplizieren-Funktion via SwipeActions.
+- `PlanDetailView`: Bearbeiten der Pläne, Umbenennen und Hinzufügen von Übungen.
+- `ExerciseSelectionView`: Übungen aus der Seed-Datenbank auswählen und dem Plan hinzufügen.
+- `PlanExerciseRowView`: Eingabe der Soll-Werte (Sätze, Reps, Gewicht, Pause) und Supersatz-Toggle.
+- `AppRouter` aktualisiert: Der Training-Tab zeigt nun die Trainingspläne an. Die Übungsbibliothek ist über das Buch-Icon oben links erreichbar.
+- Alle Listen unterstützen Drag-to-reorder und native Deletion via SwiftData.
+
+**Nächster Schritt:** Milestone 4 (Workout-Modus)
 
 ### 2026-05-30 – Milestone 2 abgeschlossen
 

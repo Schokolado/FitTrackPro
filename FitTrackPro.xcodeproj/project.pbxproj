@@ -23,6 +23,11 @@
 		C3FDADED2FCADD8C00E8767F /* WorkoutSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3FDADE72FCADD8C00E8767F /* WorkoutSet.swift */; };
 		C3FDADEE2FCADD8C00E8767F /* DailyLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3FDADE02FCADD8C00E8767F /* DailyLog.swift */; };
 		C3FDADEF2FCADD8C00E8767F /* Exercise.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3FDADE12FCADD8C00E8767F /* Exercise.swift */; };
+		C3FDADF82FCADE4800E8767F /* ExerciseLibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3FDADF22FCADE4800E8767F /* ExerciseLibraryView.swift */; };
+		C3FDADF92FCADE4800E8767F /* ExerciseFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3FDADF12FCADE4800E8767F /* ExerciseFormView.swift */; };
+		C3FDADFA2FCADE4800E8767F /* ExerciseDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3FDADF02FCADE4800E8767F /* ExerciseDetailView.swift */; };
+		C3FDADFB2FCADE4800E8767F /* SeedDataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3FDADF62FCADE4800E8767F /* SeedDataService.swift */; };
+		C3FDADFC2FCADE4800E8767F /* ExerciseLibraryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3FDADF32FCADE4800E8767F /* ExerciseLibraryViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -45,6 +50,11 @@
 		C3FDADE52FCADD8C00E8767F /* WeightEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeightEntry.swift; sourceTree = "<group>"; };
 		C3FDADE62FCADD8C00E8767F /* WorkoutSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutSession.swift; sourceTree = "<group>"; };
 		C3FDADE72FCADD8C00E8767F /* WorkoutSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutSet.swift; sourceTree = "<group>"; };
+		C3FDADF02FCADE4800E8767F /* ExerciseDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseDetailView.swift; sourceTree = "<group>"; };
+		C3FDADF12FCADE4800E8767F /* ExerciseFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseFormView.swift; sourceTree = "<group>"; };
+		C3FDADF22FCADE4800E8767F /* ExerciseLibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseLibraryView.swift; sourceTree = "<group>"; };
+		C3FDADF32FCADE4800E8767F /* ExerciseLibraryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseLibraryViewModel.swift; sourceTree = "<group>"; };
+		C3FDADF62FCADE4800E8767F /* SeedDataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeedDataService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,6 +71,10 @@
 		C3FDADA52FCAD62A00E8767F = {
 			isa = PBXGroup;
 			children = (
+				C3FDADF42FCADE4800E8767F /* ExerciseLibrary */,
+				C3FDADF52FCADE4800E8767F /* Plans */,
+				C3FDADF62FCADE4800E8767F /* SeedDataService.swift */,
+				C3FDADF72FCADE4800E8767F /* Workout */,
 				C3FDADBE2FCAD75500E8767F /* App */,
 				C3FDADC52FCAD75500E8767F /* Core */,
 				C3FDADCF2FCAD75500E8767F /* Features */,
@@ -217,6 +231,31 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
+		C3FDADF42FCADE4800E8767F /* ExerciseLibrary */ = {
+			isa = PBXGroup;
+			children = (
+				C3FDADF02FCADE4800E8767F /* ExerciseDetailView.swift */,
+				C3FDADF12FCADE4800E8767F /* ExerciseFormView.swift */,
+				C3FDADF22FCADE4800E8767F /* ExerciseLibraryView.swift */,
+				C3FDADF32FCADE4800E8767F /* ExerciseLibraryViewModel.swift */,
+			);
+			path = ExerciseLibrary;
+			sourceTree = "<group>";
+		};
+		C3FDADF52FCADE4800E8767F /* Plans */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Plans;
+			sourceTree = "<group>";
+		};
+		C3FDADF72FCADE4800E8767F /* Workout */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Workout;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -299,6 +338,11 @@
 				C3FDADDC2FCAD75500E8767F /* AppRouter.swift in Sources */,
 				C3FDADE82FCADD8C00E8767F /* WorkoutSession.swift in Sources */,
 				C3FDADE92FCADD8C00E8767F /* PlanExercise.swift in Sources */,
+				C3FDADF82FCADE4800E8767F /* ExerciseLibraryView.swift in Sources */,
+				C3FDADF92FCADE4800E8767F /* ExerciseFormView.swift in Sources */,
+				C3FDADFA2FCADE4800E8767F /* ExerciseDetailView.swift in Sources */,
+				C3FDADFB2FCADE4800E8767F /* SeedDataService.swift in Sources */,
+				C3FDADFC2FCADE4800E8767F /* ExerciseLibraryViewModel.swift in Sources */,
 				C3FDADEA2FCADD8C00E8767F /* TrainingPlan.swift in Sources */,
 				C3FDADEB2FCADD8C00E8767F /* FoodEntry.swift in Sources */,
 				C3FDADEC2FCADD8C00E8767F /* WeightEntry.swift in Sources */,
