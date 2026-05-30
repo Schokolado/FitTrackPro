@@ -12,66 +12,76 @@ struct TrainingPlansView: View {
     
     var body: some View {
         NavigationStack {
-        ScrollView {
-            VStack(spacing: Spacing.md) {
-                ForEach(plans) { plan in
-                    ZStack(alignment: .topTrailing) {
-                        NavigationLink(destination: PlanDetailView(plan: plan)) {
-                            VStack(alignment: .leading, spacing: 4) {
-                                HStack {
-                                    Text(plan.name)
-                                        .font(.headline)
-                                        .foregroundColor(.brand)
-                                    Spacer()
+            Group {
+                if plans.isEmpty {
+                    ContentUnavailableView(
+                        "Keine Trainingspläne",
+                        systemImage: "list.clipboard",
+                        description: Text("Füge einen neuen Trainingsplan über das '+' oben rechts hinzu.")
+                    )
+                } else {
+                    ScrollView {
+                        VStack(spacing: Spacing.md) {
+                            ForEach(plans) { plan in
+                                ZStack(alignment: .topTrailing) {
+                                    NavigationLink(destination: PlanDetailView(plan: plan)) {
+                                        VStack(alignment: .leading, spacing: 4) {
+                                            HStack {
+                                                Text(plan.name)
+                                                    .font(.headline)
+                                                    .foregroundColor(.brand)
+                                                Spacer()
+                                            }
+                                            
+                                            Text("\(plan.planExercises?.count ?? 0) Übungen")
+                                                .font(.subheadline)
+                                                .foregroundColor(.secondary)
+                                        }
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        .contentShape(Rectangle())
+                                    }
+                                    .buttonStyle(.plain)
+                                    
+                                    Menu {
+                                        Button {
+                                            planToRename = plan
+                                            newPlanName = plan.name
+                                            showingRenameAlert = true
+                                        } label: {
+                                            Label("Umbenennen", systemImage: "pencil")
+                                        }
+                                        
+                                        Button {
+                                            duplicate(plan: plan)
+                                        } label: {
+                                            Label("Duplizieren", systemImage: "doc.on.doc")
+                                        }
+                                        
+                                        Divider()
+                                        
+                                        Button(role: .destructive) {
+                                            modelContext.delete(plan)
+                                        } label: {
+                                            Label("Löschen", systemImage: "trash")
+                                        }
+                                    } label: {
+                                        Image(systemName: "ellipsis")
+                                            .font(.system(size: 20))
+                                            .foregroundColor(.secondary)
+                                            .padding(.leading, 20)
+                                            .padding(.bottom, 20)
+                                            .contentShape(Rectangle())
+                                    }
                                 }
-                                
-                                Text("\(plan.planExercises?.count ?? 0) Übungen")
-                                    .font(.subheadline)
-                                    .foregroundColor(.secondary)
+                                .cardStyle()
+                                .padding(.horizontal)
                             }
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .contentShape(Rectangle())
                         }
-                        .buttonStyle(.plain)
-                        
-                        Menu {
-                            Button {
-                                planToRename = plan
-                                newPlanName = plan.name
-                                showingRenameAlert = true
-                            } label: {
-                                Label("Umbenennen", systemImage: "pencil")
-                            }
-                            
-                            Button {
-                                duplicate(plan: plan)
-                            } label: {
-                                Label("Duplizieren", systemImage: "doc.on.doc")
-                            }
-                            
-                            Divider()
-                            
-                            Button(role: .destructive) {
-                                modelContext.delete(plan)
-                            } label: {
-                                Label("Löschen", systemImage: "trash")
-                            }
-                        } label: {
-                            Image(systemName: "ellipsis")
-                                .font(.system(size: 20))
-                                .foregroundColor(.secondary)
-                                .padding(.leading, 20)
-                                .padding(.bottom, 20)
-                                .contentShape(Rectangle())
-                        }
+                        .padding(.vertical)
                     }
-                    .cardStyle()
-                    .padding(.horizontal)
+                    .background(Color.backgroundPrimary)
                 }
             }
-            .padding(.vertical)
-        }
-        .background(Color.backgroundPrimary)
             .navigationTitle("Trainingspläne")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
