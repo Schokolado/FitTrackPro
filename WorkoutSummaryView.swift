@@ -88,13 +88,18 @@ struct WorkoutSummaryView: View {
                             .font(.headline)
                         
                         Picker("Intensität", selection: $intensity) {
-                            Text("1 - Sehr leicht").tag(1)
-                            Text("2 - Leicht").tag(2)
-                            Text("3 - Mittel").tag(3)
-                            Text("4 - Schwer").tag(4)
-                            Text("5 - Maximum").tag(5)
+                            Text("1").tag(1)
+                            Text("2").tag(2)
+                            Text("3").tag(3)
+                            Text("4").tag(4)
+                            Text("5").tag(5)
                         }
                         .pickerStyle(.segmented)
+                        
+                        Text("1 = Sehr leicht • 5 = Maximum")
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+                            .padding(.top, 4)
                     }
                     .padding()
                     .background(Color.backgroundCard)
