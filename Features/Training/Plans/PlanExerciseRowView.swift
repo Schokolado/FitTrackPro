@@ -105,16 +105,6 @@ struct PlanExerciseRowView: View {
             }
         }
         .padding(.vertical, 4)
-        .contextMenu {
-            Button(role: .destructive) {
-                if let plan = planExercise.plan {
-                    plan.planExercises?.removeAll(where: { $0.id == planExercise.id })
-                }
-                modelContext.delete(planExercise)
-            } label: {
-                Label("Übung löschen", systemImage: "trash")
-            }
-        }
     }
 }
 
