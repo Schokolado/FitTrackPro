@@ -28,7 +28,25 @@ struct ExerciseLibraryView: View {
                     .pickerStyle(.menu)
                 }
                 .padding(.horizontal)
-                .padding(.vertical, 8)
+                .padding(.vertical, 4)
+                
+                // Custom Search Bar
+                HStack {
+                    Image(systemName: "magnifyingglass")
+                        .foregroundColor(.secondary)
+                    TextField("Übung suchen...", text: $viewModel.searchText)
+                    if !viewModel.searchText.isEmpty {
+                        Button(action: { viewModel.searchText = "" }) {
+                            Image(systemName: "xmark.circle.fill")
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                }
+                .padding(8)
+                .background(Color(.systemGray5))
+                .cornerRadius(10)
+                .padding(.horizontal)
+                .padding(.bottom, 8)
                 
                 List {
                     ForEach(viewModel.filterExercises(allExercises)) { exercise in
@@ -46,7 +64,6 @@ struct ExerciseLibraryView: View {
                 }
                 .listStyle(.plain)
                 .scrollContentBackground(.hidden)
-                .searchable(text: $viewModel.searchText, prompt: "Übung suchen...")
             }
             .background(Color.backgroundPrimary)
             .navigationTitle("Übungen")
