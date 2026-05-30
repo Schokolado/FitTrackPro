@@ -14,26 +14,7 @@ struct PlanDetailView: View {
     @State private var showingReorderSheet = false
     
     private var groupedExercises: [ExerciseGroup] {
-        let sorted = (plan.planExercises ?? []).sorted(by: { $0.sortOrder < $1.sortOrder })
-        var groups: [ExerciseGroup] = []
-        var currentGroup: ExerciseGroup?
-        
-        for ex in sorted {
-            if let groupId = ex.supersetGroup {
-                if currentGroup?.supersetGroupId == groupId {
-                    currentGroup?.exercises.append(ex)
-                } else {
-                    if let cg = currentGroup { groups.append(cg) }
-                    currentGroup = ExerciseGroup(exercises: [ex], supersetGroupId: groupId)
-                }
-            } else {
-                if let cg = currentGroup { groups.append(cg) }
-                currentGroup = nil
-                groups.append(ExerciseGroup(exercises: [ex], supersetGroupId: nil))
-            }
-        }
-        if let cg = currentGroup { groups.append(cg) }
-        return groups
+        plan.groupedPlanExercises
     }
     
     var body: some View {
@@ -149,6 +130,51 @@ struct PlanDetailView: View {
         }
         .fullScreenCover(item: $activeSession) { session in
             WorkoutSessionView(session: session)
+        }
+        .onAppear {
+            cleanupPlanExercises()
+        }
+    }
+    
+    private func cleanupPlanExercises() {
+        var sorted = (plan.planExercises ?? [])
+            .filter { $0.exercise != nil }
+            .sorted(by: { $0.sortOrder < $1.sortOrder })
+        
+        var newOrder: [PlanExercise] = []
+        var processedIds: Set<UUID> = []
+        
+        for ex in sorted {
+            if processedIds.contains(ex.id) { continue }
+            if let groupId = ex.supersetGroup {
+                let related = sorted.filter { $0.supersetGroup == groupId }
+                newOrder.append(contentsOf: related)
+                for r in related { processedIds.insert(r.id) }
+            } else {
+                newOrder.append(ex)
+                processedIds.insert(ex.id)
+            }
+        }
+        
+        var changed = false
+        for (i, ex) in newOrder.enumerated() {
+            if ex.sortOrder != i {
+                ex.sortOrder = i
+                changed = true
+            }
+        }
+        
+        // Remove zombies permanently from the array
+        // Remove zombies permanently from the array and DB
+        let zombies = plan.planExercises?.filter { $0.exercise == nil } ?? []
+        for zombie in zombies {
+            modelContext.delete(zombie)
+            changed = true
+        }
+        plan.planExercises?.removeAll { $0.exercise == nil }
+        
+        if changed {
+            try? modelContext.save()
         }
     }
     
