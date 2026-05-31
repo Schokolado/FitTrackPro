@@ -9,8 +9,9 @@ struct WorkoutTimerHeaderView: View {
     @AppStorage("timerFav2") private var timerFav2: Int = 90
     @AppStorage("timerFav3") private var timerFav3: Int = 120
     
-    // Action to show custom timer alert
+    // Actions
     var onShowCustomTimer: () -> Void
+    var onFinish: () -> Void
     
     var body: some View {
         VStack(spacing: 0) {
@@ -48,43 +49,73 @@ struct WorkoutTimerHeaderView: View {
                             .clipShape(Circle())
                     }
                 }
+                
+                // Beenden Button
+                Button("Beenden") {
+                    onFinish()
+                }
+                .font(.headline)
+                .foregroundColor(.white)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 10)
+                .background(Color.brand)
+                .clipShape(Capsule())
+                .padding(.leading, 8)
             }
             .padding(.horizontal)
             .padding(.vertical, 12)
             
             // Rest Timer Banner (Slides down when active)
             if viewModel.restTimerActive {
-                Button(action: {
-                    // Tap to skip
-                    viewModel.skipRestTimer()
-                }) {
-                    ZStack(alignment: .leading) {
-                        // Background Bar
+                ZStack(alignment: .leading) {
+                    // Background Bar (Solid Green for contrast)
+                    Rectangle()
+                        .fill(Color.green)
+                    
+                    // Progress Fill (Darker Green)
+                    GeometryReader { geometry in
+                        let progress = viewModel.totalRestDuration > 0 ? (viewModel.restTimeRemaining / viewModel.totalRestDuration) : 0
                         Rectangle()
-                            .fill(Color.backgroundCard)
-                        
-                        // Progress Fill
-                        GeometryReader { geometry in
-                            let progress = viewModel.totalRestDuration > 0 ? (viewModel.restTimeRemaining / viewModel.totalRestDuration) : 0
-                            Rectangle()
-                                .fill(Color.green.opacity(0.3))
-                                .frame(width: max(0, geometry.size.width * CGFloat(progress)))
-                                .animation(.linear(duration: 1.0), value: progress)
-                        }
-                        
-                        HStack {
-                            Image(systemName: "timer")
-                            Text("Pause")
-                            Spacer()
-                            Text(viewModel.formatTime(viewModel.restTimeRemaining))
-                                .font(.title.bold().monospacedDigit())
-                        }
-                        .foregroundColor(.green)
-                        .padding(.horizontal)
+                            .fill(Color.black.opacity(0.15))
+                            .frame(width: max(0, geometry.size.width * CGFloat(progress)))
+                            .animation(.linear(duration: 1.0), value: progress)
                     }
-                    .frame(height: 50)
+                    
+                    HStack(spacing: 16) {
+                        // Pause/Play Button
+                        Button(action: {
+                            viewModel.toggleRestTimerPause()
+                        }) {
+                            Image(systemName: viewModel.restTimerPaused ? "play.fill" : "pause.fill")
+                                .font(.title2)
+                                .frame(width: 44, height: 44)
+                                .background(Color.white.opacity(0.2))
+                                .clipShape(Circle())
+                        }
+                        
+                        Text(viewModel.restTimerPaused ? "Pausiert" : "Pause")
+                            .font(.headline)
+                        
+                        Spacer()
+                        
+                        Text(viewModel.formatTime(viewModel.restTimeRemaining))
+                            .font(.system(size: 34, weight: .bold, design: .rounded).monospacedDigit())
+                        
+                        // Skip/Close Button
+                        Button(action: {
+                            viewModel.skipRestTimer()
+                        }) {
+                            Image(systemName: "xmark")
+                                .font(.title3.bold())
+                                .frame(width: 44, height: 44)
+                                .background(Color.white.opacity(0.2))
+                                .clipShape(Circle())
+                        }
+                    }
+                    .foregroundColor(.white)
+                    .padding(.horizontal)
                 }
-                .buttonStyle(.plain)
+                .frame(height: 70)
                 .transition(.move(edge: .top).combined(with: .opacity))
             }
             
@@ -100,7 +131,7 @@ struct WorkoutTimerHeaderView: View {
     vm.startRestTimer(duration: 90)
     vm.restTimeRemaining = 45
     return VStack {
-        WorkoutTimerHeaderView(viewModel: vm, planName: "Push Day", onShowCustomTimer: {})
+        WorkoutTimerHeaderView(viewModel: vm, planName: "Push Day", onShowCustomTimer: {}, onFinish: {})
         Spacer()
     }
 }

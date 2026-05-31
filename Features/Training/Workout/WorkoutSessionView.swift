@@ -97,24 +97,14 @@ struct WorkoutSessionView: View {
                 // Neuer, massiver Sticky Header
                 WorkoutTimerHeaderView(viewModel: viewModel, planName: session.plan?.name) {
                     showingCustomTimerAlert = true
+                } onFinish: {
+                    viewModel.pauseWorkout()
+                    showingFinishSheet = true
                 }
                 
                 workoutSetsList
             }
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                // Die Timer wurden aus der Toolbar in den Header verschoben.
-                // Nur der Beenden-Button bleibt rechts.
-                
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Beenden") {
-                        viewModel.pauseWorkout()
-                        showingFinishSheet = true
-                    }
-                    .bold()
-                    .foregroundColor(.brand)
-                }
-            }
+            .navigationBarHidden(true)
             .alert("Workout abbrechen?", isPresented: $showingCancelAlert) {
                 Button("Ja, abbrechen", role: .destructive) {
                     modelContext.delete(session)

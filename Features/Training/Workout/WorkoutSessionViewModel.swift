@@ -11,6 +11,7 @@ class WorkoutSessionViewModel {
     // Rest Timer State
     var restTimeRemaining: TimeInterval = 0
     var restTimerActive = false
+    var restTimerPaused = false
     var totalRestDuration: TimeInterval = 0
     
     // UI State
@@ -52,11 +53,22 @@ class WorkoutSessionViewModel {
         restTimeRemaining = duration
         totalRestDuration = duration
         restTimerActive = true
+        restTimerPaused = false
         NotificationService.shared.scheduleRestTimerNotification(duration: duration)
+    }
+    
+    func toggleRestTimerPause() {
+        restTimerPaused.toggle()
+        if restTimerPaused {
+            NotificationService.shared.cancelRestTimerNotification()
+        } else {
+            NotificationService.shared.scheduleRestTimerNotification(duration: restTimeRemaining)
+        }
     }
     
     func cancelRestTimer() {
         restTimerActive = false
+        restTimerPaused = false
         restTimeRemaining = 0
         NotificationService.shared.cancelRestTimerNotification()
     }
@@ -89,7 +101,7 @@ class WorkoutSessionViewModel {
         currentTimeString = WorkoutSessionViewModel.timeFormatter.string(from: Date())
         
         // Rest Timer
-        if restTimerActive {
+        if restTimerActive && !restTimerPaused {
             if restTimeRemaining > 0 {
                 restTimeRemaining -= 1
             } else {
