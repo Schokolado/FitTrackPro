@@ -94,54 +94,17 @@ struct WorkoutSessionView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
+                // Neuer, massiver Sticky Header
+                WorkoutTimerHeaderView(viewModel: viewModel, planName: session.plan?.name) {
+                    showingCustomTimerAlert = true
+                }
+                
                 workoutSetsList
             }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    if viewModel.restTimerActive {
-                        Button(action: {
-                            if requireRestTimerConfirm {
-                                showingSkipRestAlert = true
-                            } else {
-                                viewModel.skipRestTimer()
-                            }
-                        }) {
-                            HStack(spacing: 4) {
-                                Image(systemName: "timer")
-                                Text(viewModel.formatTime(viewModel.restTimeRemaining))
-                            }
-                            .font(.subheadline.monospacedDigit().bold())
-                            .foregroundColor(.green)
-                        }
-                    } else {
-                        Menu {
-                            Button("\(timerFav1) Sek") { viewModel.startRestTimer(duration: TimeInterval(timerFav1)) }
-                            Button("\(timerFav2) Sek") { viewModel.startRestTimer(duration: TimeInterval(timerFav2)) }
-                            Button("\(timerFav3) Sek") { viewModel.startRestTimer(duration: TimeInterval(timerFav3)) }
-                            Divider()
-                            Button("Individuell...") {
-                                showingCustomTimerAlert = true
-                            }
-                        } label: {
-                            Image(systemName: "timer")
-                                .font(.headline)
-                                .foregroundColor(.brand)
-                        }
-                    }
-                }
-                
-                ToolbarItem(placement: .principal) {
-                    VStack(spacing: 2) {
-                        Text(session.plan?.name ?? "Freies Workout")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                        
-                        Text(viewModel.formatTime(viewModel.elapsedTime))
-                            .font(.headline.monospacedDigit())
-                            .foregroundColor(.primary)
-                    }
-                }
+                // Die Timer wurden aus der Toolbar in den Header verschoben.
+                // Nur der Beenden-Button bleibt rechts.
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Beenden") {
