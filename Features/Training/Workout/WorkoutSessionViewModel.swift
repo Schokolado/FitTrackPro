@@ -4,8 +4,9 @@ import SwiftData
 @Observable
 class WorkoutSessionViewModel {
     // Timer State
-    var startTime: Date?
     var elapsedTime: TimeInterval = 0
+    var accumulatedTime: TimeInterval = 0
+    var currentSegmentStartTime: Date?
     var timerActive = false
     
     // Rest Timer State
@@ -28,19 +29,24 @@ class WorkoutSessionViewModel {
     }()
     
     func startWorkout() {
-        if startTime == nil {
-            startTime = Date()
+        if currentSegmentStartTime == nil {
+            currentSegmentStartTime = Date()
         }
         timerActive = true
         startTimers()
     }
     
     func pauseWorkout() {
+        if timerActive, let start = currentSegmentStartTime {
+            accumulatedTime += Date().timeIntervalSince(start)
+        }
         timerActive = false
+        currentSegmentStartTime = nil
         stopTimers()
     }
     
     func resumeWorkout() {
+        currentSegmentStartTime = Date()
         timerActive = true
         startTimers()
     }
@@ -97,8 +103,8 @@ class WorkoutSessionViewModel {
     
     private func updateTimes() {
         // Workout Duration
-        if timerActive, let start = startTime {
-            elapsedTime = Date().timeIntervalSince(start)
+        if timerActive, let start = currentSegmentStartTime {
+            elapsedTime = accumulatedTime + Date().timeIntervalSince(start)
         }
         
         // Real Time Header

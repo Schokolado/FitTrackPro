@@ -30,6 +30,25 @@ struct WorkoutTimerHeaderView: View {
                     .padding(.top, 4)
                 }
                 
+                HStack {
+                    Spacer()
+                    Button(action: {
+                        if viewModel.timerActive {
+                            viewModel.pauseWorkout()
+                        } else {
+                            viewModel.resumeWorkout()
+                        }
+                    }) {
+                        Image(systemName: viewModel.timerActive ? "pause.fill" : "play.fill")
+                            .font(.title3.bold())
+                            .foregroundColor(viewModel.timerActive ? .orange : .green)
+                            .padding(12)
+                            .background(Color.secondary.opacity(0.1))
+                            .clipShape(Circle())
+                    }
+                    .padding(.top, 4)
+                }
+                
                 // Centered content
                 VStack(spacing: viewModel.restTimerActive ? 2 : 8) {
                     Text(planName ?? "Freies Workout")

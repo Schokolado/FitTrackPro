@@ -42,13 +42,15 @@ struct WorkoutMiniPlayerView: View {
                 
                 // Play/Pause button
                 Button(action: {
-                    if viewModel.timerActive {
+                    if viewModel.restTimerActive {
+                        viewModel.cancelRestTimer()
+                    } else if viewModel.timerActive {
                         viewModel.pauseWorkout()
                     } else {
-                        viewModel.startWorkout()
+                        viewModel.resumeWorkout()
                     }
                 }) {
-                    Image(systemName: viewModel.timerActive ? "pause.circle.fill" : "play.circle.fill")
+                    Image(systemName: viewModel.restTimerActive ? "xmark.circle.fill" : (viewModel.timerActive ? "pause.circle.fill" : "play.circle.fill"))
                         .font(.system(size: 32))
                         .foregroundColor(.brand)
                 }
