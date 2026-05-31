@@ -281,21 +281,28 @@ struct PlanDetailView: View {
                         _ = expandedGroups.insert(group.id)
                     }
                 }) {
-                    VStack(alignment: .leading, spacing: 4) {
-                        ForEach(Array(group.exercises.enumerated()), id: \.element.id) { index, planEx in
-                            Text(planEx.exercise?.name ?? "Unbekannt")
-                                .font(.headline)
-                                .foregroundColor(.brand)
-                            
-                            if index < group.exercises.count - 1 {
-                                Divider()
-                                    .padding(.leading)
+                    HStack(spacing: 12) {
+                        SupersetIconStack(
+                            exercises: group.exercises.compactMap { $0.exercise }
+                        )
+
+                        VStack(alignment: .leading, spacing: 2) {
+                            ForEach(group.exercises) { planEx in
+                                Text(planEx.exercise?.name ?? "Unbekannt")
+                                    .font(.headline)
+                                    .foregroundColor(.primary)
+                                    .lineLimit(1)
                             }
                         }
+
+                        Spacer()
+
+                        Image(systemName: "chevron.right")
+                            .font(.caption.weight(.semibold))
+                            .foregroundColor(.secondary)
                     }
                     .padding(.horizontal)
-                    .padding(.top, 8)
-                    .padding(.bottom, 8)
+                    .padding(.vertical, 10)
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
@@ -354,7 +361,6 @@ struct PlanDetailView: View {
         )
     }
 }
-
 
 
 struct PlanExerciseReorderView: View {

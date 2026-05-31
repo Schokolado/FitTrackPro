@@ -46,6 +46,7 @@
 		C3FDAE102FCAE41100E8767F /* WorkoutSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3FDAE0F2FCAE41100E8767F /* WorkoutSummaryView.swift */; };
 		C3FDAE122FCAE73F00E8767F /* ExerciseHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3FDAE112FCAE73F00E8767F /* ExerciseHistoryView.swift */; };
 		A1B2C3D4E5F6A7B8C9D0E1F3 /* ExerciseCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6A7B8C9D0E1F2 /* ExerciseCardView.swift */; };
+				B1C2D3E4F5A6B7C8D9E0F1A3 /* SupersetIconStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D3E4F5A6B7C8D9E0F1A2 /* SupersetIconStack.swift */; };
 		/* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -91,6 +92,7 @@
 		EBD770BA5BDC13445B2DF3A7 /* NotificationNames.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NotificationNames.swift; sourceTree = "<group>"; };
 		FD6744A2D4B3D0CF12153D62 /* SettingsView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F6A7B8C9D0E1F2 /* ExerciseCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Training/ExerciseLibrary/ExerciseCardView.swift; sourceTree = "SOURCE_ROOT"; };
+				B1C2D3E4F5A6B7C8D9E0F1A2 /* SupersetIconStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupersetIconStack.swift; sourceTree = "<group>"; };
 		/* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -108,7 +110,8 @@
 			isa = PBXGroup;
 			children = (
 				D874C7BBAA626D0DBA57A291 /* ExerciseIconView.swift */,
-			);
+			
+				B1C2D3E4F5A6B7C8D9E0F1A2 /* SupersetIconStack.swift */,);
 			name = Views;
 			path = Views;
 			sourceTree = "<group>";
@@ -413,7 +416,8 @@
 				C15C887F2F04AEAFCC42A9E9 /* ExerciseIconView.swift in Sources */,
 				A08B4EB64636BFF4EA1B16BE /* ThemeSettingsView.swift in Sources */,
 			
-				A1B2C3D4E5F6A7B8C9D0E1F3 /* ExerciseCardView.swift in Sources */,);
+				A1B2C3D4E5F6A7B8C9D0E1F3 /* ExerciseCardView.swift in Sources */,
+				B1C2D3E4F5A6B7C8D9E0F1A3 /* SupersetIconStack.swift in Sources */,);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */

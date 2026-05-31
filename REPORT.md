@@ -36,6 +36,19 @@
 
 ## Einträge
 
+### 2026-05-31 – SupersetIconStack: Overlapping Icon-Stack für Supersätze
+
+**Status:** ✅ Fertig  
+**Bearbeitet:** UI – PlanDetailView & WorkoutSessionView
+
+**Implementiert:**
+- **SupersetIconStack** (`Core/Views/SupersetIconStack.swift`): Neue wiederverwendbare Komponente. Zeigt bis zu 3 Kategorie-Icons (28×28 pt) mit −10 pt Overlap und 2 pt Hintergrund-Trennring — inspiriert vom Avatar-Stack-Pattern aus Notion / Linear / GitHub.
+- **PlanDetailView** (`Features/Training/Plans/PlanDetailView.swift`): Collapsed-Supersatz zeigt jetzt Icon-Stack + Namen-VStack statt reinem Text mit Divider-Trenner. Chevron-Pfeil als Expand-Hinweis.
+- **WorkoutSessionView** (`Features/Training/Workout/WorkoutSessionView.swift`): `WorkoutSupersetGroupCard` collapsed body ersetzt — statt flacher `ExerciseIconView`-Icons mit Divider jetzt konsistenter `SupersetIconStack`. Der separater `🔗 Supersatz`-Header (incl. Completion-Haken) bleibt unverändert.
+- Xcode-Projekt aktualisiert: `SupersetIconStack.swift` in `Core/Views`-Gruppe registriert.
+
+**Build:** `** BUILD SUCCEEDED **` (Clean Build)
+
 ### 2026-05-31 – Code-Cleanup & Architektur-Konsolidierung
 
 **Status:** ✅ Fertig  

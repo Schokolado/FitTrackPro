@@ -439,25 +439,28 @@ struct WorkoutSupersetGroupCard: View {
                     Button(action: {
                         withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) { isExpanded.toggle() }
                     }) {
-                        VStack(alignment: .leading, spacing: 4) {
-                            ForEach(Array(sessionGroup.exerciseGroups.enumerated()), id: \.element.id) { index, g in
-                                HStack {
-                                    ExerciseIconView(exercise: g.exercise, size: 20)
-                                        .foregroundColor(themeManager.color(for: g.exercise.category))
+                        HStack(spacing: 12) {
+                            SupersetIconStack(
+                                exercises: sessionGroup.exerciseGroups.map { $0.exercise }
+                            )
+
+                            VStack(alignment: .leading, spacing: 2) {
+                                ForEach(sessionGroup.exerciseGroups, id: \.id) { g in
                                     Text(g.exercise.name)
                                         .font(.headline)
                                         .foregroundColor(.primary)
-                                }
-                                
-                                if index < sessionGroup.exerciseGroups.count - 1 {
-                                    Divider()
-                                        .padding(.leading)
+                                        .lineLimit(1)
                                 }
                             }
+
+                            Spacer()
+
+                            Image(systemName: "chevron.right")
+                                .font(.caption.weight(.semibold))
+                                .foregroundColor(.secondary)
                         }
                         .padding(.horizontal)
-                        .padding(.top, 8)
-                        .padding(.bottom, 8)
+                        .padding(.vertical, 10)
                         .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
