@@ -10,26 +10,19 @@ struct SupersetIconStack: View {
     @EnvironmentObject var themeManager: ThemeManager
 
     private let iconSize: CGFloat = 28
-    private let borderWidth: CGFloat = 2
-    private let overlap: CGFloat = 10
+    private let overlap: CGFloat = 14 // Increased overlap to bring them closer
 
-    private var outerSize: CGFloat { iconSize + borderWidth * 2 }
-    private var step: CGFloat { outerSize - overlap }
+    private var step: CGFloat { iconSize - overlap }
     private var displayExercises: [Exercise] { Array(exercises.prefix(3)) }
     private var totalWidth: CGFloat {
-        outerSize + CGFloat(max(0, displayExercises.count - 1)) * step
+        iconSize + CGFloat(max(0, displayExercises.count - 1)) * step
     }
 
     var body: some View {
         ZStack(alignment: .leading) {
             ForEach(Array(displayExercises.enumerated()), id: \.offset) { index, exercise in
                 ZStack {
-                    // Border ring – matches card background for clean separation
-                    Circle()
-                        .fill(Color.backgroundCard)
-                        .frame(width: outerSize, height: outerSize)
-
-                    // Gradient fill
+                    // Gradient fill (no border ring to be consistent with normal icons)
                     Circle()
                         .fill(LinearGradient(
                             colors: [
@@ -50,6 +43,7 @@ struct SupersetIconStack: View {
                 .offset(x: CGFloat(index) * step)
             }
         }
-        .frame(width: totalWidth, height: outerSize)
+        .frame(width: totalWidth, height: iconSize, alignment: .leading)
+
     }
 }
