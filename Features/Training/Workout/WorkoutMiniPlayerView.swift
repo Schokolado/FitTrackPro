@@ -76,6 +76,16 @@ struct WorkoutMiniPlayerView: View {
                             .font(.system(size: 26))
                             .foregroundColor(.gray)
                     }
+                } else {
+                    // Cancel Rest Timer Button
+                    Button(action: {
+                        showingCancelTimerAlert = true
+                    }) {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.system(size: 32))
+                            .foregroundColor(.gray.opacity(0.5))
+                    }
+                    .buttonStyle(PlainButtonStyle())
                 }
                 
                 // Play/Pause button
@@ -93,18 +103,6 @@ struct WorkoutMiniPlayerView: View {
                         .foregroundColor(viewModel.timerActive ? .orange : .brand)
                 }
                 .buttonStyle(PlainButtonStyle())
-                
-                // Cancel Rest Timer Button
-                if viewModel.restTimerActive {
-                    Button(action: {
-                        showingCancelTimerAlert = true
-                    }) {
-                        Image(systemName: "xmark.circle.fill")
-                            .font(.system(size: 32))
-                            .foregroundColor(.gray.opacity(0.5))
-                    }
-                    .buttonStyle(PlainButtonStyle())
-                }
             }
         }
         .padding(.horizontal, 16)
