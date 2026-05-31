@@ -14,6 +14,10 @@ struct WorkoutTimerHeaderView: View {
     var onSkipRestTimer: () -> Void
     var onMinimize: (() -> Void)? = nil
     
+    private var cardHeight: CGFloat {
+        (!viewModel.timerActive && viewModel.restTimerActive) ? 195 : 170
+    }
+    
     var body: some View {
         VStack(spacing: 0) {
             // Main Header (Always visible)
@@ -136,9 +140,10 @@ struct WorkoutTimerHeaderView: View {
                 .transition(.move(edge: .bottom).combined(with: .opacity))
             }
         }
-        .frame(height: 170)
+        .frame(height: cardHeight)
         .background(Color.backgroundCard)
         .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+        .animation(.spring(response: 0.4, dampingFraction: 0.8), value: cardHeight)
         .animation(.spring(response: 0.4, dampingFraction: 0.8), value: viewModel.restTimerActive)
         .shadow(color: Color.black.opacity(0.08), radius: 12, x: 0, y: 6)
         .padding(.horizontal)
