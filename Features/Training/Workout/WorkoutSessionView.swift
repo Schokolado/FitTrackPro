@@ -199,7 +199,6 @@ struct WorkoutSessionView: View {
             }
             .onAppear {
                 NotificationService.shared.requestAuthorization()
-                viewModel.startWorkout()
                 
                 if let firstUncompleted = sessionExerciseGroups.first(where: { !isGroupCompleted($0) }) {
                     expandedGroupIds.insert(firstUncompleted.id)

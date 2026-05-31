@@ -133,6 +133,28 @@ struct WorkoutTimerHeaderView: View {
         .padding(.horizontal)
         .padding(.top, 4)
         .padding(.bottom, 16)
+        .overlay(alignment: .bottomTrailing) {
+            if !viewModel.restTimerActive {
+                Menu {
+                    Button("\(timerFav1) Sek") { viewModel.startRestTimer(duration: TimeInterval(timerFav1)) }
+                    Button("\(timerFav2) Sek") { viewModel.startRestTimer(duration: TimeInterval(timerFav2)) }
+                    Button("\(timerFav3) Sek") { viewModel.startRestTimer(duration: TimeInterval(timerFav3)) }
+                    Divider()
+                    Button("Individuell...") {
+                        onShowCustomTimer()
+                    }
+                } label: {
+                    Image(systemName: "timer")
+                        .font(.title2)
+                        .foregroundColor(.white)
+                        .frame(width: 44, height: 44)
+                        .background(Color.brand)
+                        .clipShape(Circle())
+                }
+                .padding(.horizontal, 32)
+                .padding(.bottom, 39) // 16 padding + 23 offset
+            }
+        }
     }
 }
 
