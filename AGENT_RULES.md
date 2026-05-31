@@ -9,3 +9,4 @@ These rules must be strictly followed for every task in this project.
    - The changes have been fully implemented.
    - The markdown reports/documentation have been updated.
    - The project builds successfully (`** BUILD SUCCEEDED **`).
+5. **Simulator Launch**: After a successful build, automatically boot the iOS Simulator (`open -a Simulator`), build the `.app` payload, and launch it via `xcrun simctl` so the user can immediately review the UI changes without manual clicking.
