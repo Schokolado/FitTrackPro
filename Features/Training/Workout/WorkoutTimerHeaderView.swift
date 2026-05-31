@@ -11,13 +11,15 @@ struct WorkoutTimerHeaderView: View {
     
     // Actions
     var onShowCustomTimer: () -> Void
+    var onSkipRestTimer: () -> Void
     var onFinish: () -> Void
     
     var body: some View {
         VStack(spacing: 0) {
             // Main Header (Always visible)
-            HStack {
-                VStack(alignment: .leading, spacing: 2) {
+            ZStack {
+                // Centered content
+                VStack(spacing: 2) {
                     Text(planName ?? "Freies Workout")
                         .font(.caption)
                         .foregroundColor(.secondary)
@@ -27,19 +29,20 @@ struct WorkoutTimerHeaderView: View {
                         .font(.system(size: 48, weight: .heavy, design: .rounded).monospacedDigit())
                         .foregroundColor(.primary)
                 }
-                Spacer()
                 
-                // Beenden Button
-                Button("Beenden") {
-                    onFinish()
+                // Right aligned Beenden button
+                HStack {
+                    Spacer()
+                    Button("Beenden") {
+                        onFinish()
+                    }
+                    .font(.headline)
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 10)
+                    .background(Color.brand)
+                    .clipShape(Capsule())
                 }
-                .font(.headline)
-                .foregroundColor(.white)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 10)
-                .background(Color.brand)
-                .clipShape(Capsule())
-                .padding(.leading, 8)
             }
             .padding(.horizontal)
             .padding(.vertical, 12)
@@ -51,10 +54,10 @@ struct WorkoutTimerHeaderView: View {
                     Rectangle()
                         .fill(Color.green)
                     
-                    HStack(spacing: 16) {
+                    HStack {
                         // Skip/Close Button (Left)
                         Button(action: {
-                            viewModel.skipRestTimer()
+                            onSkipRestTimer()
                         }) {
                             Image(systemName: "xmark")
                                 .font(.title3.bold())
@@ -63,13 +66,25 @@ struct WorkoutTimerHeaderView: View {
                                 .clipShape(Circle())
                         }
                         
-                        Text(viewModel.restTimerPaused ? "Pausiert" : "Pause")
-                            .font(.headline)
-                        
                         Spacer()
                         
-                        Text(viewModel.formatTime(viewModel.restTimeRemaining))
-                            .font(.system(size: 34, weight: .bold, design: .rounded).monospacedDigit())
+                        VStack(spacing: 0) {
+                            if viewModel.restTimerPaused {
+                                Text("Pausiert")
+                                    .font(.caption)
+                                    .textCase(.uppercase)
+                                    .foregroundColor(.white.opacity(0.9))
+                            } else {
+                                Text("Pause")
+                                    .font(.caption)
+                                    .textCase(.uppercase)
+                                    .foregroundColor(.white.opacity(0.9))
+                            }
+                            Text(viewModel.formatTime(viewModel.restTimeRemaining))
+                                .font(.system(size: 38, weight: .bold, design: .rounded).monospacedDigit())
+                        }
+                        
+                        Spacer()
                         
                         // Pause/Play Button (Right)
                         Button(action: {
@@ -106,7 +121,7 @@ struct WorkoutTimerHeaderView: View {
     vm.startRestTimer(duration: 90)
     vm.restTimeRemaining = 45
     return VStack {
-        WorkoutTimerHeaderView(viewModel: vm, planName: "Push Day", onShowCustomTimer: {}, onFinish: {})
+        WorkoutTimerHeaderView(viewModel: vm, planName: "Push Day", onShowCustomTimer: {}, onSkipRestTimer: {}, onFinish: {})
         Spacer()
     }
 }
