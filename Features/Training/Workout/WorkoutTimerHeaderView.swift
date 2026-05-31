@@ -60,6 +60,17 @@ struct WorkoutTimerHeaderView: View {
                     Text(viewModel.formatTime(viewModel.elapsedTime))
                         .font(.system(size: viewModel.restTimerActive ? 44 : 76, weight: .heavy, design: .rounded).monospacedDigit())
                         .foregroundColor(.primary)
+                    
+                    if !viewModel.timerActive {
+                        Text("PAUSIERT")
+                            .font(.caption2.weight(.bold))
+                            .foregroundColor(.orange)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(Color.orange.opacity(0.15))
+                            .clipShape(Capsule())
+                            .transition(.opacity.combined(with: .scale))
+                    }
                 }
                 .frame(maxWidth: .infinity)
             }
@@ -145,10 +156,10 @@ struct WorkoutTimerHeaderView: View {
                     }
                 } label: {
                     Image(systemName: "timer")
-                        .font(.title2)
-                        .foregroundColor(.white)
+                        .font(.title3.bold())
+                        .foregroundColor(.primary)
                         .frame(width: 44, height: 44)
-                        .background(Color.brand)
+                        .background(Color.secondary.opacity(0.1))
                         .clipShape(Circle())
                 }
                 .padding(.horizontal, 32)
