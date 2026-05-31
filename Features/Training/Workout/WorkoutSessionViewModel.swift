@@ -58,6 +58,7 @@ class WorkoutSessionViewModel {
     
     // MARK: - Rest Timer
     func startRestTimer(duration: TimeInterval) {
+        guard duration > 0 else { return }
         restTimeRemaining = duration
         totalRestDuration = duration
         restTimerActive = true
