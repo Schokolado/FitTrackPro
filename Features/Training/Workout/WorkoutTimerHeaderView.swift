@@ -28,6 +28,7 @@ struct WorkoutTimerHeaderView: View {
                         .font(.system(size: viewModel.restTimerActive ? 48 : 64, weight: .heavy, design: .rounded).monospacedDigit())
                         .foregroundColor(.primary)
                 }
+                .frame(maxWidth: .infinity)
             }
             .padding(.horizontal)
             .padding(.top, 16)
