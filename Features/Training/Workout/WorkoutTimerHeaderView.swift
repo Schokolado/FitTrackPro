@@ -15,7 +15,10 @@ struct WorkoutTimerHeaderView: View {
     var onMinimize: (() -> Void)? = nil
     
     private var cardHeight: CGFloat {
-        (!viewModel.timerActive && viewModel.restTimerActive) ? 195 : 170
+        if !viewModel.timerActive {
+            return viewModel.restTimerActive ? 195 : 205
+        }
+        return 170
     }
     
     var body: some View {
@@ -79,9 +82,9 @@ struct WorkoutTimerHeaderView: View {
                 .frame(maxWidth: .infinity)
             }
             .padding(.horizontal)
-            .padding(.top, viewModel.restTimerActive ? 12 : 16)
+            .padding(.top, viewModel.restTimerActive ? 16 : 28)
             .padding(.bottom, viewModel.restTimerActive ? 8 : 16)
-            .frame(maxHeight: .infinity)
+            .frame(maxHeight: .infinity, alignment: .top)
             
             // Rest Timer Banner (Slides down when active)
             if viewModel.restTimerActive {
