@@ -305,6 +305,7 @@ struct WorkoutSessionView: View {
                 .padding(.top, 16)
                 .padding(.bottom, 32)
             }
+            .padding(.top, 12)
             .padding(.vertical)
             .onChange(of: scrollTarget) { _, newTarget in
                 if let target = newTarget {
