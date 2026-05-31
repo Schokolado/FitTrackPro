@@ -102,11 +102,6 @@ struct WorkoutSessionView: View {
                             viewModel.pauseWorkout()
                             showingFinishSheet = true
                         }
-                        .background(
-                            Rectangle()
-                                .fill(.ultraThinMaterial)
-                                .ignoresSafeArea(.container, edges: .top)
-                        )
                     }
             .navigationBarHidden(true)
             .alert("Workout abbrechen?", isPresented: $showingCancelAlert) {
