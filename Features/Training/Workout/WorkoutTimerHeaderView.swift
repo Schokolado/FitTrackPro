@@ -24,7 +24,7 @@ struct WorkoutTimerHeaderView: View {
                         .textCase(.uppercase)
                     
                     Text(viewModel.formatTime(viewModel.elapsedTime))
-                        .font(.system(size: 40, weight: .heavy, design: .rounded).monospacedDigit())
+                        .font(.system(size: 48, weight: .heavy, design: .rounded).monospacedDigit())
                         .foregroundColor(.primary)
                 }
                 
@@ -68,26 +68,26 @@ struct WorkoutTimerHeaderView: View {
             // Rest Timer Banner (Slides down when active)
             if viewModel.restTimerActive {
                 ZStack(alignment: .leading) {
-                    // Background Bar (Solid Green for contrast)
+                    // Background Bar (Dark Gray for contrast with white text)
                     Rectangle()
-                        .fill(Color.green)
+                        .fill(Color(white: 0.15))
                     
-                    // Progress Fill (Darker Green)
+                    // Progress Fill (Green)
                     GeometryReader { geometry in
                         let progress = viewModel.totalRestDuration > 0 ? (viewModel.restTimeRemaining / viewModel.totalRestDuration) : 0
                         Rectangle()
-                            .fill(Color.black.opacity(0.15))
+                            .fill(Color.green.opacity(0.8))
                             .frame(width: max(0, geometry.size.width * CGFloat(progress)))
                             .animation(.linear(duration: 1.0), value: progress)
                     }
                     
                     HStack(spacing: 16) {
-                        // Pause/Play Button
+                        // Skip/Close Button (Swapped to the left)
                         Button(action: {
-                            viewModel.toggleRestTimerPause()
+                            viewModel.skipRestTimer()
                         }) {
-                            Image(systemName: viewModel.restTimerPaused ? "play.fill" : "pause.fill")
-                                .font(.title2)
+                            Image(systemName: "xmark")
+                                .font(.title3.bold())
                                 .frame(width: 44, height: 44)
                                 .background(Color.white.opacity(0.2))
                                 .clipShape(Circle())
@@ -101,12 +101,12 @@ struct WorkoutTimerHeaderView: View {
                         Text(viewModel.formatTime(viewModel.restTimeRemaining))
                             .font(.system(size: 34, weight: .bold, design: .rounded).monospacedDigit())
                         
-                        // Skip/Close Button
+                        // Pause/Play Button (Swapped to the right)
                         Button(action: {
-                            viewModel.skipRestTimer()
+                            viewModel.toggleRestTimerPause()
                         }) {
-                            Image(systemName: "xmark")
-                                .font(.title3.bold())
+                            Image(systemName: viewModel.restTimerPaused ? "play.fill" : "pause.fill")
+                                .font(.title2)
                                 .frame(width: 44, height: 44)
                                 .background(Color.white.opacity(0.2))
                                 .clipShape(Circle())
