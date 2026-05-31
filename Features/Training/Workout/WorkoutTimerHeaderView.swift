@@ -112,8 +112,12 @@ struct WorkoutTimerHeaderView: View {
             
             // Divider removed, replaced by shadow below
         }
-        .background(Color.backgroundPrimary)
-        .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 4)
+        .background(Color.backgroundCard)
+        .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+        .shadow(color: Color.black.opacity(0.08), radius: 12, x: 0, y: 6)
+        .padding(.horizontal)
+        .padding(.top, 4)
+        .padding(.bottom, 16)
     }
 }
 
