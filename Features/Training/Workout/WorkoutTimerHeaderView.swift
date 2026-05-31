@@ -20,12 +20,13 @@ struct WorkoutTimerHeaderView: View {
                 // Centered content
                 VStack(spacing: viewModel.restTimerActive ? 2 : 8) {
                     Text(planName ?? "Freies Workout")
-                        .font(.caption)
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
                         .foregroundColor(.secondary)
                         .textCase(.uppercase)
                     
                     Text(viewModel.formatTime(viewModel.elapsedTime))
-                        .font(.system(size: viewModel.restTimerActive ? 48 : 64, weight: .heavy, design: .rounded).monospacedDigit())
+                        .font(.system(size: viewModel.restTimerActive ? 56 : 76, weight: .heavy, design: .rounded).monospacedDigit())
                         .foregroundColor(.primary)
                 }
                 .frame(maxWidth: .infinity)
