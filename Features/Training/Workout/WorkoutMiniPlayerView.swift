@@ -6,6 +6,12 @@ struct WorkoutMiniPlayerView: View {
     let onTap: () -> Void
     
     @State private var showingCancelTimerAlert = false
+    @State private var showingCustomTimerAlert = false
+    @State private var customTimerSeconds = ""
+    
+    @AppStorage("timerFav1") private var timerFav1 = 30
+    @AppStorage("timerFav2") private var timerFav2 = 60
+    @AppStorage("timerFav3") private var timerFav3 = 90
     
     var body: some View {
         HStack(spacing: 16) {
@@ -55,6 +61,23 @@ struct WorkoutMiniPlayerView: View {
             
             // Buttons
             HStack(spacing: 12) {
+                // Start Rest Timer Menu
+                if !viewModel.restTimerActive {
+                    Menu {
+                        Button("\(timerFav1) Sek") { viewModel.startRestTimer(duration: TimeInterval(timerFav1)) }
+                        Button("\(timerFav2) Sek") { viewModel.startRestTimer(duration: TimeInterval(timerFav2)) }
+                        Button("\(timerFav3) Sek") { viewModel.startRestTimer(duration: TimeInterval(timerFav3)) }
+                        Divider()
+                        Button("Individuell...") {
+                            showingCustomTimerAlert = true
+                        }
+                    } label: {
+                        Image(systemName: "timer")
+                            .font(.system(size: 26))
+                            .foregroundColor(.gray)
+                    }
+                }
+                
                 // Play/Pause button
                 Button(action: {
                     withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
@@ -103,6 +126,21 @@ struct WorkoutMiniPlayerView: View {
             Button("Weiterlaufen lassen", role: .cancel) { }
         } message: {
             Text("Möchtest du die aktuelle Satz-Pause abbrechen?")
+        }
+        .alert("Eigener Timer", isPresented: $showingCustomTimerAlert) {
+            TextField("Sekunden", text: $customTimerSeconds)
+                .keyboardType(.numberPad)
+            Button("Starten") {
+                if let seconds = Int(customTimerSeconds), seconds > 0 {
+                    viewModel.startRestTimer(duration: TimeInterval(seconds))
+                }
+                customTimerSeconds = ""
+            }
+            Button("Abbrechen", role: .cancel) {
+                customTimerSeconds = ""
+            }
+        } message: {
+            Text("Gib die gewünschte Pausenzeit in Sekunden ein.")
         }
     }
 }
