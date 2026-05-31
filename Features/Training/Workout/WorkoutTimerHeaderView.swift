@@ -26,14 +26,14 @@ struct WorkoutTimerHeaderView: View {
                         .textCase(.uppercase)
                     
                     Text(viewModel.formatTime(viewModel.elapsedTime))
-                        .font(.system(size: viewModel.restTimerActive ? 56 : 76, weight: .heavy, design: .rounded).monospacedDigit())
+                        .font(.system(size: viewModel.restTimerActive ? 44 : 76, weight: .heavy, design: .rounded).monospacedDigit())
                         .foregroundColor(.primary)
                 }
                 .frame(maxWidth: .infinity)
             }
             .padding(.horizontal)
-            .padding(.top, 16)
-            .padding(.bottom, viewModel.restTimerActive ? 12 : 16)
+            .padding(.top, viewModel.restTimerActive ? 12 : 16)
+            .padding(.bottom, viewModel.restTimerActive ? 8 : 16)
             .frame(maxHeight: .infinity)
             
             // Rest Timer Banner (Slides down when active)
@@ -70,7 +70,7 @@ struct WorkoutTimerHeaderView: View {
                                     .foregroundColor(.white.opacity(0.9))
                             }
                             Text(viewModel.formatTime(viewModel.restTimeRemaining))
-                                .font(.system(size: 38, weight: .bold, design: .rounded).monospacedDigit())
+                                .font(.system(size: 56, weight: .bold, design: .rounded).monospacedDigit())
                         }
                         
                         Spacer()
@@ -89,7 +89,7 @@ struct WorkoutTimerHeaderView: View {
                     .foregroundColor(.white)
                     .padding(.horizontal)
                 }
-                .frame(height: 70)
+                .frame(height: 90)
                 .transition(.move(edge: .bottom).combined(with: .opacity))
             }
         }
