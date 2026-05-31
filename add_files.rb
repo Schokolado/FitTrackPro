@@ -17,10 +17,13 @@ end
 files_to_add = [
   # Red: SettingsView in proper location
   [['Features', 'Settings'],              'Features/Settings/SettingsView.swift'],
+  [['Features', 'Settings'],              'Features/Settings/ThemeSettingsView.swift'],
   # Yellow: New extension files
   [['Core', 'Extensions'],                'Core/Extensions/NotificationNames.swift'],
   [['Core', 'Extensions'],                'Core/Extensions/Logger+App.swift'],
   [['Core', 'Extensions'],                'Core/Extensions/TrainingPlan+Grouping.swift'],
+  [['Core', 'Managers'],                  'Core/Managers/ThemeManager.swift'],
+  [['Core', 'Views'],                     'Core/Views/ExerciseIconView.swift'],
 ]
 
 files_to_add.each do |group_path, file_path|

@@ -3,6 +3,7 @@ import SwiftData
 
 struct PlanExerciseRowView: View {
     @Environment(\.modelContext) private var modelContext
+    @EnvironmentObject var themeManager: ThemeManager
     @Bindable var planExercise: PlanExercise
     var onReorder: (() -> Void)? = nil
     var onSupersetChanged: (() -> Void)? = nil
@@ -21,12 +22,11 @@ struct PlanExerciseRowView: View {
                         HStack {
                             ZStack {
                                 Circle()
-                                    .fill(LinearGradient(gradient: Gradient(colors: [exercise.themeColor.opacity(0.7), exercise.themeColor]), startPoint: .topLeading, endPoint: .bottomTrailing))
+                                    .fill(LinearGradient(gradient: Gradient(colors: [themeManager.color(for: exercise.category).opacity(0.7), themeManager.color(for: exercise.category)]), startPoint: .topLeading, endPoint: .bottomTrailing))
                                     .frame(width: 40, height: 40)
                                 
-                                Image(systemName: exercise.themeIcon)
+                                ExerciseIconView(exercise: exercise, size: 20)
                                     .foregroundColor(.white)
-                                    .font(.headline)
                             }
                             
                             Text(exercise.name)

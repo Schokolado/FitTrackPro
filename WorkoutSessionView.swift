@@ -4,6 +4,7 @@ import SwiftData
 struct WorkoutSessionView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject var themeManager: ThemeManager
     
     @State private var viewModel = WorkoutSessionViewModel()
     @Bindable var session: WorkoutSession
@@ -375,6 +376,7 @@ struct SessionExerciseGroupData: Identifiable {
 
 struct WorkoutSupersetGroupCard: View {
     @Environment(\.modelContext) private var modelContext
+    @EnvironmentObject var themeManager: ThemeManager
     let sessionGroup: SessionExerciseGroupData
     let session: WorkoutSession
     let viewModel: WorkoutSessionViewModel
@@ -440,8 +442,8 @@ struct WorkoutSupersetGroupCard: View {
                         VStack(alignment: .leading, spacing: 4) {
                             ForEach(Array(sessionGroup.exerciseGroups.enumerated()), id: \.element.id) { index, g in
                                 HStack {
-                                    Image(systemName: g.exercise.themeIcon)
-                                        .foregroundColor(g.exercise.themeColor)
+                                    ExerciseIconView(exercise: g.exercise, size: 20)
+                                        .foregroundColor(themeManager.color(for: g.exercise.category))
                                     Text(g.exercise.name)
                                         .font(.headline)
                                         .foregroundColor(.primary)
@@ -489,6 +491,7 @@ struct WorkoutSupersetGroupCard: View {
 
 struct WorkoutExerciseInnerView: View {
     @Environment(\.modelContext) private var modelContext
+    @EnvironmentObject var themeManager: ThemeManager
     let exercise: Exercise
     let planExercise: PlanExercise?
     let sets: [WorkoutSet]
@@ -509,8 +512,8 @@ struct WorkoutExerciseInnerView: View {
                 }) {
                     HStack {
                         HStack {
-                            Image(systemName: exercise.themeIcon)
-                                .foregroundColor(exercise.themeColor)
+                            ExerciseIconView(exercise: exercise, size: 20)
+                                .foregroundColor(themeManager.color(for: exercise.category))
                             Text(exercise.name)
                                 .font(.headline)
                                 .foregroundColor(.primary)
@@ -579,7 +582,7 @@ struct WorkoutExerciseInnerView: View {
     }
     
     private func addSet(for exercise: Exercise, planExercise: PlanExercise?) {
-        guard let sessionSets = session.sets else { return }
+        guard session.sets != nil else { return }
         let existingSets: [WorkoutSet]
         if let planEx = planExercise {
             existingSets = sets.filter { $0.planExercise?.id == planEx.id }

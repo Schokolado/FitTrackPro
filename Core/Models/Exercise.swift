@@ -82,7 +82,13 @@ extension Exercise {
     var themeIcon: String {
         switch category.lowercased() {
         case "cardio": return "figure.run"
+        case "beine", "legs": return "figure.walk" // Fallback since no custom icon
+        case "ganzkörper", "full body": return "figure.mixed.cardio" // Fallback since no custom icon
         default: return "dumbbell.fill"
         }
+    }
+    
+    var customIconName: String? {
+        return nil
     }
 }

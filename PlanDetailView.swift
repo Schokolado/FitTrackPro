@@ -40,33 +40,19 @@ struct PlanDetailView: View {
         return groups
     }
     
-    var body: some View {
+    private var mainContent: some View {
         ScrollView {
             ScrollViewReader { proxy in
                 VStack(spacing: Spacing.md) {
                     if !groupedExercises.isEmpty {
-                        Button(action: { startWorkout() }) {
-                            Label("Workout Starten", systemImage: "play.fill")
-                                .frame(maxWidth: .infinity)
-                        }
-                        .primaryButtonStyle()
-                        .padding(.horizontal)
+                        startWorkoutButton
                     }
                     
                     ForEach(groupedExercises) { group in
                         exerciseGroupView(for: group)
                     }
                     
-                    Button(action: { showingExerciseSelection = true }) {
-                        Label("Übung hinzufügen", systemImage: "plus.circle.fill")
-                            .font(.headline)
-                            .foregroundColor(.brand)
-                    }
-                    .padding()
-                    .frame(maxWidth: .infinity)
-                    .background(Color.brandSecondary.opacity(0.1))
-                    .cornerRadius(12)
-                    .padding(.horizontal)
+                    addExerciseButton
                 }
                 .padding(.vertical)
                 .onChange(of: newlyAddedExerciseIds) { oldValue, newValue in
@@ -80,6 +66,32 @@ struct PlanDetailView: View {
                 }
             }
         }
+    }
+    
+    private var startWorkoutButton: some View {
+        Button(action: { startWorkout() }) {
+            Label("Workout Starten", systemImage: "play.fill")
+                .frame(maxWidth: .infinity)
+        }
+        .primaryButtonStyle()
+        .padding(.horizontal)
+    }
+
+    private var addExerciseButton: some View {
+        Button(action: { showingExerciseSelection = true }) {
+            Label("Übung hinzufügen", systemImage: "plus.circle.fill")
+                .font(.headline)
+                .foregroundColor(.brand)
+        }
+        .padding()
+        .frame(maxWidth: .infinity)
+        .background(Color.brandSecondary.opacity(0.1))
+        .cornerRadius(12)
+        .padding(.horizontal)
+    }
+    
+    var body: some View {
+        mainContent
         .id(refreshId)
         .background(Color.backgroundPrimary)
         .navigationTitle(plan.name)
@@ -148,7 +160,7 @@ struct PlanDetailView: View {
     }
     
     private func cleanupPlanExercises() {
-        var sorted = (plan.planExercises ?? [])
+        let sorted = (plan.planExercises ?? [])
             .filter { $0.exercise != nil }
             .sorted(by: { $0.sortOrder < $1.sortOrder })
         

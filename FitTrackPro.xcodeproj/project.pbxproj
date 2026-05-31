@@ -9,8 +9,11 @@
 /* Begin PBXBuildFile section */
 		21C10E70757DE05AEDA3DC64 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD6744A2D4B3D0CF12153D62 /* SettingsView.swift */; };
 		30C857921D56527B0F1E71AF /* NotificationNames.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBD770BA5BDC13445B2DF3A7 /* NotificationNames.swift */; };
+		93E5B549071D1D2F18CB0FAE /* ThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8047FC412A6662A3D5CFC08E /* ThemeManager.swift */; };
 		96DA7B033B60C03ABA5C53E3 /* Logger+App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E60A4D4AD221410CA99DE81 /* Logger+App.swift */; };
+		A08B4EB64636BFF4EA1B16BE /* ThemeSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47F44B3F101BC7D765C71322 /* ThemeSettingsView.swift */; };
 		A61BB3ADC489DCE23A7794B0 /* TrainingPlan+Grouping.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE9B37B479CDA0811F3D0A4 /* TrainingPlan+Grouping.swift */; };
+		C15C887F2F04AEAFCC42A9E9 /* ExerciseIconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D874C7BBAA626D0DBA57A291 /* ExerciseIconView.swift */; };
 		C3FDADD82FCAD75500E8767F /* View+Modifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3FDADC12FCAD75500E8767F /* View+Modifiers.swift */; };
 		C3FDADD92FCAD75500E8767F /* FitTrackProApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3FDADBD2FCAD75500E8767F /* FitTrackProApp.swift */; };
 		C3FDADDA2FCAD75500E8767F /* Color+Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3FDADC02FCAD75500E8767F /* Color+Theme.swift */; };
@@ -45,6 +48,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		47F44B3F101BC7D765C71322 /* ThemeSettingsView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ThemeSettingsView.swift; sourceTree = "<group>"; };
+		8047FC412A6662A3D5CFC08E /* ThemeManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ThemeManager.swift; sourceTree = "<group>"; };
 		9E60A4D4AD221410CA99DE81 /* Logger+App.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "Logger+App.swift"; sourceTree = "<group>"; };
 		C3FDADAE2FCAD62A00E8767F /* FitTrackPro.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FitTrackPro.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C3FDADBC2FCAD75500E8767F /* AppRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRouter.swift; sourceTree = "<group>"; };
@@ -80,6 +85,7 @@
 		C3FDAE092FCADF8E00E8767F /* WorkoutSetRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutSetRowView.swift; sourceTree = "<group>"; };
 		C3FDAE0F2FCAE41100E8767F /* WorkoutSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutSummaryView.swift; sourceTree = "<group>"; };
 		C3FDAE112FCAE73F00E8767F /* ExerciseHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseHistoryView.swift; sourceTree = "<group>"; };
+		D874C7BBAA626D0DBA57A291 /* ExerciseIconView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ExerciseIconView.swift; sourceTree = "<group>"; };
 		DFE9B37B479CDA0811F3D0A4 /* TrainingPlan+Grouping.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "TrainingPlan+Grouping.swift"; sourceTree = "<group>"; };
 		EBD770BA5BDC13445B2DF3A7 /* NotificationNames.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NotificationNames.swift; sourceTree = "<group>"; };
 		FD6744A2D4B3D0CF12153D62 /* SettingsView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -96,6 +102,24 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4DA697A554E88C9B74785009 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				D874C7BBAA626D0DBA57A291 /* ExerciseIconView.swift */,
+			);
+			name = Views;
+			path = Views;
+			sourceTree = "<group>";
+		};
+		AACEB7D8A3F943C215930A77 /* Managers */ = {
+			isa = PBXGroup;
+			children = (
+				8047FC412A6662A3D5CFC08E /* ThemeManager.swift */,
+			);
+			name = Managers;
+			path = Managers;
+			sourceTree = "<group>";
+		};
 		C3FDADA52FCAD62A00E8767F = {
 			isa = PBXGroup;
 			children = (
@@ -179,6 +203,8 @@
 				C3FDADC22FCAD75500E8767F /* Extensions */,
 				C3FDADC32FCAD75500E8767F /* Models */,
 				C3FDADC42FCAD75500E8767F /* Services */,
+				AACEB7D8A3F943C215930A77 /* Managers */,
+				4DA697A554E88C9B74785009 /* Views */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -201,6 +227,7 @@
 			isa = PBXGroup;
 			children = (
 				FD6744A2D4B3D0CF12153D62 /* SettingsView.swift */,
+				47F44B3F101BC7D765C71322 /* ThemeSettingsView.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -403,6 +430,9 @@
 				30C857921D56527B0F1E71AF /* NotificationNames.swift in Sources */,
 				96DA7B033B60C03ABA5C53E3 /* Logger+App.swift in Sources */,
 				A61BB3ADC489DCE23A7794B0 /* TrainingPlan+Grouping.swift in Sources */,
+				93E5B549071D1D2F18CB0FAE /* ThemeManager.swift in Sources */,
+				C15C887F2F04AEAFCC42A9E9 /* ExerciseIconView.swift in Sources */,
+				A08B4EB64636BFF4EA1B16BE /* ThemeSettingsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

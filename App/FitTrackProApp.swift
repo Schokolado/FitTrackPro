@@ -29,9 +29,12 @@ struct FitTrackProApp: App {
         }
     }()
 
+    @StateObject private var themeManager = ThemeManager()
+
     var body: some Scene {
         WindowGroup {
             AppRouter()
+                .environmentObject(themeManager)
         }
         .modelContainer(sharedModelContainer)
     }

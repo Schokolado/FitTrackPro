@@ -108,17 +108,17 @@ struct FilterChip: View {
 
 struct ExerciseCardView: View {
     let exercise: Exercise
+    @EnvironmentObject var themeManager: ThemeManager
     var body: some View {
         HStack(spacing: 16) {
             // Icon Badge
             ZStack {
                 Circle()
-                    .fill(LinearGradient(gradient: Gradient(colors: [exercise.themeColor.opacity(0.7), exercise.themeColor]), startPoint: .topLeading, endPoint: .bottomTrailing))
+                    .fill(LinearGradient(gradient: Gradient(colors: [themeManager.color(for: exercise.category).opacity(0.7), themeManager.color(for: exercise.category)]), startPoint: .topLeading, endPoint: .bottomTrailing))
                     .frame(width: 50, height: 50)
                 
-                Image(systemName: exercise.themeIcon)
+                ExerciseIconView(exercise: exercise, size: 24)
                     .foregroundColor(.white)
-                    .font(.title3)
             }
             
             VStack(alignment: .leading, spacing: 6) {
@@ -130,10 +130,10 @@ struct ExerciseCardView: View {
                 // Category Badge
                 Text(exercise.category.uppercased())
                     .font(.system(size: 10, weight: .bold))
-                    .foregroundColor(exercise.themeColor)
+                    .foregroundColor(themeManager.color(for: exercise.category))
                     .padding(.horizontal, 8)
                     .padding(.vertical, 4)
-                    .background(exercise.themeColor.opacity(0.15))
+                    .background(themeManager.color(for: exercise.category).opacity(0.15))
                     .clipShape(Capsule())
             }
             
