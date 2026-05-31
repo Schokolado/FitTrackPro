@@ -58,7 +58,7 @@ struct WorkoutTimerHeaderView: View {
                         .textCase(.uppercase)
                     
                     Text(viewModel.formatTime(viewModel.elapsedTime))
-                        .font(.system(size: viewModel.restTimerActive ? 44 : 76, weight: .heavy, design: .rounded).monospacedDigit())
+                        .font(.system(size: viewModel.restTimerActive ? 32 : 76, weight: .heavy, design: .rounded).monospacedDigit())
                         .foregroundColor(.primary)
                     
                     if !viewModel.timerActive {
