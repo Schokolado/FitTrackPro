@@ -93,17 +93,21 @@ struct WorkoutSessionView: View {
     
     var body: some View {
         NavigationStack {
-            VStack(spacing: 0) {
-                // Neuer, massiver Sticky Header
-                WorkoutTimerHeaderView(viewModel: viewModel, planName: session.plan?.name) {
-                    showingCustomTimerAlert = true
-                } onFinish: {
-                    viewModel.pauseWorkout()
-                    showingFinishSheet = true
-                }
-                
                 workoutSetsList
-            }
+                    .background(Color.backgroundPrimary)
+                    .safeAreaInset(edge: .top) {
+                        WorkoutTimerHeaderView(viewModel: viewModel, planName: session.plan?.name) {
+                            showingCustomTimerAlert = true
+                        } onFinish: {
+                            viewModel.pauseWorkout()
+                            showingFinishSheet = true
+                        }
+                        .background(
+                            Rectangle()
+                                .fill(.ultraThinMaterial)
+                                .ignoresSafeArea(.container, edges: .top)
+                        )
+                    }
             .navigationBarHidden(true)
             .alert("Workout abbrechen?", isPresented: $showingCancelAlert) {
                 Button("Ja, abbrechen", role: .destructive) {
