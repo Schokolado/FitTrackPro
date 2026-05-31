@@ -114,8 +114,6 @@ struct TrainingPlansView: View {
                 )
             }
             .background(Color.backgroundPrimary)
-            .navigationTitle("Trainingspläne")
-            .navigationBarTitleDisplayMode(.inline)
             .alert("Neuer Trainingsplan", isPresented: $triggerAddAlert) {
                 TextField("Name", text: $newPlanName)
                 Button("Abbrechen", role: .cancel) { }

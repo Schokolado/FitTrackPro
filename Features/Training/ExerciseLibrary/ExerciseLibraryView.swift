@@ -90,8 +90,6 @@ struct ExerciseLibraryView: View {
                 )
             }
             .background(Color.backgroundPrimary)
-            .navigationTitle("Übungen")
-            .navigationBarTitleDisplayMode(.inline)
             .sheet(isPresented: $triggerAddExercise) {
                 NavigationStack {
                     ExerciseFormView()
