@@ -98,9 +98,12 @@ struct WorkoutSessionView: View {
                     .safeAreaInset(edge: .top) {
                         WorkoutTimerHeaderView(viewModel: viewModel, planName: session.plan?.name) {
                             showingCustomTimerAlert = true
-                        } onFinish: {
-                            viewModel.pauseWorkout()
-                            showingFinishSheet = true
+                        } onSkipRestTimer: {
+                            if requireRestTimerConfirm {
+                                showingSkipRestAlert = true
+                            } else {
+                                viewModel.skipRestTimer()
+                            }
                         }
                         .background(
                             VStack(spacing: 0) {
@@ -308,13 +311,20 @@ struct WorkoutSessionView: View {
                 .padding(.horizontal)
                 
                 Button(action: {
-                    showingCancelAlert = true
+                    viewModel.pauseWorkout()
+                    showingFinishSheet = true
                 }) {
-                    Text("Workout abbrechen")
-                        .foregroundColor(.red)
-                        .frame(maxWidth: .infinity, alignment: .center)
+                    Text("Workout beenden")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 16)
+                        .background(Color.brand)
+                        .cornerRadius(12)
                 }
+                .padding(.horizontal)
                 .padding(.top, 16)
+                .padding(.bottom, 32)
             }
             .padding(.vertical)
             .onChange(of: scrollTarget) { _, newTarget in
