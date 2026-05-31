@@ -10,10 +10,18 @@ struct SupersetIconStack: View {
     @EnvironmentObject var themeManager: ThemeManager
 
     private let iconSize: CGFloat = 28
-    private let overlap: CGFloat = 14 // Increased overlap to bring them closer
+    private let maxStackWidth: CGFloat = 40
 
-    private var step: CGFloat { iconSize - overlap }
     private var displayExercises: [Exercise] { Array(exercises.prefix(3)) }
+    
+    private var step: CGFloat {
+        let count = displayExercises.count
+        if count <= 1 { return 0 }
+        // Berechne den Step so, dass alle Icons genau in maxStackWidth passen
+        let availableSpace = maxStackWidth - iconSize
+        return availableSpace / CGFloat(count - 1)
+    }
+    
     private var totalWidth: CGFloat {
         iconSize + CGFloat(max(0, displayExercises.count - 1)) * step
     }

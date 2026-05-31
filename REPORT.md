@@ -42,7 +42,7 @@
 **Bearbeitet:** UI – PlanDetailView & WorkoutSessionView
 
 **Implementiert:**
-- **SupersetIconStack** (`Core/Views/SupersetIconStack.swift`): Neue wiederverwendbare Komponente. Zeigt bis zu 3 Kategorie-Icons (28×28 pt) mit −14 pt Overlap (angepasst für besseren Abstand zum Text). Der Hintergrund-Trennring wurde entfernt, um Konsistenz mit normalen Icons zu gewährleisten.
+- **SupersetIconStack** (`Core/Views/SupersetIconStack.swift`): Neue wiederverwendbare Komponente. Zeigt bis zu 3 Kategorie-Icons (28×28 pt). Die Gesamtbreite des Stacks ist dynamisch auf maximal 40pt (Breite eines normalen großen Icons) begrenzt. Der Overlap passt sich automatisch an die Anzahl der Übungen an. Der Hintergrund-Trennring wurde entfernt, um Konsistenz mit normalen Icons zu gewährleisten.
 - **PlanDetailView** (`Features/Training/Plans/PlanDetailView.swift`): Collapsed-Supersatz zeigt jetzt Icon-Stack + Namen-VStack statt reinem Text mit Divider-Trenner. Chevron-Pfeil als Expand-Hinweis.
 - **WorkoutSessionView** (`Features/Training/Workout/WorkoutSessionView.swift`): `WorkoutSupersetGroupCard` collapsed body ersetzt — statt flacher `ExerciseIconView`-Icons mit Divider jetzt konsistenter `SupersetIconStack`. Der separater `🔗 Supersatz`-Header (incl. Completion-Haken) bleibt unverändert.
 - Xcode-Projekt aktualisiert: `SupersetIconStack.swift` in `Core/Views`-Gruppe registriert.
