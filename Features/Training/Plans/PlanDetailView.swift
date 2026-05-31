@@ -11,6 +11,7 @@ struct PlanDetailView: View {
     @State private var showingEditNameAlert = false
     @State private var showingEditNotesAlert = false
     @State private var showingDeleteAlert = false
+    @State private var showingActiveWorkoutAlert = false
     @State private var editName = ""
     @State private var editNotes = ""
     @State private var showingReorderSheet = false
@@ -79,7 +80,13 @@ struct PlanDetailView: View {
     }
     
     private var startWorkoutButton: some View {
-        Button(action: { startWorkout() }) {
+        Button(action: { 
+            if workoutManager.isWorkoutActive {
+                showingActiveWorkoutAlert = true
+            } else {
+                executeStartWorkout()
+            }
+        }) {
             Label("Workout Starten", systemImage: "play.fill")
                 .frame(maxWidth: .infinity)
         }
@@ -167,6 +174,15 @@ struct PlanDetailView: View {
         } message: {
             Text("Möchtest du diesen Trainingsplan wirklich löschen?")
         }
+        .alert("Aktives Workout beenden?", isPresented: $showingActiveWorkoutAlert) {
+            Button("Beenden & Neu starten", role: .destructive) {
+                workoutManager.endWorkout()
+                executeStartWorkout()
+            }
+            Button("Abbrechen", role: .cancel) { }
+        } message: {
+            Text("Du hast bereits ein laufendes Workout. Möchtest du dieses beenden und das neue Workout starten?")
+        }
         .sheet(isPresented: $showingExerciseSelection) {
             NavigationStack {
                 ExerciseSelectionView(plan: plan, onExerciseAdded: { newPlanEx in
@@ -233,7 +249,7 @@ struct PlanDetailView: View {
         }
     }
     
-    private func startWorkout() {
+    private func executeStartWorkout() {
         let newSession = WorkoutSession(plan: plan)
         modelContext.insert(newSession)
 

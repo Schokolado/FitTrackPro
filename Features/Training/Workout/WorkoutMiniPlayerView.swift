@@ -21,7 +21,7 @@ struct WorkoutMiniPlayerView: View {
                 
                 // Info
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(planName ?? "Freies Workout")
+                    Text("Aktives Workout: \(planName ?? "Freies Workout")")
                         .font(.subheadline)
                         .fontWeight(.semibold)
                         .foregroundColor(.primary)
