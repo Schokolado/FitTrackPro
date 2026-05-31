@@ -30,7 +30,12 @@ struct SupersetIconStack: View {
         ZStack(alignment: .leading) {
             ForEach(Array(displayExercises.enumerated()), id: \.offset) { index, exercise in
                 ZStack {
-                    // Gradient fill (no border ring to be consistent with normal icons)
+                    // Deckender Hintergrund, damit darunterliegende Icons nicht durchscheinen
+                    Circle()
+                        .fill(Color(.systemBackground))
+                        .frame(width: iconSize, height: iconSize)
+
+                    // Gradient fill
                     Circle()
                         .fill(LinearGradient(
                             colors: [
@@ -46,6 +51,7 @@ struct SupersetIconStack: View {
                     ExerciseIconView(exercise: exercise, size: 13)
                         .foregroundColor(.white)
                 }
+                .shadow(color: Color.black.opacity(0.15), radius: 2, x: 1, y: 0)
                 // First icon on top (highest z), subsequent icons behind
                 .zIndex(Double(displayExercises.count - index))
                 .offset(x: CGFloat(index) * step)
