@@ -22,14 +22,26 @@ struct WorkoutMiniPlayerView: View {
             
             // Info
             VStack(alignment: .leading, spacing: 2) {
-                Text(planName ?? "Freies Workout")
-                    .font(.subheadline)
-                    .fontWeight(.semibold)
-                    .foregroundColor(.primary)
-                    .lineLimit(1)
+                HStack(spacing: 6) {
+                    Text(planName ?? "Freies Workout")
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.primary)
+                        .lineLimit(1)
+                    
+                    if !viewModel.timerActive {
+                        Text("PAUSIERT")
+                            .font(.system(size: 10, weight: .bold))
+                            .foregroundColor(.orange)
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
+                            .background(Color.orange.opacity(0.15))
+                            .clipShape(Capsule())
+                    }
+                }
                 
                 if viewModel.restTimerActive {
-                    Text("Pause: \(viewModel.formatTime(viewModel.restTimeRemaining))")
+                    Text("Satzpause: \(viewModel.formatTime(viewModel.restTimeRemaining))")
                         .font(.caption.monospacedDigit())
                         .foregroundColor(.green)
                 } else {
@@ -41,21 +53,36 @@ struct WorkoutMiniPlayerView: View {
             
             Spacer()
             
-            // Play/Pause button
-            Button(action: {
-                if viewModel.restTimerActive {
-                    showingCancelTimerAlert = true
-                } else if viewModel.timerActive {
-                    viewModel.pauseWorkout()
-                } else {
-                    viewModel.resumeWorkout()
+            // Buttons
+            HStack(spacing: 12) {
+                // Play/Pause button
+                Button(action: {
+                    withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                        if viewModel.timerActive {
+                            viewModel.pauseWorkout()
+                        } else {
+                            viewModel.resumeWorkout()
+                        }
+                    }
+                }) {
+                    Image(systemName: viewModel.timerActive ? "pause.circle.fill" : "play.circle.fill")
+                        .font(.system(size: 32))
+                        .foregroundColor(viewModel.timerActive ? .orange : .brand)
                 }
-            }) {
-                Image(systemName: viewModel.restTimerActive ? "xmark.circle.fill" : (viewModel.timerActive ? "pause.circle.fill" : "play.circle.fill"))
-                    .font(.system(size: 32))
-                    .foregroundColor(.brand)
+                .buttonStyle(PlainButtonStyle())
+                
+                // Cancel Rest Timer Button
+                if viewModel.restTimerActive {
+                    Button(action: {
+                        showingCancelTimerAlert = true
+                    }) {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.system(size: 32))
+                            .foregroundColor(.gray.opacity(0.5))
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                }
             }
-            .buttonStyle(PlainButtonStyle())
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
