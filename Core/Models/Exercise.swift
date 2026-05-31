@@ -81,14 +81,7 @@ extension Exercise {
     
     var themeIcon: String {
         switch category.lowercased() {
-        case "brust", "chest": return "figure.strengthtraining.traditional"
-        case "rücken", "back": return "figure.core.training"
-        case "beine", "legs": return "figure.run"
-        case "schultern", "shoulders": return "figure.cross.training"
-        case "arme", "arms": return "figure.mind.and.body"
-        case "bauch / core", "abs / core", "bauch": return "figure.pilates"
-        case "cardio": return "heart.fill"
-        case "ganzkörper", "full body": return "figure.highintensity.intervaltraining"
+        case "cardio": return "figure.run"
         default: return "dumbbell.fill"
         }
     }
