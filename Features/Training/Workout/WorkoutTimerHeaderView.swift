@@ -68,28 +68,28 @@ struct WorkoutTimerHeaderView: View {
             // Rest Timer Banner (Slides down when active)
             if viewModel.restTimerActive {
                 ZStack(alignment: .leading) {
-                    // Background Bar (Dark Gray for contrast with white text)
+                    // Background Bar (Standard Gray)
                     Rectangle()
-                        .fill(Color(white: 0.15))
+                        .fill(Color.backgroundCard)
                     
-                    // Progress Fill (Green)
+                    // Progress Fill (Light Green)
                     GeometryReader { geometry in
                         let progress = viewModel.totalRestDuration > 0 ? (viewModel.restTimeRemaining / viewModel.totalRestDuration) : 0
                         Rectangle()
-                            .fill(Color.green.opacity(0.8))
+                            .fill(Color.green.opacity(0.3))
                             .frame(width: max(0, geometry.size.width * CGFloat(progress)))
                             .animation(.linear(duration: 1.0), value: progress)
                     }
                     
                     HStack(spacing: 16) {
-                        // Skip/Close Button (Swapped to the left)
+                        // Skip/Close Button (Left)
                         Button(action: {
                             viewModel.skipRestTimer()
                         }) {
                             Image(systemName: "xmark")
                                 .font(.title3.bold())
                                 .frame(width: 44, height: 44)
-                                .background(Color.white.opacity(0.2))
+                                .background(Color.secondary.opacity(0.15))
                                 .clipShape(Circle())
                         }
                         
@@ -101,27 +101,28 @@ struct WorkoutTimerHeaderView: View {
                         Text(viewModel.formatTime(viewModel.restTimeRemaining))
                             .font(.system(size: 34, weight: .bold, design: .rounded).monospacedDigit())
                         
-                        // Pause/Play Button (Swapped to the right)
+                        // Pause/Play Button (Right)
                         Button(action: {
                             viewModel.toggleRestTimerPause()
                         }) {
                             Image(systemName: viewModel.restTimerPaused ? "play.fill" : "pause.fill")
                                 .font(.title2)
                                 .frame(width: 44, height: 44)
-                                .background(Color.white.opacity(0.2))
+                                .background(Color.secondary.opacity(0.15))
                                 .clipShape(Circle())
                         }
                     }
-                    .foregroundColor(.white)
+                    .foregroundColor(.primary)
                     .padding(.horizontal)
                 }
                 .frame(height: 70)
                 .transition(.move(edge: .top).combined(with: .opacity))
             }
             
-            Divider()
+            // Divider removed, replaced by shadow below
         }
-        .background(.ultraThinMaterial)
+        .background(Color.backgroundPrimary)
+        .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 4)
     }
 }
 
