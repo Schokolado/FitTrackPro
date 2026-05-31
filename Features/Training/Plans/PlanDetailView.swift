@@ -8,8 +8,10 @@ struct PlanDetailView: View {
     
     @State private var showingExerciseSelection = false
     @State private var showingEditNameAlert = false
+    @State private var showingEditNotesAlert = false
     @State private var showingDeleteAlert = false
     @State private var editName = ""
+    @State private var editNotes = ""
     @State private var activeSession: WorkoutSession? = nil
     @State private var showingReorderSheet = false
     @State private var refreshId = UUID()
@@ -44,11 +46,17 @@ struct PlanDetailView: View {
         ScrollView {
             ScrollViewReader { proxy in
                 VStack(spacing: Spacing.md) {
+                    if !plan.notes.isEmpty {
+                        Text(plan.notes)
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.horizontal)
+                    }
+                    
                     if !groupedExercises.isEmpty {
                         startWorkoutButton
                     }
-                    
-                    notesSection
                     
                     ForEach(groupedExercises) { group in
                         exerciseGroupView(for: group)
@@ -92,21 +100,7 @@ struct PlanDetailView: View {
         .padding(.horizontal)
     }
     
-    private var notesSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Notizen")
-                .font(.headline)
-                .foregroundColor(.secondary)
-                .padding(.horizontal)
-            
-            TextField("Trainingshinweise, Ziele etc...", text: $plan.notes, axis: .vertical)
-                .padding()
-                .background(Color.backgroundCard)
-                .cornerRadius(12)
-                .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
-                .padding(.horizontal)
-        }
-    }
+
     
     var body: some View {
         mainContent
@@ -122,6 +116,13 @@ struct PlanDetailView: View {
                         showingEditNameAlert = true
                     } label: {
                         Label("Plan umbenennen", systemImage: "character.cursor.ibeam")
+                    }
+                    
+                    Button {
+                        editNotes = plan.notes
+                        showingEditNotesAlert = true
+                    } label: {
+                        Label("Notizen bearbeiten", systemImage: "note.text")
                     }
                     
                     Button {
@@ -149,6 +150,13 @@ struct PlanDetailView: View {
                 plan.name = editName
             }
             .disabled(editName.trimmingCharacters(in: .whitespaces).isEmpty)
+        }
+        .alert("Notizen bearbeiten", isPresented: $showingEditNotesAlert) {
+            TextField("Notizen", text: $editNotes)
+            Button("Abbrechen", role: .cancel) { }
+            Button("Speichern") {
+                plan.notes = editNotes
+            }
         }
         .alert("Plan löschen", isPresented: $showingDeleteAlert) {
             Button("Löschen", role: .destructive) {
