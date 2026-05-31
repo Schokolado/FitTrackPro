@@ -80,10 +80,12 @@ class WorkoutSessionViewModel {
     // MARK: - Internal Timers
     private func startTimers() {
         timer?.invalidate()
-        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
+        let newTimer = Timer(timeInterval: 1.0, repeats: true) { [weak self] _ in
             guard let self = self else { return }
             self.updateTimes()
         }
+        RunLoop.main.add(newTimer, forMode: .common)
+        self.timer = newTimer
     }
     
     private func stopTimers() {

@@ -68,18 +68,9 @@ struct WorkoutTimerHeaderView: View {
             // Rest Timer Banner (Slides down when active)
             if viewModel.restTimerActive {
                 ZStack(alignment: .leading) {
-                    // Background Bar (Standard Gray)
+                    // Background Bar (Solid Green)
                     Rectangle()
-                        .fill(Color.backgroundCard)
-                    
-                    // Progress Fill (Light Green)
-                    GeometryReader { geometry in
-                        let progress = viewModel.totalRestDuration > 0 ? (viewModel.restTimeRemaining / viewModel.totalRestDuration) : 0
-                        Rectangle()
-                            .fill(Color.green.opacity(0.3))
-                            .frame(width: max(0, geometry.size.width * CGFloat(progress)))
-                            .animation(.linear(duration: 1.0), value: progress)
-                    }
+                        .fill(Color.green)
                     
                     HStack(spacing: 16) {
                         // Skip/Close Button (Left)
@@ -89,7 +80,7 @@ struct WorkoutTimerHeaderView: View {
                             Image(systemName: "xmark")
                                 .font(.title3.bold())
                                 .frame(width: 44, height: 44)
-                                .background(Color.secondary.opacity(0.15))
+                                .background(Color.white.opacity(0.2))
                                 .clipShape(Circle())
                         }
                         
@@ -108,11 +99,11 @@ struct WorkoutTimerHeaderView: View {
                             Image(systemName: viewModel.restTimerPaused ? "play.fill" : "pause.fill")
                                 .font(.title2)
                                 .frame(width: 44, height: 44)
-                                .background(Color.secondary.opacity(0.15))
+                                .background(Color.white.opacity(0.2))
                                 .clipShape(Circle())
                         }
                     }
-                    .foregroundColor(.primary)
+                    .foregroundColor(.white)
                     .padding(.horizontal)
                 }
                 .frame(height: 70)
