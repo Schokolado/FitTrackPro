@@ -11,16 +11,36 @@ struct TrainingPlansView: View {
     @State private var planToRename: TrainingPlan? = nil
     
     var body: some View {
-        Group {
-                if plans.isEmpty {
-                    ContentUnavailableView(
-                        "Keine Trainingspläne",
-                        systemImage: "list.clipboard",
-                        description: Text("Füge einen neuen Trainingsplan über das '+' oben rechts hinzu.")
-                    )
-                } else {
-                    ScrollView {
-                        VStack(spacing: Spacing.md) {
+        VStack(spacing: 0) {
+            // Header Card
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Meine Pläne")
+                    .font(.title2)
+                    .fontWeight(.bold)
+                    .foregroundColor(.primary)
+                
+                Text("\(plans.count) Trainingspläne verfügbar")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(20)
+            .background(Color.backgroundCard)
+            .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+            .shadow(color: Color.black.opacity(0.08), radius: 12, x: 0, y: 6)
+            .padding(.horizontal)
+            .padding(.top, 4)
+            .padding(.bottom, 8)
+            
+            if plans.isEmpty {
+                ContentUnavailableView(
+                    "Keine Trainingspläne",
+                    systemImage: "list.clipboard",
+                    description: Text("Füge einen neuen Trainingsplan über das '+' oben rechts hinzu.")
+                )
+            } else {
+                ScrollView {
+                    VStack(spacing: Spacing.md) {
                             ForEach(plans) { plan in
                                 ZStack(alignment: .topTrailing) {
                                     NavigationLink(destination: PlanDetailView(plan: plan)) {

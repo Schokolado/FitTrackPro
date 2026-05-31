@@ -14,38 +14,47 @@ struct ExerciseLibraryView: View {
     
     var body: some View {
         VStack {
-                // Category Filter Dropdown
-                HStack {
-                    Text("Kategorie:")
-                        .foregroundColor(.secondary)
-                    Spacer()
-                    Picker("Kategorie", selection: $viewModel.selectedCategory) {
-                        Text("Alle").tag(String?.none)
-                        ForEach(availableCategories, id: \.self) { category in
-                            Text(category).tag(String?(category))
+                // Header Card
+                VStack(spacing: 16) {
+                    // Category Filter Dropdown
+                    HStack {
+                        Text("Kategorie")
+                            .font(.subheadline)
+                            .fontWeight(.medium)
+                            .foregroundColor(.secondary)
+                        Spacer()
+                        Picker("Kategorie", selection: $viewModel.selectedCategory) {
+                            Text("Alle").tag(String?.none)
+                            ForEach(availableCategories, id: \.self) { category in
+                                Text(category).tag(String?(category))
+                            }
+                        }
+                        .pickerStyle(.menu)
+                        .tint(.brand)
+                    }
+                    
+                    // Custom Search Bar
+                    HStack {
+                        Image(systemName: "magnifyingglass")
+                            .foregroundColor(.secondary)
+                        TextField("Übung suchen...", text: $viewModel.searchText)
+                        if !viewModel.searchText.isEmpty {
+                            Button(action: { viewModel.searchText = "" }) {
+                                Image(systemName: "xmark.circle.fill")
+                                    .foregroundColor(.secondary)
+                            }
                         }
                     }
-                    .pickerStyle(.menu)
+                    .padding(12)
+                    .background(Color.backgroundPrimary)
+                    .cornerRadius(12)
                 }
+                .padding(20)
+                .background(Color.backgroundCard)
+                .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+                .shadow(color: Color.black.opacity(0.08), radius: 12, x: 0, y: 6)
                 .padding(.horizontal)
-                .padding(.vertical, 4)
-                
-                // Custom Search Bar
-                HStack {
-                    Image(systemName: "magnifyingglass")
-                        .foregroundColor(.secondary)
-                    TextField("Übung suchen...", text: $viewModel.searchText)
-                    if !viewModel.searchText.isEmpty {
-                        Button(action: { viewModel.searchText = "" }) {
-                            Image(systemName: "xmark.circle.fill")
-                                .foregroundColor(.secondary)
-                        }
-                    }
-                }
-                .padding(8)
-                .background(Color(.systemGray5))
-                .cornerRadius(10)
-                .padding(.horizontal)
+                .padding(.top, 4)
                 .padding(.bottom, 8)
                 
                 List {
