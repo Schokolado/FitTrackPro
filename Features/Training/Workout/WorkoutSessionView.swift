@@ -120,28 +120,6 @@ struct WorkoutSessionView: View {
                             .ignoresSafeArea(.container, edges: .top)
                         )
                     }
-                    .overlay(alignment: .bottomTrailing) {
-                        if !viewModel.restTimerActive {
-                            Menu {
-                                Button("\(timerFav1) Sek") { viewModel.startRestTimer(duration: TimeInterval(timerFav1)) }
-                                Button("\(timerFav2) Sek") { viewModel.startRestTimer(duration: TimeInterval(timerFav2)) }
-                                Button("\(timerFav3) Sek") { viewModel.startRestTimer(duration: TimeInterval(timerFav3)) }
-                                Divider()
-                                Button("Individuell...") {
-                                    showingCustomTimerAlert = true
-                                }
-                            } label: {
-                                Image(systemName: "timer")
-                                    .font(.title)
-                                    .foregroundColor(.white)
-                                    .frame(width: 60, height: 60)
-                                    .background(Color.brand)
-                                    .clipShape(Circle())
-                                    .shadow(color: Color.black.opacity(0.3), radius: 5, x: 0, y: 3)
-                            }
-                            .padding(20)
-                        }
-                    }
             .navigationBarHidden(true)
             .alert("Workout abbrechen?", isPresented: $showingCancelAlert) {
                 Button("Ja, abbrechen", role: .destructive) {
