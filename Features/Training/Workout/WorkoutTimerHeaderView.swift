@@ -40,10 +40,12 @@ struct WorkoutTimerHeaderView: View {
                 HStack {
                     Spacer()
                     Button(action: {
-                        if viewModel.timerActive {
-                            viewModel.pauseWorkout()
-                        } else {
-                            viewModel.resumeWorkout()
+                        withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                            if viewModel.timerActive {
+                                viewModel.pauseWorkout()
+                            } else {
+                                viewModel.resumeWorkout()
+                            }
                         }
                     }) {
                         Image(systemName: viewModel.timerActive ? "pause.fill" : "play.fill")
@@ -69,7 +71,7 @@ struct WorkoutTimerHeaderView: View {
                         .foregroundColor(.primary)
                     
                     if !viewModel.timerActive {
-                        Text("PAUSIERT")
+                        Text("WORKOUT PAUSIERT")
                             .font(.caption2.weight(.bold))
                             .foregroundColor(.orange)
                             .padding(.horizontal, 8)
@@ -114,7 +116,7 @@ struct WorkoutTimerHeaderView: View {
                                     .textCase(.uppercase)
                                     .foregroundColor(.white.opacity(0.9))
                             } else {
-                                Text("Pause")
+                                Text("SATZPAUSE")
                                     .font(.caption)
                                     .textCase(.uppercase)
                                     .foregroundColor(.white.opacity(0.9))
@@ -127,7 +129,9 @@ struct WorkoutTimerHeaderView: View {
                         
                         // Pause/Play Button (Right)
                         Button(action: {
-                            viewModel.toggleRestTimerPause()
+                            withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                                viewModel.toggleRestTimerPause()
+                            }
                         }) {
                             Image(systemName: viewModel.restTimerPaused ? "play.fill" : "pause.fill")
                                 .font(.title2)
