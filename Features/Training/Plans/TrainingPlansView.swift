@@ -11,27 +11,7 @@ struct TrainingPlansView: View {
     @State private var planToRename: TrainingPlan? = nil
     
     var body: some View {
-        VStack(spacing: 0) {
-            // Header Card
-            VStack(alignment: .leading, spacing: 8) {
-                Text("Meine Pläne")
-                    .font(.title2)
-                    .fontWeight(.bold)
-                    .foregroundColor(.primary)
-                
-                Text("\(plans.count) Trainingspläne verfügbar")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(20)
-            .background(Color.backgroundCard)
-            .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
-            .shadow(color: Color.black.opacity(0.08), radius: 12, x: 0, y: 6)
-            .padding(.horizontal)
-            .padding(.top, 4)
-            .padding(.bottom, 8)
-            
+        Group {
             if plans.isEmpty {
                 ContentUnavailableView(
                     "Keine Trainingspläne",
@@ -99,6 +79,39 @@ struct TrainingPlansView: View {
                         .padding(.vertical)
                     }
                 }
+            }
+            .safeAreaInset(edge: .top) {
+                // Header Card
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Meine Pläne")
+                        .font(.title2)
+                        .fontWeight(.bold)
+                        .foregroundColor(.primary)
+                    
+                    Text("\(plans.count) Trainingspläne verfügbar")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(20)
+                .background(Color.backgroundCard)
+                .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+                .shadow(color: Color.black.opacity(0.08), radius: 12, x: 0, y: 6)
+                .padding(.horizontal)
+                .padding(.top, 4)
+                .padding(.bottom, 16)
+                .background(
+                    VStack(spacing: 0) {
+                        Color.backgroundPrimary
+                        LinearGradient(
+                            colors: [Color.backgroundPrimary, Color.backgroundPrimary.opacity(0.0)],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                        .frame(height: 32)
+                    }
+                    .ignoresSafeArea(.container, edges: .top)
+                )
             }
             .background(Color.backgroundPrimary)
             .navigationTitle("Trainingspläne")

@@ -13,7 +13,27 @@ struct ExerciseLibraryView: View {
     @Binding var triggerAddExercise: Bool
     
     var body: some View {
-        VStack {
+        Group {
+                List {
+                    ForEach(viewModel.filterExercises(allExercises)) { exercise in
+                        ZStack {
+                            ExerciseCardView(exercise: exercise)
+                            
+                            NavigationLink(destination: ExerciseDetailView(exercise: exercise)) {
+                                EmptyView()
+                            }
+                            .opacity(0)
+                        }
+                        .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
+                        .listRowSeparator(.hidden)
+                        .listRowBackground(Color.clear)
+                    }
+                    .onDelete(perform: deleteExercises)
+                }
+                .listStyle(.plain)
+                .scrollContentBackground(.hidden)
+            }
+            .safeAreaInset(edge: .top) {
                 // Header Card
                 VStack(spacing: 16) {
                     // Category Filter Dropdown
@@ -55,26 +75,19 @@ struct ExerciseLibraryView: View {
                 .shadow(color: Color.black.opacity(0.08), radius: 12, x: 0, y: 6)
                 .padding(.horizontal)
                 .padding(.top, 4)
-                .padding(.bottom, 8)
-                
-                List {
-                    ForEach(viewModel.filterExercises(allExercises)) { exercise in
-                        ZStack {
-                            ExerciseCardView(exercise: exercise)
-                            
-                            NavigationLink(destination: ExerciseDetailView(exercise: exercise)) {
-                                EmptyView()
-                            }
-                            .opacity(0)
-                        }
-                        .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
-                        .listRowSeparator(.hidden)
-                        .listRowBackground(Color.clear)
+                .padding(.bottom, 16)
+                .background(
+                    VStack(spacing: 0) {
+                        Color.backgroundPrimary
+                        LinearGradient(
+                            colors: [Color.backgroundPrimary, Color.backgroundPrimary.opacity(0.0)],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                        .frame(height: 32)
                     }
-                    .onDelete(perform: deleteExercises)
-                }
-                .listStyle(.plain)
-                .scrollContentBackground(.hidden)
+                    .ignoresSafeArea(.container, edges: .top)
+                )
             }
             .background(Color.backgroundPrimary)
             .navigationTitle("Übungen")
