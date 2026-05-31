@@ -28,6 +28,18 @@ struct WorkoutTimerHeaderView: View {
                         .foregroundColor(.primary)
                 }
                 Spacer()
+                
+                // Beenden Button
+                Button("Beenden") {
+                    onFinish()
+                }
+                .font(.headline)
+                .foregroundColor(.white)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 10)
+                .background(Color.brand)
+                .clipShape(Capsule())
+                .padding(.leading, 8)
             }
             .padding(.horizontal)
             .padding(.vertical, 12)
