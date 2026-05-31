@@ -6,7 +6,7 @@ struct WorkoutSessionView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject var themeManager: ThemeManager
     
-    @State private var viewModel = WorkoutSessionViewModel()
+    let viewModel: WorkoutSessionViewModel
     @Bindable var session: WorkoutSession
     
     @State private var showingCancelAlert = false
@@ -104,6 +104,8 @@ struct WorkoutSessionView: View {
                             } else {
                                 viewModel.skipRestTimer()
                             }
+                        } onMinimize: {
+                            dismiss()
                         }
                         .background(
                             VStack(spacing: 0) {

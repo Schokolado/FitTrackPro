@@ -4,6 +4,7 @@ import SwiftData
 struct PlanDetailView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
+    @Environment(WorkoutManager.self) private var workoutManager
     @Bindable var plan: TrainingPlan
     
     @State private var showingExerciseSelection = false
@@ -12,7 +13,6 @@ struct PlanDetailView: View {
     @State private var showingDeleteAlert = false
     @State private var editName = ""
     @State private var editNotes = ""
-    @State private var activeSession: WorkoutSession? = nil
     @State private var showingReorderSheet = false
     @State private var refreshId = UUID()
     @State private var newlyAddedExerciseIds: Set<UUID> = []
@@ -177,9 +177,6 @@ struct PlanDetailView: View {
         .sheet(isPresented: $showingReorderSheet) {
             PlanExerciseReorderView(plan: plan)
         }
-        .fullScreenCover(item: $activeSession) { session in
-            WorkoutSessionView(session: session)
-        }
         .onAppear {
             cleanupPlanExercises()
         }
@@ -260,7 +257,10 @@ struct PlanDetailView: View {
         }
         
         try? modelContext.save()
-        activeSession = newSession
+        workoutManager.startWorkout(session: newSession)
+        
+        // Use AppRouter's binding indirectly by starting the session in WorkoutManager
+        // Since WorkoutManager state updates, MainTabView will present the fullScreenCover.
     }
     
     private func deleteExercises(offsets: IndexSet, from group: ExerciseGroup) {

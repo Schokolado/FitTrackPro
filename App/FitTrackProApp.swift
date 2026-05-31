@@ -35,6 +35,7 @@ struct FitTrackProApp: App {
         WindowGroup {
             AppRouter()
                 .environmentObject(themeManager)
+                .environment(WorkoutManager.shared)
         }
         .modelContainer(sharedModelContainer)
     }

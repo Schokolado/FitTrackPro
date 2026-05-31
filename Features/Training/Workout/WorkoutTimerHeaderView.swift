@@ -12,11 +12,24 @@ struct WorkoutTimerHeaderView: View {
     // Actions
     var onShowCustomTimer: () -> Void
     var onSkipRestTimer: () -> Void
+    var onMinimize: (() -> Void)? = nil
     
     var body: some View {
         VStack(spacing: 0) {
             // Main Header (Always visible)
-            ZStack {
+            ZStack(alignment: .topLeading) {
+                if let onMinimize = onMinimize {
+                    Button(action: onMinimize) {
+                        Image(systemName: "chevron.down")
+                            .font(.title3.bold())
+                            .foregroundColor(.secondary)
+                            .padding(12)
+                            .background(Color.secondary.opacity(0.1))
+                            .clipShape(Circle())
+                    }
+                    .padding(.top, 4)
+                }
+                
                 // Centered content
                 VStack(spacing: viewModel.restTimerActive ? 2 : 8) {
                     Text(planName ?? "Freies Workout")

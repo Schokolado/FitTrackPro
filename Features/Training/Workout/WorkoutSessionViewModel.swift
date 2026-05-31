@@ -28,7 +28,9 @@ class WorkoutSessionViewModel {
     }()
     
     func startWorkout() {
-        startTime = Date()
+        if startTime == nil {
+            startTime = Date()
+        }
         timerActive = true
         startTimers()
     }
