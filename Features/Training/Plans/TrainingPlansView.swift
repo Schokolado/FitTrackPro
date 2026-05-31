@@ -174,6 +174,8 @@ import SwiftUI
 struct TrainingMainView: View {
     @State private var selectedTab = 0
     @State private var isFabExpanded = false
+    @EnvironmentObject var themeManager: ThemeManager
+    @Environment(WorkoutManager.self) private var workoutManager
     
     @State private var triggerAddPlan = false
     @State private var triggerAddExercise = false
@@ -293,7 +295,9 @@ struct TrainingMainView: View {
                             .rotationEffect(.degrees(isFabExpanded ? 45 : 0))
                     }
                 }
-                .padding(20)
+                .padding(.bottom, workoutManager.isWorkoutActive ? 80 : 20)
+                .padding(.trailing, 20)
+                .padding(.top, 20)
             }
         }
     }

@@ -2,6 +2,7 @@ import SwiftUI
 
 struct WorkoutMiniPlayerView: View {
     let viewModel: WorkoutSessionViewModel
+    let planName: String?
     let onTap: () -> Void
     
     var body: some View {
@@ -10,24 +11,31 @@ struct WorkoutMiniPlayerView: View {
                 // Icon
                 ZStack {
                     Circle()
-                        .fill(Color.brand.opacity(0.15))
+                        .fill(viewModel.restTimerActive ? Color.green.opacity(0.15) : Color.brand.opacity(0.15))
                         .frame(width: 40, height: 40)
                     
-                    Image(systemName: "figure.run")
-                        .foregroundColor(.brand)
+                    Image(systemName: viewModel.restTimerActive ? "timer" : "figure.run")
+                        .foregroundColor(viewModel.restTimerActive ? .green : .brand)
                         .font(.system(size: 20))
                 }
                 
                 // Info
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("Workout aktiv")
+                    Text(planName ?? "Freies Workout")
                         .font(.subheadline)
                         .fontWeight(.semibold)
                         .foregroundColor(.primary)
+                        .lineLimit(1)
                     
-                    Text(viewModel.formatTime(viewModel.elapsedTime))
-                        .font(.caption.monospacedDigit())
-                        .foregroundColor(.brand)
+                    if viewModel.restTimerActive {
+                        Text("Pause: \(viewModel.formatTime(viewModel.restTimeRemaining))")
+                            .font(.caption.monospacedDigit())
+                            .foregroundColor(.green)
+                    } else {
+                        Text(viewModel.formatTime(viewModel.elapsedTime))
+                            .font(.caption.monospacedDigit())
+                            .foregroundColor(.brand)
+                    }
                 }
                 
                 Spacer()

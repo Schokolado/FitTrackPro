@@ -41,7 +41,7 @@ struct AppRouter: View {
             .tint(.brand)
             
             if let vm = workoutManager.activeViewModel {
-                WorkoutMiniPlayerView(viewModel: vm) {
+                WorkoutMiniPlayerView(viewModel: vm, planName: workoutManager.activeSession?.plan?.name) {
                     showingWorkoutSession = true
                 }
                 .padding(.bottom, 49) // Approximate tab bar height padding
@@ -50,6 +50,11 @@ struct AppRouter: View {
         .fullScreenCover(isPresented: $showingWorkoutSession) {
             if let session = workoutManager.activeSession, let vm = workoutManager.activeViewModel {
                 WorkoutSessionView(viewModel: vm, session: session)
+            }
+        }
+        .onChange(of: workoutManager.activeSession) { oldValue, newValue in
+            if newValue != nil {
+                showingWorkoutSession = true
             }
         }
     }
