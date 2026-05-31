@@ -3,7 +3,7 @@
 > **Projekt:** FitTrackPro – iOS Krafttraining & Ernährungs-App  
 > **Plattform:** iOS 17+ · Swift 5.9 · SwiftUI · SwiftData  
 > **Start:** 2026-05-29  
-> **Letztes Update:** –
+> **Letztes Update:** 2026-05-31
 
 ---
 
@@ -25,7 +25,7 @@
 | M9 – Statistik & Analyse | ⏳ Ausstehend |
 | M10 – PDF-Export | ⏳ Ausstehend |
 | M11 – Apple Health | ⏳ Ausstehend |
-| M12 – Einstellungen | ⏳ Ausstehend |
+| M12 – Einstellungen | 🔧 In Arbeit (Basis fertig) |
 | M13 – CloudKit Sync | ⏳ Ausstehend |
 | M14 – WidgetKit Extension | ⏳ Ausstehend |
 | M15 – Lokalisierung DE+EN | ⏳ Ausstehend |
@@ -35,6 +35,41 @@
 ---
 
 ## Einträge
+
+### 2026-05-31 – Code-Cleanup & Architektur-Konsolidierung
+
+**Status:** ✅ Fertig  
+**Bearbeitet:** Architekturbereinigung (3 kritische Issues aus Validierung)
+
+**Implementiert:**
+- Magic-String-Notifications ersetzt: `NSNotification.Name("WorkoutFinished")` in `WorkoutSummaryView` und `WorkoutSessionView` durch typisierte Konstante `Notification.Name.workoutFinished` (aus `NotificationNames.swift`) ersetzt. Sender und Empfänger nutzen jetzt dieselbe Konstante.
+- `DateFormatter` gecacht: In `WorkoutSessionViewModel` wird `DateFormatter` jetzt als `private static let` einmalig angelegt statt jede Sekunde neu.
+- Datei-Konsolidierung: Alle aktiven Swift-Quellen aus dem Projekt-Root in die korrekte `Features/` und `Core/`-Verzeichnisstruktur verschoben. `project.pbxproj` entsprechend aktualisiert. Root enthielt die neuesten Versionen, die massiv von veralteten `Features/`-Kopien abwichen.
+
+**Nächster Schritt:** Milestone 6 (Ernährungs-Tracker)
+
+### 2026-05-31 – Post-M5 Features (dokumentiert nachträglich)
+
+**Status:** ✅ Fertig  
+**Bearbeitet:** UI-Verbesserungen und Feature-Erweiterungen nach Milestone 5
+
+**Implementiert:**
+- **ThemeManager** (`Core/Managers/ThemeManager.swift`): Dynamische Kategorie-Farben, pro Kategorie konfigurierbar via `UserDefaults`, mit `Color(hex:)` und `toHex()` Extension.
+- **ThemeSettingsView** (`Features/Settings/ThemeSettingsView.swift`): UI zum Anpassen der Kategorie-Farben in den Einstellungen.
+- **ExerciseCardView** (`Features/Training/ExerciseLibrary/ExerciseCardView.swift`): Moderne Floating-Card-Darstellung in der Übungsbibliothek mit dynamischen Kategorie-Icons und -Farben.
+- **ExerciseIconView** (`Core/Views/ExerciseIconView.swift`): Wiederverwendbare Icon-Komponente pro Übungskategorie.
+- **Dynamische Icons in Exercise.swift**: Extension mit `themeColor`, `themeIcon` und `customIconName` Properties.
+- **Segmented Control im Training-Tab** (`TrainingMainView`): Umschalten zwischen Trainingsplänen und Übungsbibliothek.
+- **Auto-Expand & Auto-Scroll in PlanDetailView**: Neu hinzugefügte Übungen werden automatisch aufgeklappt und ins Bild gescrollt.
+- **Auto-Expand nächste Übung im Workout-Modus**: Nach Abschluss einer Übung wird automatisch die nächste Gruppe aufgeklappt und gescrollt.
+- **Manueller Timer mit Favoriten** (`WorkoutSessionView`): Timer-Menü mit drei konfigurierbaren Favoriten (30/60/90 Sek.) und freier Eingabe via `@AppStorage`.
+- **Ad-hoc Übungen im laufenden Workout**: Übungen können aus der Bibliothek zum laufenden Workout hinzugefügt werden, optional mit Übernahme in den Plan.
+- **Auto-Finish Alert**: Nach Abschluss aller Übungen erscheint automatisch ein Hinweis zum Beenden des Workouts.
+- **Logger+App.swift**: Zentrales `os.Logger`-Setup für strukturiertes Logging.
+- **NotificationNames.swift**: Typisierte `Notification.Name`-Konstanten als zentrale Quelle.
+- **TrainingPlan+Grouping.swift**: `ExerciseGroup`-Struct und `groupedPlanExercises`-Extension ausgelagert.
+
+**Nächster Schritt:** → s.o. (Cleanup)
 
 ### 2026-05-30 – Milestone 5 abgeschlossen
 
