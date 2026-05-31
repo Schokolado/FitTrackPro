@@ -48,6 +48,8 @@ struct PlanDetailView: View {
                         startWorkoutButton
                     }
                     
+                    notesSection
+                    
                     ForEach(groupedExercises) { group in
                         exerciseGroupView(for: group)
                     }
@@ -88,6 +90,22 @@ struct PlanDetailView: View {
         .background(Color.brandSecondary.opacity(0.1))
         .cornerRadius(12)
         .padding(.horizontal)
+    }
+    
+    private var notesSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Notizen")
+                .font(.headline)
+                .foregroundColor(.secondary)
+                .padding(.horizontal)
+            
+            TextField("Trainingshinweise, Ziele etc...", text: $plan.notes, axis: .vertical)
+                .padding()
+                .background(Color.backgroundCard)
+                .cornerRadius(12)
+                .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
+                .padding(.horizontal)
+        }
     }
     
     var body: some View {
