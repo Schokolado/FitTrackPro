@@ -19,6 +19,13 @@ class WorkoutSessionViewModel {
     private var timer: Timer?
     private var restTimer: Timer?
     
+    // Cached formatter – DateFormatter is expensive to create; reuse across timer ticks
+    private static let timeFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.timeStyle = .short
+        return f
+    }()
+    
     func startWorkout() {
         startTime = Date()
         timerActive = true
@@ -79,9 +86,7 @@ class WorkoutSessionViewModel {
         }
         
         // Real Time Header
-        let formatter = DateFormatter()
-        formatter.timeStyle = .short
-        currentTimeString = formatter.string(from: Date())
+        currentTimeString = WorkoutSessionViewModel.timeFormatter.string(from: Date())
         
         // Rest Timer
         if restTimerActive {

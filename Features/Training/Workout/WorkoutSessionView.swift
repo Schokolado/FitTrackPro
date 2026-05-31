@@ -4,6 +4,7 @@ import SwiftData
 struct WorkoutSessionView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject var themeManager: ThemeManager
     
     @State private var viewModel = WorkoutSessionViewModel()
     @Bindable var session: WorkoutSession
@@ -23,13 +24,19 @@ struct WorkoutSessionView: View {
     @State private var showingCustomTimerAlert = false
     @State private var customTimerSeconds: String = ""
     
+    @State private var showingAutoFinishAlert = false
+    @State private var hasShownAutoFinishAlert = false
+    
+    @State private var expandedGroupIds: Set<String> = []
+    @State private var scrollTarget: String? = nil
+    
     private struct GroupKey: Hashable {
         let planExerciseId: UUID?
         let exerciseId: UUID
     }
     
     // Group sets by Exercise and PlanExercise for UI
-    private var groupedSets: [(id: UUID, exercise: Exercise, planExercise: PlanExercise?, sets: [WorkoutSet])] {
+    private var groupedSets: [ExerciseGroupData] {
         guard let sets = session.sets else { return [] }
         var dict: [GroupKey: [WorkoutSet]] = [:]
         
@@ -42,7 +49,7 @@ struct WorkoutSessionView: View {
             dict[key]?.append(set)
         }
         
-        var result: [(id: UUID, exercise: Exercise, planExercise: PlanExercise?, sets: [WorkoutSet])] = []
+        var result: [ExerciseGroupData] = []
         
         if let plan = session.plan, let planExercises = plan.planExercises {
             let orderedExercises = planExercises.sorted(by: { $0.sortOrder < $1.sortOrder })
@@ -50,7 +57,7 @@ struct WorkoutSessionView: View {
                 guard let exercise = planEx.exercise else { continue }
                 let key = GroupKey(planExerciseId: planEx.id, exerciseId: exercise.id)
                 if let groupSets = dict[key] {
-                    result.append((id: planEx.id, exercise: exercise, planExercise: planEx, sets: groupSets.sorted(by: { $0.setNumber < $1.setNumber })))
+                    result.append(ExerciseGroupData(id: planEx.id, exercise: exercise, planExercise: planEx, sets: groupSets.sorted(by: { $0.setNumber < $1.setNumber })))
                     dict.removeValue(forKey: key)
                 }
             }
@@ -66,11 +73,22 @@ struct WorkoutSessionView: View {
         for key in remainingKeys {
             if let groupSets = dict[key], let firstSet = groupSets.first, let exercise = firstSet.exercise {
                 let id = key.planExerciseId ?? exercise.id
-                result.append((id: id, exercise: exercise, planExercise: firstSet.planExercise, sets: groupSets.sorted(by: { $0.setNumber < $1.setNumber })))
+                result.append(ExerciseGroupData(id: id, exercise: exercise, planExercise: firstSet.planExercise, sets: groupSets.sorted(by: { $0.setNumber < $1.setNumber })))
             }
         }
         
         return result
+    }
+    
+    private func isGroupCompleted(_ group: SessionExerciseGroupData) -> Bool {
+        group.exerciseGroups.allSatisfy { g in
+            !g.sets.isEmpty && g.sets.allSatisfy { $0.isCompleted }
+        }
+    }
+    
+    private var allSetsCompleted: Bool {
+        guard let sets = session.sets, !sets.isEmpty else { return false }
+        return sets.allSatisfy { $0.isCompleted }
     }
     
     var body: some View {
@@ -140,6 +158,8 @@ struct WorkoutSessionView: View {
                     dismiss()
                 }
                 Button("Zurück", role: .cancel) {}
+            } message: {
+                Text("Dein bisheriger Fortschritt in diesem Workout geht verloren.")
             }
             .alert("Pause beenden?", isPresented: $showingSkipRestAlert) {
                 Button("Überspringen") {
@@ -187,25 +207,382 @@ struct WorkoutSessionView: View {
             } message: {
                 Text("Gib die gewünschte Pausenzeit in Sekunden ein.")
             }
+            .alert("Glückwunsch!", isPresented: $showingAutoFinishAlert) {
+                Button("Workout beenden") {
+                    viewModel.pauseWorkout()
+                    showingFinishSheet = true
+                }
+                Button("Cooldown fortsetzen", role: .cancel) { }
+            } message: {
+                Text("Du hast alle Übungen erfolgreich abgeschlossen. Möchtest du das Workout jetzt beenden oder weiterlaufen lassen (z.B. für Cooldown)?")
+            }
+            .onChange(of: allSetsCompleted) { oldValue, newValue in
+                if newValue {
+                    if !hasShownAutoFinishAlert {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                            showingAutoFinishAlert = true
+                        }
+                        hasShownAutoFinishAlert = true
+                    }
+                } else {
+                    hasShownAutoFinishAlert = false
+                }
+            }
             .onAppear {
                 NotificationService.shared.requestAuthorization()
                 viewModel.startWorkout()
+                
+                if let firstUncompleted = sessionExerciseGroups.first(where: { !isGroupCompleted($0) }) {
+                    expandedGroupIds.insert(firstUncompleted.id)
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        scrollTarget = firstUncompleted.id
+                    }
+                }
             }
             // Milestone 5: Workout Summary
             .sheet(isPresented: $showingFinishSheet) {
                 WorkoutSummaryView(session: session)
                     .interactiveDismissDisabled() // User must click "Speichern"
             }
-            .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("WorkoutFinished"))) { _ in
+            .onReceive(NotificationCenter.default.publisher(for: .workoutFinished)) { _ in
                 // Dismiss the full screen cover when the summary is saved
                 dismiss()
             }
         }
     }
     
-    private func addSet(for exercise: Exercise, planExercise: PlanExercise?) {
-        guard let sets = session.sets else { return }
+    private var sessionExerciseGroups: [SessionExerciseGroupData] {
+        let sortedGroups = groupedSets
+        var groups: [SessionExerciseGroupData] = []
+        var processedIds: Set<UUID> = []
         
+        for g in sortedGroups {
+            if processedIds.contains(g.id) { continue }
+            
+            if let groupId = g.planExercise?.supersetGroup {
+                let related = sortedGroups.filter { $0.planExercise?.supersetGroup == groupId }
+                for rel in related {
+                    processedIds.insert(rel.id)
+                }
+                groups.append(SessionExerciseGroupData(id: "superset-\(groupId)", exerciseGroups: related, supersetGroupId: groupId))
+            } else {
+                processedIds.insert(g.id)
+                groups.append(SessionExerciseGroupData(id: "single-\(g.id.uuidString)", exerciseGroups: [g], supersetGroupId: nil))
+            }
+        }
+        
+        return groups
+    }
+
+    private var workoutSetsList: some View {
+        ScrollView {
+            ScrollViewReader { proxy in
+                VStack(spacing: Spacing.md) {
+                    ForEach(sessionExerciseGroups) { group in
+                    WorkoutSupersetGroupCard(
+                        sessionGroup: group,
+                        session: session,
+                        viewModel: viewModel,
+                        isExpanded: Binding(
+                            get: { expandedGroupIds.contains(group.id) },
+                            set: { val in
+                                if val { expandedGroupIds.insert(group.id) }
+                                else { expandedGroupIds.remove(group.id) }
+                            }
+                        ),
+                        onGroupCompleted: {
+                            if let next = sessionExerciseGroups.first(where: { !isGroupCompleted($0) }) {
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                    _ = expandedGroupIds.insert(next.id)
+                                    _ = expandedGroupIds.remove(group.id)
+                                }
+                                scrollTarget = next.id
+                            } else {
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                    _ = expandedGroupIds.remove(group.id)
+                                }
+                            }
+                        }
+                    )
+                    .padding(.bottom, Spacing.sm)
+                    .id(group.id)
+                }
+                
+                Button(action: {
+                    showingExerciseSelection = true
+                }) {
+                    Label("Übung hinzufügen", systemImage: "plus.circle.fill")
+                        .font(.headline)
+                        .foregroundColor(.brand)
+                }
+                .padding()
+                .frame(maxWidth: .infinity)
+                .background(Color.brandSecondary.opacity(0.1))
+                .cornerRadius(12)
+                .padding(.horizontal)
+                
+                Button(action: {
+                    showingCancelAlert = true
+                }) {
+                    Text("Workout abbrechen")
+                        .foregroundColor(.red)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                }
+                .padding(.top, 16)
+            }
+            .padding(.vertical)
+            .onChange(of: scrollTarget) { _, newTarget in
+                if let target = newTarget {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                            proxy.scrollTo(target, anchor: .top)
+                        }
+                    }
+                }
+            }
+        }
+        }
+        .background(Color.backgroundPrimary)
+    }
+    
+    private func handleAdhocExercise(_ exercise: Exercise) {
+        // Add one empty set so it appears in the active session
+        let newSet = WorkoutSet(setNumber: 1, session: session, exercise: exercise)
+        modelContext.insert(newSet)
+        
+        // Ask if it should be saved to the underlying plan
+        if session.plan != nil {
+            self.pendingExerciseToAdd = exercise
+            // Delay alert to avoid sheet presentation conflict
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                self.showingAddToPlanAlert = true
+            }
+        }
+    }
+}
+
+struct ExerciseGroupData: Identifiable {
+    let id: UUID
+    let exercise: Exercise
+    let planExercise: PlanExercise?
+    var sets: [WorkoutSet]
+}
+
+struct SessionExerciseGroupData: Identifiable {
+    let id: String
+    var exerciseGroups: [ExerciseGroupData]
+    var supersetGroupId: Int?
+}
+
+struct WorkoutSupersetGroupCard: View {
+    @Environment(\.modelContext) private var modelContext
+    @EnvironmentObject var themeManager: ThemeManager
+    let sessionGroup: SessionExerciseGroupData
+    let session: WorkoutSession
+    let viewModel: WorkoutSessionViewModel
+    @Binding var isExpanded: Bool
+    var onGroupCompleted: () -> Void
+    
+    private var isCompleted: Bool {
+        sessionGroup.exerciseGroups.allSatisfy { g in
+            !g.sets.isEmpty && g.sets.allSatisfy { $0.isCompleted }
+        }
+    }
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            if sessionGroup.supersetGroupId != nil {
+                Button(action: {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) { isExpanded.toggle() }
+                }) {
+                    HStack {
+                        HStack {
+                            Image(systemName: "link")
+                            Text("Supersatz")
+                        }
+                        .font(.caption)
+                        .foregroundColor(.brandSecondary)
+                        
+                        Spacer()
+                        
+                        if isCompleted {
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundColor(.green)
+                        }
+                    }
+                    .padding(.horizontal)
+                    .padding(.top, Spacing.md)
+                    .padding(.bottom, 0)
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                
+                if isExpanded {
+                    ForEach(Array(sessionGroup.exerciseGroups.enumerated()), id: \.element.id) { index, group in
+                        WorkoutExerciseInnerView(
+                            exercise: group.exercise,
+                            planExercise: group.planExercise,
+                            sets: group.sets,
+                            session: session,
+                            viewModel: viewModel,
+                            isSuperset: true,
+                            groupIsCollapsed: .constant(false)
+                        )
+                        
+                        if index < sessionGroup.exerciseGroups.count - 1 {
+                            Divider()
+                                .padding(.leading)
+                                .padding(.vertical, 8)
+                        }
+                    }
+                } else {
+                    Button(action: {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) { isExpanded.toggle() }
+                    }) {
+                        VStack(alignment: .leading, spacing: 4) {
+                            ForEach(Array(sessionGroup.exerciseGroups.enumerated()), id: \.element.id) { index, g in
+                                HStack {
+                                    ExerciseIconView(exercise: g.exercise, size: 20)
+                                        .foregroundColor(themeManager.color(for: g.exercise.category))
+                                    Text(g.exercise.name)
+                                        .font(.headline)
+                                        .foregroundColor(.primary)
+                                }
+                                
+                                if index < sessionGroup.exerciseGroups.count - 1 {
+                                    Divider()
+                                        .padding(.leading)
+                                }
+                            }
+                        }
+                        .padding(.horizontal)
+                        .padding(.top, 8)
+                        .padding(.bottom, 8)
+                        .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                }
+            } else {
+                if let group = sessionGroup.exerciseGroups.first {
+                    WorkoutExerciseInnerView(
+                        exercise: group.exercise,
+                        planExercise: group.planExercise,
+                        sets: group.sets,
+                        session: session,
+                        viewModel: viewModel,
+                        isSuperset: false,
+                        groupIsCollapsed: Binding(
+                            get: { !isExpanded },
+                            set: { isExpanded = !$0 }
+                        )
+                    )
+                }
+            }
+        }
+        .cardStyle()
+        .padding(.horizontal)
+        .onChange(of: isCompleted) { oldValue, newValue in
+            if newValue == true {
+                onGroupCompleted()
+            }
+        }
+    }
+}
+
+struct WorkoutExerciseInnerView: View {
+    @Environment(\.modelContext) private var modelContext
+    @EnvironmentObject var themeManager: ThemeManager
+    let exercise: Exercise
+    let planExercise: PlanExercise?
+    let sets: [WorkoutSet]
+    let session: WorkoutSession
+    let viewModel: WorkoutSessionViewModel
+    let isSuperset: Bool
+    @Binding var groupIsCollapsed: Bool
+    
+    private var isCompleted: Bool {
+        !sets.isEmpty && sets.allSatisfy { $0.isCompleted }
+    }
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            HStack {
+                Button(action: {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) { groupIsCollapsed.toggle() }
+                }) {
+                    HStack {
+                        HStack {
+                            ExerciseIconView(exercise: exercise, size: 20)
+                                .foregroundColor(themeManager.color(for: exercise.category))
+                            Text(exercise.name)
+                                .font(.headline)
+                                .foregroundColor(.primary)
+                        }
+                        Spacer()
+                    }
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                
+                if isCompleted {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundColor(.green)
+                }
+                
+                Menu {
+                    NavigationLink(destination: ExerciseDetailView(exercise: exercise)) {
+                        Label("Übungsdetails ansehen", systemImage: "info.circle")
+                    }
+                } label: {
+                    Image(systemName: "ellipsis")
+                        .font(.system(size: 20))
+                        .foregroundColor(.secondary)
+                        .padding(.leading, 8)
+                        .padding(.vertical, 4)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.borderless)
+            }
+            .padding(.horizontal)
+            .padding(.top, isSuperset ? 8 : Spacing.sm)
+            .padding(.bottom, (isSuperset ? false : groupIsCollapsed) ? Spacing.sm : 8)
+            
+            if !(isSuperset ? false : groupIsCollapsed) {
+                ForEach(Array(sets.enumerated()), id: \.element.id) { index, workoutSet in
+                    WorkoutSetRowView(workoutSet: workoutSet) {
+                        let duration = workoutSet.planExercise?.restDuration ?? exercise.defaultRestDuration
+                        viewModel.startRestTimer(duration: duration)
+                    }
+                    .contextMenu {
+                        Button(role: .destructive) {
+                            deleteSet(workoutSet, from: sets)
+                        } label: {
+                            Label("Satz löschen", systemImage: "trash")
+                        }
+                    }
+                    .padding(.horizontal)
+                    
+                    if index < sets.count - 1 {
+                        Divider()
+                            .padding(.leading)
+                    }
+                }
+                
+                Button(action: {
+                    addSet(for: exercise, planExercise: planExercise)
+                }) {
+                    Label("Satz hinzufügen", systemImage: "plus")
+                        .font(.subheadline)
+                        .foregroundColor(.brand)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                }
+                .padding(.vertical, 12)
+            }
+        }
+    }
+    
+    private func addSet(for exercise: Exercise, planExercise: PlanExercise?) {
+        guard session.sets != nil else { return }
         let existingSets: [WorkoutSet]
         if let planEx = planExercise {
             existingSets = sets.filter { $0.planExercise?.id == planEx.id }
@@ -232,178 +609,28 @@ struct WorkoutSessionView: View {
             set.setNumber = index + 1
         }
     }
-    
-    private func handleAdhocExercise(_ exercise: Exercise) {
-        // Add one empty set so it appears in the active session
-        let newSet = WorkoutSet(setNumber: 1, session: session, exercise: exercise)
-        modelContext.insert(newSet)
-        
-        // Ask if it should be saved to the underlying plan
-        if session.plan != nil {
-            self.pendingExerciseToAdd = exercise
-            // Delay alert to avoid sheet presentation conflict
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                self.showingAddToPlanAlert = true
-            }
-        }
-    }
-    
-    private var workoutSetsList: some View {
-        ScrollView {
-            VStack(spacing: Spacing.lg) {
-                ForEach(groupedSets, id: \.id) { group in
-                    WorkoutExerciseCardView(
-                        exercise: group.exercise,
-                        planExercise: group.planExercise,
-                        sets: group.sets,
-                        session: session,
-                        viewModel: viewModel
-                    )
-                }
-                
-                Button(action: {
-                    showingExerciseSelection = true
-                }) {
-                    Label("Übung hinzufügen", systemImage: "plus.circle.fill")
-                        .font(.headline)
-                        .foregroundColor(.brand)
-                }
-                .padding()
-                .frame(maxWidth: .infinity)
-                .background(Color.brandSecondary.opacity(0.1))
-                .cornerRadius(12)
-                .padding(.horizontal)
-                
-                Button(action: {
-                    showingCancelAlert = true
-                }) {
-                    Text("Workout abbrechen")
-                        .foregroundColor(.red)
-                        .frame(maxWidth: .infinity, alignment: .center)
-                }
-                .padding(.top, 16)
-            }
-            .padding(.vertical)
-        }
-        .background(Color.backgroundPrimary)
-    }
 }
 
-struct WorkoutExerciseCardView: View {
-    @Environment(\.modelContext) private var modelContext
+struct ExerciseSectionHeader: View {
     let exercise: Exercise
-    let planExercise: PlanExercise?
-    let sets: [WorkoutSet]
-    let session: WorkoutSession
-    let viewModel: WorkoutSessionViewModel
+    let currentSessionId: UUID
     
-    @State private var isManuallyExpanded: Bool = false
-    
-    private var isCompleted: Bool {
-        !sets.isEmpty && sets.allSatisfy { $0.isCompleted }
-    }
-    
-    private var isCollapsed: Bool {
-        isCompleted && !isManuallyExpanded
+    init(exercise: Exercise, currentSessionId: UUID) {
+        self.exercise = exercise
+        self.currentSessionId = currentSessionId
     }
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
+        NavigationLink(destination: ExerciseDetailView(exercise: exercise)) {
             HStack {
-                NavigationLink(destination: ExerciseDetailView(exercise: exercise)) {
-                    HStack {
-                        Text(exercise.name)
-                            .font(.headline)
-                            .foregroundColor(.brand)
-                        Spacer()
-                    }
-                    .contentShape(Rectangle())
-                }
-                .buttonStyle(.borderless)
-                
-                if isCompleted {
-                    Button(action: {
-                        withAnimation { isManuallyExpanded.toggle() }
-                    }) {
-                        Image(systemName: isManuallyExpanded ? "chevron.up" : "chevron.down")
-                            .foregroundColor(.secondary)
-                            .padding(.leading, 12)
-                            .padding(.vertical, 4)
-                            .contentShape(Rectangle())
-                    }
-                    .buttonStyle(.borderless)
-                }
-            }
-            .padding(.horizontal)
-            .padding(.top, Spacing.sm)
-            .padding(.bottom, isCollapsed ? Spacing.sm : 8)
-            
-            if !isCollapsed {
-                ForEach(Array(sets.enumerated()), id: \.element.id) { index, workoutSet in
-                    WorkoutSetRowView(workoutSet: workoutSet) {
-                        let duration = workoutSet.planExercise?.restDuration ?? exercise.defaultRestDuration
-                        viewModel.startRestTimer(duration: duration)
-                    }
-                    .contextMenu {
-                        Button(role: .destructive) {
-                            deleteSet(workoutSet, from: sets)
-                        } label: {
-                            Label("Satz löschen", systemImage: "trash")
-                        }
-                    }
-                    .padding(.horizontal)
-                    .padding(.vertical, 8)
+                Text(exercise.name)
+                    .font(.headline)
+                    .foregroundColor(.brand)
                     
-                    if index < sets.count - 1 {
-                        Divider()
-                            .padding(.leading)
-                    }
-                }
-                
-                Button(action: {
-                    addSet(for: exercise, planExercise: planExercise)
-                }) {
-                    Label("Satz hinzufügen", systemImage: "plus")
-                        .font(.subheadline)
-                        .foregroundColor(.brand)
-                        .frame(maxWidth: .infinity, alignment: .center)
-                }
-                .padding(.vertical, 12)
+                Spacer()
             }
+            .contentShape(Rectangle())
         }
-        .cardStyle()
-        .padding(.horizontal)
-        .onChange(of: isCompleted) { oldValue, newValue in
-            if newValue == true {
-                withAnimation { isManuallyExpanded = false }
-            }
-        }
-    }
-    
-    private func addSet(for exercise: Exercise, planExercise: PlanExercise?) {
-        guard let sessionSets = session.sets else { return }
-        let existingSets: [WorkoutSet]
-        if let planEx = planExercise {
-            existingSets = sessionSets.filter { $0.planExercise?.id == planEx.id }
-        } else {
-            existingSets = sessionSets.filter { $0.exercise?.id == exercise.id && $0.planExercise == nil }
-        }
-        let newSetNumber = (existingSets.max(by: { $0.setNumber < $1.setNumber })?.setNumber ?? 0) + 1
-        
-        let newSet = WorkoutSet(
-            setNumber: newSetNumber,
-            session: session,
-            exercise: exercise,
-            planExercise: planExercise
-        )
-        modelContext.insert(newSet)
-    }
-    
-    private func deleteSet(_ setToDelete: WorkoutSet, from sets: [WorkoutSet]) {
-        modelContext.delete(setToDelete)
-        let remainingSets = sets.filter { $0.id != setToDelete.id }.sorted(by: { $0.setNumber < $1.setNumber })
-        for (index, set) in remainingSets.enumerated() {
-            set.setNumber = index + 1
-        }
+        .buttonStyle(.borderless)
     }
 }
