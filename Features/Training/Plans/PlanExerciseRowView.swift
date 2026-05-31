@@ -22,12 +22,17 @@ struct PlanExerciseRowView: View {
                         HStack {
                             ZStack {
                                 Circle()
+                                    .fill(Color(.systemBackground))
+                                    .frame(width: 40, height: 40)
+                                    
+                                Circle()
                                     .fill(LinearGradient(gradient: Gradient(colors: [themeManager.color(for: exercise.category).opacity(0.7), themeManager.color(for: exercise.category)]), startPoint: .topLeading, endPoint: .bottomTrailing))
                                     .frame(width: 40, height: 40)
                                 
                                 ExerciseIconView(exercise: exercise, size: 20)
                                     .foregroundColor(.white)
                             }
+                            .shadow(color: Color.black.opacity(0.15), radius: 2, x: 1, y: 0)
                             
                             Text(exercise.name)
                                 .font(.headline)

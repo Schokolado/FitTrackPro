@@ -36,6 +36,10 @@ struct ExerciseCardView: View {
             // Icon Badge
             ZStack {
                 Circle()
+                    .fill(Color(.systemBackground))
+                    .frame(width: 50, height: 50)
+                    
+                Circle()
                     .fill(LinearGradient(gradient: Gradient(colors: [categoryColor.opacity(0.7), categoryColor]), startPoint: .topLeading, endPoint: .bottomTrailing))
                     .frame(width: 50, height: 50)
                 
@@ -43,6 +47,7 @@ struct ExerciseCardView: View {
                     .foregroundColor(.white)
                     .font(.title3)
             }
+            .shadow(color: Color.black.opacity(0.15), radius: 2, x: 1, y: 0)
             
             VStack(alignment: .leading, spacing: 6) {
                 Text(exercise.name)

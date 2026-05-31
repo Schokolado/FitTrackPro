@@ -43,8 +43,9 @@
 
 **Implementiert:**
 - **SupersetIconStack** (`Core/Views/SupersetIconStack.swift`): Neue wiederverwendbare Komponente. Zeigt bis zu 3 Kategorie-Icons (28×28 pt). Die Gesamtbreite des Stacks ist dynamisch auf maximal 40pt (Breite eines normalen großen Icons) begrenzt. Der Overlap passt sich automatisch an die Anzahl der Übungen an. Die Icons sind nun komplett deckend (verhindert das Durchscheinen darunterliegender Icons) und werfen einen leichten Schatten, um die Stapelung besser hervorzuheben.
+- **Einzel-Icons (App-weit vereinheitlicht):** Einzelne Übungen in der `WorkoutSessionView`, der `PlanDetailView` und der `ExerciseLibraryView` (`ExerciseCardView`) haben nun durchgängig einen deckenden, farbigen Gradienten-Kreis als Hintergrund sowie denselben leichten Schatten (`radius: 2, x: 1, y: 0`) wie der `SupersetIconStack`.
 - **PlanDetailView** (`Features/Training/Plans/PlanDetailView.swift`): Collapsed-Supersatz zeigt jetzt Icon-Stack + Namen-VStack statt reinem Text mit Divider-Trenner. Chevron-Pfeil als Expand-Hinweis.
-- **WorkoutSessionView** (`Features/Training/Workout/WorkoutSessionView.swift`): `WorkoutSupersetGroupCard` collapsed body ersetzt — statt flacher `ExerciseIconView`-Icons mit Divider jetzt konsistenter `SupersetIconStack`. Der separater `🔗 Supersatz`-Header (incl. Completion-Haken) bleibt unverändert.
+- **WorkoutSessionView** (`Features/Training/Workout/WorkoutSessionView.swift`): `WorkoutSupersetGroupCard` collapsed body ersetzt — statt flacher `ExerciseIconView`-Icons mit Divider jetzt konsistenter `SupersetIconStack`. Einzelübungen nutzen nun ebenfalls einen farbigen Kreis als Hintergrund.
 - Xcode-Projekt aktualisiert: `SupersetIconStack.swift` in `Core/Views`-Gruppe registriert.
 
 **Build:** `** BUILD SUCCEEDED **` (Clean Build)

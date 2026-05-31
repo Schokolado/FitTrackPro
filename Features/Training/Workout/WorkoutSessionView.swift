@@ -514,9 +514,21 @@ struct WorkoutExerciseInnerView: View {
                     withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) { groupIsCollapsed.toggle() }
                 }) {
                     HStack {
-                        HStack {
-                            ExerciseIconView(exercise: exercise, size: 20)
-                                .foregroundColor(themeManager.color(for: exercise.category))
+                        HStack(spacing: 12) {
+                            ZStack {
+                                Circle()
+                                    .fill(Color(.systemBackground))
+                                    .frame(width: 36, height: 36)
+                                
+                                Circle()
+                                    .fill(LinearGradient(gradient: Gradient(colors: [themeManager.color(for: exercise.category).opacity(0.7), themeManager.color(for: exercise.category)]), startPoint: .topLeading, endPoint: .bottomTrailing))
+                                    .frame(width: 36, height: 36)
+                                
+                                ExerciseIconView(exercise: exercise, size: 18)
+                                    .foregroundColor(.white)
+                            }
+                            .shadow(color: Color.black.opacity(0.15), radius: 2, x: 1, y: 0)
+                            
                             Text(exercise.name)
                                 .font(.headline)
                                 .foregroundColor(.primary)
