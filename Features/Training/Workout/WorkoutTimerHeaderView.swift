@@ -19,33 +19,38 @@ struct WorkoutTimerHeaderView: View {
             // Main Header (Always visible)
             ZStack {
                 // Centered content
-                VStack(spacing: 2) {
+                VStack(spacing: viewModel.restTimerActive ? 2 : 8) {
                     Text(planName ?? "Freies Workout")
                         .font(.caption)
                         .foregroundColor(.secondary)
                         .textCase(.uppercase)
                     
                     Text(viewModel.formatTime(viewModel.elapsedTime))
-                        .font(.system(size: 48, weight: .heavy, design: .rounded).monospacedDigit())
+                        .font(.system(size: viewModel.restTimerActive ? 48 : 64, weight: .heavy, design: .rounded).monospacedDigit())
                         .foregroundColor(.primary)
                 }
                 
                 // Right aligned Beenden button
                 HStack {
                     Spacer()
-                    Button("Beenden") {
-                        onFinish()
+                    VStack {
+                        Button("Beenden") {
+                            onFinish()
+                        }
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 10)
+                        .background(Color.brand)
+                        .clipShape(Capsule())
+                        Spacer()
                     }
-                    .font(.headline)
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 10)
-                    .background(Color.brand)
-                    .clipShape(Capsule())
                 }
             }
             .padding(.horizontal)
-            .padding(.vertical, 12)
+            .padding(.top, 16)
+            .padding(.bottom, viewModel.restTimerActive ? 12 : 16)
+            .frame(maxHeight: .infinity)
             
             // Rest Timer Banner (Slides down when active)
             if viewModel.restTimerActive {
@@ -101,13 +106,13 @@ struct WorkoutTimerHeaderView: View {
                     .padding(.horizontal)
                 }
                 .frame(height: 70)
-                .transition(.move(edge: .top).combined(with: .opacity))
+                .transition(.move(edge: .bottom).combined(with: .opacity))
             }
-            
-            // Divider removed, replaced by shadow below
         }
+        .frame(height: 170)
         .background(Color.backgroundCard)
         .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+        .animation(.spring(response: 0.4, dampingFraction: 0.8), value: viewModel.restTimerActive)
         .shadow(color: Color.black.opacity(0.08), radius: 12, x: 0, y: 6)
         .padding(.horizontal)
         .padding(.top, 4)
