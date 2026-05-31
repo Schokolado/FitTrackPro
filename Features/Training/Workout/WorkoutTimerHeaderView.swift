@@ -27,40 +27,7 @@ struct WorkoutTimerHeaderView: View {
                         .font(.system(size: 48, weight: .heavy, design: .rounded).monospacedDigit())
                         .foregroundColor(.primary)
                 }
-                
                 Spacer()
-                
-                // Manual Timer Start Menu
-                if !viewModel.restTimerActive {
-                    Menu {
-                        Button("\(timerFav1) Sek") { viewModel.startRestTimer(duration: TimeInterval(timerFav1)) }
-                        Button("\(timerFav2) Sek") { viewModel.startRestTimer(duration: TimeInterval(timerFav2)) }
-                        Button("\(timerFav3) Sek") { viewModel.startRestTimer(duration: TimeInterval(timerFav3)) }
-                        Divider()
-                        Button("Individuell...") {
-                            onShowCustomTimer()
-                        }
-                    } label: {
-                        Image(systemName: "timer")
-                            .font(.title2)
-                            .foregroundColor(.brand)
-                            .padding(12)
-                            .background(Color.brand.opacity(0.15))
-                            .clipShape(Circle())
-                    }
-                }
-                
-                // Beenden Button
-                Button("Beenden") {
-                    onFinish()
-                }
-                .font(.headline)
-                .foregroundColor(.white)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 10)
-                .background(Color.brand)
-                .clipShape(Capsule())
-                .padding(.leading, 8)
             }
             .padding(.horizontal)
             .padding(.vertical, 12)

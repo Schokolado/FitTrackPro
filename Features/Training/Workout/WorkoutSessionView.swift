@@ -29,6 +29,7 @@ struct WorkoutSessionView: View {
     
     @State private var expandedGroupIds: Set<String> = []
     @State private var scrollTarget: String? = nil
+    @State private var isFabExpanded = false
     
     private struct GroupKey: Hashable {
         let planExerciseId: UUID?
@@ -102,6 +103,142 @@ struct WorkoutSessionView: View {
                             viewModel.pauseWorkout()
                             showingFinishSheet = true
                         }
+                        .background(
+                            VStack(spacing: 0) {
+                                Color.backgroundPrimary
+                                LinearGradient(
+                                    colors: [Color.backgroundPrimary, Color.backgroundPrimary.opacity(0.0)],
+                                    startPoint: .top,
+                                    endPoint: .bottom
+                                )
+                                .frame(height: 32)
+                            }
+                            .ignoresSafeArea(.container, edges: .top)
+                        )
+                    }
+                    .overlay {
+                        if isFabExpanded {
+                            Color.black.opacity(0.4)
+                                .ignoresSafeArea()
+                                .onTapGesture {
+                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                        isFabExpanded = false
+                                    }
+                                }
+                        }
+                    }
+                    .overlay(alignment: .bottomTrailing) {
+                        VStack(alignment: .trailing, spacing: 16) {
+                            if isFabExpanded {
+                                // Workout beenden
+                                Button(action: {
+                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                        isFabExpanded = false
+                                    }
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                        viewModel.pauseWorkout()
+                                        showingFinishSheet = true
+                                    }
+                                }) {
+                                    HStack {
+                                        Text("Workout beenden")
+                                            .font(.subheadline)
+                                            .fontWeight(.medium)
+                                            .padding(.horizontal, 12)
+                                            .padding(.vertical, 8)
+                                            .background(Color.white)
+                                            .foregroundColor(.primary)
+                                            .cornerRadius(8)
+                                            .shadow(color: Color.black.opacity(0.1), radius: 3, x: 0, y: 2)
+                                        
+                                        Image(systemName: "checkmark.circle.fill")
+                                            .font(.title3)
+                                            .foregroundColor(.white)
+                                            .frame(width: 48, height: 48)
+                                            .background(Color.red)
+                                            .clipShape(Circle())
+                                            .shadow(color: Color.black.opacity(0.2), radius: 4, x: 0, y: 2)
+                                    }
+                                }
+                                
+                                // Timer erstellen
+                                Button(action: {
+                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                        isFabExpanded = false
+                                    }
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                        showingCustomTimerAlert = true
+                                    }
+                                }) {
+                                    HStack {
+                                        Text("Timer starten")
+                                            .font(.subheadline)
+                                            .fontWeight(.medium)
+                                            .padding(.horizontal, 12)
+                                            .padding(.vertical, 8)
+                                            .background(Color.white)
+                                            .foregroundColor(.primary)
+                                            .cornerRadius(8)
+                                            .shadow(color: Color.black.opacity(0.1), radius: 3, x: 0, y: 2)
+                                        
+                                        Image(systemName: "timer")
+                                            .font(.title3)
+                                            .foregroundColor(.white)
+                                            .frame(width: 48, height: 48)
+                                            .background(Color.brandSecondary)
+                                            .clipShape(Circle())
+                                            .shadow(color: Color.black.opacity(0.2), radius: 4, x: 0, y: 2)
+                                    }
+                                }
+                                
+                                // Übung hinzufügen
+                                Button(action: {
+                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                        isFabExpanded = false
+                                    }
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                        showingExerciseSelection = true
+                                    }
+                                }) {
+                                    HStack {
+                                        Text("Übung hinzufügen")
+                                            .font(.subheadline)
+                                            .fontWeight(.medium)
+                                            .padding(.horizontal, 12)
+                                            .padding(.vertical, 8)
+                                            .background(Color.white)
+                                            .foregroundColor(.primary)
+                                            .cornerRadius(8)
+                                            .shadow(color: Color.black.opacity(0.1), radius: 3, x: 0, y: 2)
+                                        
+                                        Image(systemName: "plus")
+                                            .font(.title3)
+                                            .foregroundColor(.white)
+                                            .frame(width: 48, height: 48)
+                                            .background(Color.brand)
+                                            .clipShape(Circle())
+                                            .shadow(color: Color.black.opacity(0.2), radius: 4, x: 0, y: 2)
+                                    }
+                                }
+                            }
+                            
+                            // Main FAB
+                            Button(action: {
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                    isFabExpanded.toggle()
+                                }
+                            }) {
+                                Image(systemName: "plus")
+                                    .font(.title)
+                                    .foregroundColor(.white)
+                                    .frame(width: 60, height: 60)
+                                    .background(Color.brand)
+                                    .clipShape(Circle())
+                                    .shadow(color: Color.black.opacity(0.3), radius: 5, x: 0, y: 3)
+                                    .rotationEffect(.degrees(isFabExpanded ? 45 : 0))
+                            }
+                        }
+                        .padding(20)
                     }
             .navigationBarHidden(true)
             .alert("Workout abbrechen?", isPresented: $showingCancelAlert) {
