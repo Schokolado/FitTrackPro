@@ -61,3 +61,35 @@ final class Exercise {
         try? context.save()
     }
 }
+
+import SwiftUI
+
+extension Exercise {
+    var themeColor: Color {
+        switch category.lowercased() {
+        case "brust", "chest": return .blue
+        case "rücken", "back": return .indigo
+        case "beine", "legs": return .orange
+        case "schultern", "shoulders": return .purple
+        case "arme", "arms": return .cyan
+        case "bauch / core", "abs / core", "bauch": return .green
+        case "cardio": return .red
+        case "ganzkörper", "full body": return .mint
+        default: return .gray
+        }
+    }
+    
+    var themeIcon: String {
+        switch category.lowercased() {
+        case "brust", "chest": return "figure.strengthtraining.traditional"
+        case "rücken", "back": return "figure.core.training"
+        case "beine", "legs": return "figure.run"
+        case "schultern", "shoulders": return "figure.cross.training"
+        case "arme", "arms": return "figure.mind.and.body"
+        case "bauch / core", "abs / core", "bauch": return "figure.pilates"
+        case "cardio": return "heart.fill"
+        case "ganzkörper", "full body": return "figure.highintensity.intervaltraining"
+        default: return "dumbbell.fill"
+        }
+    }
+}

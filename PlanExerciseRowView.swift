@@ -19,9 +19,19 @@ struct PlanExerciseRowView: View {
                         }
                     }) {
                         HStack {
+                            ZStack {
+                                Circle()
+                                    .fill(LinearGradient(gradient: Gradient(colors: [exercise.themeColor.opacity(0.7), exercise.themeColor]), startPoint: .topLeading, endPoint: .bottomTrailing))
+                                    .frame(width: 40, height: 40)
+                                
+                                Image(systemName: exercise.themeIcon)
+                                    .foregroundColor(.white)
+                                    .font(.headline)
+                            }
+                            
                             Text(exercise.name)
                                 .font(.headline)
-                                .foregroundColor(.brand)
+                                .foregroundColor(.primary)
                             
                             Spacer()
                         }

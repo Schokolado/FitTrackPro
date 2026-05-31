@@ -439,9 +439,13 @@ struct WorkoutSupersetGroupCard: View {
                     }) {
                         VStack(alignment: .leading, spacing: 4) {
                             ForEach(Array(sessionGroup.exerciseGroups.enumerated()), id: \.element.id) { index, g in
-                                Text(g.exercise.name)
-                                    .font(.headline)
-                                    .foregroundColor(.brand)
+                                HStack {
+                                    Image(systemName: g.exercise.themeIcon)
+                                        .foregroundColor(g.exercise.themeColor)
+                                    Text(g.exercise.name)
+                                        .font(.headline)
+                                        .foregroundColor(.primary)
+                                }
                                 
                                 if index < sessionGroup.exerciseGroups.count - 1 {
                                     Divider()
@@ -504,9 +508,13 @@ struct WorkoutExerciseInnerView: View {
                     withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) { groupIsCollapsed.toggle() }
                 }) {
                     HStack {
-                        Text(exercise.name)
-                            .font(.headline)
-                            .foregroundColor(.brand)
+                        HStack {
+                            Image(systemName: exercise.themeIcon)
+                                .foregroundColor(exercise.themeColor)
+                            Text(exercise.name)
+                                .font(.headline)
+                                .foregroundColor(.primary)
+                        }
                         Spacer()
                     }
                     .contentShape(Rectangle())

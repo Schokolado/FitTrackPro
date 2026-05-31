@@ -108,44 +108,15 @@ struct FilterChip: View {
 
 struct ExerciseCardView: View {
     let exercise: Exercise
-    
-    private var categoryColor: Color {
-        switch exercise.category.lowercased() {
-        case "brust": return .blue
-        case "rücken": return .indigo
-        case "beine": return .orange
-        case "schultern": return .purple
-        case "arme": return .cyan
-        case "bauch": return .green
-        case "cardio": return .red
-        case "ganzkörper": return .mint
-        default: return .gray
-        }
-    }
-    
-    private var categoryIcon: String {
-        switch exercise.category.lowercased() {
-        case "brust": return "figure.strengthtraining.traditional"
-        case "rücken": return "figure.core.training"
-        case "beine": return "figure.run"
-        case "schultern": return "figure.cross.training"
-        case "arme": return "figure.mind.and.body"
-        case "bauch": return "figure.pilates"
-        case "cardio": return "heart.fill"
-        case "ganzkörper": return "figure.highintensity.intervaltraining"
-        default: return "dumbbell.fill"
-        }
-    }
-    
     var body: some View {
         HStack(spacing: 16) {
             // Icon Badge
             ZStack {
                 Circle()
-                    .fill(LinearGradient(gradient: Gradient(colors: [categoryColor.opacity(0.7), categoryColor]), startPoint: .topLeading, endPoint: .bottomTrailing))
+                    .fill(LinearGradient(gradient: Gradient(colors: [exercise.themeColor.opacity(0.7), exercise.themeColor]), startPoint: .topLeading, endPoint: .bottomTrailing))
                     .frame(width: 50, height: 50)
                 
-                Image(systemName: categoryIcon)
+                Image(systemName: exercise.themeIcon)
                     .foregroundColor(.white)
                     .font(.title3)
             }
@@ -159,10 +130,10 @@ struct ExerciseCardView: View {
                 // Category Badge
                 Text(exercise.category.uppercased())
                     .font(.system(size: 10, weight: .bold))
-                    .foregroundColor(categoryColor)
+                    .foregroundColor(exercise.themeColor)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 4)
-                    .background(categoryColor.opacity(0.15))
+                    .background(exercise.themeColor.opacity(0.15))
                     .clipShape(Capsule())
             }
             
