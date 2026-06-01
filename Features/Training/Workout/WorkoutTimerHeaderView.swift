@@ -96,31 +96,15 @@ struct WorkoutTimerHeaderView: View {
                         .fill(Color.green)
                     
                     HStack {
-                        // Left Buttons
-                        HStack(spacing: 8) {
-                            // Skip/Close Button
-                            Button(action: {
-                                onSkipRestTimer()
-                            }) {
-                                Image(systemName: "xmark")
-                                    .font(.title3.bold())
-                                    .frame(width: 44, height: 44)
-                                    .background(Color.white.opacity(0.2))
-                                    .clipShape(Circle())
-                            }
-                            
-                            // Pause/Play Button
-                            Button(action: {
-                                withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
-                                    viewModel.toggleRestTimerPause()
-                                }
-                            }) {
-                                Image(systemName: viewModel.restTimerPaused ? "play.fill" : "pause.fill")
-                                    .font(.title2)
-                                    .frame(width: 44, height: 44)
-                                    .background(Color.white.opacity(0.2))
-                                    .clipShape(Circle())
-                            }
+                        // Skip/Close Button (Left)
+                        Button(action: {
+                            onSkipRestTimer()
+                        }) {
+                            Image(systemName: "xmark")
+                                .font(.title3.bold())
+                                .frame(width: 44, height: 44)
+                                .background(Color.white.opacity(0.2))
+                                .clipShape(Circle())
                         }
                         
                         Spacer()
@@ -145,7 +129,7 @@ struct WorkoutTimerHeaderView: View {
                         
                         // Invisible block to perfectly center the text
                         Color.clear
-                            .frame(width: 96, height: 44)
+                            .frame(width: 44, height: 44)
                     }
                     .foregroundColor(.white)
                     .padding(.horizontal)

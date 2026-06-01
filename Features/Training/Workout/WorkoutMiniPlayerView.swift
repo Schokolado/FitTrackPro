@@ -124,15 +124,6 @@ struct WorkoutMiniPlayerView: View {
             onTap()
         }
         .confirmationDialog("Satzpause", isPresented: $showingCancelTimerAlert, titleVisibility: .visible) {
-            if viewModel.restTimerPaused {
-                Button("Fortsetzen") {
-                    viewModel.toggleRestTimerPause()
-                }
-            } else {
-                Button("Pausieren") {
-                    viewModel.toggleRestTimerPause()
-                }
-            }
             Button("Beenden", role: .destructive) {
                 viewModel.cancelRestTimer()
             }

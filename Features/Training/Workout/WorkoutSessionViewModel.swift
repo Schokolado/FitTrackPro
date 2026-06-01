@@ -76,15 +76,7 @@ class WorkoutSessionViewModel {
         NotificationService.shared.scheduleRestTimerNotification(duration: duration)
     }
     
-    func toggleRestTimerPause() {
-        restTimerPaused.toggle()
-        if restTimerPaused {
-            NotificationService.shared.cancelRestTimerNotification()
-        } else {
-            NotificationService.shared.scheduleRestTimerNotification(duration: restTimeRemaining)
-        }
-    }
-    
+
     func cancelRestTimer() {
         restTimerActive = false
         restTimerPaused = false
