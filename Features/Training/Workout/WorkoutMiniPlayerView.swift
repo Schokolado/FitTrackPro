@@ -83,7 +83,7 @@ struct WorkoutMiniPlayerView: View {
                     }) {
                         Image(systemName: "xmark.circle.fill")
                             .font(.system(size: 32))
-                            .foregroundColor(.gray.opacity(0.5))
+                            .foregroundColor(.green)
                     }
                     .buttonStyle(PlainButtonStyle())
                 }
@@ -100,7 +100,7 @@ struct WorkoutMiniPlayerView: View {
                 }) {
                     Image(systemName: viewModel.timerActive ? "pause.circle.fill" : "play.circle.fill")
                         .font(.system(size: 32))
-                        .foregroundColor(viewModel.timerActive ? .orange : .brand)
+                        .foregroundColor(viewModel.timerActive ? .green : .brand)
                 }
                 .buttonStyle(PlainButtonStyle())
             }
