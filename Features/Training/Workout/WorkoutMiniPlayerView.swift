@@ -46,14 +46,20 @@ struct WorkoutMiniPlayerView: View {
                     }
                 }
                 
-                if viewModel.restTimerActive {
-                    Text(viewModel.restTimerPaused ? "Satzpause angehalten: \(viewModel.formatTime(viewModel.restTimeRemaining))" : "Satzpause: \(viewModel.formatTime(viewModel.restTimeRemaining))")
-                        .font(.caption.monospacedDigit())
-                        .foregroundColor(viewModel.restTimerPaused ? .orange : .green)
-                } else {
+                HStack {
                     Text(viewModel.formatTime(viewModel.elapsedTime))
                         .font(.caption.monospacedDigit())
                         .foregroundColor(.brand)
+                    
+                    if viewModel.restTimerActive {
+                        Text("•")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        
+                        Text(viewModel.restTimerPaused ? "Angehalten: \(viewModel.formatTime(viewModel.restTimeRemaining))" : "Pause: \(viewModel.formatTime(viewModel.restTimeRemaining))")
+                            .font(.caption.monospacedDigit())
+                            .foregroundColor(viewModel.restTimerPaused ? .orange : .green)
+                    }
                 }
             }
             
