@@ -127,7 +127,7 @@ struct WorkoutTimerHeaderView: View {
                         
                         VStack(spacing: 0) {
                             if viewModel.restTimerPaused {
-                                Text("Pausiert")
+                                Text("Satzpause angehalten")
                                     .font(.caption)
                                     .textCase(.uppercase)
                                     .foregroundColor(.white.opacity(0.9))

@@ -43,12 +43,22 @@ class WorkoutSessionViewModel {
         timerActive = false
         currentSegmentStartTime = nil
         stopTimers()
+        
+        if restTimerActive && !restTimerPaused {
+            restTimerPaused = true
+            NotificationService.shared.cancelRestTimerNotification()
+        }
     }
     
     func resumeWorkout() {
         currentSegmentStartTime = Date()
         timerActive = true
         startTimers()
+        
+        if restTimerActive && restTimerPaused {
+            restTimerPaused = false
+            NotificationService.shared.scheduleRestTimerNotification(duration: restTimeRemaining)
+        }
     }
     
     func finishWorkout() {
