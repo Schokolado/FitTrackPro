@@ -47,7 +47,7 @@ struct WorkoutMiniPlayerView: View {
                 }
                 
                 if viewModel.restTimerActive {
-                    Text(viewModel.restTimerPaused ? "Pausiert: \(viewModel.formatTime(viewModel.restTimeRemaining))" : "Satzpause: \(viewModel.formatTime(viewModel.restTimeRemaining))")
+                    Text(viewModel.restTimerPaused ? "Satzpause angehalten: \(viewModel.formatTime(viewModel.restTimeRemaining))" : "Satzpause: \(viewModel.formatTime(viewModel.restTimeRemaining))")
                         .font(.caption.monospacedDigit())
                         .foregroundColor(viewModel.restTimerPaused ? .orange : .green)
                 } else {
