@@ -59,18 +59,48 @@ struct ExerciseDetailView: View {
                 .cardStyle()
                 .padding(.horizontal)
                 
-                // Placeholder für Video/Bilder Upload
-                VStack(alignment: .center, spacing: Spacing.md) {
-                    Image(systemName: "photo.on.rectangle.angled")
-                        .font(.system(size: 40))
-                        .foregroundColor(.secondary)
-                    Text("Bilder / Videos hinzufügen (Milestone 2.1)")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
+                if let url = exercise.externalVideoURL {
+                    Link(destination: url) {
+                        HStack {
+                            Image(systemName: "play.rectangle.fill")
+                                .font(.title2)
+                                .foregroundColor(.red)
+                            Text("Video-Tutorial ansehen")
+                                .font(.headline)
+                            Spacer()
+                            Image(systemName: "arrow.up.right")
+                                .font(.caption)
+                        }
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .cardStyle()
+                    .padding(.horizontal)
                 }
-                .frame(maxWidth: .infinity)
-                .cardStyle()
-                .padding()
+                
+                if !exercise.localMediaPaths.isEmpty {
+                    VStack(alignment: .leading, spacing: Spacing.sm) {
+                        Text("Bilder")
+                            .font(.headline)
+                            .padding(.horizontal)
+                        
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: Spacing.sm) {
+                                ForEach(exercise.localMediaPaths, id: \.self) { path in
+                                    if let image = MediaStorageService.shared.loadImage(named: path) {
+                                        Image(uiImage: image)
+                                            .resizable()
+                                            .scaledToFill()
+                                            .frame(width: 150, height: 150)
+                                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                                    }
+                                }
+                            }
+                            .padding(.horizontal)
+                        }
+                    }
+                    .padding(.bottom)
+                }
             }
             .padding(.top)
         }

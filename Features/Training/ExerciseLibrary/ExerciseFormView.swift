@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import PhotosUI
 
 struct ExerciseFormView: View {
     @Environment(\.modelContext) private var modelContext
@@ -20,6 +21,9 @@ struct ExerciseFormView: View {
     @State private var customCategoryName: String = ""
     @State private var defaultRestDuration: Double = 90
     @State private var notes: String = ""
+    @State private var externalVideoURLString: String = ""
+    @State private var localMediaPaths: [String] = []
+    @State private var selectedMediaItems: [PhotosPickerItem] = []
     
     init(exerciseToEdit: Exercise? = nil, onSave: ((Exercise) -> Void)? = nil) {
         self.exerciseToEdit = exerciseToEdit
@@ -29,6 +33,8 @@ struct ExerciseFormView: View {
             _category = State(initialValue: exercise.category)
             _defaultRestDuration = State(initialValue: exercise.defaultRestDuration)
             _notes = State(initialValue: exercise.notes)
+            _externalVideoURLString = State(initialValue: exercise.externalVideoURL?.absoluteString ?? "")
+            _localMediaPaths = State(initialValue: exercise.localMediaPaths)
         }
     }
     
@@ -77,6 +83,58 @@ struct ExerciseFormView: View {
                 TextEditor(text: $notes)
                     .frame(minHeight: 100)
             }
+            
+            Section(header: Text("Medien & Video")) {
+                TextField("Externer Video-Link (z.B. YouTube)", text: $externalVideoURLString)
+                    .keyboardType(.URL)
+                    .autocapitalization(.none)
+                
+                PhotosPicker(
+                    selection: $selectedMediaItems,
+                    matching: .images,
+                    photoLibrary: .shared()
+                ) {
+                    Label("Bilder hinzufügen", systemImage: "photo.on.rectangle.angled")
+                        .foregroundColor(.brand)
+                }
+                .onChange(of: selectedMediaItems) { _, newItems in
+                    loadMediaItems(newItems)
+                    selectedMediaItems.removeAll() // Reset selection after picking
+                }
+                
+                if !localMediaPaths.isEmpty {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 8) {
+                            ForEach(localMediaPaths, id: \.self) { path in
+                                ZStack(alignment: .topTrailing) {
+                                    if let image = MediaStorageService.shared.loadImage(named: path) {
+                                        Image(uiImage: image)
+                                            .resizable()
+                                            .scaledToFill()
+                                            .frame(width: 80, height: 80)
+                                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                                    } else {
+                                        Color.gray.opacity(0.3)
+                                            .frame(width: 80, height: 80)
+                                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                                            .overlay(Image(systemName: "photo").foregroundColor(.secondary))
+                                    }
+                                    
+                                    Button(action: {
+                                        deleteMedia(path)
+                                    }) {
+                                        Image(systemName: "xmark.circle.fill")
+                                            .foregroundColor(.red)
+                                            .background(Circle().fill(Color.white))
+                                    }
+                                    .padding(4)
+                                }
+                            }
+                        }
+                    }
+                    .padding(.vertical, 4)
+                }
+            }
         }
         .navigationTitle(exerciseToEdit == nil ? "Neue Übung" : "Übung bearbeiten")
         .navigationBarTitleDisplayMode(.inline)
@@ -98,17 +156,23 @@ struct ExerciseFormView: View {
     private func save() {
         let finalCategory = isCustomCategory && !customCategoryName.trimmingCharacters(in: .whitespaces).isEmpty ? customCategoryName : category
         
+        let videoURL = URL(string: externalVideoURLString.trimmingCharacters(in: .whitespaces))
+        
         if let exercise = exerciseToEdit {
             exercise.name = name
             exercise.category = finalCategory
             exercise.defaultRestDuration = defaultRestDuration
             exercise.notes = notes
+            exercise.externalVideoURL = videoURL
+            exercise.localMediaPaths = localMediaPaths
             onSave?(exercise)
         } else {
             let newExercise = Exercise(
                 name: name,
                 category: finalCategory,
                 notes: notes,
+                externalVideoURL: videoURL,
+                localMediaPaths: localMediaPaths,
                 defaultRestDuration: defaultRestDuration,
                 isCustom: true
             )
@@ -116,5 +180,31 @@ struct ExerciseFormView: View {
             onSave?(newExercise)
         }
         dismiss()
+    }
+    
+    private func loadMediaItems(_ items: [PhotosPickerItem]) {
+        for item in items {
+            item.loadTransferable(type: Data.self) { result in
+                DispatchQueue.main.async {
+                    switch result {
+                    case .success(let data?):
+                        if let image = UIImage(data: data) {
+                            if let fileName = MediaStorageService.shared.saveImage(image) {
+                                self.localMediaPaths.append(fileName)
+                            }
+                        }
+                    case .success(nil):
+                        break
+                    case .failure(let error):
+                        print("Error loading image: \(error)")
+                    }
+                }
+            }
+        }
+    }
+    
+    private func deleteMedia(_ path: String) {
+        localMediaPaths.removeAll { $0 == path }
+        MediaStorageService.shared.deleteMedia(named: path)
     }
 }
