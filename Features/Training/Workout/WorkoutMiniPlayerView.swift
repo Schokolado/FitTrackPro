@@ -74,7 +74,7 @@ struct WorkoutMiniPlayerView: View {
                     } label: {
                         Image(systemName: "timer")
                             .font(.system(size: 26))
-                            .foregroundColor(.gray)
+                            .foregroundColor(.green)
                     }
                 } else {
                     // Cancel Rest Timer Button
@@ -100,7 +100,7 @@ struct WorkoutMiniPlayerView: View {
                 }) {
                     Image(systemName: viewModel.timerActive ? "pause.circle.fill" : "play.circle.fill")
                         .font(.system(size: 32))
-                        .foregroundColor(viewModel.timerActive ? .green : .brand)
+                        .foregroundColor(viewModel.timerActive ? .orange : .brand)
                 }
                 .buttonStyle(PlainButtonStyle())
             }
