@@ -49,7 +49,7 @@ struct WorkoutMiniPlayerView: View {
                 HStack {
                     Text(viewModel.formatTime(viewModel.elapsedTime))
                         .font(.caption.monospacedDigit())
-                        .foregroundColor(.brand)
+                        .foregroundColor(.primary)
                     
                     if viewModel.restTimerActive {
                         Text("•")
