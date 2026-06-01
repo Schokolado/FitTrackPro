@@ -5,6 +5,7 @@ struct WorkoutSessionView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject var themeManager: ThemeManager
+    @Environment(WorkoutManager.self) private var workoutManager
     
     let viewModel: WorkoutSessionViewModel
     @Bindable var session: WorkoutSession
@@ -124,6 +125,7 @@ struct WorkoutSessionView: View {
             .alert("Workout abbrechen?", isPresented: $showingCancelAlert) {
                 Button("Ja, abbrechen", role: .destructive) {
                     modelContext.delete(session)
+                    workoutManager.endWorkout()
                     dismiss()
                 }
                 Button("Zurück", role: .cancel) {}
@@ -213,7 +215,8 @@ struct WorkoutSessionView: View {
                     .interactiveDismissDisabled() // User must click "Speichern"
             }
             .onReceive(NotificationCenter.default.publisher(for: .workoutFinished)) { _ in
-                // Dismiss the full screen cover when the summary is saved
+                // End workout in manager and dismiss the view
+                workoutManager.endWorkout()
                 dismiss()
             }
         }

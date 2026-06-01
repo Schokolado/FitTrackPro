@@ -47,6 +47,16 @@ struct PlanDetailView: View {
         ScrollView {
             ScrollViewReader { proxy in
                 VStack(spacing: Spacing.md) {
+                    
+                    Text(plan.name)
+                        .font(.largeTitle)
+                        .fontWeight(.bold)
+                        .minimumScaleFactor(0.4)
+                        .lineLimit(1)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal)
+                        .padding(.top, 4)
+                        
                     if !plan.notes.isEmpty {
                         Text(plan.notes)
                             .font(.subheadline)
@@ -114,7 +124,7 @@ struct PlanDetailView: View {
         .id(refreshId)
         .background(Color.backgroundPrimary)
         .navigationTitle(plan.name)
-        .navigationBarTitleDisplayMode(.large)
+        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Menu {
