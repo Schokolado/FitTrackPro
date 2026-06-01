@@ -47,9 +47,9 @@ struct WorkoutMiniPlayerView: View {
                 }
                 
                 if viewModel.restTimerActive {
-                    Text("Satzpause: \(viewModel.formatTime(viewModel.restTimeRemaining))")
+                    Text(viewModel.restTimerPaused ? "Pausiert: \(viewModel.formatTime(viewModel.restTimeRemaining))" : "Satzpause: \(viewModel.formatTime(viewModel.restTimeRemaining))")
                         .font(.caption.monospacedDigit())
-                        .foregroundColor(.green)
+                        .foregroundColor(viewModel.restTimerPaused ? .orange : .green)
                 } else {
                     Text(viewModel.formatTime(viewModel.elapsedTime))
                         .font(.caption.monospacedDigit())
@@ -117,13 +117,22 @@ struct WorkoutMiniPlayerView: View {
         .onTapGesture {
             onTap()
         }
-        .alert("Pause beenden?", isPresented: $showingCancelTimerAlert) {
+        .confirmationDialog("Satzpause", isPresented: $showingCancelTimerAlert, titleVisibility: .visible) {
+            if viewModel.restTimerPaused {
+                Button("Fortsetzen") {
+                    viewModel.toggleRestTimerPause()
+                }
+            } else {
+                Button("Pausieren") {
+                    viewModel.toggleRestTimerPause()
+                }
+            }
             Button("Beenden", role: .destructive) {
                 viewModel.cancelRestTimer()
             }
-            Button("Weiterlaufen lassen", role: .cancel) { }
+            Button("Abbrechen", role: .cancel) { }
         } message: {
-            Text("Möchtest du die aktuelle Satz-Pause abbrechen?")
+            Text("Was möchtest du mit der Satzpause machen?")
         }
         .alert("Eigener Timer", isPresented: $showingCustomTimerAlert) {
             TextField("Sekunden", text: $customTimerSeconds)
