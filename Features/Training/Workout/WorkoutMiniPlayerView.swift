@@ -56,7 +56,7 @@ struct WorkoutMiniPlayerView: View {
                             .font(.caption)
                             .foregroundColor(.secondary)
                         
-                        Text(viewModel.restTimerPaused ? "Angehalten: \(viewModel.formatTime(viewModel.restTimeRemaining))" : "Pause: \(viewModel.formatTime(viewModel.restTimeRemaining))")
+                        Text("Pause: \(viewModel.formatTime(viewModel.restTimeRemaining))")
                             .font(.caption.monospacedDigit())
                             .foregroundColor(.green)
                     }
