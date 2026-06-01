@@ -36,7 +36,7 @@ struct WorkoutMiniPlayerView: View {
                         .lineLimit(1)
                     
                     if !viewModel.timerActive {
-                        Text("PAUSIERT")
+                        Text("ANGEHALTEN")
                             .font(.system(size: 10, weight: .bold))
                             .foregroundColor(.orange)
                             .padding(.horizontal, 6)

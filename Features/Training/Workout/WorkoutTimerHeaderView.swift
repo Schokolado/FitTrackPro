@@ -71,7 +71,7 @@ struct WorkoutTimerHeaderView: View {
                         .foregroundColor(.primary)
                     
                     if !viewModel.timerActive {
-                        Text("WORKOUT PAUSIERT")
+                        Text("WORKOUT ANGEHALTEN")
                             .font(.caption2.weight(.bold))
                             .foregroundColor(.orange)
                             .padding(.horizontal, 8)
