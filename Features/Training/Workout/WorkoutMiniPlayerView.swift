@@ -104,9 +104,9 @@ struct WorkoutMiniPlayerView: View {
                         }
                     }
                 }) {
-                    Image(systemName: viewModel.timerActive ? "pause.circle.fill" : "play.circle.fill")
+                    Image(systemName: viewModel.timerActive ? "pause.circle" : "play.circle")
                         .font(.system(size: 32))
-                        .foregroundColor(viewModel.timerActive ? .orange : .brand)
+                        .foregroundColor(.primary)
                 }
                 .buttonStyle(PlainButtonStyle())
             }
