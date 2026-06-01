@@ -28,7 +28,7 @@ struct TrainingPlansView: View {
                                             HStack {
                                                 Text(plan.name)
                                                     .font(.headline)
-                                                    .foregroundColor(.brand)
+                                                    .foregroundColor(.primary)
                                                 Spacer()
                                             }
                                             
@@ -82,7 +82,7 @@ struct TrainingPlansView: View {
             }
             .safeAreaInset(edge: .top) {
                 // Header Card
-                VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: 4) {
                     Text("Meine Pläne")
                         .font(.title2)
                         .fontWeight(.bold)
@@ -93,13 +93,9 @@ struct TrainingPlansView: View {
                         .foregroundColor(.secondary)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(20)
-                .background(Color.backgroundCard)
-                .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
-                .shadow(color: Color.black.opacity(0.08), radius: 12, x: 0, y: 6)
-                .padding(.horizontal)
-                .padding(.top, 4)
-                .padding(.bottom, 16)
+                .padding(.horizontal, 20)
+                .padding(.top, 16)
+                .padding(.bottom, 8)
                 .background(
                     VStack(spacing: 0) {
                         Color.backgroundPrimary
@@ -108,7 +104,7 @@ struct TrainingPlansView: View {
                             startPoint: .top,
                             endPoint: .bottom
                         )
-                        .frame(height: 32)
+                        .frame(height: 16)
                     }
                     .ignoresSafeArea(.container, edges: .top)
                 )
