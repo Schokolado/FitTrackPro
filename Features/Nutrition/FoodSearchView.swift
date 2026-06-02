@@ -46,7 +46,34 @@ struct FoodSearchView: View {
     
     var body: some View {
         NavigationStack {
-            List {
+            VStack(spacing: 0) {
+                // Eigene Suchleiste, um die fehlerhaften iOS-Transitions zu umgehen
+                HStack {
+                    Image(systemName: "magnifyingglass")
+                        .foregroundColor(.secondary)
+                    TextField("Lebensmittel suchen...", text: $searchText)
+                        .submitLabel(.search)
+                        .onSubmit {
+                            hasSearchedOnline = false
+                        }
+                    
+                    if !searchText.isEmpty {
+                        Button(action: {
+                            searchText = ""
+                        }) {
+                            Image(systemName: "xmark.circle.fill")
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                }
+                .padding(10)
+                .background(Color(.systemGray5))
+                .cornerRadius(10)
+                .padding(.horizontal)
+                .padding(.top, 8)
+                .padding(.bottom, 8)
+                
+                List {
                 Section {
                     Button(action: {
                         selectedProduct = nil
@@ -144,18 +171,13 @@ struct FoodSearchView: View {
                 }
             }
             .navigationTitle("\(mealType.rawValue) hinzufügen")
-            .navigationBarTitleDisplayMode(.large)
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Fertig") {
                         dismiss()
                     }
                 }
-            }
-            .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Lebensmittel suchen...")
-            .onSubmit(of: .search) {
-                // Nur Keyboard schließen und Online-Ergebnisse verstecken (falls vorher gesucht)
-                hasSearchedOnline = false
             }
             .onChange(of: searchText) { oldValue, newValue in
                 if newValue.isEmpty {
@@ -174,8 +196,9 @@ struct FoodSearchView: View {
                     onSave?(savedName)
                 }
             }
-        }
-    }
+            } // close VStack
+        } // close NavigationStack
+    } // close body
     
     private func triggerOnlineSearch(query: String) async {
         let now = Date()
