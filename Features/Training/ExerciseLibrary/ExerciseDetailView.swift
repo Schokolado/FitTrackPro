@@ -78,14 +78,30 @@ struct ExerciseDetailView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .cardStyle()
                     .padding(.horizontal)
+                } else {
+                    Button(action: { showingEditForm = true }) {
+                        HStack {
+                            Image(systemName: "video.badge.plus")
+                                .font(.title2)
+                                .foregroundColor(.secondary)
+                            Text("Video-Tutorial hinzufügen")
+                                .font(.headline)
+                                .foregroundColor(.secondary)
+                            Spacer()
+                        }
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .cardStyle()
+                    .padding(.horizontal)
                 }
                 
-                if !exercise.localMediaPaths.isEmpty {
-                    VStack(alignment: .leading, spacing: Spacing.sm) {
-                        Text("Bilder")
-                            .font(.headline)
-                            .padding(.horizontal)
+                VStack(alignment: .leading, spacing: Spacing.sm) {
+                    Text("Bilder")
+                        .font(.headline)
+                        .padding(.horizontal)
                         
+                    if !exercise.localMediaPaths.isEmpty {
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack(spacing: Spacing.sm) {
                                 ForEach(Array(exercise.localMediaPaths.enumerated()), id: \.offset) { index, path in
@@ -104,9 +120,29 @@ struct ExerciseDetailView: View {
                             }
                             .padding(.horizontal)
                         }
+                    } else {
+                        Button(action: { showingEditForm = true }) {
+                            VStack(spacing: Spacing.sm) {
+                                Image(systemName: "photo.badge.plus")
+                                    .font(.system(size: 32))
+                                    .foregroundColor(.secondary)
+                                Text("Bilder hinzufügen")
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary)
+                            }
+                            .frame(width: 150, height: 150)
+                            .background(Color.secondary.opacity(0.1))
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .stroke(Color.secondary.opacity(0.3), style: StrokeStyle(lineWidth: 1, dash: [5]))
+                            )
+                        }
+                        .padding(.horizontal)
+                        .buttonStyle(PlainButtonStyle())
                     }
-                    .padding(.bottom)
                 }
+                .padding(.bottom)
             }
             .padding(.top)
         }
