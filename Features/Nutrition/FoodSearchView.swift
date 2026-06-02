@@ -146,13 +146,13 @@ struct FoodSearchView: View {
             .navigationTitle("\(mealType.rawValue) hinzufügen")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Abbrechen") {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Fertig") {
                         dismiss()
                     }
                 }
             }
-            .searchable(text: $searchText, prompt: "Lebensmittel suchen...")
+            .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Lebensmittel suchen...")
             .onSubmit(of: .search) {
                 // Nur Keyboard schließen und Online-Ergebnisse verstecken (falls vorher gesucht)
                 hasSearchedOnline = false
