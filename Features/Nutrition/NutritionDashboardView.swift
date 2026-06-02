@@ -3,6 +3,7 @@ import SwiftData
 
 struct NutritionDashboardView: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(WorkoutManager.self) private var workoutManager
     @Query private var allDailyLogs: [DailyLog]
     
     @State private var selectedDate: Date = Date()
@@ -33,7 +34,7 @@ struct NutritionDashboardView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: Spacing.lg) {
-                    datePickerSection
+                    WeekCalendarView(selectedDate: $selectedDate)
                     
                     macroSummarySection
                     
@@ -42,6 +43,13 @@ struct NutritionDashboardView: View {
                     }
                 }
                 .padding()
+                .safeAreaInset(edge: .bottom) {
+                    // Add padding at the bottom if the mini player is active
+                    // so the user can scroll past the last element
+                    if workoutManager.activeViewModel != nil {
+                        Color.clear.frame(height: 70)
+                    }
+                }
             }
             .background(Color.backgroundPrimary)
             .navigationTitle("Ernährung")
@@ -109,32 +117,7 @@ struct NutritionDashboardView: View {
         }
     }
     
-    private var datePickerSection: some View {
-        HStack {
-            Text("Datum")
-            Spacer()
-            Button(action: { showingDatePicker = true }) {
-                Text(selectedDate.formatted(date: .abbreviated, time: .omitted))
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    .background(Color(.systemGray6))
-                    .cornerRadius(8)
-                    .foregroundColor(Color.brand)
-            }
-            .popover(isPresented: $showingDatePicker) {
-                DatePicker("Datum", selection: $selectedDate, displayedComponents: .date)
-                    .datePickerStyle(.graphical)
-                    .padding()
-                    .frame(width: 320, height: 340)
-                    .presentationCompactAdaptation(.popover)
-                    .onChange(of: selectedDate) { _, _ in
-                        showingDatePicker = false
-                    }
-            }
-        }
-        .padding()
-        .cardStyle()
-    }
+    // The datePickerSection has been replaced by WeekCalendarView.
     
     private var macroSummarySection: some View {
         VStack(spacing: Spacing.md) {
@@ -246,5 +229,123 @@ extension Date {
         let formatter = ISO8601DateFormatter()
         formatter.formatOptions = [.withFullDate]
         return formatter.string(from: self)
+    }
+}
+// WeekCalendarView added below
+struct WeekCalendarView: View {
+    @Binding var selectedDate: Date
+    @State private var showingDatePicker = false
+    
+    // Berechnet die 7 Tage der Woche (Mo-So), in der sich das selectedDate befindet.
+    var weekDates: [Date] {
+        var dates: [Date] = []
+        var calendar = Calendar.current
+        calendar.firstWeekday = 2 // 2 = Montag
+        
+        let startOfWeek = calendar.date(from: calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: selectedDate))!
+        
+        for i in 0..<7 {
+            if let date = calendar.date(byAdding: .day, value: i, to: startOfWeek) {
+                dates.append(date)
+            }
+        }
+        return dates
+    }
+    
+    var body: some View {
+        VStack(spacing: 12) {
+            // Header: Monat/Jahr und unsichtbarer Button für DatePicker beim Klick auf den Text
+            HStack {
+                Button(action: { showingDatePicker = true }) {
+                    HStack(spacing: 4) {
+                        Text(monthYearString(for: selectedDate))
+                            .font(.headline)
+                            .foregroundColor(.primary)
+                        Image(systemName: "chevron.down")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                }
+                
+                Spacer()
+                
+                Button(action: { withAnimation { selectedDate = Date() } }) {
+                    Text("Heute")
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                        .foregroundColor(.brand)
+                }
+            }
+            .padding(.horizontal)
+            .popover(isPresented: $showingDatePicker) {
+                DatePicker("Datum wählen", selection: $selectedDate, displayedComponents: .date)
+                    .datePickerStyle(.graphical)
+                    .padding()
+                    .frame(width: 320, height: 340)
+                    .presentationCompactAdaptation(.popover)
+                    .onChange(of: selectedDate) { _, _ in
+                        showingDatePicker = false
+                    }
+            }
+            
+            // Wochentage Leiste
+            HStack(spacing: 8) {
+                ForEach(weekDates, id: \.self) { date in
+                    let isSelected = Calendar.current.isDate(date, inSameDayAs: selectedDate)
+                    let isToday = Calendar.current.isDate(date, inSameDayAs: Date())
+                    
+                    VStack(spacing: 6) {
+                        Text(dayOfWeek(for: date))
+                            .font(.caption2)
+                            .fontWeight(.semibold)
+                            .foregroundColor(isSelected ? .white : (isToday ? .brand : .secondary))
+                        
+                        Text(dayOfMonth(for: date))
+                            .font(.system(size: 18, weight: isSelected ? .bold : .regular))
+                            .foregroundColor(isSelected ? .white : .primary)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 10)
+                    .background(isSelected ? Color.brand : Color.clear)
+                    .clipShape(Capsule())
+                    .onTapGesture {
+                        withAnimation {
+                            selectedDate = date
+                        }
+                    }
+                }
+            }
+            .padding(.horizontal, 8)
+        }
+        .padding(.vertical, 16)
+        .cardStyle()
+    }
+    
+    private func monthYearString(for date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMMM yyyy"
+        formatter.locale = Locale(identifier: "de_DE")
+        return formatter.string(from: date)
+    }
+    
+    private func dayOfWeek(for date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "EEE" // Mo, Di, Mi...
+        formatter.locale = Locale(identifier: "de_DE")
+        return formatter.string(from: date)
+    }
+    
+    private func dayOfMonth(for date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "d"
+        return formatter.string(from: date)
+    }
+}
+
+#Preview {
+    ZStack {
+        Color(.systemGroupedBackground).edgesIgnoringSafeArea(.all)
+        WeekCalendarView(selectedDate: .constant(Date()))
+            .padding()
     }
 }
