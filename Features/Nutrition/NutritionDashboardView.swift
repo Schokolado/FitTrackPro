@@ -43,16 +43,10 @@ struct NutritionDashboardView: View {
                     }
                 }
                 .padding()
-                .safeAreaInset(edge: .bottom) {
-                    // Add padding at the bottom if the mini player is active
-                    // so the user can scroll past the last element
-                    if workoutManager.activeViewModel != nil {
-                        Color.clear.frame(height: 70)
-                    }
-                }
             }
             .background(Color.backgroundPrimary)
             .navigationTitle("Ernährung")
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: { showingScanner = true }) {

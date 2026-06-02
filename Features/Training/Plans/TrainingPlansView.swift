@@ -291,10 +291,12 @@ struct TrainingMainView: View {
                             .rotationEffect(.degrees(isFabExpanded ? 45 : 0))
                     }
                 }
-                .padding(.bottom, workoutManager.isWorkoutActive ? 80 : 20)
+                .padding(.bottom, 20)
                 .padding(.trailing, 20)
                 .padding(.top, 20)
             }
+            .navigationTitle("Training")
+            .navigationBarTitleDisplayMode(.inline)
         }
     }
 }

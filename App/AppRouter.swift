@@ -10,16 +10,19 @@ struct AppRouter: View {
                 Text("Dashboard View")
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .background(Color.backgroundPrimary)
+                    .withMiniPlayerSafeArea()
                     .tabItem {
                         Label("Home", systemImage: "house.fill")
                     }
                 
                 TrainingMainView()
+                    .withMiniPlayerSafeArea()
                     .tabItem {
                         Label("Training", systemImage: "dumbbell.fill")
                     }
                 
                 NutritionDashboardView()
+                    .withMiniPlayerSafeArea()
                     .tabItem {
                         Label("Ernährung", systemImage: "fork.knife")
                     }
@@ -27,11 +30,13 @@ struct AppRouter: View {
                 Text("Statistics View")
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .background(Color.backgroundPrimary)
+                    .withMiniPlayerSafeArea()
                     .tabItem {
                         Label("Statistik", systemImage: "chart.xyaxis.line")
                     }
                 
                 SettingsView()
+                    .withMiniPlayerSafeArea()
                     .tabItem {
                         Label("Einstellungen", systemImage: "gearshape.fill")
                     }
@@ -55,6 +60,24 @@ struct AppRouter: View {
                 showingWorkoutSession = true
             }
         }
+    }
+}
+
+struct MiniPlayerSafeAreaModifier: ViewModifier {
+    @Environment(WorkoutManager.self) private var workoutManager
+    
+    func body(content: Content) -> some View {
+        content.safeAreaInset(edge: .bottom) {
+            if workoutManager.activeViewModel != nil {
+                Color.clear.frame(height: 70) // Höhe des Mini Players
+            }
+        }
+    }
+}
+
+extension View {
+    func withMiniPlayerSafeArea() -> some View {
+        self.modifier(MiniPlayerSafeAreaModifier())
     }
 }
 
