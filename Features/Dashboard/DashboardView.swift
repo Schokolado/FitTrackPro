@@ -5,6 +5,7 @@ struct DashboardView: View {
     @Binding var selectedTab: Int
     @Environment(\.modelContext) private var modelContext
     @AppStorage("dailyCalorieGoal") private var dailyCalorieGoal: Double = 2500
+    @AppStorage("userName") private var userName: String = ""
     
     @Query(sort: \WeightEntry.timestamp, order: .reverse) private var weightEntries: [WeightEntry]
     @Query(sort: \FoodEntry.timestamp, order: .reverse) private var foodEntries: [FoodEntry]
@@ -32,8 +33,17 @@ struct DashboardView: View {
                             Text(greetingMessage)
                                 .font(.title2)
                                 .foregroundColor(.secondary)
-                            Text("Willkommen zurück")
-                                .font(.largeTitle.bold())
+                            
+                            if userName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                                Text("Willkommen zurück")
+                                    .font(.largeTitle.bold())
+                            } else {
+                                Text("Willkommen zurück,")
+                                    .font(.largeTitle.bold())
+                                Text(userName)
+                                    .font(.largeTitle.bold())
+                                    .foregroundColor(.brand)
+                            }
                         }
                         Spacer()
                     }
