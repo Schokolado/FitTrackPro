@@ -76,9 +76,13 @@ struct TabBarAccessor: UIViewControllerRepresentable {
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
         DispatchQueue.main.async {
             // Finde den übergeordneten UITabBarController und setze die globalen Insets
+            // WICHTIG: Die Insets auf die CHILD-Controller anwenden, nicht auf den TabBarController selbst!
+            // Sonst verschiebt sich die Tab-Bar nach oben.
             if let tabBarController = uiViewController.tabBarController {
-                if tabBarController.additionalSafeAreaInsets.bottom != bottomInset {
-                    tabBarController.additionalSafeAreaInsets.bottom = bottomInset
+                for vc in tabBarController.viewControllers ?? [] {
+                    if vc.additionalSafeAreaInsets.bottom != bottomInset {
+                        vc.additionalSafeAreaInsets.bottom = bottomInset
+                    }
                 }
             }
         }
