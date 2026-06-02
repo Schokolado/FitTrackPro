@@ -130,11 +130,11 @@
 
 ## Milestone 7 – Gewichtstracker
 
-- [ ] `WeightTrackerView.swift` – Eingabe und Historie
-- [ ] Gewichtseintrag erstellen
-- [ ] Gewichtseintrag bearbeiten/löschen
-- [ ] Verlaufsdiagramm (Swift Charts, Liniendiagramm)
-- [ ] Aktuelles Gewicht im Dashboard anzeigen
+- [x] `WeightTrackerView.swift` – Eingabe und Historie
+- [x] Gewichtseintrag erstellen
+- [x] Gewichtseintrag bearbeiten/löschen
+- [x] Verlaufsdiagramm (Swift Charts, Liniendiagramm)
+- [x] Aktuelles Gewicht im Dashboard anzeigen
 - [ ] `WidgetDataService` nach Gewichtseintrag aktualisieren
 
 ---
