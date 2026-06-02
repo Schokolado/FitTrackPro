@@ -13,7 +13,7 @@ struct NutritionDashboardView: View {
     
     @State private var showingSavedAlert = false
     @State private var savedFoodName = ""
-    @State private var datePickerId = UUID()
+    @State private var showingDatePicker = false
     
     @AppStorage("nutritionGoalCalories") private var goalCalories: Double = 2000
     @AppStorage("nutritionGoalProtein") private var goalProtein: Double = 150
@@ -72,7 +72,6 @@ struct NutritionDashboardView: View {
             }
             .onChange(of: selectedDate) { _, _ in
                 ensureDailyLogExists()
-                datePickerId = UUID() // Forces DatePicker popover to close
             }
             .alert("Gespeichert", isPresented: $showingSavedAlert) {
                 Button("OK", role: .cancel) { }
@@ -83,11 +82,29 @@ struct NutritionDashboardView: View {
     }
     
     private var datePickerSection: some View {
-        DatePicker("Datum", selection: $selectedDate, displayedComponents: .date)
-            .datePickerStyle(.compact)
-            .id(datePickerId)
-            .padding()
-            .cardStyle()
+        HStack {
+            Text("Datum")
+            Spacer()
+            Button(action: { showingDatePicker = true }) {
+                Text(selectedDate.formatted(date: .abbreviated, time: .omitted))
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(Color(.systemGray6))
+                    .cornerRadius(8)
+                    .foregroundColor(Color.brand)
+            }
+            .popover(isPresented: $showingDatePicker) {
+                DatePicker("Datum", selection: $selectedDate, displayedComponents: .date)
+                    .datePickerStyle(.graphical)
+                    .padding()
+                    .presentationCompactAdaptation(.popover)
+                    .onChange(of: selectedDate) { _, _ in
+                        showingDatePicker = false
+                    }
+            }
+        }
+        .padding()
+        .cardStyle()
     }
     
     private var macroSummarySection: some View {
