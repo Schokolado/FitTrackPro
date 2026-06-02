@@ -3,17 +3,19 @@ import SwiftUI
 struct AppRouter: View {
     @Environment(WorkoutManager.self) private var workoutManager
     @State private var showingWorkoutSession = false
+    @State private var selectedTab = 0
     
     var body: some View {
         ZStack(alignment: .bottom) {
-            TabView {
-                Text("Dashboard View")
+            TabView(selection: $selectedTab) {
+                DashboardView()
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .background(Color.backgroundPrimary)
                     .globalMiniPlayerSafeArea(isActive: workoutManager.activeViewModel != nil)
                     .tabItem {
                         Label("Home", systemImage: "house.fill")
                     }
+                    .tag(0)
                 
                 TrainingMainView()
                     .globalMiniPlayerSafeArea(isActive: workoutManager.activeViewModel != nil)
