@@ -125,9 +125,9 @@ struct FoodSearchView: View {
                 }
             }
             .searchable(text: $searchText, prompt: "Lebensmittel suchen...")
-            .onChange(of: searchText) { oldValue, newValue in
+            .onSubmit(of: .search) {
                 Task {
-                    await performSearch(query: newValue)
+                    await performSearch(query: searchText)
                 }
             }
             .navigationDestination(isPresented: $showForm) {

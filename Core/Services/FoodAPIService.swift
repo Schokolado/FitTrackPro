@@ -48,8 +48,11 @@ actor FoodAPIService {
             throw FoodAPIError.networkError
         }
         
+        var request = URLRequest(url: url)
+        request.setValue("FitTrackPro - iOS - Version 1.0 - OpenSourceApp", forHTTPHeaderField: "User-Agent")
+        
         do {
-            let (data, response) = try await URLSession.shared.data(from: url)
+            let (data, response) = try await URLSession.shared.data(for: request)
             
             guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
                 throw FoodAPIError.networkError
@@ -78,8 +81,11 @@ actor FoodAPIService {
             throw FoodAPIError.networkError
         }
         
+        var request = URLRequest(url: url)
+        request.setValue("FitTrackPro - iOS - Version 1.0 - OpenSourceApp", forHTTPHeaderField: "User-Agent")
+        
         do {
-            let (data, response) = try await URLSession.shared.data(from: url)
+            let (data, response) = try await URLSession.shared.data(for: request)
             
             guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
                 throw FoodAPIError.networkError
