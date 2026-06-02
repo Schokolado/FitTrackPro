@@ -144,7 +144,7 @@ struct FoodSearchView: View {
                 }
             }
             .navigationTitle("\(mealType.rawValue) hinzufügen")
-            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Fertig") {
