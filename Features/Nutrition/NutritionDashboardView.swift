@@ -97,6 +97,7 @@ struct NutritionDashboardView: View {
                 DatePicker("Datum", selection: $selectedDate, displayedComponents: .date)
                     .datePickerStyle(.graphical)
                     .padding()
+                    .frame(width: 320, height: 340)
                     .presentationCompactAdaptation(.popover)
                     .onChange(of: selectedDate) { _, _ in
                         showingDatePicker = false
