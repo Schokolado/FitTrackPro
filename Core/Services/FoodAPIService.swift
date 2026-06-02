@@ -42,7 +42,28 @@ struct OFFSearchResponse: Decodable {
     let products: [OFFProduct]?
 }
 
+#if DEBUG
+class SSLBypassDelegate: NSObject, URLSessionDelegate {
+    func urlSession(_ session: URLSession, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
+        if let trust = challenge.protectionSpace.serverTrust {
+            completionHandler(.useCredential, URLCredential(trust: trust))
+        } else {
+            completionHandler(.performDefaultHandling, nil)
+        }
+    }
+}
+#endif
+
 actor FoodAPIService {
+    private let session: URLSession
+    
+    init() {
+        #if DEBUG
+        self.session = URLSession(configuration: .default, delegate: SSLBypassDelegate(), delegateQueue: nil)
+        #else
+        self.session = URLSession.shared
+        #endif
+    }
     func fetchProduct(barcode: String) async throws -> OFFProduct? {
         guard let url = URL(string: "https://world.openfoodfacts.org/api/v0/product/\(barcode).json") else {
             throw FoodAPIError.networkError
@@ -52,7 +73,7 @@ actor FoodAPIService {
         request.setValue("FitTrackPro - iOS - Version 1.0 - OpenSourceApp", forHTTPHeaderField: "User-Agent")
         
         do {
-            let (data, response) = try await URLSession.shared.data(for: request)
+            let (data, response) = try await session.data(for: request)
             
             guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
                 throw FoodAPIError.networkError
@@ -85,7 +106,7 @@ actor FoodAPIService {
         request.setValue("FitTrackPro - iOS - Version 1.0 - OpenSourceApp", forHTTPHeaderField: "User-Agent")
         
         do {
-            let (data, response) = try await URLSession.shared.data(for: request)
+            let (data, response) = try await session.data(for: request)
             
             guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
                 throw FoodAPIError.networkError
