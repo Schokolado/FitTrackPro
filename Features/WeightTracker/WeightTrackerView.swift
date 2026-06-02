@@ -179,6 +179,7 @@ struct WeightTrackerView: View {
                             }
                         }
                         .chartYScale(domain: chartYScale)
+                        .chartXScale(range: .plotDimension(padding: 10))
                         .clipped()
                         .frame(height: 250)
                         .padding()
@@ -265,11 +266,11 @@ struct WeightTrackerView: View {
         }
         .sheet(isPresented: $showingAddEntry) {
             WeightEntryFormView()
-                .presentationDetents([.medium, .large])
+                .presentationDetents([.fraction(0.65), .large])
         }
         .sheet(item: $entryToEdit) { entry in
             WeightEntryFormView(entryToEdit: entry)
-                .presentationDetents([.medium, .large])
+                .presentationDetents([.fraction(0.65), .large])
         }
     }
     

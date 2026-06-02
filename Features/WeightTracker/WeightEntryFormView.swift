@@ -42,6 +42,11 @@ struct WeightEntryFormView: View {
                     DatePicker("Datum", selection: $date, displayedComponents: .date)
                 }
                 
+                Section("Notizen") {
+                    TextEditor(text: $notes)
+                        .frame(minHeight: 60)
+                }
+                
                 if entryToEdit != nil {
                     Section {
                         Button(role: .destructive) {
@@ -54,11 +59,6 @@ struct WeightEntryFormView: View {
                             }
                         }
                     }
-                }
-                
-                Section("Notizen") {
-                    TextEditor(text: $notes)
-                        .frame(minHeight: 100)
                 }
             }
             .navigationTitle(entryToEdit == nil ? "Neues Gewicht" : "Gewicht bearbeiten")
