@@ -70,6 +70,7 @@ struct SettingsView: View {
                     }
                 }
             }
+            .withMiniPlayerSafeArea()
             .navigationTitle("Einstellungen")
         }
     }

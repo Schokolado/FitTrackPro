@@ -44,6 +44,7 @@ struct NutritionDashboardView: View {
                 }
                 .padding()
             }
+            .withMiniPlayerSafeArea()
             .background(Color.backgroundPrimary)
             .navigationTitle("Ernährung")
             .navigationBarTitleDisplayMode(.inline)

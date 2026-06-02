@@ -10,19 +10,16 @@ struct AppRouter: View {
                 Text("Dashboard View")
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .background(Color.backgroundPrimary)
-                    .withMiniPlayerSafeArea()
                     .tabItem {
                         Label("Home", systemImage: "house.fill")
                     }
                 
                 TrainingMainView()
-                    .withMiniPlayerSafeArea()
                     .tabItem {
                         Label("Training", systemImage: "dumbbell.fill")
                     }
                 
                 NutritionDashboardView()
-                    .withMiniPlayerSafeArea()
                     .tabItem {
                         Label("Ernährung", systemImage: "fork.knife")
                     }
@@ -30,13 +27,11 @@ struct AppRouter: View {
                 Text("Statistics View")
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .background(Color.backgroundPrimary)
-                    .withMiniPlayerSafeArea()
                     .tabItem {
                         Label("Statistik", systemImage: "chart.xyaxis.line")
                     }
                 
                 SettingsView()
-                    .withMiniPlayerSafeArea()
                     .tabItem {
                         Label("Einstellungen", systemImage: "gearshape.fill")
                     }

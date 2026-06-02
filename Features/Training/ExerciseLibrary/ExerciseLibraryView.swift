@@ -89,6 +89,7 @@ struct ExerciseLibraryView: View {
                     .ignoresSafeArea(.container, edges: .top)
                 )
             }
+            .withMiniPlayerSafeArea()
             .background(Color.backgroundPrimary)
             .sheet(isPresented: $triggerAddExercise) {
                 NavigationStack {
