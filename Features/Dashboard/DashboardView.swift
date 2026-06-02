@@ -41,6 +41,7 @@ struct DashboardView: View {
                     .buttonStyle(PlainButtonStyle())
                 }
                 .padding()
+                .frame(maxWidth: .infinity)
             }
             .background(Color.backgroundPrimary)
             .navigationTitle("Dashboard")

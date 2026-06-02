@@ -133,6 +133,7 @@ struct WeightTrackerView: View {
                 }
             }
             .padding(.bottom, 100) // Space for FAB
+            .frame(maxWidth: .infinity)
         }
         .background(Color.backgroundPrimary)
         .navigationTitle("Gewicht")
