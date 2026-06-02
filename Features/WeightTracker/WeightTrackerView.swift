@@ -159,7 +159,8 @@ struct WeightTrackerView: View {
                                 
                                 AreaMark(
                                     x: .value("Datum", entry.timestamp),
-                                    y: .value("Gewicht", entry.weightKg)
+                                    yStart: .value("Base", chartYScale.lowerBound),
+                                    yEnd: .value("Gewicht", entry.weightKg)
                                 )
                                 .interpolationMethod(.catmullRom)
                                 .foregroundStyle(
@@ -178,6 +179,7 @@ struct WeightTrackerView: View {
                             }
                         }
                         .chartYScale(domain: chartYScale)
+                        .clipped()
                         .frame(height: 250)
                         .padding()
                         .background(
