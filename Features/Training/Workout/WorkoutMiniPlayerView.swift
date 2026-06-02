@@ -115,12 +115,8 @@ struct WorkoutMiniPlayerView: View {
         .padding(.vertical, 12)
         .background(
             RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .fill(.regularMaterial)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 16, style: .continuous)
-                        .fill(Color.primary.opacity(0.08))
-                )
-                .shadow(color: .black.opacity(0.25), radius: 20, y: 5)
+                .fill(.ultraThinMaterial)
+                .shadow(color: .black.opacity(0.35), radius: 25, y: 5)
         )
         .padding(.horizontal)
         .padding(.bottom, 8)
