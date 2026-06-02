@@ -1,16 +1,27 @@
 import SwiftUI
 
 struct FullScreenImageViewer: View {
-    let image: UIImage
+    let mediaPaths: [String]
+    @State var initialIndex: Int
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         NavigationStack {
-            ZoomableScrollView {
-                Image(uiImage: image)
-                    .resizable()
-                    .scaledToFit()
+            TabView(selection: $initialIndex) {
+                ForEach(0..<mediaPaths.count, id: \.self) { index in
+                    if let image = MediaStorageService.shared.loadImage(named: mediaPaths[index]) {
+                        ZoomableScrollView {
+                            Image(uiImage: image)
+                                .resizable()
+                                .scaledToFit()
+                        }
+                        .tag(index)
+                    } else {
+                        Color.black.tag(index)
+                    }
+                }
             }
+            .tabViewStyle(.page(indexDisplayMode: .always))
             .background(Color.black.edgesIgnoringSafeArea(.all))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -27,7 +38,6 @@ struct FullScreenImageViewer: View {
             .toolbarBackground(.black, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
         }
-        .preferredColorScheme(.dark)
     }
 }
 

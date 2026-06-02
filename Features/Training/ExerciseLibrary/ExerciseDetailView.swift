@@ -1,18 +1,14 @@
 import SwiftUI
 import SwiftData
 
-struct IdentifiableImage: Identifiable {
-    let id = UUID()
-    let image: UIImage
-}
-
 struct ExerciseDetailView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     @Bindable var exercise: Exercise
     
     @State private var showingEditForm = false
-    @State private var fullScreenImage: IdentifiableImage? = nil
+    @State private var showingFullScreenViewer = false
+    @State private var selectedImageIndex: Int = 0
     
     var body: some View {
         ScrollView {
@@ -92,7 +88,7 @@ struct ExerciseDetailView: View {
                         
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack(spacing: Spacing.sm) {
-                                ForEach(exercise.localMediaPaths, id: \.self) { path in
+                                ForEach(Array(exercise.localMediaPaths.enumerated()), id: \.offset) { index, path in
                                     if let image = MediaStorageService.shared.loadImage(named: path) {
                                         Image(uiImage: image)
                                             .resizable()
@@ -100,7 +96,8 @@ struct ExerciseDetailView: View {
                                             .frame(width: 150, height: 150)
                                             .clipShape(RoundedRectangle(cornerRadius: 12))
                                             .onTapGesture {
-                                                fullScreenImage = IdentifiableImage(image: image)
+                                                selectedImageIndex = index
+                                                showingFullScreenViewer = true
                                             }
                                     }
                                 }
@@ -139,8 +136,8 @@ struct ExerciseDetailView: View {
                 ExerciseFormView(exerciseToEdit: exercise)
             }
         }
-        .fullScreenCover(item: $fullScreenImage) { item in
-            FullScreenImageViewer(image: item.image)
+        .fullScreenCover(isPresented: $showingFullScreenViewer) {
+            FullScreenImageViewer(mediaPaths: exercise.localMediaPaths, initialIndex: selectedImageIndex)
         }
     }
 }
