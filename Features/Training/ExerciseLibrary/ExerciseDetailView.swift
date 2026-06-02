@@ -45,21 +45,33 @@ struct ExerciseDetailView: View {
                 .cardStyle()
                 .padding(.horizontal)
                 
-                VStack(alignment: .leading, spacing: Spacing.sm) {
-                    Text("Notizen")
-                        .font(.headline)
-                    if exercise.notes.isEmpty {
-                        Text("Keine Notizen hinzugefügt.")
-                            .foregroundColor(.secondary)
-                            .italic()
-                    } else {
+                if exercise.notes.isEmpty {
+                    Button(action: { showingEditForm = true }) {
+                        HStack {
+                            Image(systemName: "note.text.badge.plus")
+                                .font(.title2)
+                                .foregroundColor(.secondary)
+                            Text("Notizen hinzufügen")
+                                .font(.headline)
+                                .foregroundColor(.secondary)
+                            Spacer()
+                        }
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .cardStyle()
+                    .padding(.horizontal)
+                } else {
+                    VStack(alignment: .leading, spacing: Spacing.sm) {
+                        Text("Notizen")
+                            .font(.headline)
                         Text(exercise.notes)
                             .foregroundColor(.secondary)
                     }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .cardStyle()
+                    .padding(.horizontal)
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .cardStyle()
-                .padding(.horizontal)
                 
                 if let url = exercise.externalVideoURL {
                     Link(destination: url) {
