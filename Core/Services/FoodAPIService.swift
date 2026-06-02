@@ -22,12 +22,27 @@ struct OFFNutriments: Decodable {
 
 struct OFFProduct: Decodable, Identifiable {
     let id = UUID()
-    let productName: String?
+    var productName: String?
     let nutriments: OFFNutriments?
     
     enum CodingKeys: String, CodingKey {
         case productName = "product_name"
+        case productNameDe = "product_name_de"
+        case productNameEn = "product_name_en"
         case nutriments
+    }
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.nutriments = try container.decodeIfPresent(OFFNutriments.self, forKey: .nutriments)
+        
+        if let name = try container.decodeIfPresent(String.self, forKey: .productName) {
+            self.productName = name
+        } else if let nameDe = try container.decodeIfPresent(String.self, forKey: .productNameDe) {
+            self.productName = nameDe
+        } else if let nameEn = try container.decodeIfPresent(String.self, forKey: .productNameEn) {
+            self.productName = nameEn
+        }
     }
 }
 
@@ -40,6 +55,7 @@ struct OFFSearchResponse: Decodable {
     let count: Int?
     let page: Int?
     let products: [OFFProduct]?
+    let hits: [OFFProduct]?
 }
 
 #if DEBUG
@@ -98,7 +114,7 @@ actor FoodAPIService {
     
     func searchProducts(query: String) async throws -> [OFFProduct] {
         guard let encodedQuery = query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
-              let url = URL(string: "https://de.openfoodfacts.org/cgi/search.pl?search_terms=\(encodedQuery)&search_simple=1&action=process&json=1") else {
+              let url = URL(string: "https://search.openfoodfacts.org/search?q=\(encodedQuery)") else {
             throw FoodAPIError.networkError
         }
         
@@ -115,8 +131,9 @@ actor FoodAPIService {
             let decoder = JSONDecoder()
             let decodedResponse = try decoder.decode(OFFSearchResponse.self, from: data)
             
+            let productsList = decodedResponse.hits ?? decodedResponse.products ?? []
             // Filter out products without a name
-            return decodedResponse.products?.filter { $0.productName?.isEmpty == false } ?? []
+            return productsList.filter { $0.productName?.isEmpty == false }
         } catch let error as DecodingError {
             print("Decoding error: \(error)")
             throw FoodAPIError.decodingError
