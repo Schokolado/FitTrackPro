@@ -22,19 +22,30 @@ struct OFFNutriments: Decodable {
 
 struct OFFProduct: Decodable, Identifiable {
     let id = UUID()
+    var code: String?
     var productName: String?
+    var servingQuantity: Double?
     let nutriments: OFFNutriments?
     
     enum CodingKeys: String, CodingKey {
+        case code
         case productName = "product_name"
         case productNameDe = "product_name_de"
         case productNameEn = "product_name_en"
+        case servingQuantity = "serving_quantity"
         case nutriments
     }
     
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.code = try container.decodeIfPresent(String.self, forKey: .code)
         self.nutriments = try container.decodeIfPresent(OFFNutriments.self, forKey: .nutriments)
+        
+        if let sqStr = try? container.decodeIfPresent(String.self, forKey: .servingQuantity), let sq = Double(sqStr) {
+            self.servingQuantity = sq
+        } else if let sq = try? container.decodeIfPresent(Double.self, forKey: .servingQuantity) {
+            self.servingQuantity = sq
+        }
         
         if let name = try container.decodeIfPresent(String.self, forKey: .productName) {
             self.productName = name

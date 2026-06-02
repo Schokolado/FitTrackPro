@@ -112,6 +112,11 @@ struct FoodEntryFormView: View {
             .onAppear {
                 if let product = prefilledProduct {
                     name = product.productName ?? ""
+                    if let sq = product.servingQuantity, sq > 0 {
+                        amountGrams = sq
+                    } else {
+                        amountGrams = 100.0
+                    }
                     if let nuts = product.nutriments {
                         caloriesPer100g = nuts.energyKcal100g ?? 0.0
                         proteinPer100g = nuts.proteins100g ?? 0.0

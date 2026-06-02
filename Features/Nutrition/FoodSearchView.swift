@@ -76,8 +76,16 @@ struct FoodSearchView: View {
                         } else {
                             ForEach(searchResults) { product in
                                 Button(action: {
-                                    selectedProduct = product
-                                    showForm = true
+                                    Task {
+                                        isSearching = true
+                                        if let code = product.code, let fullProduct = try? await apiService.fetchProduct(barcode: code) {
+                                            selectedProduct = fullProduct
+                                        } else {
+                                            selectedProduct = product
+                                        }
+                                        isSearching = false
+                                        showForm = true
+                                    }
                                 }) {
                                     VStack(alignment: .leading) {
                                         Text(product.productName ?? "Unbekanntes Produkt")
