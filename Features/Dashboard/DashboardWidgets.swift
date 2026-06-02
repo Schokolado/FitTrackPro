@@ -1,95 +1,6 @@
 import SwiftUI
 import SwiftData
 
-struct DashboardView: View {
-    @Binding var selectedTab: Int
-    @Environment(\.modelContext) private var modelContext
-    @AppStorage("dailyCalorieGoal") private var dailyCalorieGoal: Double = 2500
-    
-    @Query(sort: \WeightEntry.timestamp, order: .reverse) private var weightEntries: [WeightEntry]
-    @Query(sort: \FoodEntry.timestamp, order: .reverse) private var foodEntries: [FoodEntry]
-    @Query(sort: \WorkoutSession.startTime, order: .reverse) private var workouts: [WorkoutSession]
-    
-    var todayFoodEntries: [FoodEntry] {
-        foodEntries.filter { Calendar.current.isDateInToday($0.timestamp) }
-    }
-    
-    var todayWorkouts: [WorkoutSession] {
-        workouts.filter { Calendar.current.isDateInToday($0.startTime) }
-    }
-    
-    var consumedCalories: Double {
-        todayFoodEntries.reduce(0) { $0 + $1.calories }
-    }
-    
-    var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(spacing: 24) {
-                    // Header
-                    HStack {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(greetingMessage)
-                                .font(.title2)
-                                .foregroundColor(.secondary)
-                            Text("Willkommen zurück")
-                                .font(.largeTitle.bold())
-                        }
-                        Spacer()
-                    }
-                    .padding(.horizontal)
-                    .padding(.top, 10)
-                    
-                    // Nutrition Card
-                    Button(action: {
-                        selectedTab = 2 // Tab Index für Ernährung
-                    }) {
-                        NutritionSummaryCard(
-                            consumed: consumedCalories,
-                            goal: dailyCalorieGoal
-                        )
-                    }
-                    .buttonStyle(PlainButtonStyle())
-                    
-                    // Grid for Weight and Training
-                    LazyVGrid(columns: [GridItem(.flexible(), spacing: 16), GridItem(.flexible(), spacing: 16)], spacing: 16) {
-                        NavigationLink(destination: WeightTrackerView()) {
-                            WeightSummaryCard(entries: weightEntries)
-                        }
-                        .buttonStyle(PlainButtonStyle())
-                        
-                        Button(action: {
-                            selectedTab = 1 // Tab Index für Training
-                        }) {
-                            TrainingSummaryCard(workouts: todayWorkouts)
-                        }
-                        .buttonStyle(PlainButtonStyle())
-                    }
-                    .padding(.horizontal)
-                }
-                .padding(.bottom, 120) // Platz für Tabbar & MiniPlayer
-            }
-            .background(Color.backgroundPrimary)
-            .navigationBarHidden(true)
-        }
-    }
-    
-    private var greetingMessage: String {
-        let hour = Calendar.current.component(.hour, from: Date())
-        switch hour {
-        case 0..<12: return "Guten Morgen"
-        case 12..<18: return "Guten Tag"
-        default: return "Guten Abend"
-        }
-    }
-}
-
-#Preview {
-    DashboardView(selectedTab: .constant(0))
-}
-import SwiftUI
-import SwiftData
-
 struct NutritionSummaryCard: View {
     let consumed: Double
     let goal: Double
@@ -141,7 +52,7 @@ struct NutritionSummaryCard: View {
             
             Spacer()
             Image(systemName: "chevron.right")
-                .foregroundColor(.gray)
+                .foregroundColor(.tertiary)
         }
         .padding(20)
         .background(
@@ -179,7 +90,7 @@ struct WeightSummaryCard: View {
                     .font(.title2)
                 Spacer()
                 Image(systemName: "chevron.right")
-                    .foregroundColor(.gray)
+                    .foregroundColor(.tertiary)
             }
             
             Spacer()
@@ -232,7 +143,7 @@ struct TrainingSummaryCard: View {
                     .font(.title2)
                 Spacer()
                 Image(systemName: "chevron.right")
-                    .foregroundColor(.gray)
+                    .foregroundColor(.tertiary)
             }
             
             Spacer()

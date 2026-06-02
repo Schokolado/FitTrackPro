@@ -8,7 +8,7 @@ struct AppRouter: View {
     var body: some View {
         ZStack(alignment: .bottom) {
             TabView(selection: $selectedTab) {
-                DashboardView()
+                DashboardView(selectedTab: $selectedTab)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .background(Color.backgroundPrimary)
                     .globalMiniPlayerSafeArea(isActive: workoutManager.activeViewModel != nil)
