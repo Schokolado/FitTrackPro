@@ -7,7 +7,6 @@ struct NutritionDashboardView: View {
     
     @State private var selectedDate: Date = Date()
     @State private var showingAddEntry = false
-    @State private var showingFoodSearch = false
     @State private var showingScanner = false
     @State private var selectedMealType: MealType = .breakfast
     @State private var scannedProduct: OFFProduct? = nil
@@ -51,10 +50,6 @@ struct NutritionDashboardView: View {
             }
             .sheet(isPresented: $showingAddEntry) {
                 FoodEntryFormView(mealType: selectedMealType, prefilledProduct: scannedProduct)
-                    .presentationDetents([.large])
-            }
-            .sheet(isPresented: $showingFoodSearch) {
-                FoodSearchView(mealType: selectedMealType)
                     .presentationDetents([.large])
             }
             .sheet(isPresented: $showingScanner) {
@@ -144,58 +139,32 @@ struct NutritionDashboardView: View {
     }
     
     private func mealSection(for type: MealType) -> some View {
-        VStack(alignment: .leading, spacing: Spacing.sm) {
+        let entries = todayEntries.filter { $0.mealType == type }
+        let totalCals = entries.reduce(0) { $0 + $1.calories }
+        let dateString = selectedDate.iso8601String()
+        
+        return NavigationLink(destination: MealDetailView(mealType: type, dateString: dateString)) {
             HStack {
-                Text(type.rawValue)
-                    .font(.headline)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(type.rawValue)
+                        .font(.headline)
+                        .foregroundColor(.primary)
+                    Text("\(entries.count) Einträge")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
                 Spacer()
-                Button(action: {
-                    selectedMealType = type
-                    scannedProduct = nil
-                    showingFoodSearch = true
-                }) {
-                    Image(systemName: "plus.circle.fill")
-                        .foregroundColor(.brand)
-                        .font(.title3)
-                }
-            }
-            
-            let entries = todayEntries.filter { $0.mealType == type }
-            
-            if entries.isEmpty {
-                Text("Keine Einträge")
-                    .font(.subheadline)
+                Text("\(Int(totalCals)) kcal")
+                    .font(.headline)
+                    .foregroundColor(.primary)
+                Image(systemName: "chevron.right")
                     .foregroundColor(.secondary)
-                    .padding(.vertical, Spacing.sm)
-            } else {
-                ForEach(entries) { entry in
-                    HStack {
-                        VStack(alignment: .leading) {
-                            Text(entry.name)
-                                .font(.subheadline)
-                                .fontWeight(.medium)
-                            Text("\(Int(entry.amountGrams)) g")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                        }
-                        Spacer()
-                        Text("\(Int(entry.calories)) kcal")
-                            .font(.subheadline)
-                            .fontWeight(.bold)
-                    }
-                    .padding(.vertical, 4)
-                    .swipeActions(edge: .trailing) {
-                        Button(role: .destructive) {
-                            deleteEntry(entry)
-                        } label: {
-                            Label("Löschen", systemImage: "trash")
-                        }
-                    }
-                }
+                    .padding(.leading, 8)
             }
+            .padding()
+            .cardStyle()
         }
-        .padding()
-        .cardStyle()
+        .buttonStyle(.plain)
     }
     
     private func ensureDailyLogExists() {
