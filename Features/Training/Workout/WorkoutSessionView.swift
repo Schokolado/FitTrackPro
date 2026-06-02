@@ -109,6 +109,14 @@ struct WorkoutSessionView: View {
                         } onMinimize: {
                             dismiss()
                         }
+                        .gesture(
+                            DragGesture(minimumDistance: 30, coordinateSpace: .local)
+                                .onEnded { value in
+                                    if value.translation.height > 40 {
+                                        dismiss()
+                                    }
+                                }
+                        )
                         .background(
                             VStack(spacing: 0) {
                                 Color.backgroundPrimary
