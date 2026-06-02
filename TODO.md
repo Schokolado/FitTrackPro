@@ -106,24 +106,24 @@
 
 ## Milestone 6 – Ernährungs-Tracker
 
-- [ ] `NutritionDashboardView.swift` – Tagesübersicht (Ringe/Balken für Makros)
-- [ ] `FoodLogView.swift` – Liste der heutigen Einträge nach Mahlzeit
-- [ ] `FoodEntryFormView.swift` – Eintrag erstellen/bearbeiten (manuell)
-- [ ] **Barcode-Scanner** (`BarcodeScannerView.swift`):
-  - [ ] `AVCaptureSession`-Setup als `UIViewControllerRepresentable`
-  - [ ] Unterstützte Formate: EAN-13, EAN-8, UPC-A, Code128
-  - [ ] Scan-Ergebnis → OpenFoodFacts API-Call
-  - [ ] Ergebnis-Sheet: Produkt-Preview + Mengen-Stepper (g)
-  - [ ] Makros proportional zur eingegebenen Menge berechnen
-  - [ ] Fallback auf manuelle Eingabe wenn Produkt nicht gefunden
-- [ ] `FoodAPIService.swift` – OpenFoodFacts REST API (actor-basiert)
-  - [ ] `OFFResponse`, `OFFProduct`, `OFFNutriments` Decodable-Structs
-  - [ ] Error-Handling (Netzwerk, kein Produkt, ungültiger Barcode)
-- [ ] Kalorien-Ziel setzen (in Einstellungen oder direkt im View)
-- [ ] Makro-Ziele setzen (Protein, Kohlenhydrate, Fett)
-- [ ] Fortschrittsbalken/-ringe für Kalorien und Makros
-- [ ] Tagesrückblick speichern in `DailyLog`
-- [ ] Navigation zwischen Tagen (DatePicker)
+- [x] `NutritionDashboardView.swift` – Tagesübersicht (Ringe/Balken für Makros)
+- [x] `FoodLogView.swift` – Liste der heutigen Einträge nach Mahlzeit
+- [x] `FoodEntryFormView.swift` – Eintrag erstellen/bearbeiten (manuell)
+- [x] **Barcode-Scanner** (`BarcodeScannerView.swift`):
+  - [x] `AVCaptureSession`-Setup als `UIViewControllerRepresentable`
+  - [x] Unterstützte Formate: EAN-13, EAN-8, UPC-A, Code128
+  - [x] Scan-Ergebnis → OpenFoodFacts API-Call
+  - [x] Ergebnis-Sheet: Produkt-Preview + Mengen-Stepper (g)
+  - [x] Makros proportional zur eingegebenen Menge berechnen
+  - [x] Fallback auf manuelle Eingabe wenn Produkt nicht gefunden
+- [x] `FoodAPIService.swift` – OpenFoodFacts REST API (actor-basiert)
+  - [x] `OFFResponse`, `OFFProduct`, `OFFNutriments` Decodable-Structs
+  - [x] Error-Handling (Netzwerk, kein Produkt, ungültiger Barcode)
+- [x] Kalorien-Ziel setzen (in Einstellungen oder direkt im View)
+- [x] Makro-Ziele setzen (Protein, Kohlenhydrate, Fett)
+- [x] Fortschrittsbalken/-ringe für Kalorien und Makros
+- [x] Tagesrückblick speichern in `DailyLog`
+- [x] Navigation zwischen Tagen (DatePicker)
 - [ ] `WidgetDataService` nach Mahlzeit-Log aktualisieren
 
 ---
