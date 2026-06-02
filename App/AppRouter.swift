@@ -19,9 +19,7 @@ struct AppRouter: View {
                         Label("Training", systemImage: "dumbbell.fill")
                     }
                 
-                Text("Nutrition View")
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .background(Color.backgroundPrimary)
+                NutritionDashboardView()
                     .tabItem {
                         Label("Ernährung", systemImage: "fork.knife")
                     }
