@@ -109,7 +109,6 @@ struct TrainingPlansView: View {
                     .ignoresSafeArea(.container, edges: .top)
                 )
             }
-            .withMiniPlayerSafeArea()
             .background(Color.backgroundPrimary)
             .alert("Neuer Trainingsplan", isPresented: $triggerAddAlert) {
                 TextField("Name", text: $newPlanName)
