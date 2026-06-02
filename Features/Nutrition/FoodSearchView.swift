@@ -6,6 +6,7 @@ struct FoodSearchView: View {
     @Environment(\.dismiss) private var dismiss
     
     let mealType: MealType
+    var onSave: ((String) -> Void)? = nil
     
     @Query(sort: \FoodEntry.timestamp, order: .reverse) private var allFoodEntries: [FoodEntry]
     
@@ -130,7 +131,10 @@ struct FoodSearchView: View {
                 }
             }
             .navigationDestination(isPresented: $showForm) {
-                FoodEntryFormView(mealType: mealType, prefilledProduct: selectedProduct, prefilledEntry: selectedEntry)
+                FoodEntryFormView(mealType: mealType, prefilledProduct: selectedProduct, prefilledEntry: selectedEntry) { savedName in
+                    dismiss()
+                    onSave?(savedName)
+                }
             }
         }
     }

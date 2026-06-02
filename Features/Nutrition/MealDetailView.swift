@@ -10,6 +10,8 @@ struct MealDetailView: View {
     @Query private var allDailyLogs: [DailyLog]
     
     @State private var showingFoodSearch = false
+    @State private var showingSavedAlert = false
+    @State private var savedFoodName = ""
     
     private var todayLog: DailyLog? {
         allDailyLogs.first { $0.dateString == dateString }
@@ -40,27 +42,30 @@ struct MealDetailView: View {
                         .foregroundColor(.secondary)
                 } else {
                     ForEach(entries) { entry in
-                        HStack {
-                            VStack(alignment: .leading) {
-                                Text(entry.name)
+                        NavigationLink(destination: FoodEntryDetailView(entry: entry)) {
+                            HStack {
+                                VStack(alignment: .leading) {
+                                    Text(entry.name)
+                                        .font(.subheadline)
+                                        .fontWeight(.medium)
+                                    Text("\(Int(entry.amountGrams)) g")
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
+                                Spacer()
+                                Text("\(Int(entry.calories)) kcal")
                                     .font(.subheadline)
-                                    .fontWeight(.medium)
-                                Text("\(Int(entry.amountGrams)) g")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
+                                    .fontWeight(.bold)
                             }
-                            Spacer()
-                            Text("\(Int(entry.calories)) kcal")
-                                .font(.subheadline)
-                                .fontWeight(.bold)
+                            .padding(.vertical, 4)
                         }
-                        .padding(.vertical, 4)
                         .swipeActions(edge: .trailing) {
                             Button(role: .destructive) {
                                 deleteEntry(entry)
                             } label: {
                                 Label("Löschen", systemImage: "trash")
                             }
+                            .tint(.red)
                         }
                     }
                 }
@@ -82,8 +87,17 @@ struct MealDetailView: View {
         .navigationTitle(mealType.rawValue)
         .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $showingFoodSearch) {
-            FoodSearchView(mealType: mealType)
-                .presentationDetents([.large])
+            FoodSearchView(mealType: mealType) { savedName in
+                showingFoodSearch = false
+                savedFoodName = savedName
+                showingSavedAlert = true
+            }
+            .presentationDetents([.large])
+        }
+        .alert("Gespeichert", isPresented: $showingSavedAlert) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text("\(savedFoodName) wurde hinzugefügt.")
         }
     }
     

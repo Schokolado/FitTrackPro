@@ -9,6 +9,7 @@ struct FoodEntryFormView: View {
     @State var mealType: MealType
     var prefilledProduct: OFFProduct?
     var prefilledEntry: FoodEntry?
+    var onSave: ((String) -> Void)? = nil
     
     @State private var name: String = ""
     @State private var amountGrams: Double = 100.0
@@ -166,6 +167,11 @@ struct FoodEntryFormView: View {
         )
         
         modelContext.insert(newEntry)
-        dismiss()
+        
+        if let onSave = onSave {
+            onSave(newEntry.name)
+        } else {
+            dismiss()
+        }
     }
 }

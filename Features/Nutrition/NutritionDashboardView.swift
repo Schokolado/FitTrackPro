@@ -11,6 +11,9 @@ struct NutritionDashboardView: View {
     @State private var selectedMealType: MealType = .breakfast
     @State private var scannedProduct: OFFProduct? = nil
     
+    @State private var showingSavedAlert = false
+    @State private var savedFoodName = ""
+    
     @AppStorage("nutritionGoalCalories") private var goalCalories: Double = 2000
     @AppStorage("nutritionGoalProtein") private var goalProtein: Double = 150
     @AppStorage("nutritionGoalCarbs") private var goalCarbs: Double = 250
@@ -49,8 +52,12 @@ struct NutritionDashboardView: View {
                 }
             }
             .sheet(isPresented: $showingAddEntry) {
-                FoodEntryFormView(mealType: selectedMealType, prefilledProduct: scannedProduct)
-                    .presentationDetents([.large])
+                FoodEntryFormView(mealType: selectedMealType, prefilledProduct: scannedProduct) { savedName in
+                    showingAddEntry = false
+                    savedFoodName = savedName
+                    showingSavedAlert = true
+                }
+                .presentationDetents([.large])
             }
             .sheet(isPresented: $showingScanner) {
                 BarcodeScannerView(onProductFound: { product in
@@ -64,6 +71,11 @@ struct NutritionDashboardView: View {
             }
             .onChange(of: selectedDate) { _, _ in
                 ensureDailyLogExists()
+            }
+            .alert("Gespeichert", isPresented: $showingSavedAlert) {
+                Button("OK", role: .cancel) { }
+            } message: {
+                Text("\(savedFoodName) wurde hinzugefügt.")
             }
         }
     }
