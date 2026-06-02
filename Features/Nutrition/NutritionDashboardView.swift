@@ -61,11 +61,39 @@ struct NutritionDashboardView: View {
                 .presentationDetents([.large])
             }
             .sheet(isPresented: $showingScanner) {
-                BarcodeScannerView(onProductFound: { product in
-                    showingScanner = false
-                    scannedProduct = product
-                    showingAddEntry = true
-                })
+                ZStack {
+                    BarcodeScannerView(onProductFound: { product in
+                        showingScanner = false
+                        scannedProduct = product
+                        showingAddEntry = true
+                    })
+                    
+                    #if targetEnvironment(simulator)
+                    VStack {
+                        Spacer()
+                        Button(action: {
+                            Task {
+                                let service = FoodAPIService()
+                                // Beispiel-Barcode für den Simulator (Coca Cola oder ein bekannter Artikel)
+                                let product = try? await service.fetchProduct(barcode: "5449000000996")
+                                DispatchQueue.main.async {
+                                    showingScanner = false
+                                    scannedProduct = product
+                                    showingAddEntry = true
+                                }
+                            }
+                        }) {
+                            Text("Simulator Mock Scan (Coca Cola)")
+                                .font(.headline)
+                                .padding()
+                                .background(Color.brand)
+                                .foregroundColor(.white)
+                                .cornerRadius(10)
+                        }
+                        .padding(.bottom, 40)
+                    }
+                    #endif
+                }
             }
             .onAppear {
                 ensureDailyLogExists()
