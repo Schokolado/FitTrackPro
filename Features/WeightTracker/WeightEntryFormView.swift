@@ -10,6 +10,7 @@ struct WeightEntryFormView: View {
     @State private var weight: Double = 70.0
     @State private var date: Date = Date()
     @State private var notes: String = ""
+    @State private var showingDeleteConfirmation = false
     
     init(entryToEdit: WeightEntry? = nil) {
         self.entryToEdit = entryToEdit
@@ -41,16 +42,10 @@ struct WeightEntryFormView: View {
                     DatePicker("Datum", selection: $date, displayedComponents: .date)
                 }
                 
-                Section("Notizen") {
-                    TextEditor(text: $notes)
-                        .frame(minHeight: 100)
-                }
-                
                 if entryToEdit != nil {
                     Section {
                         Button(role: .destructive) {
-                            deleteEntry()
-                            dismiss()
+                            showingDeleteConfirmation = true
                         } label: {
                             HStack {
                                 Spacer()
@@ -59,6 +54,11 @@ struct WeightEntryFormView: View {
                             }
                         }
                     }
+                }
+                
+                Section("Notizen") {
+                    TextEditor(text: $notes)
+                        .frame(minHeight: 100)
                 }
             }
             .navigationTitle(entryToEdit == nil ? "Neues Gewicht" : "Gewicht bearbeiten")
@@ -77,6 +77,15 @@ struct WeightEntryFormView: View {
                     }
                     .bold()
                 }
+            }
+            .alert("Eintrag löschen?", isPresented: $showingDeleteConfirmation) {
+                Button("Abbrechen", role: .cancel) { }
+                Button("Löschen", role: .destructive) {
+                    deleteEntry()
+                    dismiss()
+                }
+            } message: {
+                Text("Bist du sicher, dass du diesen Gewichtseintrag löschen möchtest? Dies kann nicht rückgängig gemacht werden.")
             }
         }
     }
