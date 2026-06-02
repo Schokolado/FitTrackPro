@@ -39,6 +39,10 @@ struct WeightEntryFormView: View {
                 }
                 Section {
                     DatePicker("Datum", selection: $date, in: ...Date(), displayedComponents: .date)
+                        .onChange(of: date) { _, _ in
+                            // Dismiss the popover by resigning first responder (simulates tapping outside)
+                            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+                        }
                 }
                 
                 Section("Notizen") {

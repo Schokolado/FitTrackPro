@@ -18,6 +18,7 @@ struct WeightTrackerView: View {
     @State private var showingAddEntry = false
     @State private var entryToEdit: WeightEntry?
     @State private var selectedTimeRange: WeightTimeRange = .month // Default to month
+    @State private var selectedDate: Date?
     
     var filteredEntries: [WeightEntry] {
         let now = Date()
@@ -172,9 +173,33 @@ struct WeightTrackerView: View {
                                 )
                                 .foregroundStyle(Color.brand)
                             }
+                            
+                            if let selectedDate = selectedDate, let entry = findClosestEntry(to: selectedDate) {
+                                RuleMark(x: .value("Selected", entry.timestamp))
+                                    .lineStyle(StrokeStyle(lineWidth: 1, dash: [5]))
+                                    .foregroundStyle(.gray.opacity(0.5))
+                                    .annotation(position: .top, overflowResolution: .init(x: .fit(to: .chart), y: .disabled)) {
+                                        VStack(spacing: 2) {
+                                            Text("\(entry.weightKg, format: .number.precision(.fractionLength(1))) kg")
+                                                .font(.subheadline.bold())
+                                                .foregroundColor(.primary)
+                                            Text(entry.timestamp, format: .dateTime.day().month().year())
+                                                .font(.caption2)
+                                                .foregroundColor(.secondary)
+                                        }
+                                        .padding(.horizontal, 8)
+                                        .padding(.vertical, 4)
+                                        .background(
+                                            RoundedRectangle(cornerRadius: 6)
+                                                .fill(Color(uiColor: .systemBackground))
+                                                .shadow(color: .black.opacity(0.1), radius: 2, y: 1)
+                                        )
+                                    }
+                            }
                         }
                         .chartYScale(domain: chartYScale)
                         .chartXScale(range: .plotDimension(padding: 10))
+                        .chartXSelection(value: $selectedDate)
                         .clipped()
                         .frame(height: 250)
                         .padding()
@@ -267,6 +292,10 @@ struct WeightTrackerView: View {
             WeightEntryFormView(entryToEdit: entry)
                 .presentationDetents([.fraction(0.65), .large])
         }
+    }
+    
+    private func findClosestEntry(to date: Date) -> WeightEntry? {
+        filteredEntries.min(by: { abs($0.timestamp.timeIntervalSince(date)) < abs($1.timestamp.timeIntervalSince(date)) })
     }
     
     private func deleteEntry(_ entry: WeightEntry) {
