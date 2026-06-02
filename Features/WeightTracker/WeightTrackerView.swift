@@ -79,12 +79,7 @@ struct WeightTrackerView: View {
         let minWeight = weights.min() ?? 0
         let maxWeight = weights.max() ?? 100
         
-        if minWeight == maxWeight {
-            return (minWeight - 5)...(maxWeight + 5)
-        }
-        
-        let padding = (maxWeight - minWeight) * 0.1
-        return (minWeight - padding)...(maxWeight + padding)
+        return (minWeight - 5)...(maxWeight + 5)
     }
     
     var body: some View {

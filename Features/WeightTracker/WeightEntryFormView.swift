@@ -11,7 +11,6 @@ struct WeightEntryFormView: View {
     @State private var date: Date = Date()
     @State private var notes: String = ""
     @State private var showingDeleteConfirmation = false
-    @State private var datePickerId = UUID()
     
     init(entryToEdit: WeightEntry? = nil) {
         self.entryToEdit = entryToEdit
@@ -40,13 +39,6 @@ struct WeightEntryFormView: View {
                 }
                 Section {
                     DatePicker("Datum", selection: $date, in: ...Date(), displayedComponents: .date)
-                        .id(datePickerId)
-                        .onChange(of: date) { _, _ in
-                            // Hack to force close the DatePicker popover when a date is selected
-                            withAnimation {
-                                datePickerId = UUID()
-                            }
-                        }
                 }
                 
                 Section("Notizen") {
