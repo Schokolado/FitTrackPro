@@ -1,12 +1,18 @@
 import SwiftUI
 import SwiftData
 
+struct IdentifiableImage: Identifiable {
+    let id = UUID()
+    let image: UIImage
+}
+
 struct ExerciseDetailView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     @Bindable var exercise: Exercise
     
     @State private var showingEditForm = false
+    @State private var fullScreenImage: IdentifiableImage? = nil
     
     var body: some View {
         ScrollView {
@@ -93,6 +99,9 @@ struct ExerciseDetailView: View {
                                             .scaledToFill()
                                             .frame(width: 150, height: 150)
                                             .clipShape(RoundedRectangle(cornerRadius: 12))
+                                            .onTapGesture {
+                                                fullScreenImage = IdentifiableImage(image: image)
+                                            }
                                     }
                                 }
                             }
@@ -129,6 +138,9 @@ struct ExerciseDetailView: View {
             NavigationStack {
                 ExerciseFormView(exerciseToEdit: exercise)
             }
+        }
+        .fullScreenCover(item: $fullScreenImage) { item in
+            FullScreenImageViewer(image: item.image)
         }
     }
 }
