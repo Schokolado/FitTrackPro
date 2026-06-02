@@ -38,7 +38,7 @@ struct WeightEntryFormView: View {
                 }
                 
                 Section {
-                    DatePicker("Datum & Uhrzeit", selection: $date)
+                    DatePicker("Datum", selection: $date, displayedComponents: .date)
                 }
                 
                 Section("Notizen") {
