@@ -13,6 +13,7 @@ struct NutritionDashboardView: View {
     
     @State private var showingSavedAlert = false
     @State private var savedFoodName = ""
+    @State private var datePickerId = UUID()
     
     @AppStorage("nutritionGoalCalories") private var goalCalories: Double = 2000
     @AppStorage("nutritionGoalProtein") private var goalProtein: Double = 150
@@ -71,6 +72,7 @@ struct NutritionDashboardView: View {
             }
             .onChange(of: selectedDate) { _, _ in
                 ensureDailyLogExists()
+                datePickerId = UUID() // Forces DatePicker popover to close
             }
             .alert("Gespeichert", isPresented: $showingSavedAlert) {
                 Button("OK", role: .cancel) { }
@@ -83,6 +85,7 @@ struct NutritionDashboardView: View {
     private var datePickerSection: some View {
         DatePicker("Datum", selection: $selectedDate, displayedComponents: .date)
             .datePickerStyle(.compact)
+            .id(datePickerId)
             .padding()
             .cardStyle()
     }
