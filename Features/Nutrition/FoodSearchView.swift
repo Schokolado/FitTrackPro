@@ -13,6 +13,9 @@ struct FoodSearchView: View {
     @State private var searchText = ""
     @State private var searchResults: [OFFProduct] = []
     @State private var isSearching = false
+    @State private var hasSearchedOnline = false
+    @State private var lastSearchTime: Date = Date.distantPast
+    @State private var showRateLimitAlert = false
     
     // For navigation to form
     @State private var selectedProduct: OFFProduct?
@@ -59,7 +62,7 @@ struct FoodSearchView: View {
                     }
                 }
                 
-                if !searchText.isEmpty {
+                if !searchText.isEmpty && hasSearchedOnline {
                     Section(header: Text("Datenbank-Suche (OpenFoodFacts)")) {
                         if isSearching {
                             HStack {
@@ -93,8 +96,11 @@ struct FoodSearchView: View {
                 }
                 
                 Section(header: Text(searchText.isEmpty ? "Zuletzt gegessen" : "Lokale Treffer")) {
-                    if recentFoods.isEmpty {
+                    if recentFoods.isEmpty && searchText.isEmpty {
                         Text("Noch keine Einträge vorhanden.")
+                            .foregroundColor(.secondary)
+                    } else if recentFoods.isEmpty {
+                        Text("Keine lokalen Treffer.")
                             .foregroundColor(.secondary)
                     } else {
                         ForEach(recentFoods) { entry in
@@ -113,6 +119,20 @@ struct FoodSearchView: View {
                             .foregroundColor(.primary)
                         }
                     }
+                    
+                    if !searchText.isEmpty && !hasSearchedOnline {
+                        Button(action: {
+                            Task {
+                                await triggerOnlineSearch(query: searchText)
+                            }
+                        }) {
+                            HStack {
+                                Image(systemName: "magnifyingglass")
+                                Text("Weitere Ergebnisse online suchen...")
+                            }
+                            .foregroundColor(.blue)
+                        }
+                    }
                 }
             }
             .navigationTitle("\(mealType.rawValue) hinzufügen")
@@ -126,9 +146,23 @@ struct FoodSearchView: View {
             }
             .searchable(text: $searchText, prompt: "Lebensmittel suchen...")
             .onSubmit(of: .search) {
-                Task {
-                    await performSearch(query: searchText)
+                hasSearchedOnline = false
+                if recentFoods.isEmpty {
+                    Task {
+                        await triggerOnlineSearch(query: searchText)
+                    }
                 }
+            }
+            .onChange(of: searchText) { oldValue, newValue in
+                if newValue.isEmpty {
+                    hasSearchedOnline = false
+                    searchResults = []
+                }
+            }
+            .alert("Bitte kurz warten", isPresented: $showRateLimitAlert) {
+                Button("OK", role: .cancel) { }
+            } message: {
+                Text("Um die Datenbank nicht zu überlasten, warte bitte ein paar Sekunden zwischen den Suchanfragen.")
             }
             .navigationDestination(isPresented: $showForm) {
                 FoodEntryFormView(mealType: mealType, prefilledProduct: selectedProduct, prefilledEntry: selectedEntry) { savedName in
@@ -137,6 +171,19 @@ struct FoodSearchView: View {
                 }
             }
         }
+    }
+    
+    private func triggerOnlineSearch(query: String) async {
+        let now = Date()
+        // 5 seconds rate limit between online searches
+        if now.timeIntervalSince(lastSearchTime) < 5 {
+            showRateLimitAlert = true
+            return
+        }
+        
+        lastSearchTime = now
+        hasSearchedOnline = true
+        await performSearch(query: query)
     }
     
     private func performSearch(query: String) async {
