@@ -102,11 +102,6 @@ struct FoodEntryFormView: View {
             .navigationTitle("Eintrag hinzufügen")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Abbrechen") {
-                        dismiss()
-                    }
-                }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Speichern") {
                         saveEntry()
