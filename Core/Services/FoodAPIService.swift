@@ -74,7 +74,7 @@ actor FoodAPIService {
     
     func searchProducts(query: String) async throws -> [OFFProduct] {
         guard let encodedQuery = query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
-              let url = URL(string: "https://world.openfoodfacts.org/cgi/search.pl?search_terms=\(encodedQuery)&search_simple=1&action=process&json=1") else {
+              let url = URL(string: "https://world.openfoodfacts.org/api/v2/search?search_terms=\(encodedQuery)&fields=code,product_name,nutriments") else {
             throw FoodAPIError.networkError
         }
         
