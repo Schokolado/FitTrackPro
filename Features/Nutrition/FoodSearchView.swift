@@ -154,12 +154,8 @@ struct FoodSearchView: View {
             }
             .searchable(text: $searchText, prompt: "Lebensmittel suchen...")
             .onSubmit(of: .search) {
+                // Nur Keyboard schließen und Online-Ergebnisse verstecken (falls vorher gesucht)
                 hasSearchedOnline = false
-                if recentFoods.isEmpty {
-                    Task {
-                        await triggerOnlineSearch(query: searchText)
-                    }
-                }
             }
             .onChange(of: searchText) { oldValue, newValue in
                 if newValue.isEmpty {
