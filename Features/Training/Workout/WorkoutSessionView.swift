@@ -11,6 +11,7 @@ struct WorkoutSessionView: View {
     @Bindable var session: WorkoutSession
     
     @State private var showingCancelAlert = false
+    @State private var showingConfirmFinishAlert = false
     @State private var showingFinishSheet = false
     @State private var showingSkipRestAlert = false
     @AppStorage("requireRestTimerConfirm") private var requireRestTimerConfirm = true
@@ -219,6 +220,15 @@ struct WorkoutSessionView: View {
                 workoutManager.endWorkout()
                 dismiss()
             }
+            .alert("Training beenden?", isPresented: $showingConfirmFinishAlert) {
+                Button("Ja, beenden") {
+                    viewModel.pauseWorkout()
+                    showingFinishSheet = true
+                }
+                Button("Abbrechen", role: .cancel) { }
+            } message: {
+                Text("Bist du sicher, dass du das Training beenden möchtest?")
+            }
         }
     }
     
@@ -293,8 +303,7 @@ struct WorkoutSessionView: View {
                 .padding(.horizontal)
                 
                 Button(action: {
-                    viewModel.pauseWorkout()
-                    showingFinishSheet = true
+                    showingConfirmFinishAlert = true
                 }) {
                     Text("Workout beenden")
                         .font(.headline)
