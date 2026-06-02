@@ -43,6 +43,21 @@ struct FoodSearchView: View {
     var body: some View {
         NavigationStack {
             List {
+                Section {
+                    Button(action: {
+                        selectedProduct = nil
+                        selectedEntry = nil
+                        showForm = true
+                    }) {
+                        HStack {
+                            Image(systemName: "plus.circle.fill")
+                                .foregroundColor(.brand)
+                            Text("Manuell hinzufügen")
+                                .foregroundColor(.primary)
+                        }
+                    }
+                }
+                
                 if !searchText.isEmpty {
                     Section(header: Text("Datenbank-Suche (OpenFoodFacts)")) {
                         if isSearching {
