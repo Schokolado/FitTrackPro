@@ -20,7 +20,8 @@ struct OFFNutriments: Decodable {
     }
 }
 
-struct OFFProduct: Decodable {
+struct OFFProduct: Decodable, Identifiable {
+    let id = UUID()
     let productName: String?
     let nutriments: OFFNutriments?
     
@@ -33,6 +34,12 @@ struct OFFProduct: Decodable {
 struct OFFResponse: Decodable {
     let product: OFFProduct?
     let status: Int
+}
+
+struct OFFSearchResponse: Decodable {
+    let count: Int?
+    let page: Int?
+    let products: [OFFProduct]?
 }
 
 actor FoodAPIService {
@@ -56,6 +63,33 @@ actor FoodAPIService {
             }
             
             return decodedResponse.product
+        } catch let error as DecodingError {
+            print("Decoding error: \(error)")
+            throw FoodAPIError.decodingError
+        } catch {
+            print("Network error: \(error)")
+            throw FoodAPIError.networkError
+        }
+    }
+    
+    func searchProducts(query: String) async throws -> [OFFProduct] {
+        guard let encodedQuery = query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
+              let url = URL(string: "https://world.openfoodfacts.org/cgi/search.pl?search_terms=\(encodedQuery)&search_simple=1&action=process&json=1") else {
+            throw FoodAPIError.networkError
+        }
+        
+        do {
+            let (data, response) = try await URLSession.shared.data(from: url)
+            
+            guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+                throw FoodAPIError.networkError
+            }
+            
+            let decoder = JSONDecoder()
+            let decodedResponse = try decoder.decode(OFFSearchResponse.self, from: data)
+            
+            // Filter out products without a name
+            return decodedResponse.products?.filter { $0.productName?.isEmpty == false } ?? []
         } catch let error as DecodingError {
             print("Decoding error: \(error)")
             throw FoodAPIError.decodingError

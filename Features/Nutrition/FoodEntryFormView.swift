@@ -8,6 +8,7 @@ struct FoodEntryFormView: View {
     
     @State var mealType: MealType
     var prefilledProduct: OFFProduct?
+    var prefilledEntry: FoodEntry?
     
     @State private var name: String = ""
     @State private var amountGrams: Double = 100.0
@@ -120,6 +121,18 @@ struct FoodEntryFormView: View {
                         proteinPer100g = nuts.proteins100g ?? 0.0
                         carbsPer100g = nuts.carbohydrates100g ?? 0.0
                         fatPer100g = nuts.fat100g ?? 0.0
+                    }
+                } else if let entry = prefilledEntry {
+                    name = entry.name
+                    amountGrams = entry.amountGrams > 0 ? entry.amountGrams : 100.0
+                    
+                    // Reverse calculate per 100g from the entry's totals
+                    let ratio = amountGrams / 100.0
+                    if ratio > 0 {
+                        caloriesPer100g = entry.calories / ratio
+                        proteinPer100g = entry.proteinGrams / ratio
+                        carbsPer100g = entry.carbsGrams / ratio
+                        fatPer100g = entry.fatGrams / ratio
                     }
                 }
             }

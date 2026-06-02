@@ -7,8 +7,9 @@ struct NutritionDashboardView: View {
     
     @State private var selectedDate: Date = Date()
     @State private var showingAddEntry = false
+    @State private var showingFoodSearch = false
     @State private var showingScanner = false
-    @State private var selectedMealType: MealType = .snack
+    @State private var selectedMealType: MealType = .breakfast
     @State private var scannedProduct: OFFProduct? = nil
     
     @AppStorage("nutritionGoalCalories") private var goalCalories: Double = 2000
@@ -50,6 +51,10 @@ struct NutritionDashboardView: View {
             }
             .sheet(isPresented: $showingAddEntry) {
                 FoodEntryFormView(mealType: selectedMealType, prefilledProduct: scannedProduct)
+                    .presentationDetents([.large])
+            }
+            .sheet(isPresented: $showingFoodSearch) {
+                FoodSearchView(mealType: selectedMealType)
                     .presentationDetents([.large])
             }
             .sheet(isPresented: $showingScanner) {
@@ -147,7 +152,7 @@ struct NutritionDashboardView: View {
                 Button(action: {
                     selectedMealType = type
                     scannedProduct = nil
-                    showingAddEntry = true
+                    showingFoodSearch = true
                 }) {
                     Image(systemName: "plus.circle.fill")
                         .foregroundColor(.brand)
