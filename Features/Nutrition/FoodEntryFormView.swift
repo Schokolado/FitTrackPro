@@ -30,9 +30,9 @@ struct FoodEntryFormView: View {
                         }
                     }
                     HStack {
-                        Text("Menge (g)")
+                        Text("Menge (g/ml)")
                         Spacer()
-                        TextField("g", value: $amountGrams, format: .number)
+                        TextField("g/ml", value: $amountGrams, format: .number)
                             .keyboardType(.decimalPad)
                             .multilineTextAlignment(.trailing)
                             .frame(width: 80)
@@ -41,7 +41,7 @@ struct FoodEntryFormView: View {
                     }
                 }
                 
-                Section(header: Text("Nährwerte (pro 100g)")) {
+                Section(header: Text("Nährwerte (pro 100g/ml)")) {
                     HStack {
                         Text("Kalorien (kcal)")
                         Spacer()
@@ -72,7 +72,7 @@ struct FoodEntryFormView: View {
                     }
                 }
                 
-                Section(header: Text("Berechnet (für \(Int(amountGrams))g)")) {
+                Section(header: Text("Berechnet (für \(Int(amountGrams))g/ml)")) {
                     HStack {
                         Text("Kalorien")
                         Spacer()
