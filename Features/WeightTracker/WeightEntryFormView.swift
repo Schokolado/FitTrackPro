@@ -45,6 +45,21 @@ struct WeightEntryFormView: View {
                     TextEditor(text: $notes)
                         .frame(minHeight: 100)
                 }
+                
+                if entryToEdit != nil {
+                    Section {
+                        Button(role: .destructive) {
+                            deleteEntry()
+                            dismiss()
+                        } label: {
+                            HStack {
+                                Spacer()
+                                Text("Eintrag löschen")
+                                Spacer()
+                            }
+                        }
+                    }
+                }
             }
             .navigationTitle(entryToEdit == nil ? "Neues Gewicht" : "Gewicht bearbeiten")
             .navigationBarTitleDisplayMode(.inline)
@@ -79,6 +94,12 @@ struct WeightEntryFormView: View {
         }
         
         // TODO: Update WidgetDataService if implemented
+    }
+    
+    private func deleteEntry() {
+        if let entry = entryToEdit {
+            modelContext.delete(entry)
+        }
     }
 }
 
