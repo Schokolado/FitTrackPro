@@ -291,7 +291,7 @@ struct TrainingMainView: View {
                             .rotationEffect(.degrees(isFabExpanded ? 45 : 0))
                     }
                 }
-                .padding(.bottom, workoutManager.activeViewModel != nil ? 90 : 20)
+                .padding(.bottom, 20)
                 .padding(.trailing, 20)
                 .padding(.top, 20)
             }
