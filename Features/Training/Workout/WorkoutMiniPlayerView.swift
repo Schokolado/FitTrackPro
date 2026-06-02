@@ -120,7 +120,7 @@ struct WorkoutMiniPlayerView: View {
                     RoundedRectangle(cornerRadius: 16, style: .continuous)
                         .fill(Color.primary.opacity(0.08))
                 )
-                .shadow(color: .black.opacity(0.15), radius: 10, y: 2)
+                .shadow(color: .black.opacity(0.25), radius: 20, y: 5)
         )
         .padding(.horizontal)
         .padding(.bottom, 8)
