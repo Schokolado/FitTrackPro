@@ -461,37 +461,45 @@ struct ExerciseHistoryBlock: View {
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
-
-            // Sets table header
-            HStack {
-                Text("Satz")
-                    .frame(width: 36, alignment: .leading)
-                Spacer()
-                Text("Gewicht")
-                    .frame(width: 100, alignment: .trailing)
-                Text("Wdh.")
-                    .frame(width: 50, alignment: .trailing)
-            }
-            .font(.caption2.bold())
-            .foregroundColor(.secondary)
-            .padding(.horizontal, 4)
-
-            ForEach(sets.sorted(by: { $0.setNumber < $1.setNumber })) { set in
-                HStack {
-                    Text("\(set.setNumber)")
-                        .frame(width: 36, alignment: .leading)
-                        .font(.caption.monospacedDigit())
-                        .foregroundColor(.secondary)
-                    Spacer()
-                    Text(set.actualWeight > 0 ? "\(set.actualWeight, specifier: "%.1f") kg" : (zeroWeightIsBodyweight ? "Körpergewicht" : "0 kg"))
-                        .frame(width: 100, alignment: .trailing)
-                        .font(.subheadline.monospacedDigit())
-                    Text("\(set.actualReps)")
-                        .frame(width: 50, alignment: .trailing)
-                        .font(.subheadline.monospacedDigit())
+            VStack(spacing: 8) {
+                ForEach(sets.sorted(by: { $0.setNumber < $1.setNumber })) { set in
+                    HStack(spacing: 16) {
+                        Text("\(set.setNumber)")
+                            .font(.caption.bold())
+                            .foregroundColor(.white)
+                            .frame(width: 28, height: 28)
+                            .background(Color.brand)
+                            .clipShape(Circle())
+                        
+                        Spacer()
+                        
+                        HStack(spacing: 6) {
+                            Image(systemName: "dumbbell.fill")
+                                .font(.caption2)
+                                .foregroundColor(.secondary)
+                            Text(set.actualWeight > 0 ? "\(set.actualWeight, specifier: "%.1f") kg" : (zeroWeightIsBodyweight ? "Körpergewicht" : "0 kg"))
+                                .font(.subheadline.bold())
+                                .fixedSize()
+                        }
+                        
+                        Spacer()
+                        
+                        HStack(spacing: 6) {
+                            Image(systemName: "arrow.triangle.2.circlepath")
+                                .font(.caption2)
+                                .foregroundColor(.secondary)
+                            Text("\(set.actualReps) Wdh")
+                                .font(.subheadline.bold())
+                        }
+                        .frame(minWidth: 70, alignment: .leading)
+                    }
+                    .padding(.vertical, 10)
+                    .padding(.horizontal, 12)
+                    .background(Color.backgroundPrimary)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
                 }
-                .padding(.horizontal, 4)
             }
+            .padding(.top, 4)
         }
         .padding(14)
         .background(

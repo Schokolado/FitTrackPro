@@ -9,6 +9,7 @@ struct FoodEntryFormView: View {
     @State var mealType: MealType
     var prefilledProduct: OFFProduct?
     var prefilledEntry: FoodEntry?
+    var targetDate: Date = Date()
     var onSave: ((String) -> Void)? = nil
     
     @State private var name: String = ""
@@ -147,7 +148,7 @@ struct FoodEntryFormView: View {
     private var calculatedFat: Double { fatPer100g * ratio }
     
     private func saveEntry() {
-        let dateString = Date().iso8601String()
+        let dateString = targetDate.iso8601String()
         let todayLog = allDailyLogs.first(where: { $0.dateString == dateString }) ?? {
             let newLog = DailyLog(dateString: dateString)
             modelContext.insert(newLog)
@@ -156,7 +157,7 @@ struct FoodEntryFormView: View {
         
         let newEntry = FoodEntry(
             name: name,
-            timestamp: Date(),
+            timestamp: targetDate,
             mealType: mealType,
             amountGrams: amountGrams,
             calories: calculatedCalories,

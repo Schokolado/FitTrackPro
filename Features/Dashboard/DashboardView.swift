@@ -8,11 +8,13 @@ struct DashboardView: View {
     @AppStorage("userName") private var userName: String = ""
     
     @Query(sort: \WeightEntry.timestamp, order: .reverse) private var weightEntries: [WeightEntry]
-    @Query(sort: \FoodEntry.timestamp, order: .reverse) private var foodEntries: [FoodEntry]
+    @Query private var allDailyLogs: [DailyLog]
     @Query(sort: \WorkoutSession.startTime, order: .reverse) private var workouts: [WorkoutSession]
     
     var todayFoodEntries: [FoodEntry] {
-        foodEntries.filter { Calendar.current.isDateInToday($0.timestamp) }
+        let todayString = Date().iso8601String()
+        let todayLog = allDailyLogs.first(where: { $0.dateString == todayString })
+        return todayLog?.foodEntries ?? []
     }
     
     var todayWorkouts: [WorkoutSession] {
@@ -60,6 +62,7 @@ struct DashboardView: View {
                         )
                     }
                     .buttonStyle(PlainButtonStyle())
+                    .padding(.horizontal)
                     
                     // Grid for Weight and Training
                     LazyVGrid(columns: [GridItem(.flexible(), spacing: 16), GridItem(.flexible(), spacing: 16)], spacing: 16) {

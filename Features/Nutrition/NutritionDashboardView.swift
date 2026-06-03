@@ -55,7 +55,7 @@ struct NutritionDashboardView: View {
                 }
             }
             .sheet(isPresented: $showingAddEntry) {
-                FoodEntryFormView(mealType: selectedMealType, prefilledProduct: scannedProduct) { savedName in
+                FoodEntryFormView(mealType: selectedMealType, prefilledProduct: scannedProduct, targetDate: selectedDate) { savedName in
                     showingAddEntry = false
                     savedFoodName = savedName
                     showingSavedAlert = true
