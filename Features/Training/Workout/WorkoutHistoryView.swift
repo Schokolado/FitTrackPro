@@ -347,6 +347,22 @@ struct WorkoutHistoryDetailView: View {
                     }
                 }
 
+                // Resume Button (if unfinished and not active)
+                if session.endTime == nil && activeSessionId != session.id {
+                    Button {
+                        WorkoutManager.shared.resumeUnfinishedWorkout(session: session)
+                        dismiss()
+                    } label: {
+                        Label("Workout fortsetzen", systemImage: "play.fill")
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 14)
+                            .background(Color.brand)
+                            .foregroundColor(.white)
+                            .clipShape(RoundedRectangle(cornerRadius: 14))
+                    }
+                    .padding(.top, 16)
+                }
+
                 // Delete Button
                 Button(role: .destructive) {
                     showDeleteConfirm = true

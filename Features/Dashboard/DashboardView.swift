@@ -69,6 +69,7 @@ struct DashboardView: View {
                         .buttonStyle(PlainButtonStyle())
                         
                         Button(action: {
+                            UserDefaults.standard.set(2, forKey: "trainingSelectedTab")
                             selectedTab = 1 // Tab Index für Training
                         }) {
                             TrainingSummaryCard(workouts: todayWorkouts)

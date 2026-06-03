@@ -168,7 +168,7 @@ struct TrainingPlansView: View {
 import SwiftUI
 
 struct TrainingMainView: View {
-    @State private var selectedTab = 0
+    @AppStorage("trainingSelectedTab") private var selectedTab = 0
     @State private var isFabExpanded = false
     @EnvironmentObject var themeManager: ThemeManager
     @Environment(WorkoutManager.self) private var workoutManager
