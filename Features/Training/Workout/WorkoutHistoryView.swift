@@ -447,7 +447,7 @@ struct ExerciseHistoryBlock: View {
                     .frame(width: 36, alignment: .leading)
                 Spacer()
                 Text("Gewicht")
-                    .frame(width: 72, alignment: .trailing)
+                    .frame(width: 100, alignment: .trailing)
                 Text("Wdh.")
                     .frame(width: 50, alignment: .trailing)
             }
@@ -463,7 +463,7 @@ struct ExerciseHistoryBlock: View {
                         .foregroundColor(.secondary)
                     Spacer()
                     Text(set.actualWeight > 0 ? "\(set.actualWeight, specifier: "%.1f") kg" : "Körpergewicht")
-                        .frame(width: 72, alignment: .trailing)
+                        .frame(width: 100, alignment: .trailing)
                         .font(.subheadline.monospacedDigit())
                     Text("\(set.actualReps)")
                         .frame(width: 50, alignment: .trailing)

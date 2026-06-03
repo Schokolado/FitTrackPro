@@ -226,6 +226,8 @@ struct WorkoutSessionView: View {
             .onReceive(NotificationCenter.default.publisher(for: .workoutFinished)) { _ in
                 // End workout in manager and dismiss the view
                 workoutManager.endWorkout()
+                UserDefaults.standard.set(1, forKey: "mainSelectedTab")
+                UserDefaults.standard.set(2, forKey: "trainingSelectedTab")
                 dismiss()
             }
             .alert("Training beenden?", isPresented: $showingConfirmFinishAlert) {

@@ -3,7 +3,7 @@ import SwiftUI
 struct AppRouter: View {
     @Environment(WorkoutManager.self) private var workoutManager
     @State private var showingWorkoutSession = false
-    @State private var selectedTab = 0
+    @AppStorage("mainSelectedTab") private var selectedTab = 0
     
     var body: some View {
         ZStack(alignment: .bottom) {
