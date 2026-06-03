@@ -308,7 +308,7 @@ struct OnboardingGoalsPage: View {
                     label: "Kohlenhydrate / Tag",
                     icon: "k.circle.fill",
                     value: $carbsGoal,
-                    range: 50...500,
+                    range: 50...700,
                     step: 10,
                     unit: "g"
                 )
