@@ -1,10 +1,53 @@
 import SwiftUI
 import SwiftData
 
+// MARK: - Helpers
+
+private func durationString(session: WorkoutSession, activeSessionId: UUID?) -> String {
+    // Only show "Laufend" if this is the currently active session
+    if session.endTime == nil {
+        if session.id == activeSessionId { return "Laufend" }
+        return "–"  // No endTime but not active → incomplete/aborted session
+    }
+    let secs = Int(session.endTime!.timeIntervalSince(session.startTime))
+    let h = secs / 3600
+    let m = (secs % 3600) / 60
+    if h > 0 { return "\(h)h \(m)min" }
+    return "\(m) min"
+}
+
+private func monthKey(for date: Date) -> String {
+    let formatter = DateFormatter()
+    formatter.locale = Locale(identifier: "de_DE")
+    formatter.dateFormat = "MMMM yyyy"
+    return formatter.string(from: date)
+}
+
 // MARK: - Workout History List View
 
 struct WorkoutHistoryView: View {
     @Query(sort: \WorkoutSession.startTime, order: .reverse) private var sessions: [WorkoutSession]
+    @Environment(WorkoutManager.self) private var workoutManager
+
+    /// Sessions grouped by month, in order
+    private var groupedSessions: [(monthLabel: String, sessions: [WorkoutSession])] {
+        var result: [(monthLabel: String, sessions: [WorkoutSession])] = []
+        var seen: [String: Int] = [:]
+        for session in sessions {
+            let key = monthKey(for: session.startTime)
+            if let idx = seen[key] {
+                result[idx].sessions.append(session)
+            } else {
+                seen[key] = result.count
+                result.append((monthLabel: key, sessions: [session]))
+            }
+        }
+        return result
+    }
+
+    private var activeSessionId: UUID? {
+        workoutManager.activeSession?.id
+    }
 
     var body: some View {
         Group {
@@ -26,12 +69,28 @@ struct WorkoutHistoryView: View {
                 .padding(.bottom, 80)
             } else {
                 ScrollView {
-                    LazyVStack(spacing: 12) {
-                        ForEach(sessions) { session in
-                            NavigationLink(destination: WorkoutHistoryDetailView(session: session)) {
-                                WorkoutHistoryCard(session: session)
+                    LazyVStack(spacing: 12, pinnedViews: []) {
+                        ForEach(groupedSessions, id: \.monthLabel) { group in
+                            // Month header
+                            HStack {
+                                Text(group.monthLabel)
+                                    .font(.subheadline.bold())
+                                    .foregroundColor(.secondary)
+                                Spacer()
+                                Text("\(group.sessions.count) Einheiten")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
                             }
-                            .buttonStyle(PlainButtonStyle())
+                            .padding(.horizontal, 4)
+                            .padding(.top, 8)
+
+                            // Cards in this month
+                            ForEach(group.sessions) { session in
+                                NavigationLink(destination: WorkoutHistoryDetailView(session: session, activeSessionId: activeSessionId)) {
+                                    WorkoutHistoryCard(session: session, activeSessionId: activeSessionId)
+                                }
+                                .buttonStyle(PlainButtonStyle())
+                            }
                         }
                     }
                     .padding()
@@ -43,18 +102,15 @@ struct WorkoutHistoryView: View {
     }
 }
 
+
 // MARK: - History Card (List Row)
 
 struct WorkoutHistoryCard: View {
     let session: WorkoutSession
+    let activeSessionId: UUID?
 
     private var duration: String {
-        guard let end = session.endTime else { return "Laufend" }
-        let secs = Int(end.timeIntervalSince(session.startTime))
-        let h = secs / 3600
-        let m = (secs % 3600) / 60
-        if h > 0 { return "\(h)h \(m)min" }
-        return "\(m) min"
+        durationString(session: session, activeSessionId: activeSessionId)
     }
 
     private var completedSets: [WorkoutSet] {
@@ -166,17 +222,13 @@ struct RatingBadge: View {
 
 struct WorkoutHistoryDetailView: View {
     let session: WorkoutSession
+    let activeSessionId: UUID?
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     @State private var showDeleteConfirm = false
 
     private var duration: String {
-        guard let end = session.endTime else { return "Laufend" }
-        let secs = Int(end.timeIntervalSince(session.startTime))
-        let h = secs / 3600
-        let m = (secs % 3600) / 60
-        if h > 0 { return "\(h)h \(m)min" }
-        return "\(m) min"
+        durationString(session: session, activeSessionId: activeSessionId)
     }
 
     private var completedSets: [WorkoutSet] {
