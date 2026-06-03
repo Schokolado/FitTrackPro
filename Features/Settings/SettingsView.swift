@@ -2,6 +2,7 @@ import SwiftUI
 
 struct SettingsView: View {
     @AppStorage(AppStorageKeys.prefillExerciseHistory) private var prefillExerciseHistory = true
+    @AppStorage("zeroWeightIsBodyweight") private var zeroWeightIsBodyweight = true
     
     @AppStorage("timerFav1") private var timerFav1: Int = 30
     @AppStorage("timerFav2") private var timerFav2: Int = 60
@@ -111,6 +112,8 @@ struct SettingsView: View {
                 }
 
                 Section(header: Text("Trainingsplan")) {
+                    Toggle("0 kg als Körpergewicht werten", isOn: $zeroWeightIsBodyweight)
+                    
                     Toggle("Werte aus Historie übernehmen", isOn: $prefillExerciseHistory)
                     Text("Wenn aktiviert, werden beim Hinzufügen einer Übung zum Plan automatisch die Sätze, Wiederholungen und Gewichte aus dem letzten Training übernommen.")
                         .font(.caption)

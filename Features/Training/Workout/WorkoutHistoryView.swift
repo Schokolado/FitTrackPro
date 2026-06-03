@@ -428,6 +428,7 @@ struct DetailStatBox: View {
 struct ExerciseHistoryBlock: View {
     let exercise: Exercise
     let sets: [WorkoutSet]
+    @AppStorage("zeroWeightIsBodyweight") private var zeroWeightIsBodyweight = true
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -462,7 +463,7 @@ struct ExerciseHistoryBlock: View {
                         .font(.caption.monospacedDigit())
                         .foregroundColor(.secondary)
                     Spacer()
-                    Text(set.actualWeight > 0 ? "\(set.actualWeight, specifier: "%.1f") kg" : "Körpergewicht")
+                    Text(set.actualWeight > 0 ? "\(set.actualWeight, specifier: "%.1f") kg" : (zeroWeightIsBodyweight ? "Körpergewicht" : "0 kg"))
                         .frame(width: 100, alignment: .trailing)
                         .font(.subheadline.monospacedDigit())
                     Text("\(set.actualReps)")
