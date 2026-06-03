@@ -8,7 +8,6 @@ struct SettingsView: View {
     @AppStorage("timerFav3") private var timerFav3: Int = 90
     @AppStorage("requireRestTimerConfirm") private var requireRestTimerConfirm = true
     
-    @AppStorage("nutritionGoalCalories") private var nutritionGoalCalories: Double = 2500
     @AppStorage("nutritionGoalProtein") private var nutritionGoalProtein: Double = 150
     @AppStorage("nutritionGoalCarbs") private var nutritionGoalCarbs: Double = 250
     @AppStorage("nutritionGoalFat") private var nutritionGoalFat: Double = 70
@@ -77,9 +76,6 @@ struct SettingsView: View {
                         TextField("kcal", value: $dailyCalorieGoal, format: .number)
                             .keyboardType(.decimalPad)
                             .multilineTextAlignment(.trailing)
-                            .onChange(of: dailyCalorieGoal) { _, new in
-                                nutritionGoalCalories = new // sync keys
-                            }
                     }
                     HStack {
                         Text("Protein (g)")
@@ -139,7 +135,7 @@ struct SettingsView: View {
                     HStack {
                         Text("Kalorien")
                         Spacer()
-                        TextField("kcal", value: $nutritionGoalCalories, format: .number)
+                        TextField("kcal", value: $dailyCalorieGoal, format: .number)
                             .keyboardType(.decimalPad)
                             .multilineTextAlignment(.trailing)
                     }

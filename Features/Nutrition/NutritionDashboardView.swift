@@ -16,7 +16,7 @@ struct NutritionDashboardView: View {
     @State private var savedFoodName = ""
     @State private var showingDatePicker = false
     
-    @AppStorage("nutritionGoalCalories") private var goalCalories: Double = 2000
+    @AppStorage("dailyCalorieGoal") private var goalCalories: Double = 2500
     @AppStorage("nutritionGoalProtein") private var goalProtein: Double = 150
     @AppStorage("nutritionGoalCarbs") private var goalCarbs: Double = 250
     @AppStorage("nutritionGoalFat") private var goalFat: Double = 70
