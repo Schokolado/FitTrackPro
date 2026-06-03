@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		0730E4F7D51B730CE3A5A89E /* MealDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1E8E706AC5DE77A2BF50419 /* MealDetailView.swift */; };
 		21C10E70757DE05AEDA3DC64 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD6744A2D4B3D0CF12153D62 /* SettingsView.swift */; };
+		28E5FDA46357AB349294F2C4 /* WorkoutHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA156830A304954C68A7705E /* WorkoutHistoryView.swift */; };
 		2B934108FF060CCF528CC462 /* WeightEntryFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E6E96E7913E710AC58042F /* WeightEntryFormView.swift */; };
 		30C857921D56527B0F1E71AF /* NotificationNames.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBD770BA5BDC13445B2DF3A7 /* NotificationNames.swift */; };
 		40673D404A445CA10E57F22B /* FoodAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBAC85A08230019A83ADA120 /* FoodAPIService.swift */; };
@@ -125,6 +126,7 @@
 		E63AA023B39CEE387F13D43F /* ZoomableImageView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ZoomableImageView.swift; path = Core/Views/ZoomableImageView.swift; sourceTree = "<group>"; };
 		EBD770BA5BDC13445B2DF3A7 /* NotificationNames.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NotificationNames.swift; sourceTree = "<group>"; };
 		F6E3C57FB6083B5D9869C682 /* FoodEntryFormView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FoodEntryFormView.swift; sourceTree = "<group>"; };
+		FA156830A304954C68A7705E /* WorkoutHistoryView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WorkoutHistoryView.swift; sourceTree = "<group>"; };
 		FBAC85A08230019A83ADA120 /* FoodAPIService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FoodAPIService.swift; sourceTree = "<group>"; };
 		FD6744A2D4B3D0CF12153D62 /* SettingsView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -349,6 +351,7 @@
 				C3FDAE112FCAE73F00E8767F /* ExerciseHistoryView.swift */,
 				B2C3D4E5F6A7B8C9D0E1F2A3 /* WorkoutTimerHeaderView.swift */,
 				7929DBB78E8F83266C1EED06 /* WorkoutMiniPlayerView.swift */,
+				FA156830A304954C68A7705E /* WorkoutHistoryView.swift */,
 			);
 			path = Workout;
 			sourceTree = "<group>";
@@ -540,6 +543,7 @@
 				2B934108FF060CCF528CC462 /* WeightEntryFormView.swift in Sources */,
 				D103DFCD8977A59169073514 /* OnboardingView.swift in Sources */,
 				91DC3E9E046A131BFD3F0A4B /* OnboardingPages.swift in Sources */,
+				28E5FDA46357AB349294F2C4 /* WorkoutHistoryView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

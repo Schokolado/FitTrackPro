@@ -182,6 +182,7 @@ struct TrainingMainView: View {
                 Picker("Ansicht", selection: $selectedTab) {
                     Text("Pläne").tag(0)
                     Text("Übungen").tag(1)
+                    Text("Historie").tag(2)
                 }
                 .pickerStyle(.segmented)
                 .padding()
@@ -189,8 +190,10 @@ struct TrainingMainView: View {
                 
                 if selectedTab == 0 {
                     TrainingPlansView(triggerAddAlert: $triggerAddPlan)
-                } else {
+                } else if selectedTab == 1 {
                     ExerciseLibraryView(triggerAddExercise: $triggerAddExercise)
+                } else {
+                    WorkoutHistoryView()
                 }
                 
                 Spacer(minLength: 0)
