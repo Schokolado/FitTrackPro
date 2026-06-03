@@ -73,6 +73,9 @@ struct DashboardView: View {
                                 UserDefaults.standard.set(0, forKey: "trainingSelectedTab") // Pläne
                             } else {
                                 UserDefaults.standard.set(2, forKey: "trainingSelectedTab") // Historie
+                                if let latest = todayWorkouts.first {
+                                    UserDefaults.standard.set(latest.id.uuidString, forKey: "openHistorySessionId")
+                                }
                             }
                             selectedTab = 1 // Tab Index für Training
                         }) {

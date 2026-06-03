@@ -50,6 +50,15 @@ struct WorkoutHistoryView: View {
         workoutManager.activeSession?.id
     }
 
+    @AppStorage("openHistorySessionId") private var openHistorySessionId: String = ""
+
+    private var selectionBinding: Binding<String?> {
+        Binding(
+            get: { openHistorySessionId.isEmpty ? nil : openHistorySessionId },
+            set: { openHistorySessionId = $0 ?? "" }
+        )
+    }
+
     var body: some View {
         Group {
             if sessions.isEmpty {
@@ -87,7 +96,11 @@ struct WorkoutHistoryView: View {
 
                             // Cards in this month
                             ForEach(group.sessions) { session in
-                                NavigationLink(destination: WorkoutHistoryDetailView(session: session, activeSessionId: activeSessionId)) {
+                                NavigationLink(
+                                    destination: WorkoutHistoryDetailView(session: session, activeSessionId: activeSessionId),
+                                    tag: session.id.uuidString,
+                                    selection: selectionBinding
+                                ) {
                                     WorkoutHistoryCard(session: session, activeSessionId: activeSessionId)
                                 }
                                 .buttonStyle(PlainButtonStyle())
@@ -100,6 +113,13 @@ struct WorkoutHistoryView: View {
             }
         }
         .background(Color.backgroundPrimary)
+        .onAppear {
+            // Check if openHistorySessionId matches an existing session
+            // If not, clear it so we don't get stuck
+            if !openHistorySessionId.isEmpty && !sessions.contains(where: { $0.id.uuidString == openHistorySessionId }) {
+                openHistorySessionId = ""
+            }
+        }
     }
 }
 
