@@ -5,9 +5,21 @@ struct AppRouter: View {
     @State private var showingWorkoutSession = false
     @AppStorage("mainSelectedTab") private var selectedTab = 0
     
+    private var tabSelection: Binding<Int> {
+        Binding(
+            get: { selectedTab },
+            set: { newTab in
+                if newTab == selectedTab {
+                    NotificationCenter.default.post(name: NSNotification.Name("TabReselected"), object: newTab)
+                }
+                selectedTab = newTab
+            }
+        )
+    }
+    
     var body: some View {
         ZStack(alignment: .bottom) {
-            TabView(selection: $selectedTab) {
+            TabView(selection: tabSelection) {
                 DashboardView(selectedTab: $selectedTab)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .background(Color.backgroundPrimary)

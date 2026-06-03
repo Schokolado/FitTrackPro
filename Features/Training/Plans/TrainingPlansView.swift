@@ -175,6 +175,7 @@ struct TrainingMainView: View {
     
     @State private var triggerAddPlan = false
     @State private var triggerAddExercise = false
+    @State private var navId = UUID()
     
     var body: some View {
         NavigationStack {
@@ -300,6 +301,12 @@ struct TrainingMainView: View {
             }
             .navigationTitle("Training")
             .navigationBarTitleDisplayMode(.inline)
+        }
+        .id(navId)
+        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("TabReselected"))) { notification in
+            if let tab = notification.object as? Int, tab == 1 {
+                navId = UUID()
+            }
         }
     }
 }

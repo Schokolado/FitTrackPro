@@ -24,6 +24,8 @@ struct SettingsView: View {
     @State private var birthDate: Date = Calendar.current.date(byAdding: .year, value: -25, to: Date()) ?? Date()
     @EnvironmentObject var themeManager: ThemeManager
     
+    @State private var navId = UUID()
+    
     var body: some View {
         NavigationStack {
             Form {
@@ -166,6 +168,12 @@ struct SettingsView: View {
                 }
             }
             .navigationTitle("Einstellungen")
+        }
+        .id(navId)
+        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("TabReselected"))) { notification in
+            if let tab = notification.object as? Int, tab == 4 {
+                navId = UUID()
+            }
         }
     }
 }

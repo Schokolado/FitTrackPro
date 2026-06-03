@@ -468,7 +468,7 @@ struct ExerciseHistoryBlock: View {
                             .font(.caption.bold())
                             .foregroundColor(.white)
                             .frame(width: 28, height: 28)
-                            .background(Color.brand)
+                            .background(exercise.themeColor)
                             .clipShape(Circle())
                         
                         Spacer()

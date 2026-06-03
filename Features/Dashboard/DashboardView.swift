@@ -24,6 +24,7 @@ struct DashboardView: View {
     var consumedCalories: Double {
         todayFoodEntries.reduce(0) { $0 + $1.calories }
     }
+    @State private var navId = UUID()
     
     var body: some View {
         NavigationStack {
@@ -92,6 +93,12 @@ struct DashboardView: View {
             }
             .background(Color.backgroundPrimary)
             .navigationBarHidden(true)
+        }
+        .id(navId)
+        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("TabReselected"))) { notification in
+            if let tab = notification.object as? Int, tab == 0 {
+                navId = UUID()
+            }
         }
     }
     
