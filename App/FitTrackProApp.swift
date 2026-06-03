@@ -30,13 +30,21 @@ struct FitTrackProApp: App {
     }()
 
     @StateObject private var themeManager = ThemeManager()
+    @AppStorage(AppStorageKeys.hasCompletedOnboarding) private var hasCompletedOnboarding = false
 
     var body: some Scene {
         WindowGroup {
             AppRouter()
                 .environmentObject(themeManager)
                 .environment(WorkoutManager.shared)
+                .fullScreenCover(isPresented: Binding(
+                    get: { !hasCompletedOnboarding },
+                    set: { _ in }
+                )) {
+                    OnboardingView()
+                }
         }
         .modelContainer(sharedModelContainer)
     }
 }
+
