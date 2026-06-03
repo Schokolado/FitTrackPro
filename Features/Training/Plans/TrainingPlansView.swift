@@ -305,6 +305,7 @@ struct TrainingMainView: View {
         .id(navId)
         .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("TabReselected"))) { notification in
             if let tab = notification.object as? Int, tab == 1 {
+                UserDefaults.standard.set("", forKey: "openHistorySessionId")
                 navId = UUID()
             }
         }
