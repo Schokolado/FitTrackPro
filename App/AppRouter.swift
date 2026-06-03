@@ -22,12 +22,14 @@ struct AppRouter: View {
                     .tabItem {
                         Label("Training", systemImage: "dumbbell.fill")
                     }
+                    .tag(1)
                 
                 NutritionDashboardView()
                     .globalMiniPlayerSafeArea(isActive: workoutManager.activeViewModel != nil)
                     .tabItem {
                         Label("Ernährung", systemImage: "fork.knife")
                     }
+                    .tag(2)
                 
                 Text("Statistics View")
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -36,12 +38,14 @@ struct AppRouter: View {
                     .tabItem {
                         Label("Statistik", systemImage: "chart.xyaxis.line")
                     }
+                    .tag(3)
                 
                 SettingsView()
                     .globalMiniPlayerSafeArea(isActive: workoutManager.activeViewModel != nil)
                     .tabItem {
                         Label("Einstellungen", systemImage: "gearshape.fill")
                     }
+                    .tag(4)
             }
             .tint(.brand)
             
