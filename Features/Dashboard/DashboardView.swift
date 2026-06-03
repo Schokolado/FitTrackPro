@@ -69,7 +69,11 @@ struct DashboardView: View {
                         .buttonStyle(PlainButtonStyle())
                         
                         Button(action: {
-                            UserDefaults.standard.set(2, forKey: "trainingSelectedTab")
+                            if todayWorkouts.isEmpty {
+                                UserDefaults.standard.set(0, forKey: "trainingSelectedTab") // Pläne
+                            } else {
+                                UserDefaults.standard.set(2, forKey: "trainingSelectedTab") // Historie
+                            }
                             selectedTab = 1 // Tab Index für Training
                         }) {
                             TrainingSummaryCard(workouts: todayWorkouts)
