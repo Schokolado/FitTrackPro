@@ -12,8 +12,9 @@ private func durationString(session: WorkoutSession, activeSessionId: UUID?) -> 
     let secs = Int(session.endTime!.timeIntervalSince(session.startTime))
     let h = secs / 3600
     let m = (secs % 3600) / 60
-    if h > 0 { return "\(h)h \(m)min" }
-    return "\(m) min"
+    let s = secs % 60
+    if h > 0 { return "\(h)h \(m)min \(s)s" }
+    return "\(m)m \(s)s"
 }
 
 private func monthKey(for date: Date) -> String {
