@@ -19,9 +19,9 @@
 | M3 – Trainingspläne | ✅ Abgeschlossen |
 | M4 – Workout-Modus | ✅ Abgeschlossen |
 | M5 – Workout-Abschluss | ✅ Abgeschlossen |
-| M6 – Ernährung + Barcode | ⏳ Ausstehend |
-| M7 – Gewichtstracker | ⏳ Ausstehend |
-| M8 – Dashboard | ⏳ Ausstehend |
+| M6 – Ernährung + Barcode | ✅ Abgeschlossen |
+| M7 – Gewichtstracker | ✅ Abgeschlossen |
+| M8 – Dashboard | 🔧 In Arbeit (Basis fertig) |
 | M9 – Statistik & Analyse | ⏳ Ausstehend |
 | M10 – PDF-Export | ⏳ Ausstehend |
 | M11 – Apple Health | ⏳ Ausstehend |
@@ -35,6 +35,21 @@
 ---
 
 ## Einträge
+
+### 2026-06-04 – M6, M7 & M8 (Dashboard & Tracking)
+
+**Status:** 🔧 In Arbeit  
+**Milestones:** M6, M7, M8  
+**Bearbeitet:** Ernährungstracker, Gewichtstracker, In-App Dashboard
+
+**Implementiert:**
+- **M6 – Ernährung:** Barcode-Scanner mit OpenFoodFacts-API, Makro-Tracking, `DailyLog`-Speicherung und Kalorienziele implementiert.
+- **M7 – Gewichtstracker:** Verlaufsdiagramm und Gewichtseingabe implementiert.
+- **M8 – Dashboard:** Basis-Homescreen mit Begrüßungstext, Kalorienbilanz-Widget (zeigt K/P/F), Körpergewichts-Widget und Trainings-Widget (Nächstes/Letztes Workout) implementiert. Navigationstabs und Deep-Links (z.B. Klick auf Ernährung springt direkt zu "heute") optimiert.
+- Bugfixes bei der Kalorienberechnung (Zeitzonen) und Echtzeit-Updates für Dashboard-Daten (`@Query` Anpassungen).
+
+**Nächster Schritt:** Dashboard fertigstellen (Stimmung, Quick-Actions) oder M14 (WidgetKit Extension) beginnen.
+
 
 ### 2026-05-31 – SupersetIconStack: Overlapping Icon-Stack für Supersätze
 
