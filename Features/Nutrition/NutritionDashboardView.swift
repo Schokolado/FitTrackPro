@@ -8,6 +8,7 @@ struct NutritionDashboardView: View {
     
     @State private var selectedDate: Date = Date()
     @State private var showingAddEntry = false
+    @State private var showingFoodSearch = false
     @State private var showingScanner = false
     @State private var selectedMealType: MealType = .breakfast
     @State private var scannedProduct: OFFProduct? = nil
@@ -64,6 +65,14 @@ struct NutritionDashboardView: View {
                 }
                 .presentationDetents([.large])
             }
+            .sheet(isPresented: $showingFoodSearch) {
+                FoodSearchView(mealType: selectedMealType) { savedName in
+                    showingFoodSearch = false
+                    savedFoodName = savedName
+                    showingSavedAlert = true
+                }
+                .presentationDetents([.large])
+            }
             .sheet(isPresented: $showingScanner) {
                 ZStack {
                     BarcodeScannerView(onProductFound: { product in
@@ -112,7 +121,8 @@ struct NutritionDashboardView: View {
             }
             .overlay(alignment: .bottomTrailing) {
                 Button(action: {
-                    showingAddEntry = true
+                    selectedMealType = currentMealType
+                    showingFoodSearch = true
                 }) {
                     HStack {
                         Image(systemName: "plus")
@@ -142,7 +152,18 @@ struct NutritionDashboardView: View {
         }
         .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("OpenNutritionAddEntry"))) { _ in
             selectedDate = Date()
-            showingAddEntry = true
+            selectedMealType = currentMealType
+            showingFoodSearch = true
+        }
+    }
+    
+    private var currentMealType: MealType {
+        let hour = Calendar.current.component(.hour, from: Date())
+        switch hour {
+        case 0..<11: return .breakfast
+        case 11..<15: return .lunch
+        case 15..<18: return .snack
+        default: return .dinner
         }
     }
     
