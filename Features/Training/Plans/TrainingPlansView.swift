@@ -255,6 +255,13 @@ struct PlanCardView: View {
     let onDelete: () -> Void
     let onCreateGroup: () -> Void
     
+    private var lastCompletedSession: WorkoutSession? {
+        plan.sessions?
+            .filter { $0.endTime != nil }
+            .sorted { ($0.endTime ?? Date.distantPast) > ($1.endTime ?? Date.distantPast) }
+            .first
+    }
+    
     private var gradient: LinearGradient {
         let colors: [[Color]] = [
             [Color.brand, Color.brandSecondary],
@@ -275,6 +282,16 @@ struct PlanCardView: View {
                     .fontWeight(.bold)
                     .foregroundColor(.white)
                     .lineLimit(2)
+                
+                if let lastSession = lastCompletedSession, let endTime = lastSession.endTime {
+                    Text("Zuletzt: \(endTime.formatted(date: .abbreviated, time: .omitted))")
+                        .font(.caption)
+                        .foregroundColor(.white.opacity(0.8))
+                } else {
+                    Text("Noch nie absolviert")
+                        .font(.caption)
+                        .foregroundColor(.white.opacity(0.8))
+                }
                 
                 Spacer(minLength: 20)
                 
