@@ -63,6 +63,7 @@
 - [x] Plan umbenennen
 - [x] Plan duplizieren
 - [x] Plan löschen
+- [x] Anzeige: "Zuletzt absolviert" Datum auf der Plankarte
 - [x] `PlanDetailView.swift` – Übungen im Plan anzeigen & bearbeiten
 - [x] Übungen zum Plan hinzufügen (aus Mediathek auswählen)
 - [x] Soll-Werte pro Übung setzen (Sätze, Wiederholungen, Gewicht, Pausendauer)

@@ -46,6 +46,7 @@
 - **M6 – Ernährung:** Barcode-Scanner mit OpenFoodFacts-API, Makro-Tracking, `DailyLog`-Speicherung und Kalorienziele implementiert.
 - **M7 – Gewichtstracker:** Verlaufsdiagramm und Gewichtseingabe implementiert.
 - **M8 – Dashboard:** Basis-Homescreen mit Begrüßungstext, Kalorienbilanz-Widget (zeigt K/P/F), Körpergewichts-Widget, Trainings-Widget (Nächstes/Letztes Workout) und neuem **Schrittzähler-Widget** (grüner Ring-Mockup, Zielwert konfigurierbar im Onboarding) implementiert. Navigationstabs und Deep-Links (z.B. Klick auf Ernährung springt direkt zu "heute") optimiert.
+- **M3 – Training (UX):** Trainingspläne zeigen nun auf der Karte direkt an, wann sie zuletzt absolviert wurden ("Zuletzt: Datum" oder "Noch nie absolviert").
 - Bugfixes bei der Kalorienberechnung (Zeitzonen) und Echtzeit-Updates für Dashboard-Daten (`@Query` Anpassungen).
 
 **Nächster Schritt:** Dashboard fertigstellen (Stimmung, Quick-Actions) oder M14 (WidgetKit Extension) beginnen.
