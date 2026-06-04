@@ -262,6 +262,28 @@ struct PlanCardView: View {
             .first
     }
     
+    private func lastCompletedText(for date: Date?) -> String {
+        guard let date = date else { return "noch nie absolviert" }
+        
+        let calendar = Calendar.current
+        if calendar.isDateInToday(date) {
+            return "heute absolviert"
+        }
+        
+        let startOfToday = calendar.startOfDay(for: Date())
+        let startOfDate = calendar.startOfDay(for: date)
+        
+        if let days = calendar.dateComponents([.day], from: startOfDate, to: startOfToday).day, days > 0 {
+            if days == 1 {
+                return "zuletzt vor 1 Tag"
+            } else {
+                return "zuletzt vor \(days) Tagen"
+            }
+        }
+        
+        return "heute absolviert"
+    }
+    
     private var gradient: LinearGradient {
         let colors: [[Color]] = [
             [Color.brand, Color.brandSecondary],
@@ -283,15 +305,9 @@ struct PlanCardView: View {
                     .foregroundColor(.white)
                     .lineLimit(2)
                 
-                if let lastSession = lastCompletedSession, let endTime = lastSession.endTime {
-                    Text("Zuletzt: \(endTime.formatted(date: .abbreviated, time: .omitted))")
-                        .font(.caption)
-                        .foregroundColor(.white.opacity(0.8))
-                } else {
-                    Text("Noch nie absolviert")
-                        .font(.caption)
-                        .foregroundColor(.white.opacity(0.8))
-                }
+                Text(lastCompletedText(for: lastCompletedSession?.endTime))
+                    .font(.caption)
+                    .foregroundColor(.white.opacity(0.8))
                 
                 Spacer(minLength: 20)
                 
