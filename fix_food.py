@@ -1,50 +1,9 @@
-import SwiftUI
-import SwiftData
+import re
 
-struct FoodSearchView: View {
-    @Environment(\.modelContext) private var modelContext
-    @Environment(\.dismiss) private var dismiss
-    
-    let mealType: MealType?
-    var onSave: ((String) -> Void)? = nil
-    
-    @Query(sort: \FoodEntry.timestamp, order: .reverse) private var allFoodEntries: [FoodEntry]
-    
-    @State private var searchText = ""
-    @State private var searchResults: [OFFProduct] = []
-    @State private var isSearching = false
-    @State private var hasSearchedOnline = false
-    @State private var lastSearchTime: Date = Date.distantPast
-    @State private var showRateLimitAlert = false
-    
-    // For navigation to form
-    @State private var selectedProduct: OFFProduct?
-    @State private var selectedEntry: FoodEntry?
-    @State private var showForm = false
-    
-    private let apiService = FoodAPIService()
-    
-    private var recentFoods: [FoodEntry] {
-        var uniqueNames = Set<String>()
-        var result = [FoodEntry]()
-        
-        for entry in allFoodEntries {
-            if !uniqueNames.contains(entry.name) {
-                uniqueNames.insert(entry.name)
-                result.append(entry)
-            }
-            if result.count >= 20 { break } // Limit to 20 recent items
-        }
-        
-        // If searching locally
-        if !searchText.isEmpty {
-            return result.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
-        }
-        
-        return result
-    }
-    
-        @State private var currentPage = 1
+with open("Features/Nutrition/FoodSearchView.swift", "r") as f:
+    content = f.read()
+
+new_body = """    @State private var currentPage = 1
     @State private var hasMoreResults = false
 
     var body: some View {
@@ -173,7 +132,7 @@ struct FoodSearchView: View {
                             Text(product.productName ?? "Unbekanntes Produkt")
                                 .font(.headline)
                             if let nuts = product.nutriments, let kcal = nuts.energyKcal100g {
-                                Text("\(kcal, specifier: "%.0f") kcal pro 100g")
+                                Text("\\(kcal, specifier: "%.0f") kcal pro 100g")
                                     .font(.caption)
                                     .foregroundColor(.secondary)
                             }
@@ -217,7 +176,7 @@ struct FoodSearchView: View {
                         VStack(alignment: .leading) {
                             Text(entry.name)
                                 .font(.headline)
-                            Text("\(entry.calories, specifier: "%.0f") kcal (\(entry.amountGrams, specifier: "%.0f")g)")
+                            Text("\\(entry.calories, specifier: "%.0f") kcal (\\(entry.amountGrams, specifier: "%.0f")g)")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
@@ -274,7 +233,7 @@ struct FoodSearchView: View {
                 hasMoreResults = results.count >= 20
             }
         } catch {
-            print("Search failed: \(error)")
+            print("Search failed: \\(error)")
             if searchText == query && page == 1 {
                 searchResults = []
             }
@@ -283,4 +242,12 @@ struct FoodSearchView: View {
             isSearching = false
         }
     }
-}
+}"""
+
+# Use regex to replace everything from `var body: some View {` to the end of the file.
+pattern = r'var body: some View \{.*'
+content = re.sub(pattern, new_body, content, flags=re.DOTALL)
+
+with open("Features/Nutrition/FoodSearchView.swift", "w") as f:
+    f.write(content)
+
