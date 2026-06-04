@@ -33,6 +33,14 @@ struct TrainingPlansView: View {
     @State private var newGroupNameForPlan = ""
     @State private var planToGroup: TrainingPlan? = nil
     
+    @State private var newlyCreatedPlanId: String = ""
+    private var isNewPlanPresented: Binding<Bool> {
+        Binding(
+            get: { !newlyCreatedPlanId.isEmpty },
+            set: { if !$0 { newlyCreatedPlanId = "" } }
+        )
+    }
+    
     private var filteredPlans: [TrainingPlan] {
         switch selectedFilter {
         case .all:
@@ -159,7 +167,11 @@ struct TrainingPlansView: View {
                 }
             }
         }
-        .background(Color.backgroundPrimary)
+        .navigationDestination(isPresented: isNewPlanPresented) {
+            if let plan = plans.first(where: { $0.id.uuidString == newlyCreatedPlanId }) {
+                PlanDetailView(plan: plan)
+            }
+        }
         .alert("Neuer Trainingsplan", isPresented: $triggerAddAlert) {
             TextField("Name", text: $newPlanName)
             Button("Abbrechen", role: .cancel) { }
@@ -203,6 +215,11 @@ struct TrainingPlansView: View {
         }
         let plan = TrainingPlan(name: newPlanName, sortOrder: plans.count, group: preselectedGroup)
         modelContext.insert(plan)
+        newPlanName = ""
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            newlyCreatedPlanId = plan.id.uuidString
+        }
     }
     
     private func duplicate(plan: TrainingPlan) {
