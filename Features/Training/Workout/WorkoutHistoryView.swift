@@ -42,13 +42,21 @@ struct WorkoutHistoryView: View {
         }
         return months
     }
+    
+    private var activeFilterBinding: Binding<String> {
+        Binding(
+            get: { selectedMonthFilter ?? availableMonths.first ?? "" },
+            set: { selectedMonthFilter = $0 }
+        )
+    }
 
     /// Sessions grouped by month, in order
     private var groupedSessions: [(monthLabel: String, sessions: [WorkoutSession])] {
         var result: [(monthLabel: String, sessions: [WorkoutSession])] = []
         var seen: [String: Int] = [:]
         
-        let filteredSessions = selectedMonthFilter == nil ? sessions : sessions.filter { monthKey(for: $0.startTime) == selectedMonthFilter }
+        let filterToUse = activeFilterBinding.wrappedValue
+        let filteredSessions = filterToUse.isEmpty ? sessions : sessions.filter { monthKey(for: $0.startTime) == filterToUse }
         
         for session in filteredSessions {
             let key = monthKey(for: session.startTime)
@@ -102,10 +110,9 @@ struct WorkoutHistoryView: View {
                                     .font(.subheadline.bold())
                                     .foregroundColor(.secondary)
                                 Spacer()
-                                Picker("Monat wählen", selection: $selectedMonthFilter) {
-                                    Text("Alle").tag(String?.none)
+                                Picker("Monat wählen", selection: activeFilterBinding) {
                                     ForEach(availableMonths, id: \.self) { month in
-                                        Text(month).tag(String?.some(month))
+                                        Text(month).tag(month)
                                     }
                                 }
                                 .pickerStyle(.menu)
@@ -114,11 +121,8 @@ struct WorkoutHistoryView: View {
                         }
                         
                         ForEach(groupedSessions, id: \.monthLabel) { group in
-                            // Month header
+                            // Header (only showing count now)
                             HStack {
-                                Text(group.monthLabel)
-                                    .font(.subheadline.bold())
-                                    .foregroundColor(.secondary)
                                 Spacer()
                                 Text("\(group.sessions.count) Einheiten")
                                     .font(.caption)
