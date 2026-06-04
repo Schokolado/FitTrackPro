@@ -46,8 +46,11 @@ struct FoodSearchView: View {
     
     var body: some View {
         NavigationStack {
-            VStack(spacing: 0) {
-                // Eigene Suchleiste, um die fehlerhaften iOS-Transitions zu umgehen
+            ZStack {
+                Color(.systemGroupedBackground).ignoresSafeArea()
+                
+                VStack(spacing: 0) {
+                    // Eigene Suchleiste, um die fehlerhaften iOS-Transitions zu umgehen
                 HStack {
                     Image(systemName: "magnifyingglass")
                         .foregroundColor(.secondary)
@@ -74,7 +77,7 @@ struct FoodSearchView: View {
                 .padding(.bottom, 8)
                 
                 List {
-                Section {
+                    Section {
                     Button(action: {
                         selectedProduct = nil
                         selectedEntry = nil
@@ -169,8 +172,9 @@ struct FoodSearchView: View {
                         }
                     }
                 }
+                .scrollContentBackground(.hidden)
             } // close VStack
-            .background(Color(.systemGroupedBackground))
+            } // close ZStack
             .navigationTitle(mealType?.rawValue.appending(" hinzufügen") ?? "Mahlzeit hinzufügen")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
