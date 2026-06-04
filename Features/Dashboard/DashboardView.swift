@@ -127,10 +127,7 @@ struct DashboardView: View {
                     )
                     .padding(.horizontal)
                     
-                    // Mood Card
-                    MoodSummaryCard()
-                        .padding(.horizontal)
-                    
+
                     // Grid for Weight and Training
                     LazyVGrid(columns: [GridItem(.flexible(), spacing: 16), GridItem(.flexible(), spacing: 16)], spacing: 16) {
                         NavigationLink(destination: WeightTrackerView()) {
@@ -165,6 +162,10 @@ struct DashboardView: View {
                         SleepTrackerMockupCard()
                     }
                     .padding(.horizontal)
+                    
+                    // Mood Card
+                    MoodSummaryCard()
+                        .padding(.horizontal)
                 }
                 .padding(.bottom, 120) // Platz für Tabbar & MiniPlayer
             }

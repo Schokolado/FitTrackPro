@@ -388,21 +388,25 @@ struct MoodSummaryCard: View {
             .frame(width: 60, height: 60)
             
             // Texts
-            VStack(alignment: .leading, spacing: 4) {
-                Text("Stimmung (Heute)")
-                    .font(.headline)
-                    .foregroundColor(.primary)
+            VStack(alignment: .leading, spacing: 8) {
+                HStack {
+                    Text("Stimmung")
+                        .font(.headline)
+                        .foregroundColor(.primary)
+                    Spacer()
+                    Text("Coming Soon")
+                        .font(.caption2.bold())
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(Color.yellow.opacity(0.2))
+                        .foregroundColor(.yellow)
+                        .clipShape(Capsule())
+                }
                 
                 Text("Wie fühlst du dich heute?")
                     .font(.subheadline)
                     .foregroundColor(.secondary)
             }
-            
-            Spacer()
-            
-            Image(systemName: "plus.circle.fill")
-                .foregroundColor(.yellow)
-                .font(.title2)
         }
         .padding(20)
         .background(
