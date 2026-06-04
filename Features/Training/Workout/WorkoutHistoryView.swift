@@ -45,17 +45,22 @@ struct WorkoutHistoryView: View {
     
     private var activeFilterBinding: Binding<String> {
         Binding(
-            get: { selectedMonthFilter ?? availableMonths.first ?? "" },
+            get: { selectedMonthFilter ?? availableMonths.first ?? "Alle" },
             set: { selectedMonthFilter = $0 }
         )
     }
 
     /// Sessions grouped by month, in order
     private var groupedSessions: [(monthLabel: String, sessions: [WorkoutSession])] {
+        let filterToUse = activeFilterBinding.wrappedValue
+        
+        if filterToUse == "Alle" {
+            return [("Alle", sessions)]
+        }
+        
         var result: [(monthLabel: String, sessions: [WorkoutSession])] = []
         var seen: [String: Int] = [:]
         
-        let filterToUse = activeFilterBinding.wrappedValue
         let filteredSessions = filterToUse.isEmpty ? sessions : sessions.filter { monthKey(for: $0.startTime) == filterToUse }
         
         for session in filteredSessions {
@@ -109,6 +114,7 @@ struct WorkoutHistoryView: View {
                             HStack {
                                 if availableMonths.count > 1 {
                                     Picker("Monat", selection: activeFilterBinding) {
+                                        Text("Alle").tag("Alle")
                                         ForEach(availableMonths, id: \.self) { month in
                                             Text(month).tag(month)
                                         }
