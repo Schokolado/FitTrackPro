@@ -246,13 +246,16 @@ struct FoodSearchView: View {
     
     private func triggerOnlineSearch(query: String, page: Int) async {
         let now = Date()
-        // 3 seconds rate limit between online searches
-        if now.timeIntervalSince(lastSearchTime) < 3 {
-            showRateLimitAlert = true
-            return
+        let elapsed = now.timeIntervalSince(lastSearchTime)
+        
+        // 3 seconds internal timer between online searches to prevent blocking
+        if elapsed < 3 {
+            isSearching = true
+            let remaining = 3.0 - elapsed
+            try? await Task.sleep(nanoseconds: UInt64(remaining * 1_000_000_000))
         }
         
-        lastSearchTime = now
+        lastSearchTime = Date()
         hasSearchedOnline = true
         await performSearch(query: query, page: page)
     }
