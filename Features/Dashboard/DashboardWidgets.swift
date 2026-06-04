@@ -372,3 +372,43 @@ struct RecoveryMockupCard: View {
         )
     }
 }
+
+struct MoodSummaryCard: View {
+    var body: some View {
+        HStack(spacing: 20) {
+            // Icon
+            ZStack {
+                Circle()
+                    .fill(Color.yellow.opacity(0.2))
+                
+                Image(systemName: "face.smiling.fill")
+                    .foregroundColor(.yellow)
+                    .font(.title)
+            }
+            .frame(width: 60, height: 60)
+            
+            // Texts
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Stimmung (Heute)")
+                    .font(.headline)
+                    .foregroundColor(.primary)
+                
+                Text("Wie fühlst du dich heute?")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+            }
+            
+            Spacer()
+            
+            Image(systemName: "plus.circle.fill")
+                .foregroundColor(.yellow)
+                .font(.title2)
+        }
+        .padding(20)
+        .background(
+            RoundedRectangle(cornerRadius: 24, style: .continuous)
+                .fill(Color.backgroundSecondary)
+                .shadow(color: .black.opacity(0.05), radius: 15, y: 8)
+        )
+    }
+}

@@ -67,6 +67,42 @@ struct DashboardView: View {
                     .padding(.horizontal)
                     .padding(.top, 10)
                     
+                    // Quick Actions
+                    HStack(spacing: 16) {
+                        Button(action: {
+                            selectedTab = 1 // Training Tab
+                            UserDefaults.standard.set(0, forKey: "trainingSelectedTab") // Pläne
+                        }) {
+                            HStack {
+                                Image(systemName: "play.fill")
+                                Text("Workout")
+                            }
+                            .font(.subheadline.bold())
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.green.opacity(0.15))
+                            .foregroundColor(.green)
+                            .cornerRadius(12)
+                        }
+                        
+                        Button(action: {
+                            selectedTab = 2 // Nutrition Tab
+                            NotificationCenter.default.post(name: NSNotification.Name("ResetNutritionToToday"), object: nil)
+                        }) {
+                            HStack {
+                                Image(systemName: "plus.circle.fill")
+                                Text("Mahlzeit")
+                            }
+                            .font(.subheadline.bold())
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.orange.opacity(0.15))
+                            .foregroundColor(.orange)
+                            .cornerRadius(12)
+                        }
+                    }
+                    .padding(.horizontal)
+                    
                     // Nutrition Card
                     Button(action: {
                         selectedTab = 2 // Tab Index für Ernährung
@@ -89,6 +125,10 @@ struct DashboardView: View {
                         goal: dailyStepGoal
                     )
                     .padding(.horizontal)
+                    
+                    // Mood Card
+                    MoodSummaryCard()
+                        .padding(.horizontal)
                     
                     // Grid for Weight and Training
                     LazyVGrid(columns: [GridItem(.flexible(), spacing: 16), GridItem(.flexible(), spacing: 16)], spacing: 16) {
