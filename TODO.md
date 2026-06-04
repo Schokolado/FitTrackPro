@@ -143,6 +143,7 @@
 
 - [x] `DashboardView.swift` – Homescreen mit modernem Design
 - [x] Widget: Kalorienbilanz (heute)
+- [x] Widget: Schrittzähler (Mock-UI mit Ring)
 - [x] Widget: Aktuelles Körpergewicht
 - [x] Widget: Trainingsleistung / Nächstes Workout
 - [ ] Widget: Heutige Stimmung / Mood

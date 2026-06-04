@@ -262,7 +262,8 @@ let container = try! ModelContainer(for: schema, configurations: [modelConfigura
 let readTypes: Set<HKObjectType> = [
     HKObjectType.workoutType(),
     HKObjectType.quantityType(forIdentifier: .activeEnergyBurned)!,
-    HKObjectType.quantityType(forIdentifier: .bodyMass)!
+    HKObjectType.quantityType(forIdentifier: .bodyMass)!,
+    HKObjectType.quantityType(forIdentifier: .stepCount)!
 ]
 let writeTypes: Set<HKSampleType> = [
     HKObjectType.workoutType(),
@@ -509,6 +510,7 @@ extension AppStorageKeys {
     static let targetCarbs          = "target_carbs"              // Double
     static let targetFat            = "target_fat"                // Double
     static let defaultRestDuration  = "default_rest_duration"     // TimeInterval, default: 90
+    static let dailyStepGoal        = "daily_step_goal"           // Int, default: 10000
 }
 ```
 

@@ -5,7 +5,10 @@ struct DashboardView: View {
     @Binding var selectedTab: Int
     @Environment(\.modelContext) private var modelContext
     @AppStorage("dailyCalorieGoal") private var dailyCalorieGoal: Double = 2500
+    @AppStorage("daily_step_goal") private var dailyStepGoal: Int = 10000
     @AppStorage("userName") private var userName: String = ""
+    
+    @State private var todaySteps: Int = 3450 // Mock value for now
     
     @Query(sort: \WeightEntry.timestamp, order: .reverse) private var weightEntries: [WeightEntry]
     @Query private var allFoodEntries: [FoodEntry]
@@ -78,6 +81,13 @@ struct DashboardView: View {
                         )
                     }
                     .buttonStyle(PlainButtonStyle())
+                    .padding(.horizontal)
+                    
+                    // Step Card
+                    StepSummaryCard(
+                        steps: todaySteps,
+                        goal: dailyStepGoal
+                    )
                     .padding(.horizontal)
                     
                     // Grid for Weight and Training

@@ -184,3 +184,60 @@ struct TrainingSummaryCard: View {
         )
     }
 }
+
+struct StepSummaryCard: View {
+    let steps: Int
+    let goal: Int
+    
+    var progress: Double {
+        min(Double(steps) / max(Double(goal), 1), 1.0)
+    }
+    
+    var body: some View {
+        HStack(spacing: 20) {
+            // Circular Progress
+            ZStack {
+                Circle()
+                    .stroke(Color.green.opacity(0.2), lineWidth: 10)
+                
+                Circle()
+                    .trim(from: 0, to: progress)
+                    .stroke(Color.green, style: StrokeStyle(lineWidth: 10, lineCap: .round))
+                    .rotationEffect(.degrees(-90))
+                    .animation(.spring(response: 0.6, dampingFraction: 0.8), value: progress)
+                
+                VStack(spacing: 2) {
+                    Image(systemName: "figure.walk")
+                        .foregroundColor(.green)
+                        .font(.caption)
+                    Text("\(steps)")
+                        .font(.system(size: 16, weight: .bold, design: .rounded))
+                        .minimumScaleFactor(0.5)
+                        .lineLimit(1)
+                }
+            }
+            .frame(width: 90, height: 90)
+            
+            // Texts
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Schritte heute")
+                    .font(.headline)
+                    .foregroundColor(.primary)
+                
+                Text("\(max(goal - steps, 0)) Schritte verbleibend")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+            }
+            
+            Spacer()
+            Image(systemName: "chevron.right")
+                .foregroundColor(.gray)
+        }
+        .padding(20)
+        .background(
+            RoundedRectangle(cornerRadius: 24, style: .continuous)
+                .fill(Color.backgroundSecondary)
+                .shadow(color: .black.opacity(0.05), radius: 15, y: 8)
+        )
+    }
+}
