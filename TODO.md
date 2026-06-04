@@ -147,9 +147,9 @@
 - [x] Widget: Schrittzähler (Mock-UI mit Ring)
 - [x] Widget: Aktuelles Körpergewicht
 - [x] Widget: Trainingsleistung / Nächstes Workout
-- [ ] Widget: Heutige Stimmung / Mood
-- [ ] Quick-Action: Workout starten
-- [ ] Quick-Action: Mahlzeit loggen
+- [x] Widget: Heutige Stimmung / Mood
+- [x] Quick-Action: Workout starten
+- [x] Quick-Action: Mahlzeit loggen
 - [x] Begrüßungstext mit Tageszeit (Guten Morgen/Abend etc.)
 
 ---
