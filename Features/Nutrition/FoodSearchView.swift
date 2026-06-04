@@ -180,6 +180,8 @@ struct FoodSearchView: View {
                     }
                 }
             }
+            .toolbarBackground(Color(.systemGroupedBackground), for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
             .onChange(of: searchText) { oldValue, newValue in
                 if newValue.isEmpty {
                     hasSearchedOnline = false
