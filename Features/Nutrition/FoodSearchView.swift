@@ -169,7 +169,8 @@ struct FoodSearchView: View {
                         }
                     }
                 }
-            }
+            } // close VStack
+            .background(Color(.systemGroupedBackground))
             .navigationTitle(mealType?.rawValue.appending(" hinzufügen") ?? "Mahlzeit hinzufügen")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
