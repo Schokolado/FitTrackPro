@@ -567,6 +567,34 @@ struct TrainingMainView: View {
             .overlay(alignment: .bottomTrailing) {
                 VStack(alignment: .trailing, spacing: 16) {
                     if isFabExpanded {
+                        // Workout starten Button
+                        Button(action: {
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                isFabExpanded = false
+                            }
+                            selectedTab = 0
+                        }) {
+                            HStack {
+                                Text("Workout starten")
+                                    .font(.subheadline)
+                                    .fontWeight(.medium)
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 8)
+                                    .background(Color.white)
+                                    .foregroundColor(.primary)
+                                    .cornerRadius(8)
+                                    .shadow(color: Color.black.opacity(0.1), radius: 3, x: 0, y: 2)
+                                
+                                Image(systemName: "play.fill")
+                                    .font(.title3)
+                                    .foregroundColor(.white)
+                                    .frame(width: 48, height: 48)
+                                    .background(Color.green)
+                                    .clipShape(Circle())
+                                    .shadow(color: Color.black.opacity(0.2), radius: 4, x: 0, y: 2)
+                            }
+                        }
+                        
                         // Neuer Plan Button
                         Button(action: {
                             withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
