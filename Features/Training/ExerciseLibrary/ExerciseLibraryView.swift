@@ -29,6 +29,13 @@ struct ExerciseLibraryView: View {
                         .listRowBackground(Color.clear)
                     }
                     .onDelete(perform: deleteExercises)
+                    
+                    // Platz für FAB
+                    Color.clear
+                        .frame(height: 100)
+                        .listRowInsets(EdgeInsets())
+                        .listRowSeparator(.hidden)
+                        .listRowBackground(Color.clear)
                 }
                 .listStyle(.plain)
                 .scrollContentBackground(.hidden)

@@ -46,6 +46,7 @@ struct NutritionDashboardView: View {
                     }
                 }
                 .padding()
+                .padding(.bottom, 100) // Platz für FAB
             }
             .background(Color.backgroundPrimary)
             .navigationTitle("Ernährung")
