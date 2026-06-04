@@ -76,10 +76,10 @@ struct WorkoutHistoryView: View {
 
     @AppStorage("openHistorySessionId") private var openHistorySessionId: String = ""
 
-    private var selectionBinding: Binding<String?> {
+    private var isDetailPresented: Binding<Bool> {
         Binding(
-            get: { openHistorySessionId.isEmpty ? nil : openHistorySessionId },
-            set: { openHistorySessionId = $0 ?? "" }
+            get: { !openHistorySessionId.isEmpty },
+            set: { if !$0 { openHistorySessionId = "" } }
         )
     }
 
@@ -105,38 +105,36 @@ struct WorkoutHistoryView: View {
                 ScrollView {
                     LazyVStack(spacing: 12, pinnedViews: []) {
                         ForEach(groupedSessions, id: \.monthLabel) { group in
-                            // Header row with count and picker
+                            // Header row
                             HStack {
-                                Text("\(group.sessions.count) Einheiten")
-                                    .font(.subheadline)
-                                    .foregroundColor(.secondary)
+                                if availableMonths.count > 1 {
+                                    Picker("Monat", selection: activeFilterBinding) {
+                                        ForEach(availableMonths, id: \.self) { month in
+                                            Text(month).tag(month)
+                                        }
+                                    }
+                                    .pickerStyle(.menu)
+                                    .labelsHidden()
+                                    .tint(.primary)
+                                } else {
+                                    Text(group.monthLabel)
+                                        .font(.headline)
+                                        .foregroundColor(.primary)
+                                }
                                 
                                 Spacer()
                                 
-                                if availableMonths.count > 1 {
-                                    HStack(spacing: 4) {
-                                        Text("Monat")
-                                            .font(.subheadline.bold())
-                                            .foregroundColor(.secondary)
-                                        Picker("Monat wählen", selection: activeFilterBinding) {
-                                            ForEach(availableMonths, id: \.self) { month in
-                                                Text(month).tag(month)
-                                            }
-                                        }
-                                        .pickerStyle(.menu)
-                                        .tint(.brand)
-                                    }
-                                }
+                                Text("\(group.sessions.count) Einheiten")
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary)
                             }
                             .padding(.top, 4)
 
                             // Cards in this month
                             ForEach(group.sessions) { session in
-                                NavigationLink(
-                                    destination: WorkoutHistoryDetailView(session: session, activeSessionId: activeSessionId),
-                                    tag: session.id.uuidString,
-                                    selection: selectionBinding
-                                ) {
+                                Button(action: {
+                                    openHistorySessionId = session.id.uuidString
+                                }) {
                                     WorkoutHistoryCard(session: session, activeSessionId: activeSessionId)
                                 }
                                 .buttonStyle(PlainButtonStyle())
@@ -145,6 +143,11 @@ struct WorkoutHistoryView: View {
                     }
                     .padding()
                     .padding(.bottom, 80)
+                }
+                .navigationDestination(isPresented: isDetailPresented) {
+                    if let session = sessions.first(where: { $0.id.uuidString == openHistorySessionId }) {
+                        WorkoutHistoryDetailView(session: session, activeSessionId: activeSessionId)
+                    }
                 }
             }
         }
