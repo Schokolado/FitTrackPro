@@ -79,7 +79,9 @@ struct NutritionDashboardView: View {
                     BarcodeScannerView(onProductFound: { product in
                         showingScanner = false
                         scannedProduct = product
-                        showingAddEntry = true
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                            showingAddEntry = true
+                        }
                     })
                     
                     #if targetEnvironment(simulator)
@@ -93,7 +95,9 @@ struct NutritionDashboardView: View {
                                 DispatchQueue.main.async {
                                     showingScanner = false
                                     scannedProduct = product
-                                    showingAddEntry = true
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                        showingAddEntry = true
+                                    }
                                 }
                             }
                         }) {
