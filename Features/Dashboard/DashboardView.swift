@@ -88,6 +88,7 @@ struct DashboardView: View {
                         Button(action: {
                             selectedTab = 2 // Nutrition Tab
                             NotificationCenter.default.post(name: NSNotification.Name("ResetNutritionToToday"), object: nil)
+                            NotificationCenter.default.post(name: NSNotification.Name("OpenNutritionAddEntry"), object: nil)
                         }) {
                             HStack {
                                 Image(systemName: "plus.circle.fill")

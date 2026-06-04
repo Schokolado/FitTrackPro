@@ -110,6 +110,25 @@ struct NutritionDashboardView: View {
             } message: {
                 Text("\(savedFoodName) wurde hinzugefügt.")
             }
+            .overlay(alignment: .bottomTrailing) {
+                Button(action: {
+                    showingAddEntry = true
+                }) {
+                    HStack {
+                        Image(systemName: "plus")
+                        Text("Mahlzeit")
+                    }
+                    .font(.subheadline.bold())
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 12)
+                    .background(Color.orange)
+                    .foregroundColor(.white)
+                    .cornerRadius(25)
+                    .shadow(color: .black.opacity(0.2), radius: 5, x: 0, y: 3)
+                }
+                .padding()
+                .padding(.bottom, 20)
+            }
         }
         .id(navId)
         .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("TabReselected"))) { notification in
@@ -120,6 +139,10 @@ struct NutritionDashboardView: View {
         .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("ResetNutritionToToday"))) { _ in
             selectedDate = Date()
             navId = UUID()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("OpenNutritionAddEntry"))) { _ in
+            selectedDate = Date()
+            showingAddEntry = true
         }
     }
     
