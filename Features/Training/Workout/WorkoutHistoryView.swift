@@ -104,31 +104,31 @@ struct WorkoutHistoryView: View {
             } else {
                 ScrollView {
                     LazyVStack(spacing: 12, pinnedViews: []) {
-                        if availableMonths.count > 1 {
+                        ForEach(groupedSessions, id: \.monthLabel) { group in
+                            // Header row with count and picker
                             HStack {
-                                Text("Monat")
-                                    .font(.subheadline.bold())
+                                Text("\(group.sessions.count) Einheiten")
+                                    .font(.subheadline)
                                     .foregroundColor(.secondary)
+                                
                                 Spacer()
-                                Picker("Monat wählen", selection: activeFilterBinding) {
-                                    ForEach(availableMonths, id: \.self) { month in
-                                        Text(month).tag(month)
+                                
+                                if availableMonths.count > 1 {
+                                    HStack(spacing: 4) {
+                                        Text("Monat")
+                                            .font(.subheadline.bold())
+                                            .foregroundColor(.secondary)
+                                        Picker("Monat wählen", selection: activeFilterBinding) {
+                                            ForEach(availableMonths, id: \.self) { month in
+                                                Text(month).tag(month)
+                                            }
+                                        }
+                                        .pickerStyle(.menu)
+                                        .tint(.brand)
                                     }
                                 }
-                                .pickerStyle(.menu)
-                                .tint(.brand)
                             }
-                        }
-                        
-                        ForEach(groupedSessions, id: \.monthLabel) { group in
-                            // Header (only showing count now)
-                            HStack {
-                                Spacer()
-                                Text("\(group.sessions.count) Einheiten")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                            }
-                            .padding(.top, 8)
+                            .padding(.top, 4)
 
                             // Cards in this month
                             ForEach(group.sessions) { session in
