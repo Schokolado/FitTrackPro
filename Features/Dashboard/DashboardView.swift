@@ -113,6 +113,17 @@ struct DashboardView: View {
                         .buttonStyle(PlainButtonStyle())
                     }
                     .padding(.horizontal)
+                    
+                    // Recovery Card
+                    RecoveryMockupCard()
+                        .padding(.horizontal)
+                    
+                    // Grid for Water and Sleep
+                    LazyVGrid(columns: [GridItem(.flexible(), spacing: 16), GridItem(.flexible(), spacing: 16)], spacing: 16) {
+                        WaterTrackerMockupCard()
+                        SleepTrackerMockupCard()
+                    }
+                    .padding(.horizontal)
                 }
                 .padding(.bottom, 120) // Platz für Tabbar & MiniPlayer
             }

@@ -241,3 +241,134 @@ struct StepSummaryCard: View {
         )
     }
 }
+
+struct WaterTrackerMockupCard: View {
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Image(systemName: "drop.fill")
+                    .foregroundColor(.cyan)
+                    .font(.title2)
+                Spacer()
+                Text("Coming Soon")
+                    .font(.caption2.bold())
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 2)
+                    .background(Color.cyan.opacity(0.2))
+                    .foregroundColor(.cyan)
+                    .clipShape(Capsule())
+            }
+            Spacer()
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Wasser")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                Text("1.2 L")
+                    .font(.system(size: 24, weight: .bold, design: .rounded))
+                Text("von 2.5 L")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+        }
+        .padding(20)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .frame(height: 160)
+        .background(
+            RoundedRectangle(cornerRadius: 24, style: .continuous)
+                .fill(Color.backgroundSecondary)
+                .shadow(color: .black.opacity(0.05), radius: 15, y: 8)
+        )
+    }
+}
+
+struct SleepTrackerMockupCard: View {
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Image(systemName: "moon.zzz.fill")
+                    .foregroundColor(.indigo)
+                    .font(.title2)
+                Spacer()
+                Text("Coming Soon")
+                    .font(.caption2.bold())
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 2)
+                    .background(Color.indigo.opacity(0.2))
+                    .foregroundColor(.indigo)
+                    .clipShape(Capsule())
+            }
+            Spacer()
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Schlaf")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                Text("7h 15m")
+                    .font(.system(size: 24, weight: .bold, design: .rounded))
+                Text("Gute Qualität")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+        }
+        .padding(20)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .frame(height: 160)
+        .background(
+            RoundedRectangle(cornerRadius: 24, style: .continuous)
+                .fill(Color.backgroundSecondary)
+                .shadow(color: .black.opacity(0.05), radius: 15, y: 8)
+        )
+    }
+}
+
+struct RecoveryMockupCard: View {
+    var body: some View {
+        HStack(spacing: 20) {
+            // Circular Progress
+            ZStack {
+                Circle()
+                    .stroke(Color.teal.opacity(0.2), lineWidth: 10)
+                
+                Circle()
+                    .trim(from: 0, to: 0.85)
+                    .stroke(Color.teal, style: StrokeStyle(lineWidth: 10, lineCap: .round))
+                    .rotationEffect(.degrees(-90))
+                
+                VStack(spacing: 2) {
+                    Image(systemName: "battery.100.bolt")
+                        .foregroundColor(.teal)
+                        .font(.caption)
+                    Text("85%")
+                        .font(.system(size: 16, weight: .bold, design: .rounded))
+                }
+            }
+            .frame(width: 90, height: 90)
+            
+            // Texts
+            VStack(alignment: .leading, spacing: 8) {
+                HStack {
+                    Text("Akku / Recovery")
+                        .font(.headline)
+                        .foregroundColor(.primary)
+                    Spacer()
+                    Text("Coming Soon")
+                        .font(.caption2.bold())
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(Color.teal.opacity(0.2))
+                        .foregroundColor(.teal)
+                        .clipShape(Capsule())
+                }
+                
+                Text("Bereit für ein intensives Training heute!")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+            }
+        }
+        .padding(20)
+        .background(
+            RoundedRectangle(cornerRadius: 24, style: .continuous)
+                .fill(Color.backgroundSecondary)
+                .shadow(color: .black.opacity(0.05), radius: 15, y: 8)
+        )
+    }
+}
