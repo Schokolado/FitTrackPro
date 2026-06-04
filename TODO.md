@@ -141,14 +141,14 @@
 
 ## Milestone 8 – Dashboard
 
-- [ ] `DashboardView.swift` – Homescreen mit modernem Design
-- [ ] Widget: Kalorienbilanz (heute)
-- [ ] Widget: Aktuelles Körpergewicht
+- [x] `DashboardView.swift` – Homescreen mit modernem Design
+- [x] Widget: Kalorienbilanz (heute)
+- [x] Widget: Aktuelles Körpergewicht
+- [x] Widget: Trainingsleistung / Nächstes Workout
 - [ ] Widget: Heutige Stimmung / Mood
-- [ ] Widget: Trainingsleistung (letzte 30 Tage, frei wählbar)
 - [ ] Quick-Action: Workout starten
 - [ ] Quick-Action: Mahlzeit loggen
-- [ ] Begrüßungstext mit Tageszeit (Guten Morgen/Abend etc.)
+- [x] Begrüßungstext mit Tageszeit (Guten Morgen/Abend etc.)
 
 ---
 
