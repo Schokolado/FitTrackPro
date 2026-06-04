@@ -146,15 +146,17 @@ struct FoodSearchView: View {
     
     private var onlineSearchSection: some View {
         Section(header: Text("Datenbank-Suche (OpenFoodFacts)")) {
-            if isSearching && currentPage == 1 {
-                HStack {
-                    Spacer()
-                    ProgressView()
-                    Spacer()
+            if searchResults.isEmpty {
+                if isSearching {
+                    HStack {
+                        Spacer()
+                        ProgressView()
+                        Spacer()
+                    }
+                } else {
+                    Text("Keine Ergebnisse gefunden.")
+                        .foregroundColor(.secondary)
                 }
-            } else if searchResults.isEmpty {
-                Text("Keine Ergebnisse gefunden.")
-                    .foregroundColor(.secondary)
             } else {
                 ForEach(searchResults) { product in
                     Button(action: {
@@ -182,7 +184,7 @@ struct FoodSearchView: View {
                     .foregroundColor(.primary)
                 }
                 
-                if isSearching && currentPage > 1 {
+                if isSearching {
                     HStack {
                         Spacer()
                         ProgressView()
@@ -261,6 +263,9 @@ struct FoodSearchView: View {
             return
         }
         
+        if page == 1 {
+            searchResults = []
+        }
         isSearching = true
         do {
             let results = try await apiService.searchProducts(query: query, page: page)
