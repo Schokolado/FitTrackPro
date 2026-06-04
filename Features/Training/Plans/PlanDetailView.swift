@@ -5,6 +5,7 @@ struct PlanDetailView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     @Environment(WorkoutManager.self) private var workoutManager
+    @Query(sort: \PlanGroup.sortOrder) private var groups: [PlanGroup]
     @Bindable var plan: TrainingPlan
     
     @State private var showingExerciseSelection = false
@@ -19,6 +20,9 @@ struct PlanDetailView: View {
     @State private var newlyAddedExerciseIds: Set<UUID> = []
     @State private var expandedGroups: Set<String> = []
     @State private var expandedExercises: Set<UUID> = []
+    
+    @State private var showingCreateGroupAlert = false
+    @State private var newGroupName = ""
     
     private var groupedExercises: [ExerciseGroup] {
         let sorted = (plan.planExercises ?? []).sorted(by: { $0.sortOrder < $1.sortOrder })
@@ -150,6 +154,45 @@ struct PlanDetailView: View {
                     
                     Divider()
                     
+                    Menu {
+                        Button {
+                            plan.group = nil
+                        } label: {
+                            HStack {
+                                Text("Nicht zugeordnet")
+                                if plan.group == nil {
+                                    Image(systemName: "checkmark")
+                                }
+                            }
+                        }
+                        
+                        ForEach(groups) { group in
+                            Button {
+                                plan.group = group
+                            } label: {
+                                HStack {
+                                    Text(group.name)
+                                    if plan.group?.id == group.id {
+                                        Image(systemName: "checkmark")
+                                    }
+                                }
+                            }
+                        }
+                        
+                        Divider()
+                        
+                        Button {
+                            newGroupName = ""
+                            showingCreateGroupAlert = true
+                        } label: {
+                            Label("Neue Gruppe erstellen", systemImage: "plus")
+                        }
+                    } label: {
+                        Label("Gruppe zuweisen", systemImage: "folder")
+                    }
+                    
+                    Divider()
+                    
                     Button(role: .destructive) {
                         showingDeleteAlert = true
                     } label: {
@@ -183,6 +226,16 @@ struct PlanDetailView: View {
             Button("Abbrechen", role: .cancel) { }
         } message: {
             Text("Möchtest du diesen Trainingsplan wirklich löschen?")
+        }
+        .alert("Neue Gruppe", isPresented: $showingCreateGroupAlert) {
+            TextField("Gruppenname", text: $newGroupName)
+            Button("Abbrechen", role: .cancel) { }
+            Button("Erstellen") {
+                let newGroup = PlanGroup(name: newGroupName, sortOrder: groups.count)
+                modelContext.insert(newGroup)
+                plan.group = newGroup
+            }
+            .disabled(newGroupName.trimmingCharacters(in: .whitespaces).isEmpty)
         }
         .alert("Aktives Workout beenden?", isPresented: $showingActiveWorkoutAlert) {
             Button("Beenden & Neu starten", role: .destructive) {

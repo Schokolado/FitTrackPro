@@ -4,6 +4,9 @@ import SwiftData
 struct NutritionSummaryCard: View {
     let consumed: Double
     let goal: Double
+    let carbs: Double
+    let protein: Double
+    let fat: Double
     
     var progress: Double {
         min(consumed / max(goal, 1), 1.0)
@@ -43,16 +46,16 @@ struct NutritionSummaryCard: View {
                     .foregroundColor(.secondary)
                     
                 HStack(spacing: 12) {
-                    MacroBadge(label: "K", color: .blue)
-                    MacroBadge(label: "P", color: .purple)
-                    MacroBadge(label: "F", color: .orange)
+                    MacroBadge(label: "K", value: Int(carbs), color: .blue)
+                    MacroBadge(label: "P", value: Int(protein), color: .purple)
+                    MacroBadge(label: "F", value: Int(fat), color: .orange)
                 }
                 .padding(.top, 4)
             }
             
             Spacer()
             Image(systemName: "chevron.right")
-                .foregroundColor(.tertiary)
+                .foregroundColor(.gray)
         }
         .padding(20)
         .background(
@@ -65,6 +68,7 @@ struct NutritionSummaryCard: View {
 
 struct MacroBadge: View {
     let label: String
+    let value: Int
     let color: Color
     
     var body: some View {
@@ -72,7 +76,7 @@ struct MacroBadge: View {
             Circle()
                 .fill(color)
                 .frame(width: 8, height: 8)
-            Text(label)
+            Text("\(value)g \(label)")
                 .font(.caption2.bold())
                 .foregroundColor(.secondary)
         }
@@ -90,7 +94,7 @@ struct WeightSummaryCard: View {
                     .font(.title2)
                 Spacer()
                 Image(systemName: "chevron.right")
-                    .foregroundColor(.tertiary)
+                    .foregroundColor(.gray)
             }
             
             Spacer()
@@ -143,7 +147,7 @@ struct TrainingSummaryCard: View {
                     .font(.title2)
                 Spacer()
                 Image(systemName: "chevron.right")
-                    .foregroundColor(.tertiary)
+                    .foregroundColor(.gray)
             }
             
             Spacer()

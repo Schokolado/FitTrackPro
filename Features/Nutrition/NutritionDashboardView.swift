@@ -117,6 +117,10 @@ struct NutritionDashboardView: View {
                 navId = UUID()
             }
         }
+        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("ResetNutritionToToday"))) { _ in
+            selectedDate = Date()
+            navId = UUID()
+        }
     }
     
     // The datePickerSection has been replaced by WeekCalendarView.
@@ -230,6 +234,7 @@ extension Date {
     func iso8601String() -> String {
         let formatter = ISO8601DateFormatter()
         formatter.formatOptions = [.withFullDate]
+        formatter.timeZone = TimeZone.current
         return formatter.string(from: self)
     }
 }

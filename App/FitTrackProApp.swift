@@ -9,6 +9,7 @@ struct FitTrackProApp: App {
         let schema = Schema([
             Exercise.self,
             TrainingPlan.self,
+            PlanGroup.self,
             PlanExercise.self,
             WorkoutSession.self,
             WorkoutSet.self,

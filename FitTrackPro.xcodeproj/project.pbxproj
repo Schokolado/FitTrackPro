@@ -17,11 +17,11 @@
 		620B08C35A23A7D3D80D25F8 /* BarcodeScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31B8F76A071FF82963F58CB1 /* BarcodeScannerView.swift */; };
 		6878E9929B88B7B40D4254EA /* FoodEntryDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD22A5EC738385F901017E44 /* FoodEntryDetailView.swift */; };
 		7BE1477690BC9D513707F251 /* WorkoutMiniPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7929DBB78E8F83266C1EED06 /* WorkoutMiniPlayerView.swift */; };
+		7CBB425E5DE5B0FCB43EC8F8 /* MediaStorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24F89C11D3C0BFE0B9A05259 /* MediaStorageService.swift */; };
 		812EF5ED4BB3C57C65D4A4CF /* FoodSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7768BF38EA403DA6D3786DE7 /* FoodSearchView.swift */; };
 		91DC3E9E046A131BFD3F0A4B /* OnboardingPages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E98D3DF243C997C39782B23 /* OnboardingPages.swift */; };
 		930A83FC2209564F95B960AE /* ZoomableImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E63AA023B39CEE387F13D43F /* ZoomableImageView.swift */; };
 		93E5B549071D1D2F18CB0FAE /* ThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8047FC412A6662A3D5CFC08E /* ThemeManager.swift */; };
-		968744DC6D32FE4E6AB114C5 /* MediaStorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C737BB0362204A9178B7B285 /* MediaStorageService.swift */; };
 		96DA7B033B60C03ABA5C53E3 /* Logger+App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E60A4D4AD221410CA99DE81 /* Logger+App.swift */; };
 		A08B4EB64636BFF4EA1B16BE /* ThemeSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47F44B3F101BC7D765C71322 /* ThemeSettingsView.swift */; };
 		A1B2C3D4E5F6A7B8C9D0E1F3 /* ExerciseCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6A7B8C9D0E1F2 /* ExerciseCardView.swift */; };
@@ -63,6 +63,7 @@
 		C3FDAE122FCAE73F00E8767F /* ExerciseHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3FDAE112FCAE73F00E8767F /* ExerciseHistoryView.swift */; };
 		D103DFCD8977A59169073514 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419465B90755D5DA410C4EE /* OnboardingView.swift */; };
 		D41652995A51F1EE5E2CEC6A /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8731522474B83B7321837381 /* DashboardView.swift */; };
+		D4EB58B4BE6064887B02F959 /* DashboardWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9941A700145BCF946FB8E80 /* DashboardWidgets.swift */; };
 		E4D8520B764D043C948E1905 /* WeightTrackerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 155FE0B4357D418A5970D74E /* WeightTrackerView.swift */; };
 		EF5C5D14436FFEC5911CF909 /* FoodEntryFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E3C57FB6083B5D9869C682 /* FoodEntryFormView.swift */; };
 /* End PBXBuildFile section */
@@ -71,6 +72,7 @@
 		155FE0B4357D418A5970D74E /* WeightTrackerView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WeightTrackerView.swift; path = Features/WeightTracker/WeightTrackerView.swift; sourceTree = "<group>"; };
 		1E98D3DF243C997C39782B23 /* OnboardingPages.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = OnboardingPages.swift; sourceTree = "<group>"; };
 		22D4AD56870B8E2E36F11173 /* WorkoutManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WorkoutManager.swift; sourceTree = "<group>"; };
+		24F89C11D3C0BFE0B9A05259 /* MediaStorageService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MediaStorageService.swift; sourceTree = "<group>"; };
 		31B8F76A071FF82963F58CB1 /* BarcodeScannerView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BarcodeScannerView.swift; sourceTree = "<group>"; };
 		47F44B3F101BC7D765C71322 /* ThemeSettingsView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ThemeSettingsView.swift; sourceTree = "<group>"; };
 		49E6E96E7913E710AC58042F /* WeightEntryFormView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WeightEntryFormView.swift; path = Features/WeightTracker/WeightEntryFormView.swift; sourceTree = "<group>"; };
@@ -119,7 +121,7 @@
 		C3FDAE092FCADF8E00E8767F /* WorkoutSetRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Training/Workout/WorkoutSetRowView.swift; sourceTree = SOURCE_ROOT; };
 		C3FDAE0F2FCAE41100E8767F /* WorkoutSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Training/Workout/WorkoutSummaryView.swift; sourceTree = SOURCE_ROOT; };
 		C3FDAE112FCAE73F00E8767F /* ExerciseHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Training/Workout/ExerciseHistoryView.swift; sourceTree = SOURCE_ROOT; };
-		C737BB0362204A9178B7B285 /* MediaStorageService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MediaStorageService.swift; path = Core/Services/MediaStorageService.swift; sourceTree = "<group>"; };
+		C9941A700145BCF946FB8E80 /* DashboardWidgets.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DashboardWidgets.swift; sourceTree = "<group>"; };
 		CD22A5EC738385F901017E44 /* FoodEntryDetailView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = FoodEntryDetailView.swift; path = Features/Nutrition/FoodEntryDetailView.swift; sourceTree = "<group>"; };
 		D874C7BBAA626D0DBA57A291 /* ExerciseIconView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ExerciseIconView.swift; sourceTree = "<group>"; };
 		DFE9B37B479CDA0811F3D0A4 /* TrainingPlan+Grouping.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "TrainingPlan+Grouping.swift"; sourceTree = "<group>"; };
@@ -142,6 +144,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		11E0CA9F7DA3197A005B5974 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				CF6177B4683C7D0EB473814E /* Services */,
+			);
+			name = Core;
+			sourceTree = "<group>";
+		};
 		23F8B1C3FFA6A0FA01B986EA /* Views */ = {
 			isa = PBXGroup;
 			children = (
@@ -269,6 +279,7 @@
 				C3FDAE052FCADF8E00E8767F /* NotificationService.swift */,
 				C3FDADF62FCADE4800E8767F /* SeedDataService.swift */,
 				FBAC85A08230019A83ADA120 /* FoodAPIService.swift */,
+				24F89C11D3C0BFE0B9A05259 /* MediaStorageService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -288,6 +299,7 @@
 		C3FDADC62FCAD75500E8767F /* Dashboard */ = {
 			isa = PBXGroup;
 			children = (
+				C9941A700145BCF946FB8E80 /* DashboardWidgets.swift */,
 			);
 			path = Dashboard;
 			sourceTree = "<group>";
@@ -382,6 +394,7 @@
 				C3FDADC92FCAD75500E8767F /* Statistics */,
 				C3FDADCD2FCAD75500E8767F /* Training */,
 				C3FDADCE2FCAD75500E8767F /* WeightTracker */,
+				11E0CA9F7DA3197A005B5974 /* Core */,
 			);
 			path = Features;
 			sourceTree = "<group>";
@@ -394,6 +407,13 @@
 				C3FDADD62FCAD75500E8767F /* Localizable.strings */,
 			);
 			path = Resources;
+			sourceTree = "<group>";
+		};
+		CF6177B4683C7D0EB473814E /* Services */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Services;
 			sourceTree = "<group>";
 		};
 		E3B449F615856AB3CAEA6A7E /* FitTrackPro */ = {
@@ -411,7 +431,6 @@
 		FDD7E62335CED01D0A6D3E0C /* Services */ = {
 			isa = PBXGroup;
 			children = (
-				C737BB0362204A9178B7B285 /* MediaStorageService.swift */,
 			);
 			name = Services;
 			sourceTree = "<group>";
@@ -529,7 +548,6 @@
 				B2C3D4E5F6A7B8C9D0E1F2A4 /* WorkoutTimerHeaderView.swift in Sources */,
 				5D85FC800B43DA2130CD7736 /* WorkoutManager.swift in Sources */,
 				7BE1477690BC9D513707F251 /* WorkoutMiniPlayerView.swift in Sources */,
-				968744DC6D32FE4E6AB114C5 /* MediaStorageService.swift in Sources */,
 				930A83FC2209564F95B960AE /* ZoomableImageView.swift in Sources */,
 				40673D404A445CA10E57F22B /* FoodAPIService.swift in Sources */,
 				C166854380B2634C9C5DA1DF /* NutritionDashboardView.swift in Sources */,
@@ -544,6 +562,8 @@
 				D103DFCD8977A59169073514 /* OnboardingView.swift in Sources */,
 				91DC3E9E046A131BFD3F0A4B /* OnboardingPages.swift in Sources */,
 				28E5FDA46357AB349294F2C4 /* WorkoutHistoryView.swift in Sources */,
+				D4EB58B4BE6064887B02F959 /* DashboardWidgets.swift in Sources */,
+				7CBB425E5DE5B0FCB43EC8F8 /* MediaStorageService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

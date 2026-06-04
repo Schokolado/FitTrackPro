@@ -8,13 +8,12 @@ struct DashboardView: View {
     @AppStorage("userName") private var userName: String = ""
     
     @Query(sort: \WeightEntry.timestamp, order: .reverse) private var weightEntries: [WeightEntry]
-    @Query private var allDailyLogs: [DailyLog]
+    @Query private var allFoodEntries: [FoodEntry]
     @Query(sort: \WorkoutSession.startTime, order: .reverse) private var workouts: [WorkoutSession]
     
     var todayFoodEntries: [FoodEntry] {
         let todayString = Date().iso8601String()
-        let todayLog = allDailyLogs.first(where: { $0.dateString == todayString })
-        return todayLog?.foodEntries ?? []
+        return allFoodEntries.filter { $0.dailyLog?.dateString == todayString }
     }
     
     var todayWorkouts: [WorkoutSession] {
@@ -22,7 +21,19 @@ struct DashboardView: View {
     }
     
     var consumedCalories: Double {
-        todayFoodEntries.reduce(0) { $0 + $1.calories }
+        todayFoodEntries.reduce(0.0) { $0 + $1.calories }
+    }
+    
+    var consumedCarbs: Double {
+        todayFoodEntries.reduce(0.0) { $0 + $1.carbsGrams }
+    }
+    
+    var consumedProtein: Double {
+        todayFoodEntries.reduce(0.0) { $0 + $1.proteinGrams }
+    }
+    
+    var consumedFat: Double {
+        todayFoodEntries.reduce(0.0) { $0 + $1.fatGrams }
     }
     @State private var navId = UUID()
     
@@ -56,10 +67,14 @@ struct DashboardView: View {
                     // Nutrition Card
                     Button(action: {
                         selectedTab = 2 // Tab Index für Ernährung
+                        NotificationCenter.default.post(name: NSNotification.Name("ResetNutritionToToday"), object: nil)
                     }) {
                         NutritionSummaryCard(
                             consumed: consumedCalories,
-                            goal: dailyCalorieGoal
+                            goal: dailyCalorieGoal,
+                            carbs: consumedCarbs,
+                            protein: consumedProtein,
+                            fat: consumedFat
                         )
                     }
                     .buttonStyle(PlainButtonStyle())
@@ -118,182 +133,4 @@ struct DashboardView: View {
 import SwiftUI
 import SwiftData
 
-struct NutritionSummaryCard: View {
-    let consumed: Double
-    let goal: Double
-    
-    var progress: Double {
-        min(consumed / max(goal, 1), 1.0)
-    }
-    
-    var body: some View {
-        HStack(spacing: 20) {
-            // Circular Progress
-            ZStack {
-                Circle()
-                    .stroke(Color.brand.opacity(0.2), lineWidth: 10)
-                
-                Circle()
-                    .trim(from: 0, to: progress)
-                    .stroke(Color.brand, style: StrokeStyle(lineWidth: 10, lineCap: .round))
-                    .rotationEffect(.degrees(-90))
-                    .animation(.spring(response: 0.6, dampingFraction: 0.8), value: progress)
-                
-                VStack(spacing: 2) {
-                    Image(systemName: "flame.fill")
-                        .foregroundColor(.brand)
-                        .font(.caption)
-                    Text("\(Int(consumed))")
-                        .font(.system(size: 20, weight: .bold, design: .rounded))
-                }
-            }
-            .frame(width: 90, height: 90)
-            
-            // Texts
-            VStack(alignment: .leading, spacing: 8) {
-                Text("Ernährung heute")
-                    .font(.headline)
-                    .foregroundColor(.primary)
-                
-                Text("\(Int(max(goal - consumed, 0))) kcal verbleibend")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                    
-                HStack(spacing: 12) {
-                    MacroBadge(label: "K", color: .blue)
-                    MacroBadge(label: "P", color: .purple)
-                    MacroBadge(label: "F", color: .orange)
-                }
-                .padding(.top, 4)
-            }
-            
-            Spacer()
-            Image(systemName: "chevron.right")
-                .foregroundColor(.gray)
-        }
-        .padding(20)
-        .background(
-            RoundedRectangle(cornerRadius: 24, style: .continuous)
-                .fill(Color.backgroundSecondary)
-                .shadow(color: .black.opacity(0.05), radius: 15, y: 8)
-        )
-    }
-}
 
-struct MacroBadge: View {
-    let label: String
-    let color: Color
-    
-    var body: some View {
-        HStack(spacing: 4) {
-            Circle()
-                .fill(color)
-                .frame(width: 8, height: 8)
-            Text(label)
-                .font(.caption2.bold())
-                .foregroundColor(.secondary)
-        }
-    }
-}
-
-struct WeightSummaryCard: View {
-    let entries: [WeightEntry]
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Image(systemName: "scalemass")
-                    .foregroundColor(.brand)
-                    .font(.title2)
-                Spacer()
-                Image(systemName: "chevron.right")
-                    .foregroundColor(.gray)
-            }
-            
-            Spacer()
-            
-            VStack(alignment: .leading, spacing: 4) {
-                Text("Gewicht")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                
-                if let latest = entries.first {
-                    Text("\(latest.weightKg, specifier: "%.1f") kg")
-                        .font(.system(size: 24, weight: .bold, design: .rounded))
-                        
-                    if entries.count > 1 {
-                        let diff = latest.weightKg - entries[1].weightKg
-                        let color: Color = diff > 0 ? .red : (diff < 0 ? .green : .secondary)
-                        Text(String(format: "%@%.1f kg", diff > 0 ? "+" : "", diff))
-                            .font(.caption.bold())
-                            .foregroundColor(color)
-                    } else {
-                        Text("Erster Eintrag")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                } else {
-                    Text("-- kg")
-                        .font(.system(size: 24, weight: .bold, design: .rounded))
-                }
-            }
-        }
-        .padding(20)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .frame(height: 160)
-        .background(
-            RoundedRectangle(cornerRadius: 24, style: .continuous)
-                .fill(Color.backgroundSecondary)
-                .shadow(color: .black.opacity(0.05), radius: 15, y: 8)
-        )
-    }
-}
-
-struct TrainingSummaryCard: View {
-    let workouts: [WorkoutSession]
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Image(systemName: "figure.run")
-                    .foregroundColor(.blue)
-                    .font(.title2)
-                Spacer()
-                Image(systemName: "chevron.right")
-                    .foregroundColor(.gray)
-            }
-            
-            Spacer()
-            
-            VStack(alignment: .leading, spacing: 4) {
-                Text("Training")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                
-                if let workout = workouts.first {
-                    Text("Erledigt")
-                        .font(.system(size: 24, weight: .bold, design: .rounded))
-                        .foregroundColor(.green)
-                    Text(workout.plan?.name ?? "Freies Workout")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .lineLimit(1)
-                } else {
-                    Text("Anstehend")
-                        .font(.system(size: 24, weight: .bold, design: .rounded))
-                    Text("Tippen zum Starten")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
-            }
-        }
-        .padding(20)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .frame(height: 160)
-        .background(
-            RoundedRectangle(cornerRadius: 24, style: .continuous)
-                .fill(Color.backgroundSecondary)
-                .shadow(color: .black.opacity(0.05), radius: 15, y: 8)
-        )
-    }
-}
