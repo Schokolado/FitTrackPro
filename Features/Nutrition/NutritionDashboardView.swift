@@ -10,7 +10,7 @@ struct NutritionDashboardView: View {
     @State private var showingAddEntry = false
     @State private var showingFoodSearch = false
     @State private var showingScanner = false
-    @State private var selectedMealType: MealType = .breakfast
+    @State private var selectedMealType: MealType? = nil
     @State private var scannedProduct: OFFProduct? = nil
     
     @State private var showingSavedAlert = false
@@ -122,7 +122,7 @@ struct NutritionDashboardView: View {
             }
             .overlay(alignment: .bottomTrailing) {
                 Button(action: {
-                    selectedMealType = currentMealType
+                    selectedMealType = nil
                     showingFoodSearch = true
                 }) {
                     HStack {
@@ -153,18 +153,8 @@ struct NutritionDashboardView: View {
         }
         .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("OpenNutritionAddEntry"))) { _ in
             selectedDate = Date()
-            selectedMealType = currentMealType
+            selectedMealType = nil
             showingFoodSearch = true
-        }
-    }
-    
-    private var currentMealType: MealType {
-        let hour = Calendar.current.component(.hour, from: Date())
-        switch hour {
-        case 0..<11: return .breakfast
-        case 11..<15: return .lunch
-        case 15..<18: return .snack
-        default: return .dinner
         }
     }
     

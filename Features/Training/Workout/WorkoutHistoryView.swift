@@ -30,11 +30,27 @@ struct WorkoutHistoryView: View {
     @Query(sort: \WorkoutSession.startTime, order: .reverse) private var sessions: [WorkoutSession]
     @Environment(WorkoutManager.self) private var workoutManager
 
+    @State private var selectedMonthFilter: String? = nil
+    
+    private var availableMonths: [String] {
+        var months: [String] = []
+        for session in sessions {
+            let key = monthKey(for: session.startTime)
+            if !months.contains(key) {
+                months.append(key)
+            }
+        }
+        return months
+    }
+
     /// Sessions grouped by month, in order
     private var groupedSessions: [(monthLabel: String, sessions: [WorkoutSession])] {
         var result: [(monthLabel: String, sessions: [WorkoutSession])] = []
         var seen: [String: Int] = [:]
-        for session in sessions {
+        
+        let filteredSessions = selectedMonthFilter == nil ? sessions : sessions.filter { monthKey(for: $0.startTime) == selectedMonthFilter }
+        
+        for session in filteredSessions {
             let key = monthKey(for: session.startTime)
             if let idx = seen[key] {
                 result[idx].sessions.append(session)
@@ -79,6 +95,26 @@ struct WorkoutHistoryView: View {
                 .padding(.bottom, 80)
             } else {
                 ScrollView {
+                    if availableMonths.count > 1 {
+                        HStack {
+                            Text("Monat")
+                                .font(.subheadline.bold())
+                                .foregroundColor(.secondary)
+                            Spacer()
+                            Picker("Monat wählen", selection: $selectedMonthFilter) {
+                                Text("Alle").tag(String?.none)
+                                ForEach(availableMonths, id: \.self) { month in
+                                    Text(month).tag(String?.some(month))
+                                }
+                            }
+                            .pickerStyle(.menu)
+                            .tint(.brand)
+                        }
+                        .padding(.horizontal)
+                        .padding(.top, 16)
+                        .padding(.bottom, 8)
+                    }
+                    
                     LazyVStack(spacing: 12, pinnedViews: []) {
                         ForEach(groupedSessions, id: \.monthLabel) { group in
                             // Month header

@@ -5,7 +5,7 @@ struct FoodSearchView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     
-    let mealType: MealType
+    let mealType: MealType?
     var onSave: ((String) -> Void)? = nil
     
     @Query(sort: \FoodEntry.timestamp, order: .reverse) private var allFoodEntries: [FoodEntry]
@@ -170,7 +170,7 @@ struct FoodSearchView: View {
                     }
                 }
             }
-            .navigationTitle("\(mealType.rawValue) hinzufügen")
+            .navigationTitle(mealType?.rawValue.appending(" hinzufügen") ?? "Mahlzeit hinzufügen")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {

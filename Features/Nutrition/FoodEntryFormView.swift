@@ -6,11 +6,13 @@ struct FoodEntryFormView: View {
     @Environment(\.dismiss) private var dismiss
     @Query private var allDailyLogs: [DailyLog]
     
-    @State var mealType: MealType
+    @State var mealType: MealType?
     var prefilledProduct: OFFProduct?
     var prefilledEntry: FoodEntry?
     var targetDate: Date = Date()
     var onSave: ((String) -> Void)? = nil
+    
+    @State private var showingValidationError = false
     
     @State private var name: String = ""
     @State private var amountGrams: Double = 100.0
@@ -26,8 +28,9 @@ struct FoodEntryFormView: View {
                 Section(header: Text("Details")) {
                     TextField("Name", text: $name)
                     Picker("Mahlzeit", selection: $mealType) {
+                        Text("Bitte wählen").tag(MealType?.none)
                         ForEach(MealType.allCases, id: \.self) { type in
-                            Text(type.rawValue).tag(type)
+                            Text(type.rawValue).tag(MealType?.some(type))
                         }
                     }
                     HStack {
@@ -110,6 +113,11 @@ struct FoodEntryFormView: View {
                     .disabled(name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 }
             }
+            .alert("Fehlende Angabe", isPresented: $showingValidationError) {
+                Button("OK", role: .cancel) { }
+            } message: {
+                Text("Bitte wähle eine Mahlzeit aus (z.B. Frühstück).")
+            }
             .onAppear {
                 if let product = prefilledProduct {
                     name = product.productName ?? ""
@@ -148,6 +156,11 @@ struct FoodEntryFormView: View {
     private var calculatedFat: Double { fatPer100g * ratio }
     
     private func saveEntry() {
+        guard let selectedMealType = mealType else {
+            showingValidationError = true
+            return
+        }
+        
         let dateString = targetDate.iso8601String()
         let todayLog = allDailyLogs.first(where: { $0.dateString == dateString }) ?? {
             let newLog = DailyLog(dateString: dateString)
@@ -158,7 +171,7 @@ struct FoodEntryFormView: View {
         let newEntry = FoodEntry(
             name: name,
             timestamp: targetDate,
-            mealType: mealType,
+            mealType: selectedMealType,
             amountGrams: amountGrams,
             calories: calculatedCalories,
             proteinGrams: calculatedProtein,
