@@ -95,27 +95,24 @@ struct WorkoutHistoryView: View {
                 .padding(.bottom, 80)
             } else {
                 ScrollView {
-                    if availableMonths.count > 1 {
-                        HStack {
-                            Text("Monat")
-                                .font(.subheadline.bold())
-                                .foregroundColor(.secondary)
-                            Spacer()
-                            Picker("Monat wählen", selection: $selectedMonthFilter) {
-                                Text("Alle").tag(String?.none)
-                                ForEach(availableMonths, id: \.self) { month in
-                                    Text(month).tag(String?.some(month))
-                                }
-                            }
-                            .pickerStyle(.menu)
-                            .tint(.brand)
-                        }
-                        .padding(.horizontal)
-                        .padding(.top, 16)
-                        .padding(.bottom, 8)
-                    }
-                    
                     LazyVStack(spacing: 12, pinnedViews: []) {
+                        if availableMonths.count > 1 {
+                            HStack {
+                                Text("Monat")
+                                    .font(.subheadline.bold())
+                                    .foregroundColor(.secondary)
+                                Spacer()
+                                Picker("Monat wählen", selection: $selectedMonthFilter) {
+                                    Text("Alle").tag(String?.none)
+                                    ForEach(availableMonths, id: \.self) { month in
+                                        Text(month).tag(String?.some(month))
+                                    }
+                                }
+                                .pickerStyle(.menu)
+                                .tint(.brand)
+                            }
+                        }
+                        
                         ForEach(groupedSessions, id: \.monthLabel) { group in
                             // Month header
                             HStack {
@@ -127,7 +124,6 @@ struct WorkoutHistoryView: View {
                                     .font(.caption)
                                     .foregroundColor(.secondary)
                             }
-                            .padding(.horizontal, 4)
                             .padding(.top, 8)
 
                             // Cards in this month
