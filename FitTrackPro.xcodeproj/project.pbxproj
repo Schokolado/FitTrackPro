@@ -151,6 +151,7 @@
 		C3FDAE092FCADF8E00E8767F /* Features/Training/Workout/WorkoutSetRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Training/Workout/WorkoutSetRowView.swift; sourceTree = SOURCE_ROOT; };
 		C3FDAE0F2FCAE41100E8767F /* Features/Training/Workout/WorkoutSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Training/Workout/WorkoutSummaryView.swift; sourceTree = SOURCE_ROOT; };
 		C3FDAE112FCAE73F00E8767F /* Features/Training/Workout/ExerciseHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Training/Workout/ExerciseHistoryView.swift; sourceTree = SOURCE_ROOT; };
+		C3FDAE132FD6087600E8767F /* FitTrackPro-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "FitTrackPro-Info.plist"; sourceTree = "<group>"; };
 		C9941A700145BCF946FB8E80 /* DashboardWidgets.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DashboardWidgets.swift; sourceTree = "<group>"; };
 		CD22A5EC738385F901017E44 /* FoodEntryDetailView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = FoodEntryDetailView.swift; path = Features/Nutrition/FoodEntryDetailView.swift; sourceTree = "<group>"; };
 		CFED6926A8A26CC69B4ABA71 /* PlanProgressView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PlanProgressView.swift; sourceTree = "<group>"; };
@@ -529,6 +530,7 @@
 		E3B449F615856AB3CAEA6A7E /* FitTrackPro */ = {
 			isa = PBXGroup;
 			children = (
+				C3FDAE132FD6087600E8767F /* FitTrackPro-Info.plist */,
 				96B8891F3604C30ADACA4863 /* Core */,
 				357015347D9A426D16776478 /* Features */,
 				8731522474B83B7321837381 /* DashboardView.swift */,
@@ -863,17 +865,18 @@
 				ASSETCATALOG_COMPILER_GENERATE_ASSET_SYMBOLS = YES;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = FitTrackPro.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = 2G888L5QQN;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "FitTrackPro-Info.plist";
 				INFOPLIST_KEY_LSRequiresIPhoneOS = YES;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "FitTrackPro liest Gesundheitsdaten, um deinen Fortschritt zu tracken.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "FitTrackPro schreibt Workout- und Gewichtsdaten in Apple Health.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = NO;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -882,8 +885,9 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = something.FitTrackPro;
+				PRODUCT_BUNDLE_IDENTIFIER = com.riccardopfeiler.FitTrackPro;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
@@ -901,17 +905,18 @@
 				ASSETCATALOG_COMPILER_GENERATE_ASSET_SYMBOLS = YES;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = FitTrackPro.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = 2G888L5QQN;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "FitTrackPro-Info.plist";
 				INFOPLIST_KEY_LSRequiresIPhoneOS = YES;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "FitTrackPro liest Gesundheitsdaten, um deinen Fortschritt zu tracken.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "FitTrackPro schreibt Workout- und Gewichtsdaten in Apple Health.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = NO;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -920,8 +925,9 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = something.FitTrackPro;
+				PRODUCT_BUNDLE_IDENTIFIER = com.riccardopfeiler.FitTrackPro;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;

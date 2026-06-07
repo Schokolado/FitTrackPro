@@ -16,7 +16,17 @@ struct OnboardingView: View {
                 OnboardingGoalsPage(currentPage: $currentPage)
                     .tag(3)
                 OnboardingFinishPage {
-                    hasCompletedOnboarding = true
+                    Task {
+                        // Apple Health Berechtigungen anfragen
+                        try? await HealthKitService.shared.requestAuthorization()
+                        
+                        await MainActor.run {
+                            // Apple Health in den App-Einstellungen als "Aktiviert" markieren
+                            UserDefaults.standard.set(true, forKey: AppStorageKeys.healthKitEnabled)
+                            // Onboarding beenden
+                            hasCompletedOnboarding = true
+                        }
+                    }
                 }
                 .tag(4)
             }
