@@ -124,7 +124,6 @@ struct WeightTrackerView: View {
                             .font(.system(size: 48, weight: .bold, design: .rounded))
                     }
                 }
-                .padding(.top, 20)
                 
                 // Time Range Picker
                 if !entries.isEmpty {
@@ -138,7 +137,7 @@ struct WeightTrackerView: View {
                 }
                 
                 // Chart
-                if filteredEntries.count > 1 {
+                if !filteredEntries.isEmpty {
                     VStack(alignment: .leading) {
                         Text("Verlauf (\(selectedTimeRange.rawValue))")
                             .font(.headline)
@@ -224,15 +223,6 @@ struct WeightTrackerView: View {
                             .foregroundColor(.secondary)
                     }
                     .padding(.vertical, 40)
-                } else if filteredEntries.count <= 1 {
-                    VStack(spacing: 12) {
-                        Image(systemName: "chart.line.uptrend.xyaxis")
-                            .font(.system(size: 40))
-                            .foregroundColor(.secondary)
-                        Text("Nicht genug Daten für diesen Zeitraum.")
-                            .foregroundColor(.secondary)
-                    }
-                    .padding(.vertical, 40)
                 }
                 
                 // History List
@@ -273,7 +263,7 @@ struct WeightTrackerView: View {
             .frame(maxWidth: .infinity)
         }
         .background(Color.backgroundPrimary)
-        .navigationTitle("Gewicht")
+        .navigationTitle("")
         .navigationBarTitleDisplayMode(.inline)
         .overlay(alignment: .bottomTrailing) {
             Button(action: {

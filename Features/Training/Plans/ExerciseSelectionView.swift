@@ -33,18 +33,20 @@ struct ExerciseSelectionView: View {
                 }
             }
             
-            Section {
-                ForEach(filteredExercises) { exercise in
-                    Button(action: {
-                        addExerciseToPlan(exercise)
-                    }) {
-                        VStack(alignment: .leading) {
-                            Text(exercise.name)
-                                .font(.headline)
-                                .foregroundColor(.primary)
-                            Text(exercise.category)
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
+            let groupedExercises = Dictionary(grouping: filteredExercises, by: { $0.category })
+            let sortedCategories = groupedExercises.keys.sorted()
+            
+            ForEach(sortedCategories, id: \.self) { category in
+                Section(header: Text(category).font(.headline)) {
+                    ForEach(groupedExercises[category] ?? []) { exercise in
+                        Button(action: {
+                            addExerciseToPlan(exercise)
+                        }) {
+                            VStack(alignment: .leading) {
+                                Text(exercise.name)
+                                    .font(.headline)
+                                    .foregroundColor(.primary)
+                            }
                         }
                     }
                 }

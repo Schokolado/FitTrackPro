@@ -5,6 +5,9 @@ struct WeightEntryFormView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     
+    @AppStorage(AppStorageKeys.healthKitEnabled) private var healthKitEnabled = false
+    @AppStorage(AppStorageKeys.healthKitAutoSync) private var healthKitAutoSync = false
+    
     let entryToEdit: WeightEntry?
     
     @State private var weight: Double = 70.0
@@ -94,15 +97,36 @@ struct WeightEntryFormView: View {
     }
     
     private func saveEntry() {
+        let entryToSave: WeightEntry
         if let entry = entryToEdit {
             // Update existing
             entry.weightKg = weight
             entry.timestamp = date
             entry.notes = notes
+            entryToSave = entry
         } else {
             // Create new
             let newEntry = WeightEntry(weightKg: weight, timestamp: date, notes: notes)
             modelContext.insert(newEntry)
+            entryToSave = newEntry
+        }
+        
+        do {
+            try modelContext.save()
+        } catch {
+            print("Error saving weight entry: \(error)")
+        }
+        
+        if healthKitEnabled && healthKitAutoSync {
+            Task {
+                do {
+                    try await HealthKitService.shared.exportWeight(entry: entryToSave)
+                    entryToSave.syncedToHealthKit = true
+                    try? modelContext.save()
+                } catch {
+                    print("Error exporting weight to HealthKit: \(error)")
+                }
+            }
         }
         
         // TODO: Update WidgetDataService if implemented

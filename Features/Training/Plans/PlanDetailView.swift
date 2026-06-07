@@ -24,6 +24,15 @@ struct PlanDetailView: View {
     @State private var showingCreateGroupAlert = false
     @State private var newGroupName = ""
     
+    @Query(sort: \WorkoutSession.startTime, order: .reverse) private var allSessions: [WorkoutSession]
+    @State private var showingShareSheet = false
+    @State private var generatedPDFUrl: URL?
+    @State private var isGeneratingPDF = false
+    
+    private var planSessions: [WorkoutSession] {
+        allSessions.filter { $0.plan?.id == plan.id }
+    }
+    
     private var groupedExercises: [ExerciseGroup] {
         let sorted = (plan.planExercises ?? []).sorted(by: { $0.sortOrder < $1.sortOrder })
         var groups: [ExerciseGroup] = []
@@ -127,11 +136,34 @@ struct PlanDetailView: View {
         mainContent
         .id(refreshId)
         .background(Color.backgroundPrimary)
-        .navigationTitle(plan.name)
+        .navigationTitle("Training")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                Menu {
+                HStack(spacing: 16) {
+                    if isGeneratingPDF {
+                        ProgressView()
+                            .progressViewStyle(.circular)
+                            .scaleEffect(0.8)
+                    } else {
+                        Menu {
+                            Button {
+                                exportEmptyPlan()
+                            } label: {
+                                Label("Leerer Plan", systemImage: "doc.text")
+                            }
+                            
+                            Button {
+                                exportHistoricalPlan()
+                            } label: {
+                                Label("Historischer Verlauf", systemImage: "chart.line.uptrend.xyaxis")
+                            }
+                        } label: {
+                            Image(systemName: "square.and.arrow.up")
+                        }
+                    }
+                    
+                    Menu {
                     Button {
                         editName = plan.name
                         showingEditNameAlert = true
@@ -201,6 +233,7 @@ struct PlanDetailView: View {
                 } label: {
                     Image(systemName: "pencil")
                 }
+                }
             }
         }
         .alert("Plan umbenennen", isPresented: $showingEditNameAlert) {
@@ -258,6 +291,39 @@ struct PlanDetailView: View {
         }
         .onAppear {
             cleanupPlanExercises()
+        }
+        .sheet(isPresented: $showingShareSheet, onDismiss: {
+            if let url = generatedPDFUrl {
+                try? FileManager.default.removeItem(at: url)
+            }
+        }) {
+            if let url = generatedPDFUrl {
+                ShareSheet(activityItems: [url])
+                    .presentationDetents([.medium, .large])
+            }
+        }
+    }
+    
+    private func exportEmptyPlan() {
+        isGeneratingPDF = true
+        // Yield to main thread to show progress view
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            if let url = PDFExportService.shared.exportEmptyPlan(plan) {
+                self.generatedPDFUrl = url
+                self.showingShareSheet = true
+            }
+            self.isGeneratingPDF = false
+        }
+    }
+
+    private func exportHistoricalPlan() {
+        isGeneratingPDF = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            if let url = PDFExportService.shared.exportHistoricalPlan(plan: plan, sessions: planSessions) {
+                self.generatedPDFUrl = url
+                self.showingShareSheet = true
+            }
+            self.isGeneratingPDF = false
         }
     }
     

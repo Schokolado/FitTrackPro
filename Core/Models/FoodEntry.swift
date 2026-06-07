@@ -22,10 +22,11 @@ final class FoodEntry {
     var proteinGrams: Double = 0.0
     var carbsGrams: Double = 0.0
     var fatGrams: Double = 0.0
+    var syncedToHealthKit: Bool = false
     
     var dailyLog: DailyLog?
 
-    init(id: UUID = UUID(), name: String = "", barcode: String? = nil, timestamp: Date = Date(), mealType: MealType = .snack, amountGrams: Double = 0.0, calories: Double = 0.0, proteinGrams: Double = 0.0, carbsGrams: Double = 0.0, fatGrams: Double = 0.0, dailyLog: DailyLog? = nil) {
+    init(id: UUID = UUID(), name: String = "", barcode: String? = nil, timestamp: Date = Date(), mealType: MealType = .snack, amountGrams: Double = 0.0, calories: Double = 0.0, proteinGrams: Double = 0.0, carbsGrams: Double = 0.0, fatGrams: Double = 0.0, syncedToHealthKit: Bool = false, dailyLog: DailyLog? = nil) {
         self.id = id
         self.name = name
         self.barcode = barcode
@@ -36,6 +37,7 @@ final class FoodEntry {
         self.proteinGrams = proteinGrams
         self.carbsGrams = carbsGrams
         self.fatGrams = fatGrams
+        self.syncedToHealthKit = syncedToHealthKit
         self.dailyLog = dailyLog
     }
 }

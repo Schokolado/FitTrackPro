@@ -4,6 +4,7 @@ struct FullScreenImageViewer: View {
     let mediaPaths: [String]
     @State var initialIndex: Int
     @Environment(\.dismiss) private var dismiss
+    @State private var dragOffset: CGSize = .zero
     
     var body: some View {
         NavigationStack {
@@ -38,6 +39,25 @@ struct FullScreenImageViewer: View {
             .toolbarBackground(.black, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
         }
+        .offset(y: dragOffset.height)
+        .opacity(1.0 - Double(dragOffset.height / 500))
+        .gesture(
+            DragGesture()
+                .onChanged { value in
+                    if value.translation.height > 0 {
+                        dragOffset = value.translation
+                    }
+                }
+                .onEnded { value in
+                    if value.translation.height > 100 {
+                        dismiss()
+                    } else {
+                        withAnimation(.spring()) {
+                            dragOffset = .zero
+                        }
+                    }
+                }
+        )
     }
 }
 

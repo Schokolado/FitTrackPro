@@ -12,6 +12,10 @@ struct WorkoutSummaryView: View {
     @State private var showConfetti = false
     @State private var showingCancelAlert = false
     
+    @AppStorage(AppStorageKeys.healthKitEnabled) private var healthKitEnabled = false
+    @AppStorage(AppStorageKeys.healthKitAutoSync) private var healthKitAutoSync = false
+    @State private var syncToHealth: Bool = false
+    
     // Computed statistics
     private var totalVolume: Double {
         session.sets?.filter { $0.isCompleted }
@@ -105,15 +109,20 @@ struct WorkoutSummaryView: View {
                     .background(Color.backgroundCard)
                     .cornerRadius(16)
                     
-                    // Notes
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("Notizen (Optional)")
+                        Text("Notizen")
                             .font(.headline)
+                        
                         TextEditor(text: $notes)
-                            .frame(minHeight: 100)
-                            .padding(4)
-                            .background(Color.backgroundSecondary)
+                            .frame(height: 100)
+                            .padding(8)
+                            .background(Color(uiColor: .systemGray6))
                             .cornerRadius(8)
+                            
+                        if healthKitEnabled {
+                            Divider().padding(.vertical, 4)
+                            Toggle("In Apple Health eintragen", isOn: $syncToHealth)
+                        }
                     }
                     .padding()
                     .background(Color.backgroundCard)
@@ -141,10 +150,13 @@ struct WorkoutSummaryView: View {
                 // Trigger animation
                 showConfetti = true
                 
-                // Set endTime if not already set (it might be set by the calling view)
+                // Set endTime if not already set
                 if session.endTime == nil {
                     session.endTime = Date()
                 }
+                
+                // Init sync toggle
+                syncToHealth = healthKitEnabled && healthKitAutoSync
             }
             .alert("Training verwerfen?", isPresented: $showingCancelAlert) {
                 Button("Ja, verwerfen", role: .destructive) {
@@ -166,6 +178,18 @@ struct WorkoutSummaryView: View {
             try modelContext.save()
         } catch {
             print("Error saving session: \(error)")
+        }
+        
+        if syncToHealth {
+            Task {
+                do {
+                    try await HealthKitService.shared.exportWorkout(session: session)
+                    session.syncedToHealthKit = true
+                    try? modelContext.save()
+                } catch {
+                    print("HealthKit sync failed: \(error)")
+                }
+            }
         }
         
         // Let the caller know we're done so the fullScreenCover can be dismissed

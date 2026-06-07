@@ -54,6 +54,9 @@ struct OnboardingPageContainer<Content: View>: View {
                 .padding(.bottom, 100)
             }
         }
+        .onTapGesture {
+            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+        }
     }
 }
 
@@ -226,9 +229,16 @@ struct OnboardingBodyPage: View {
                     HStack {
                         Slider(value: $heightCm, in: 140...220, step: 1)
                             .tint(.brand)
-                        Text("\(Int(heightCm)) cm")
-                            .font(.headline.monospacedDigit())
-                            .frame(width: 68, alignment: .trailing)
+                        HStack(spacing: 4) {
+                            TextField("", value: $heightCm, format: .number)
+                                .keyboardType(.decimalPad)
+                                .multilineTextAlignment(.trailing)
+                                .font(.headline.monospacedDigit())
+                            Text("cm")
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                        }
+                        .frame(width: 80, alignment: .trailing)
                     }
                 }
 
@@ -240,11 +250,16 @@ struct OnboardingBodyPage: View {
                     HStack {
                         Slider(value: $weightKg, in: 30...200, step: 0.5)
                             .tint(.brand)
-                        Text(weightKg, format: .number.precision(.fractionLength(1)))
-                            .font(.headline.monospacedDigit())
-                        + Text(" kg")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
+                        HStack(spacing: 4) {
+                            TextField("", value: $weightKg, format: .number.precision(.fractionLength(1)))
+                                .keyboardType(.decimalPad)
+                                .multilineTextAlignment(.trailing)
+                                .font(.headline.monospacedDigit())
+                            Text("kg")
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                        }
+                        .frame(width: 80, alignment: .trailing)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
@@ -335,9 +350,14 @@ struct OnboardingGoalsPage: View {
                             set: { stepGoal = Int($0) }
                         ), in: 2000...30000, step: 500)
                         .tint(.brand)
-                        Text("\(stepGoal)")
-                            .font(.headline.monospacedDigit())
-                            .frame(width: 64, alignment: .trailing)
+                        TextField("", value: Binding(
+                            get: { stepGoal },
+                            set: { stepGoal = $0 }
+                        ), format: .number)
+                        .keyboardType(.numberPad)
+                        .multilineTextAlignment(.trailing)
+                        .font(.headline.monospacedDigit())
+                        .frame(width: 80, alignment: .trailing)
                     }
                 }
 
@@ -365,9 +385,16 @@ struct GoalSliderRow: View {
             HStack {
                 Slider(value: $value, in: range, step: step)
                     .tint(.brand)
-                Text("\(Int(value)) \(unit)")
-                    .font(.subheadline.monospacedDigit())
-                    .frame(width: 72, alignment: .trailing)
+                HStack(spacing: 4) {
+                    TextField("", value: $value, format: .number)
+                        .keyboardType(.decimalPad)
+                        .multilineTextAlignment(.trailing)
+                        .font(.subheadline.monospacedDigit())
+                    Text(unit)
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                }
+                .frame(width: 85, alignment: .trailing)
             }
         }
     }

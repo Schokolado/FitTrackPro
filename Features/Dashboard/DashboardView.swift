@@ -7,8 +7,9 @@ struct DashboardView: View {
     @AppStorage("dailyCalorieGoal") private var dailyCalorieGoal: Double = 2500
     @AppStorage("daily_step_goal") private var dailyStepGoal: Int = 10000
     @AppStorage("userName") private var userName: String = ""
+    @AppStorage(AppStorageKeys.healthKitEnabled) private var healthKitEnabled = false
     
-    @State private var todaySteps: Int = 3450 // Mock value for now
+    @State private var todaySteps: Int = 0
     
     @Query(sort: \WeightEntry.timestamp, order: .reverse) private var weightEntries: [WeightEntry]
     @Query private var allFoodEntries: [FoodEntry]
@@ -126,6 +127,15 @@ struct DashboardView: View {
                         goal: dailyStepGoal
                     )
                     .padding(.horizontal)
+                    .task {
+                        if healthKitEnabled {
+                            if let steps = try? await HealthKitService.shared.fetchSteps() {
+                                await MainActor.run {
+                                    todaySteps = steps
+                                }
+                            }
+                        }
+                    }
                     
 
                     // Grid for Weight and Training

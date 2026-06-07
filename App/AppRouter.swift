@@ -43,7 +43,7 @@ struct AppRouter: View {
                     }
                     .tag(2)
                 
-                Text("Statistics View")
+                StatisticsView()
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .background(Color.backgroundPrimary)
                     .globalMiniPlayerSafeArea(isActive: workoutManager.activeViewModel != nil)

@@ -21,6 +21,7 @@ struct FoodSearchView: View {
     @State private var selectedProduct: OFFProduct?
     @State private var selectedEntry: FoodEntry?
     @State private var showForm = false
+    @State private var showingScanner = false
     
     private let apiService = FoodAPIService()
     
@@ -97,6 +98,46 @@ struct FoodSearchView: View {
                     onSave?(savedName)
                 }
             }
+            .sheet(isPresented: $showingScanner) {
+                ZStack {
+                    BarcodeScannerView(onProductFound: { product in
+                        showingScanner = false
+                        selectedProduct = product
+                        selectedEntry = nil
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                            showForm = true
+                        }
+                    })
+                    
+                    #if targetEnvironment(simulator)
+                    VStack {
+                        Spacer()
+                        Button(action: {
+                            Task {
+                                let service = FoodAPIService()
+                                let product = try? await service.fetchProduct(barcode: "5449000000996")
+                                DispatchQueue.main.async {
+                                    showingScanner = false
+                                    selectedProduct = product
+                                    selectedEntry = nil
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                        showForm = true
+                                    }
+                                }
+                            }
+                        }) {
+                            Text("Simulator Mock Scan")
+                                .font(.headline)
+                                .padding()
+                                .background(Color.brand)
+                                .foregroundColor(.white)
+                                .cornerRadius(10)
+                        }
+                        .padding(.bottom, 40)
+                    }
+                    #endif
+                }
+            }
         }
     }
     
@@ -138,6 +179,17 @@ struct FoodSearchView: View {
                     Image(systemName: "plus.circle.fill")
                         .foregroundColor(.brand)
                     Text("Manuell hinzufügen")
+                        .foregroundColor(.primary)
+                }
+            }
+            
+            Button(action: {
+                showingScanner = true
+            }) {
+                HStack {
+                    Image(systemName: "barcode.viewfinder")
+                        .foregroundColor(.brand)
+                    Text("Barcode scannen")
                         .foregroundColor(.primary)
                 }
             }

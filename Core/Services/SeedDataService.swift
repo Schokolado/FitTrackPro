@@ -14,23 +14,24 @@ class SeedDataService {
     private init() {}
     
     func seedExercisesIfNeeded(context: ModelContext) {
-        let hasSeeded = UserDefaults.standard.bool(forKey: AppStorageKeys.hasSeededExercises)
-        guard !hasSeeded else { return }
-        
         let locale = Locale.current.language.languageCode?.identifier == "de" ? "de" : "en"
         let jsonString = locale == "de" ? """
 [
   { "name": "Bankdrücken (Langhantel)", "category": "Brust", "defaultRestDuration": 90, "sortOrder": 1 },
-  { "name": "Schrägbankdrücken (Kurzhanteln)", "category": "Brust", "defaultRestDuration": 90, "sortOrder": 2 },
-  { "name": "Butterfly (Maschine)", "category": "Brust", "defaultRestDuration": 90, "sortOrder": 3 },
-  { "name": "Fliegende am Kabelzug", "category": "Brust", "defaultRestDuration": 90, "sortOrder": 4 },
-  { "name": "Liegestütze", "category": "Brust", "defaultRestDuration": 60, "sortOrder": 5 },
+  { "name": "Bankdrücken (Kurzhantel)", "category": "Brust", "defaultRestDuration": 90, "sortOrder": 2 },
+  { "name": "Schrägbankdrücken (Kurzhanteln)", "category": "Brust", "defaultRestDuration": 90, "sortOrder": 3 },
+  { "name": "Butterfly (Maschine)", "category": "Brust", "defaultRestDuration": 90, "sortOrder": 4 },
+  { "name": "Butterfly (Kurzhantel)", "category": "Brust", "defaultRestDuration": 90, "sortOrder": 5 },
+  { "name": "Schrägbank Butterfly (Kurzhantel)", "category": "Brust", "defaultRestDuration": 90, "sortOrder": 6 },
+  { "name": "Fliegende am Kabelzug", "category": "Brust", "defaultRestDuration": 90, "sortOrder": 7 },
+  { "name": "Liegestütze", "category": "Brust", "defaultRestDuration": 60, "sortOrder": 8 },
   
   { "name": "Kreuzheben", "category": "Rücken", "defaultRestDuration": 120, "sortOrder": 10 },
   { "name": "Klimmzüge", "category": "Rücken", "defaultRestDuration": 90, "sortOrder": 11 },
   { "name": "Latzug", "category": "Rücken", "defaultRestDuration": 90, "sortOrder": 12 },
-  { "name": "Rudern vorgebeugt (Langhantel)", "category": "Rücken", "defaultRestDuration": 90, "sortOrder": 13 },
-  { "name": "Rudern sitzend (Kabelzug)", "category": "Rücken", "defaultRestDuration": 90, "sortOrder": 14 },
+  { "name": "Latziehen zum Nacken", "category": "Rücken", "defaultRestDuration": 90, "sortOrder": 13 },
+  { "name": "Rudern vorgebeugt (Langhantel)", "category": "Rücken", "defaultRestDuration": 90, "sortOrder": 14 },
+  { "name": "Rudern sitzend (Kabelzug)", "category": "Rücken", "defaultRestDuration": 90, "sortOrder": 15 },
   
   { "name": "Kniebeugen (Langhantel)", "category": "Beine", "defaultRestDuration": 120, "sortOrder": 20 },
   { "name": "Beinpresse", "category": "Beine", "defaultRestDuration": 120, "sortOrder": 21 },
@@ -65,16 +66,20 @@ class SeedDataService {
 """ : """
 [
   { "name": "Bench Press (Barbell)", "category": "Chest", "defaultRestDuration": 90, "sortOrder": 1 },
-  { "name": "Incline Bench Press (Dumbbell)", "category": "Chest", "defaultRestDuration": 90, "sortOrder": 2 },
-  { "name": "Butterfly (Machine)", "category": "Chest", "defaultRestDuration": 90, "sortOrder": 3 },
-  { "name": "Cable Crossovers", "category": "Chest", "defaultRestDuration": 90, "sortOrder": 4 },
-  { "name": "Push-ups", "category": "Chest", "defaultRestDuration": 60, "sortOrder": 5 },
+  { "name": "Bench Press (Dumbbell)", "category": "Chest", "defaultRestDuration": 90, "sortOrder": 2 },
+  { "name": "Incline Bench Press (Dumbbell)", "category": "Chest", "defaultRestDuration": 90, "sortOrder": 3 },
+  { "name": "Butterfly (Machine)", "category": "Chest", "defaultRestDuration": 90, "sortOrder": 4 },
+  { "name": "Dumbbell Flyes", "category": "Chest", "defaultRestDuration": 90, "sortOrder": 5 },
+  { "name": "Incline Dumbbell Flyes", "category": "Chest", "defaultRestDuration": 90, "sortOrder": 6 },
+  { "name": "Cable Crossovers", "category": "Chest", "defaultRestDuration": 90, "sortOrder": 7 },
+  { "name": "Push-ups", "category": "Chest", "defaultRestDuration": 60, "sortOrder": 8 },
   
   { "name": "Deadlift", "category": "Back", "defaultRestDuration": 120, "sortOrder": 10 },
   { "name": "Pull-ups", "category": "Back", "defaultRestDuration": 90, "sortOrder": 11 },
   { "name": "Lat Pulldown", "category": "Back", "defaultRestDuration": 90, "sortOrder": 12 },
-  { "name": "Bent Over Row (Barbell)", "category": "Back", "defaultRestDuration": 90, "sortOrder": 13 },
-  { "name": "Seated Cable Row", "category": "Back", "defaultRestDuration": 90, "sortOrder": 14 },
+  { "name": "Behind-the-Neck Lat Pulldown", "category": "Back", "defaultRestDuration": 90, "sortOrder": 13 },
+  { "name": "Bent Over Row (Barbell)", "category": "Back", "defaultRestDuration": 90, "sortOrder": 14 },
+  { "name": "Seated Cable Row", "category": "Back", "defaultRestDuration": 90, "sortOrder": 15 },
   
   { "name": "Squat (Barbell)", "category": "Legs", "defaultRestDuration": 120, "sortOrder": 20 },
   { "name": "Leg Press", "category": "Legs", "defaultRestDuration": 120, "sortOrder": 21 },
@@ -134,8 +139,6 @@ class SeedDataService {
         
         do {
             try context.save()
-            UserDefaults.standard.set(true, forKey: AppStorageKeys.hasSeededExercises)
-            print("Successfully seeded exercises.")
         } catch {
             print("Failed to save seed data: \(error)")
         }

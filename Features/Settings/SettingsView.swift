@@ -1,8 +1,14 @@
 import SwiftUI
+import SwiftData
+import CloudKit
 
 struct SettingsView: View {
+    @Environment(\.modelContext) private var modelContext
     @AppStorage(AppStorageKeys.prefillExerciseHistory) private var prefillExerciseHistory = true
     @AppStorage("zeroWeightIsBodyweight") private var zeroWeightIsBodyweight = true
+    
+    @AppStorage(AppStorageKeys.healthKitEnabled) private var healthKitEnabled = false
+    @AppStorage(AppStorageKeys.healthKitAutoSync) private var healthKitAutoSync = false
     
     @AppStorage("timerFav1") private var timerFav1: Int = 30
     @AppStorage("timerFav2") private var timerFav2: Int = 60
@@ -20,6 +26,13 @@ struct SettingsView: View {
     @AppStorage(AppStorageKeys.userHeightCm) private var heightCm: Double = 175
     @AppStorage(AppStorageKeys.dailyCalorieGoal) private var dailyCalorieGoal: Double = 2500
     @AppStorage(AppStorageKeys.dailyStepGoal) private var dailyStepGoal: Int = 10000
+    
+    @Query(filter: #Predicate<WorkoutSession> { $0.syncedToHealthKit == false }) private var unsyncedWorkouts: [WorkoutSession]
+    @Query(filter: #Predicate<WeightEntry> { $0.syncedToHealthKit == false }) private var unsyncedWeights: [WeightEntry]
+    @Query(filter: #Predicate<FoodEntry> { $0.syncedToHealthKit == false }) private var unsyncedFoods: [FoodEntry]
+    
+    @State private var isSyncing = false
+    @State private var showSyncCompleteAlert = false
     
     @State private var birthDate: Date = Calendar.current.date(byAdding: .year, value: -25, to: Date()) ?? Date()
     @EnvironmentObject var themeManager: ThemeManager
@@ -122,6 +135,62 @@ struct SettingsView: View {
                         .foregroundColor(.secondary)
                 }
                 
+                Section {
+                    HStack {
+                        Toggle("Mit Apple Health verbinden", isOn: $healthKitEnabled)
+                            .onChange(of: healthKitEnabled) { _, newValue in
+                                if newValue {
+                                    Task { @MainActor in
+                                        do {
+                                            try await HealthKitService.shared.requestAuthorization()
+                                            await performInitialSync()
+                                        } catch {
+                                            print("HealthKit Authorization failed: \(error)")
+                                        }
+                                    }
+                                }
+                            }
+                            .disabled(isSyncing)
+                        
+                        if isSyncing {
+                            ProgressView()
+                                .padding(.leading, 8)
+                        }
+                    }
+                    
+                    if healthKitEnabled {
+                        Toggle("Automatisch synchronisieren", isOn: $healthKitAutoSync)
+                        
+                        Text(healthKitAutoSync
+                            ? "Workouts und Gewichtsdaten werden nach dem Speichern automatisch exportiert."
+                            : "Du kannst Daten manuell über einen Button exportieren.")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                } header: {
+                    Label("Apple Health", systemImage: "heart.fill")
+                } footer: {
+                    if !HealthKitService.shared.isAvailable {
+                        Text("Apple Health ist auf diesem Gerät nicht verfügbar.")
+                    }
+                }
+                .alert("Sync abgeschlossen", isPresented: $showSyncCompleteAlert) {
+                    Button("OK", role: .cancel) { }
+                } message: {
+                    Text("Alle bisherigen Daten wurden erfolgreich mit Apple Health synchronisiert.")
+                }
+                
+                Section {
+                    HStack {
+                        Label("Automatisch aktiv", systemImage: "checkmark.icloud.fill")
+                            .foregroundColor(.green)
+                    }
+                } header: {
+                    Label("iCloud Sync", systemImage: "icloud.fill")
+                } footer: {
+                    Text("Deine Daten werden automatisch und sicher über deinen iCloud-Account synchronisiert (sofern dein iPhone in iCloud angemeldet ist).")
+                }
+                
                 Section(header: Text("Darstellung")) {
                     NavigationLink("Farben & Kategorien") {
                         ThemeSettingsView()
@@ -175,5 +244,55 @@ struct SettingsView: View {
                 navId = UUID()
             }
         }
+    }
+    
+    @MainActor
+    private func performInitialSync() async {
+        isSyncing = true
+        
+        let service = HealthKitService.shared
+        
+        // Import historical weights
+        do {
+            let imported = try await service.importHistoricalWeights()
+            for item in imported {
+                let entry = WeightEntry(weightKg: item.weightKg, timestamp: item.timestamp, notes: "Aus Apple Health importiert")
+                entry.syncedToHealthKit = true
+                modelContext.insert(entry)
+            }
+        } catch {
+            print("Failed to import historical weights: \(error)")
+        }
+        
+        // Export existing data
+        for workout in unsyncedWorkouts {
+            do {
+                try await service.exportWorkout(session: workout)
+                workout.syncedToHealthKit = true
+            } catch {
+                print("Failed to sync workout: \(error)")
+            }
+        }
+        
+        for weight in unsyncedWeights {
+            do {
+                try await service.exportWeight(entry: weight)
+                weight.syncedToHealthKit = true
+            } catch {
+                print("Failed to sync weight: \(error)")
+            }
+        }
+        
+        for food in unsyncedFoods {
+            do {
+                try await service.exportNutrition(entry: food)
+                food.syncedToHealthKit = true
+            } catch {
+                print("Failed to sync food: \(error)")
+            }
+        }
+        
+        isSyncing = false
+        showSyncCompleteAlert = true
     }
 }

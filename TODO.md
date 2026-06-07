@@ -156,43 +156,45 @@
 
 ## Milestone 9 – Statistik & Analyse
 
-- [ ] `StatisticsView.swift` – Übersicht mit Filter-Optionen
-- [ ] `StatisticsViewModel.swift` – Aggregationslogik
-- [ ] Filterung nach Übung
-- [ ] Filterung nach Plan
-- [ ] Filterung nach Zeitraum (frei wählbar)
-- [ ] Diagramm: Volumen über Zeit (Swift Charts, Balkendiagramm)
-- [ ] Diagramm: Max. Gewicht über Zeit (Liniendiagramm)
-- [ ] Diagramm: Sätze und Wiederholungen über Zeit
-- [ ] `ExerciseProgressChart.swift` – Wiederverwendbare Chart-Komponente
-- [ ] `PlanProgressView.swift` – Plan-spezifische Auswertung
+- [x] `StatisticsView.swift` – Übersicht mit Filter-Optionen
+- [x] `StatisticsViewModel.swift` – Aggregationslogik
+- [x] Filterung nach Übung
+- [x] Filterung nach Plan
+- [x] Filterung nach Zeitraum (frei wählbar)
+- [x] Diagramm: Volumen über Zeit (Swift Charts, Balkendiagramm)
+- [x] Diagramm: Max. Gewicht über Zeit (Liniendiagramm)
+- [x] Diagramm: Sätze und Wiederholungen über Zeit
+- [x] `ExerciseProgressChart.swift` – Wiederverwendbare Chart-Komponente
+- [x] `PlanProgressView.swift` – Plan-spezifische Auswertung
 
 ---
 
 ## Milestone 10 – PDF-Export
 
-- [ ] `PDFExportService.swift` implementieren
-- [ ] Export 1: Leerer Trainingsplan (Tabelle: Übung, Sätze, Wdh., Gewicht, Notizen)
-- [ ] Export 2: Historischer Plan mit Steigerungskurve
-  - [ ] Swift Chart als `UIImage` rendern
-  - [ ] In PDF einbetten
-  - [ ] Workout-Historie tabellarisch listen
-- [ ] Share Sheet (`UIActivityViewController`) zum Teilen/Speichern
-- [ ] PDF-Export in Plan-Detailansicht zugänglich machen
+- [x] `PDFExportService.swift` implementieren
+- [x] Export 1: Leerer Trainingsplan (Tabelle: Übung, Sätze, Wdh., Gewicht, Notizen)
+- [x] Export 2: Historischer Plan mit Steigerungskurve
+  - [x] Swift Chart als `UIImage` rendern
+  - [x] In PDF einbetten
+  - [x] Workout-Historie tabellarisch listen
+- [x] Share Sheet (`UIActivityViewController`) zum Teilen/Speichern
+- [x] PDF-Export in Plan-Detailansicht zugänglich machen
 
 ---
 
 ## Milestone 11 – Apple Health Integration
 
 - [ ] `HealthKitService.swift` implementieren
-- [ ] Berechtigungen anfragen (Workout, Kalorien, Gewicht)
-- [ ] Workout-Daten exportieren (`HKWorkout`)
-- [ ] Kalorien exportieren (`HKQuantitySample`)
+- [ ] Berechtigungen anfragen (Workout, Gewicht)
+- [ ] Workout-Daten exportieren (`HKWorkout`) - **OHNE** Kalorien
 - [ ] Gewicht exportieren (`HKQuantitySample`)
 - [ ] Einstellungen: Toggle „Automatisch synchronisieren"
 - [ ] Automatischer Sync nach Workout-Abschluss (wenn aktiviert)
 - [ ] Manueller Sync-Button nach Workout (wenn deaktiviert)
 - [ ] Sync-Status pro Session tracken (`syncedToHealthKit: Bool`)
+- [ ] Zukünftig: Gewicht aus Apple Health einlesen und jeweilige Einträge erstellen (Notiz: "Import aus Health")
+- [ ] Zukünftig: Kalorien und Makro Export in Apple Health
+- [ ] Zukünftig: Kalorienangabe bei Workout (evtl. berechnen durch Apple Watch Daten, Statistik, prüfen was möglich ist)
 
 ---
 

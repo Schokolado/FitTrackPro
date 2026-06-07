@@ -50,7 +50,7 @@ struct NutritionDashboardView: View {
             }
             .background(Color.backgroundPrimary)
             .navigationTitle("Ernährung")
-            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: { showingScanner = true }) {

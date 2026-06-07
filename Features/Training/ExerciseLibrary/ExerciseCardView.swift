@@ -3,18 +3,10 @@ import SwiftUI
 struct ExerciseCardView: View {
     let exercise: Exercise
     
+    @EnvironmentObject var themeManager: ThemeManager
+    
     private var categoryColor: Color {
-        switch exercise.category.lowercased() {
-        case "brust": return .blue
-        case "rücken": return .indigo
-        case "beine": return .orange
-        case "schultern": return .purple
-        case "arme": return .cyan
-        case "bauch": return .green
-        case "cardio": return .red
-        case "ganzkörper": return .mint
-        default: return .gray
-        }
+        themeManager.color(for: exercise.category)
     }
     
     private var categoryIcon: String {

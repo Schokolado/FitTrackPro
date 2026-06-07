@@ -272,11 +272,39 @@ struct PlanCardView: View {
     let onDelete: () -> Void
     let onCreateGroup: () -> Void
     
+    @State private var showingShareSheet = false
+    @State private var generatedPDFUrl: URL? = nil
+    @State private var isGeneratingPDF = false
+    @State private var showingDeleteAlert = false
+    
     private var lastCompletedSession: WorkoutSession? {
         plan.sessions?
             .filter { $0.endTime != nil }
             .sorted { ($0.endTime ?? Date.distantPast) > ($1.endTime ?? Date.distantPast) }
             .first
+    }
+    
+    private func exportEmptyPlan() {
+        isGeneratingPDF = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            if let url = PDFExportService.shared.exportEmptyPlan(plan) {
+                self.generatedPDFUrl = url
+                self.showingShareSheet = true
+            }
+            self.isGeneratingPDF = false
+        }
+    }
+
+    private func exportHistoricalPlan() {
+        isGeneratingPDF = true
+        let sessions = plan.sessions?.sorted(by: { ($0.startTime ?? Date.distantPast) > ($1.startTime ?? Date.distantPast) }) ?? []
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            if let url = PDFExportService.shared.exportHistoricalPlan(plan: plan, sessions: sessions) {
+                self.generatedPDFUrl = url
+                self.showingShareSheet = true
+            }
+            self.isGeneratingPDF = false
+        }
     }
     
     private func lastCompletedText(for date: Date?) -> String {
@@ -361,9 +389,43 @@ struct PlanCardView: View {
             )
             .cornerRadius(20)
             .shadow(color: Color.black.opacity(0.15), radius: 10, x: 0, y: 5)
+            .overlay {
+                if isGeneratingPDF {
+                    ZStack {
+                        Color.black.opacity(0.4)
+                            .cornerRadius(20)
+                        
+                        VStack(spacing: 12) {
+                            ProgressView()
+                                .tint(.white)
+                                .scaleEffect(1.5)
+                            Text("PDF erstellen...")
+                                .font(.footnote)
+                                .foregroundColor(.white)
+                        }
+                    }
+                }
+            }
             
             // Menu
             Menu {
+                Menu {
+                    Button {
+                        exportEmptyPlan()
+                    } label: {
+                        Label("Leerer Plan (Vorlage)", systemImage: "doc.text")
+                    }
+                    Button {
+                        exportHistoricalPlan()
+                    } label: {
+                        Label("Historie inkl. Daten", systemImage: "chart.bar.doc.horizontal")
+                    }
+                } label: {
+                    Label("Als PDF exportieren", systemImage: "square.and.arrow.up")
+                }
+                
+                Divider()
+                
                 Menu {
                     Button {
                         plan.group = nil
@@ -417,7 +479,7 @@ struct PlanCardView: View {
                 Divider()
                 
                 Button(role: .destructive) {
-                    onDelete()
+                    showingDeleteAlert = true
                 } label: {
                     Label("Löschen", systemImage: "trash")
                 }
@@ -428,6 +490,20 @@ struct PlanCardView: View {
                     .padding(16)
                     .contentShape(Rectangle())
             }
+        }
+        .sheet(isPresented: $showingShareSheet) {
+            if let url = generatedPDFUrl {
+                ShareSheet(activityItems: [url])
+                    .presentationDetents([.medium, .large])
+            }
+        }
+        .alert("Plan löschen", isPresented: $showingDeleteAlert) {
+            Button("Abbrechen", role: .cancel) {}
+            Button("Löschen", role: .destructive) {
+                onDelete()
+            }
+        } message: {
+            Text("Bist du sicher, dass du den Trainingsplan '\(plan.name)' unwiderruflich löschen möchtest?")
         }
     }
 }
@@ -698,7 +774,7 @@ struct TrainingMainView: View {
                 .padding(.top, 20)
             }
             .navigationTitle("Training")
-            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarTitleDisplayMode(.large)
         }
         .id(navId)
         .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("TabReselected"))) { notification in

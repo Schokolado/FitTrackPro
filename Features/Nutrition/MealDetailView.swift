@@ -13,6 +13,10 @@ struct MealDetailView: View {
     @State private var showingSavedAlert = false
     @State private var savedFoodName = ""
     
+    @State private var showingScanner = false
+    @State private var scannedProduct: OFFProduct? = nil
+    @State private var showingAddEntryFromScanner = false
+    
     private var todayLog: DailyLog? {
         allDailyLogs.first { $0.dateString == dateString }
     }
@@ -23,6 +27,13 @@ struct MealDetailView: View {
     
     private var totalCalories: Double {
         entries.reduce(0) { $0 + $1.calories }
+    }
+    
+    private var parsedDate: Date {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withFullDate]
+        formatter.timeZone = TimeZone.current
+        return formatter.date(from: dateString) ?? Date()
     }
     
     var body: some View {
@@ -82,6 +93,17 @@ struct MealDetailView: View {
                             .foregroundColor(.primary)
                     }
                 }
+                
+                Button(action: {
+                    showingScanner = true
+                }) {
+                    HStack {
+                        Image(systemName: "barcode.viewfinder")
+                            .foregroundColor(.brand)
+                        Text("Barcode scannen")
+                            .foregroundColor(.primary)
+                    }
+                }
             }
         }
         .navigationTitle(mealType.rawValue)
@@ -89,6 +111,52 @@ struct MealDetailView: View {
         .sheet(isPresented: $showingFoodSearch) {
             FoodSearchView(mealType: mealType) { savedName in
                 showingFoodSearch = false
+                savedFoodName = savedName
+                showingSavedAlert = true
+            }
+            .presentationDetents([.large])
+        }
+        .sheet(isPresented: $showingScanner) {
+            ZStack {
+                BarcodeScannerView(onProductFound: { product in
+                    showingScanner = false
+                    scannedProduct = product
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        showingAddEntryFromScanner = true
+                    }
+                })
+                
+                #if targetEnvironment(simulator)
+                VStack {
+                    Spacer()
+                    Button(action: {
+                        Task {
+                            let service = FoodAPIService()
+                            let product = try? await service.fetchProduct(barcode: "5449000000996")
+                            DispatchQueue.main.async {
+                                showingScanner = false
+                                scannedProduct = product
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                    showingAddEntryFromScanner = true
+                                }
+                            }
+                        }
+                    }) {
+                        Text("Simulator Mock Scan")
+                            .font(.headline)
+                            .padding()
+                            .background(Color.brand)
+                            .foregroundColor(.white)
+                            .cornerRadius(10)
+                    }
+                    .padding(.bottom, 40)
+                }
+                #endif
+            }
+        }
+        .sheet(isPresented: $showingAddEntryFromScanner) {
+            FoodEntryFormView(mealType: mealType, prefilledProduct: scannedProduct, targetDate: parsedDate) { savedName in
+                showingAddEntryFromScanner = false
                 savedFoodName = savedName
                 showingSavedAlert = true
             }

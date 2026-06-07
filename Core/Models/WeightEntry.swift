@@ -7,11 +7,13 @@ final class WeightEntry {
     var weightKg: Double = 0.0
     var timestamp: Date = Date()
     var notes: String = ""
-
-    init(id: UUID = UUID(), weightKg: Double = 0.0, timestamp: Date = Date(), notes: String = "") {
+    var syncedToHealthKit: Bool = false
+    
+    init(id: UUID = UUID(), weightKg: Double = 0.0, timestamp: Date = Date(), notes: String = "", syncedToHealthKit: Bool = false) {
         self.id = id
         self.weightKg = weightKg
         self.timestamp = timestamp
         self.notes = notes
+        self.syncedToHealthKit = syncedToHealthKit
     }
 }

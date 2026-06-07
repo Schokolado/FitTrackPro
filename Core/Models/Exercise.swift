@@ -18,6 +18,7 @@ final class Exercise {
     var localMediaPaths: [String] = []
     var defaultRestDuration: TimeInterval = 90.0
     var isCustom: Bool = false
+    var isArchived: Bool = false
     var sortOrder: Int = 0
     var createdAt: Date = Date()
 
@@ -27,7 +28,7 @@ final class Exercise {
     @Relationship(deleteRule: .nullify, inverse: \WorkoutSet.exercise)
     var workoutSets: [WorkoutSet]?
 
-    init(id: UUID = UUID(), name: String = "", category: String = "Freie Gewichte", notes: String = "", externalVideoURL: URL? = nil, localMediaPaths: [String] = [], defaultRestDuration: TimeInterval = 90.0, isCustom: Bool = false, sortOrder: Int = 0, createdAt: Date = Date()) {
+    init(id: UUID = UUID(), name: String = "", category: String = "Freie Gewichte", notes: String = "", externalVideoURL: URL? = nil, localMediaPaths: [String] = [], defaultRestDuration: TimeInterval = 90.0, isCustom: Bool = false, isArchived: Bool = false, sortOrder: Int = 0, createdAt: Date = Date()) {
         self.id = id
         self.name = name
         self.category = category
@@ -36,6 +37,7 @@ final class Exercise {
         self.localMediaPaths = localMediaPaths
         self.defaultRestDuration = defaultRestDuration
         self.isCustom = isCustom
+        self.isArchived = isArchived
         self.sortOrder = sortOrder
         self.createdAt = createdAt
     }

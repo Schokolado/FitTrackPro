@@ -12,7 +12,11 @@ struct FoodEntryFormView: View {
     var targetDate: Date = Date()
     var onSave: ((String) -> Void)? = nil
     
+    @AppStorage(AppStorageKeys.healthKitEnabled) private var healthKitEnabled = false
+    @AppStorage(AppStorageKeys.healthKitAutoSync) private var healthKitAutoSync = false
+    
     @State private var showingValidationError = false
+    @State private var showingScanner = false
     
     @State private var name: String = ""
     @State private var amountGrams: Double = 100.0
@@ -25,6 +29,19 @@ struct FoodEntryFormView: View {
     var body: some View {
         NavigationStack {
             Form {
+                Section {
+                    Button(action: {
+                        showingScanner = true
+                    }) {
+                        HStack {
+                            Image(systemName: "barcode.viewfinder")
+                                .foregroundColor(.brand)
+                            Text("Aus Datenbank scannen")
+                                .foregroundColor(.primary)
+                        }
+                    }
+                }
+                
                 Section(header: Text("Details")) {
                     TextField("Name", text: $name)
                     Picker("Mahlzeit", selection: $mealType) {
@@ -118,20 +135,41 @@ struct FoodEntryFormView: View {
             } message: {
                 Text("Bitte wähle eine Mahlzeit aus (z.B. Frühstück).")
             }
+            .sheet(isPresented: $showingScanner) {
+                ZStack {
+                    BarcodeScannerView(onProductFound: { product in
+                        showingScanner = false
+                        if let p = product { applyProduct(p) }
+                    })
+                    
+                    #if targetEnvironment(simulator)
+                    VStack {
+                        Spacer()
+                        Button(action: {
+                            Task {
+                                let service = FoodAPIService()
+                                let product = try? await service.fetchProduct(barcode: "5449000000996")
+                                DispatchQueue.main.async {
+                                    showingScanner = false
+                                    if let p = product { applyProduct(p) }
+                                }
+                            }
+                        }) {
+                            Text("Simulator Mock Scan")
+                                .font(.headline)
+                                .padding()
+                                .background(Color.brand)
+                                .foregroundColor(.white)
+                                .cornerRadius(10)
+                        }
+                        .padding(.bottom, 40)
+                    }
+                    #endif
+                }
+            }
             .onAppear {
                 if let product = prefilledProduct {
-                    name = product.productName ?? ""
-                    if let sq = product.servingQuantity, sq > 0 {
-                        amountGrams = sq
-                    } else {
-                        amountGrams = 100.0
-                    }
-                    if let nuts = product.nutriments {
-                        caloriesPer100g = nuts.energyKcal100g ?? 0.0
-                        proteinPer100g = nuts.proteins100g ?? 0.0
-                        carbsPer100g = nuts.carbohydrates100g ?? 0.0
-                        fatPer100g = nuts.fat100g ?? 0.0
-                    }
+                    applyProduct(product)
                 } else if let entry = prefilledEntry {
                     name = entry.name
                     amountGrams = entry.amountGrams > 0 ? entry.amountGrams : 100.0
@@ -146,6 +184,21 @@ struct FoodEntryFormView: View {
                     }
                 }
             }
+        }
+    }
+    
+    private func applyProduct(_ product: OFFProduct) {
+        name = product.productName ?? ""
+        if let sq = product.servingQuantity, sq > 0 {
+            amountGrams = sq
+        } else {
+            amountGrams = 100.0
+        }
+        if let nuts = product.nutriments {
+            caloriesPer100g = nuts.energyKcal100g ?? 0.0
+            proteinPer100g = nuts.proteins100g ?? 0.0
+            carbsPer100g = nuts.carbohydrates100g ?? 0.0
+            fatPer100g = nuts.fat100g ?? 0.0
         }
     }
     
@@ -181,6 +234,17 @@ struct FoodEntryFormView: View {
         )
         
         modelContext.insert(newEntry)
+        
+        if healthKitEnabled && healthKitAutoSync {
+            Task { @MainActor in
+                do {
+                    try await HealthKitService.shared.exportNutrition(entry: newEntry)
+                    newEntry.syncedToHealthKit = true
+                } catch {
+                    print("Nutrition sync failed: \(error)")
+                }
+            }
+        }
         
         if let onSave = onSave {
             onSave(newEntry.name)

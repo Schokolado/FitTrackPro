@@ -1,7 +1,7 @@
 import SwiftUI
 import AVFoundation
 
-struct BarcodeScannerView: UIViewControllerRepresentable {
+struct BarcodeScannerRepresentable: UIViewControllerRepresentable {
     var onProductFound: (OFFProduct?) -> Void
     
     func makeUIViewController(context: Context) -> ScannerViewController {
@@ -17,9 +17,9 @@ struct BarcodeScannerView: UIViewControllerRepresentable {
     }
     
     class Coordinator: NSObject, ScannerViewControllerDelegate {
-        var parent: BarcodeScannerView
+        var parent: BarcodeScannerRepresentable
         
-        init(_ parent: BarcodeScannerView) {
+        init(_ parent: BarcodeScannerRepresentable) {
             self.parent = parent
         }
         
@@ -125,6 +125,43 @@ class ScannerViewController: UIViewController, AVCaptureMetadataOutputObjectsDel
             AudioServicesPlaySystemSound(SystemSoundID(kSystemSoundID_Vibrate))
             isProcessing = true
             delegate?.didFindBarcode(stringValue, in: self)
+        }
+    }
+}
+
+struct BarcodeScannerView: View {
+    @Environment(\.dismiss) private var dismiss
+    var onProductFound: (OFFProduct?) -> Void
+    
+    var body: some View {
+        ZStack {
+            BarcodeScannerRepresentable(onProductFound: onProductFound)
+                .edgesIgnoringSafeArea(.all)
+            
+            VStack {
+                HStack {
+                    Spacer()
+                    Button(action: {
+                        dismiss()
+                    }) {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.system(size: 32))
+                            .foregroundColor(.white)
+                            .shadow(radius: 4)
+                            .padding()
+                    }
+                }
+                
+                Spacer()
+                
+                Text("Bitte richte die Kamera auf den Barcode.")
+                    .font(.headline)
+                    .foregroundColor(.white)
+                    .padding()
+                    .background(Color.black.opacity(0.7))
+                    .cornerRadius(12)
+                    .padding(.bottom, 60)
+            }
         }
     }
 }
