@@ -14,6 +14,7 @@ struct DashboardView: View {
     @Query(sort: \WeightEntry.timestamp, order: .reverse) private var weightEntries: [WeightEntry]
     @Query private var allFoodEntries: [FoodEntry]
     @Query(sort: \WorkoutSession.startTime, order: .reverse) private var workouts: [WorkoutSession]
+    @Query private var manualStepEntries: [StepEntry]
     
     var todayFoodEntries: [FoodEntry] {
         let todayString = Date().iso8601String()
@@ -22,6 +23,12 @@ struct DashboardView: View {
     
     var todayWorkouts: [WorkoutSession] {
         workouts.filter { Calendar.current.isDateInToday($0.startTime) }
+    }
+    
+    var totalTodaySteps: Int {
+        let todayString = Date().iso8601String()
+        let manual = manualStepEntries.filter { $0.dateString == todayString }.reduce(0) { $0 + $1.steps }
+        return todaySteps + manual
     }
     
     var consumedCalories: Double {
@@ -122,10 +129,13 @@ struct DashboardView: View {
                     .padding(.horizontal)
                     
                     // Step Card
-                    StepSummaryCard(
-                        steps: todaySteps,
-                        goal: dailyStepGoal
-                    )
+                    NavigationLink(destination: StepTrackerView()) {
+                        StepSummaryCard(
+                            steps: totalTodaySteps,
+                            goal: dailyStepGoal
+                        )
+                    }
+                    .buttonStyle(PlainButtonStyle())
                     .padding(.horizontal)
                     .task {
                         if healthKitEnabled {

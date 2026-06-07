@@ -270,6 +270,57 @@ final class HealthKitService {
         }
     }
     
+    /// Liest historische Schrittdaten für einen bestimmten Zeitraum aus
+    func fetchStepsHistory(startDate: Date, endDate: Date = Date()) async throws -> [(date: Date, steps: Int)] {
+        guard isAvailable else { throw HealthKitError.notAvailable }
+        guard let stepType = HKQuantityType.quantityType(forIdentifier: .stepCount) else {
+            return []
+        }
+        
+        let calendar = Calendar.current
+        let startOfStart = calendar.startOfDay(for: startDate)
+        let endOfEnd = calendar.date(byAdding: .day, value: 1, to: calendar.startOfDay(for: endDate))!
+        
+        let predicate = HKQuery.predicateForSamples(withStart: startOfStart, end: endOfEnd, options: .strictStartDate)
+        
+        var interval = DateComponents()
+        interval.day = 1
+        
+        let query = HKStatisticsCollectionQuery(quantityType: stepType,
+                                                quantitySamplePredicate: predicate,
+                                                options: .cumulativeSum,
+                                                anchorDate: startOfStart,
+                                                intervalComponents: interval)
+        
+        return try await withCheckedThrowingContinuation { continuation in
+            query.initialResultsHandler = { query, results, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+                
+                guard let results = results else {
+                    continuation.resume(returning: [])
+                    return
+                }
+                
+                var dailySteps: [(Date, Int)] = []
+                results.enumerateStatistics(from: startOfStart, to: endOfEnd) { statistics, stop in
+                    if let sum = statistics.sumQuantity() {
+                        let steps = Int(sum.doubleValue(for: HKUnit.count()))
+                        dailySteps.append((statistics.startDate, steps))
+                    } else {
+                        dailySteps.append((statistics.startDate, 0))
+                    }
+                }
+                
+                continuation.resume(returning: dailySteps)
+            }
+            
+            healthStore.execute(query)
+        }
+    }
+    
     /// Importiert historische Gewichtsdaten aus Apple Health, die nicht von dieser App stammen.
     func importHistoricalWeights() async throws -> [(timestamp: Date, weightKg: Double)] {
         guard isAvailable else { throw HealthKitError.notAvailable }
