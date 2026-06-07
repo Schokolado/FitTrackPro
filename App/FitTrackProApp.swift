@@ -44,6 +44,12 @@ struct FitTrackProApp: App {
                                 do {
                                     let newContainer = try ModelContainer(for: schema, configurations: [config])
                                     
+                                    // Seed default exercises during splash screen
+                                    await MainActor.run {
+                                        let context = newContainer.mainContext
+                                        SeedDataService.shared.seedExercisesIfNeeded(context: context)
+                                    }
+                                    
                                     // Give the splash screen a minimum of 2 seconds to show off the cool animation
                                     try? await Task.sleep(nanoseconds: 2_000_000_000)
                                     

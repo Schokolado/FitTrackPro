@@ -273,6 +273,15 @@ struct OnboardingBodyPage: View {
                     // Save as first WeightEntry
                     let entry = WeightEntry(weightKg: weightKg, timestamp: Date(), notes: "Erster Eintrag (Onboarding)")
                     modelContext.insert(entry)
+                    
+                    // Write weight to Apple Health if no entry exists for today
+                    Task {
+                        if HealthKitService.shared.isAvailable {
+                            try? await HealthKitService.shared.exportWeight(entry: entry)
+                            entry.syncedToHealthKit = true
+                        }
+                    }
+                    
                     withAnimation { currentPage = 3 }
                 }
             }

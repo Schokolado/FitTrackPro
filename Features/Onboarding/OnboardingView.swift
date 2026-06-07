@@ -2,6 +2,7 @@ import SwiftUI
 
 struct OnboardingView: View {
     @AppStorage(AppStorageKeys.hasCompletedOnboarding) private var hasCompletedOnboarding = false
+    @Environment(\.modelContext) private var modelContext
     @State private var currentPage = 0
 
     var body: some View {
@@ -21,8 +22,27 @@ struct OnboardingView: View {
                         try? await HealthKitService.shared.requestAuthorization()
                         
                         await MainActor.run {
-                            // Apple Health in den App-Einstellungen als "Aktiviert" markieren
+                            // Apple Health aktivieren und AutoSync einschalten
                             UserDefaults.standard.set(true, forKey: AppStorageKeys.healthKitEnabled)
+                            UserDefaults.standard.set(true, forKey: "autoSyncHealthKit")
+                        }
+                        
+                        // Historische Gewichtsdaten aus Apple Health importieren
+                        do {
+                            let imported = try await HealthKitService.shared.importHistoricalWeights()
+                            await MainActor.run {
+                                for item in imported {
+                                    let entry = WeightEntry(weightKg: item.weightKg, timestamp: item.timestamp, notes: "Aus Apple Health importiert")
+                                    entry.syncedToHealthKit = true
+                                    modelContext.insert(entry)
+                                }
+                                try? modelContext.save()
+                            }
+                        } catch {
+                            print("Failed to import historical weights during onboarding: \(error)")
+                        }
+                        
+                        await MainActor.run {
                             // Onboarding beenden
                             hasCompletedOnboarding = true
                         }
