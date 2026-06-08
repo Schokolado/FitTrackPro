@@ -24,9 +24,13 @@ final class FoodEntry {
     var fatGrams: Double = 0.0
     var syncedToHealthKit: Bool = false
     
+    // Verknüpfung zu Rezepten
+    var recipeId: UUID?
+    var recipeNote: String?
+    
     var dailyLog: DailyLog?
 
-    init(id: UUID = UUID(), name: String = "", barcode: String? = nil, timestamp: Date = Date(), mealType: MealType = .snack, amountGrams: Double = 0.0, calories: Double = 0.0, proteinGrams: Double = 0.0, carbsGrams: Double = 0.0, fatGrams: Double = 0.0, syncedToHealthKit: Bool = false, dailyLog: DailyLog? = nil) {
+    init(id: UUID = UUID(), name: String = "", barcode: String? = nil, timestamp: Date = Date(), mealType: MealType = .snack, amountGrams: Double = 0.0, calories: Double = 0.0, proteinGrams: Double = 0.0, carbsGrams: Double = 0.0, fatGrams: Double = 0.0, syncedToHealthKit: Bool = false, recipeId: UUID? = nil, recipeNote: String? = nil, dailyLog: DailyLog? = nil) {
         self.id = id
         self.name = name
         self.barcode = barcode
@@ -38,6 +42,8 @@ final class FoodEntry {
         self.carbsGrams = carbsGrams
         self.fatGrams = fatGrams
         self.syncedToHealthKit = syncedToHealthKit
+        self.recipeId = recipeId
+        self.recipeNote = recipeNote
         self.dailyLog = dailyLog
     }
 }

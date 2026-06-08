@@ -37,7 +37,10 @@ struct FitTrackProApp: App {
                                     FoodEntry.self,
                                     DailyLog.self,
                                     WeightEntry.self,
-                                    StepEntry.self
+                                    StepEntry.self,
+                                    SavedFood.self,
+                                    Recipe.self,
+                                    RecipeIngredient.self
                                 ])
                                 let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false, cloudKitDatabase: .automatic)
                                 

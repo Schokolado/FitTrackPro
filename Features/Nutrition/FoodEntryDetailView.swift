@@ -49,6 +49,17 @@ struct FoodEntryDetailView: View {
                     infoRow(title: "Mahlzeit", value: entry.mealType.rawValue)
                     Divider()
                     infoRow(title: "Hinzugefügt am", value: entry.timestamp.formatted(date: .abbreviated, time: .shortened))
+                    
+                    if let note = entry.recipeNote, !note.isEmpty {
+                        Divider()
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Rezeptzutaten")
+                                .foregroundColor(.secondary)
+                            Text(note)
+                                .font(.body)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    }
                 }
                 .padding()
                 .cardStyle()

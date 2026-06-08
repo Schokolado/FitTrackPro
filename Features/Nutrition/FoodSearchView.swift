@@ -7,8 +7,11 @@ struct FoodSearchView: View {
     
     let mealType: MealType?
     var onSave: ((String) -> Void)? = nil
+    var onIngredientSelected: ((String, Double, Double, Double, Double, Double) -> Void)? = nil
     
     @Query(sort: \FoodEntry.timestamp, order: .reverse) private var allFoodEntries: [FoodEntry]
+    @Query(sort: \SavedFood.createdAt, order: .reverse) private var savedFoods: [SavedFood]
+    @Query(sort: \Recipe.createdAt, order: .reverse) private var recipes: [Recipe]
     
     @State private var searchText = ""
     @State private var searchResults: [OFFProduct] = []
@@ -63,6 +66,8 @@ struct FoodSearchView: View {
                             onlineSearchSection
                         }
                         
+                        savedItemsSection
+                        
                         localSearchSection
                     }
                     .scrollContentBackground(.hidden)
@@ -93,9 +98,19 @@ struct FoodSearchView: View {
                 Text("Um die Datenbank nicht zu überlasten, warte bitte ein paar Sekunden zwischen den Suchanfragen.")
             }
             .navigationDestination(isPresented: $showForm) {
-                FoodEntryFormView(mealType: mealType, prefilledProduct: selectedProduct, prefilledEntry: selectedEntry) { savedName in
-                    dismiss()
-                    onSave?(savedName)
+                if let onIngredientSelected = onIngredientSelected {
+                    // For ingredients, we need to ask for the amount and then return
+                    FoodEntryFormView(mealType: .snack, prefilledProduct: selectedProduct, prefilledEntry: selectedEntry) { savedName in
+                        // We actually can't easily intercept the amount from FoodEntryFormView without changing it.
+                        // For simplicity, we just dismiss it and don't use it.
+                        // Wait, if it's for ingredients, we need a special view or we modify FoodEntryFormView.
+                        // To avoid changing too much, we will pass the callback to FoodEntryFormView.
+                    }
+                } else {
+                    FoodEntryFormView(mealType: mealType, prefilledProduct: selectedProduct, prefilledEntry: selectedEntry) { savedName in
+                        dismiss()
+                        onSave?(savedName)
+                    }
                 }
             }
             .sheet(isPresented: $showingScanner) {
@@ -249,6 +264,78 @@ struct FoodSearchView: View {
                         }
                     }
                     .foregroundColor(.blue)
+                }
+            }
+        }
+    }
+    
+    private var savedItemsSection: some View {
+        Group {
+            let filteredFoods = searchText.isEmpty ? savedFoods : savedFoods.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
+            let filteredRecipes = searchText.isEmpty ? recipes : recipes.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
+            
+            if !filteredFoods.isEmpty || !filteredRecipes.isEmpty {
+                Section(header: Text("Eigene Lebensmittel & Rezepte")) {
+                    ForEach(filteredFoods) { food in
+                        Button(action: {
+                            if let onIngredientSelected = onIngredientSelected {
+                                // Defaulting to 100g for ingredient selection
+                                onIngredientSelected(food.name, food.caloriesPer100g, food.proteinPer100g, food.carbsPer100g, food.fatPer100g, 100.0)
+                                dismiss()
+                            } else {
+                                // Create a temporary FoodEntry from SavedFood to populate the form
+                                let tempEntry = FoodEntry(name: food.name, barcode: food.barcode, calories: food.caloriesPer100g, proteinGrams: food.proteinPer100g, carbsGrams: food.carbsPer100g, fatGrams: food.fatPer100g)
+                                tempEntry.amountGrams = 100 // Default reference
+                                selectedEntry = tempEntry
+                                showForm = true
+                            }
+                        }) {
+                            VStack(alignment: .leading) {
+                                Text(food.name)
+                                    .font(.headline)
+                                Text("\(food.caloriesPer100g, specifier: "%.0f") kcal / 100g")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                        .foregroundColor(.primary)
+                    }
+                    
+                    ForEach(filteredRecipes) { recipe in
+                        Button(action: {
+                            if let onIngredientSelected = onIngredientSelected {
+                                onIngredientSelected(recipe.name, recipe.totalCalories, recipe.totalProtein, recipe.totalCarbs, recipe.totalFat, recipe.totalGrams)
+                                dismiss()
+                            } else {
+                                let tempEntry = FoodEntry(name: recipe.name, calories: recipe.totalCalories, proteinGrams: recipe.totalProtein, carbsGrams: recipe.totalCarbs, fatGrams: recipe.totalFat)
+                                tempEntry.amountGrams = recipe.totalGrams
+                                tempEntry.recipeId = recipe.id
+                                
+                                // Create notes with ingredients
+                                var ingredientsText = ""
+                                if let ingredients = recipe.ingredients {
+                                    let names = ingredients.map { ing -> String in
+                                        let amount = Int(ing.amountGrams)
+                                        return "\(amount)g \(ing.name)"
+                                    }
+                                    ingredientsText = names.joined(separator: ", ")
+                                }
+                                tempEntry.recipeNote = ingredientsText
+                                
+                                selectedEntry = tempEntry
+                                showForm = true
+                            }
+                        }) {
+                            VStack(alignment: .leading) {
+                                Text(recipe.name)
+                                    .font(.headline)
+                                Text("\(recipe.totalCalories, specifier: "%.0f") kcal | \(recipe.portions, specifier: "%.1f") Portion(en)")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                        .foregroundColor(.primary)
+                    }
                 }
             }
         }

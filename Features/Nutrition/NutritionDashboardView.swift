@@ -52,7 +52,10 @@ struct NutritionDashboardView: View {
             .navigationTitle("Ernährung")
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItemGroup(placement: .navigationBarTrailing) {
+                    NavigationLink(destination: FoodManagementView()) {
+                        Image(systemName: "list.bullet.clipboard")
+                    }
                     Button(action: { showingScanner = true }) {
                         Image(systemName: "barcode.viewfinder")
                     }
