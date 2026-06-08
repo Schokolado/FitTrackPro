@@ -16,15 +16,19 @@ struct FoodSearchView: View {
     @State private var searchText = ""
     @State private var searchResults: [OFFProduct] = []
     @State private var isSearching = false
+    @State private var showingScanner = false
+    @State private var hasMoreResults = false
+    @State private var showRateLimitAlert = false
+    @State private var showAmountAlert = false
+    @State private var ingredientAmount: Double = 100.0
+    @State private var pendingIngredient: (name: String, cal: Double, pro: Double, carb: Double, fat: Double)?
     @State private var hasSearchedOnline = false
     @State private var lastSearchTime: Date = Date.distantPast
-    @State private var showRateLimitAlert = false
     
     // For navigation to form
     @State private var selectedProduct: OFFProduct?
     @State private var selectedEntry: FoodEntry?
     @State private var showForm = false
-    @State private var showingScanner = false
     
     private let apiService = FoodAPIService()
     
@@ -49,7 +53,7 @@ struct FoodSearchView: View {
     }
     
         @State private var currentPage = 1
-    @State private var hasMoreResults = false
+
 
     var body: some View {
         NavigationStack {
@@ -97,6 +101,17 @@ struct FoodSearchView: View {
             } message: {
                 Text("Um die Datenbank nicht zu überlasten, warte bitte ein paar Sekunden zwischen den Suchanfragen.")
             }
+            .alert("Menge eingeben (g/ml)", isPresented: $showAmountAlert) {
+                TextField("Menge", value: $ingredientAmount, format: .number)
+                    .keyboardType(.decimalPad)
+                Button("Abbrechen", role: .cancel) { }
+                Button("Hinzufügen") {
+                    if let pending = pendingIngredient, let onSelected = onIngredientSelected {
+                        onSelected(pending.name, pending.cal, pending.pro, pending.carb, pending.fat, ingredientAmount)
+                        dismiss()
+                    }
+                }
+            }
             .navigationDestination(isPresented: $showForm) {
                 if let onIngredientSelected = onIngredientSelected {
                     // For ingredients, we need to ask for the amount and then return
@@ -120,7 +135,18 @@ struct FoodSearchView: View {
                         selectedProduct = product
                         selectedEntry = nil
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                            showForm = true
+                            if onIngredientSelected != nil {
+                                let name = product?.productName ?? "Unbekanntes Produkt"
+                                let cal = product?.nutriments?.energyKcal100g ?? 0
+                                let pro = product?.nutriments?.proteins100g ?? 0
+                                let carb = product?.nutriments?.carbohydrates100g ?? 0
+                                let fat = product?.nutriments?.fat100g ?? 0
+                                pendingIngredient = (name, cal, pro, carb, fat)
+                                ingredientAmount = 100.0
+                                showAmountAlert = true
+                            } else {
+                                showForm = true
+                            }
                         }
                     })
                     
@@ -136,7 +162,18 @@ struct FoodSearchView: View {
                                     selectedProduct = product
                                     selectedEntry = nil
                                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                                        showForm = true
+                                        if onIngredientSelected != nil {
+                                            let name = product?.productName ?? "Unbekanntes Produkt"
+                                            let cal = product?.nutriments?.energyKcal100g ?? 0
+                                            let pro = product?.nutriments?.proteins100g ?? 0
+                                            let carb = product?.nutriments?.carbohydrates100g ?? 0
+                                            let fat = product?.nutriments?.fat100g ?? 0
+                                            pendingIngredient = (name, cal, pro, carb, fat)
+                                            ingredientAmount = 100.0
+                                            showAmountAlert = true
+                                        } else {
+                                            showForm = true
+                                        }
                                     }
                                 }
                             }
@@ -235,7 +272,19 @@ struct FoodSearchView: View {
                                 selectedProduct = product
                             }
                             isSearching = false
-                            showForm = true
+                            if onIngredientSelected != nil {
+                                let p = selectedProduct ?? product
+                                let name = p.productName ?? "Unbekanntes Produkt"
+                                let cal = p.nutriments?.energyKcal100g ?? 0
+                                let pro = p.nutriments?.proteins100g ?? 0
+                                let carb = p.nutriments?.carbohydrates100g ?? 0
+                                let fat = p.nutriments?.fat100g ?? 0
+                                pendingIngredient = (name, cal, pro, carb, fat)
+                                ingredientAmount = 100.0
+                                showAmountAlert = true
+                            } else {
+                                showForm = true
+                            }
                         }
                     }) {
                         VStack(alignment: .leading) {
@@ -278,10 +327,10 @@ struct FoodSearchView: View {
                 Section(header: Text("Eigene Lebensmittel & Rezepte")) {
                     ForEach(filteredFoods) { food in
                         Button(action: {
-                            if let onIngredientSelected = onIngredientSelected {
-                                // Defaulting to 100g for ingredient selection
-                                onIngredientSelected(food.name, food.caloriesPer100g, food.proteinPer100g, food.carbsPer100g, food.fatPer100g, 100.0)
-                                dismiss()
+                            if onIngredientSelected != nil {
+                                pendingIngredient = (food.name, food.caloriesPer100g, food.proteinPer100g, food.carbsPer100g, food.fatPer100g)
+                                ingredientAmount = 100.0
+                                showAmountAlert = true
                             } else {
                                 // Create a temporary FoodEntry from SavedFood to populate the form
                                 let tempEntry = FoodEntry(name: food.name, barcode: food.barcode, calories: food.caloriesPer100g, proteinGrams: food.proteinPer100g, carbsGrams: food.carbsPer100g, fatGrams: food.fatPer100g)
@@ -303,9 +352,10 @@ struct FoodSearchView: View {
                     
                     ForEach(filteredRecipes) { recipe in
                         Button(action: {
-                            if let onIngredientSelected = onIngredientSelected {
-                                onIngredientSelected(recipe.name, recipe.totalCalories, recipe.totalProtein, recipe.totalCarbs, recipe.totalFat, recipe.totalGrams)
-                                dismiss()
+                            if onIngredientSelected != nil {
+                                pendingIngredient = (recipe.name, recipe.totalCalories, recipe.totalProtein, recipe.totalCarbs, recipe.totalFat)
+                                ingredientAmount = recipe.totalGrams > 0 ? recipe.totalGrams : 100.0
+                                showAmountAlert = true
                             } else {
                                 let tempEntry = FoodEntry(name: recipe.name, calories: recipe.totalCalories, proteinGrams: recipe.totalProtein, carbsGrams: recipe.totalCarbs, fatGrams: recipe.totalFat)
                                 tempEntry.amountGrams = recipe.totalGrams
