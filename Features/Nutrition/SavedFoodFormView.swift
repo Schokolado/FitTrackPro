@@ -9,10 +9,10 @@ struct SavedFoodFormView: View {
     
     @State private var name: String = ""
     @State private var barcode: String = ""
-    @State private var calories: Double = 0
-    @State private var protein: Double = 0
-    @State private var carbs: Double = 0
-    @State private var fat: Double = 0
+    @State private var calories: Double? = nil
+    @State private var protein: Double? = nil
+    @State private var carbs: Double? = nil
+    @State private var fat: Double? = nil
     
     @State private var showingScanner = false
     
@@ -79,18 +79,18 @@ struct SavedFoodFormView: View {
                         if let food = foodToEdit {
                             food.name = name
                             food.barcode = barcode.isEmpty ? nil : barcode
-                            food.caloriesPer100g = calories
-                            food.proteinPer100g = protein
-                            food.carbsPer100g = carbs
-                            food.fatPer100g = fat
+                            food.caloriesPer100g = calories ?? 0
+                            food.proteinPer100g = protein ?? 0
+                            food.carbsPer100g = carbs ?? 0
+                            food.fatPer100g = fat ?? 0
                         } else {
                             let newFood = SavedFood(
                                 name: name,
                                 barcode: barcode.isEmpty ? nil : barcode,
-                                caloriesPer100g: calories,
-                                proteinPer100g: protein,
-                                carbsPer100g: carbs,
-                                fatPer100g: fat
+                                caloriesPer100g: calories ?? 0,
+                                proteinPer100g: protein ?? 0,
+                                carbsPer100g: carbs ?? 0,
+                                fatPer100g: fat ?? 0
                             )
                             modelContext.insert(newFood)
                         }
@@ -105,10 +105,10 @@ struct SavedFoodFormView: View {
                     if let product = product {
                         barcode = product.code ?? ""
                         if name.isEmpty { name = product.productName ?? "" }
-                        if calories == 0 { calories = product.nutriments?.energyKcal100g ?? 0 }
-                        if protein == 0 { protein = product.nutriments?.proteins100g ?? 0 }
-                        if carbs == 0 { carbs = product.nutriments?.carbohydrates100g ?? 0 }
-                        if fat == 0 { fat = product.nutriments?.fat100g ?? 0 }
+                        if (calories ?? 0) == 0 { calories = product.nutriments?.energyKcal100g ?? 0 }
+                        if (protein ?? 0) == 0 { protein = product.nutriments?.proteins100g ?? 0 }
+                        if (carbs ?? 0) == 0 { carbs = product.nutriments?.carbohydrates100g ?? 0 }
+                        if (fat ?? 0) == 0 { fat = product.nutriments?.fat100g ?? 0 }
                     }
                 })
             }

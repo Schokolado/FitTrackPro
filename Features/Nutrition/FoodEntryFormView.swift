@@ -22,10 +22,10 @@ struct FoodEntryFormView: View {
     @State private var barcode: String? = nil
     @State private var amountGrams: Double = 100.0
     
-    @State private var caloriesPer100g: Double = 0.0
-    @State private var proteinPer100g: Double = 0.0
-    @State private var carbsPer100g: Double = 0.0
-    @State private var fatPer100g: Double = 0.0
+    @State private var caloriesPer100g: Double? = nil
+    @State private var proteinPer100g: Double? = nil
+    @State private var carbsPer100g: Double? = nil
+    @State private var fatPer100g: Double? = nil
     
     var body: some View {
         NavigationStack {
@@ -197,18 +197,18 @@ struct FoodEntryFormView: View {
             amountGrams = 100.0
         }
         if let nuts = product.nutriments {
-            caloriesPer100g = nuts.energyKcal100g ?? 0.0
-            proteinPer100g = nuts.proteins100g ?? 0.0
-            carbsPer100g = nuts.carbohydrates100g ?? 0.0
-            fatPer100g = nuts.fat100g ?? 0.0
+            caloriesPer100g = nuts.energyKcal100g
+            proteinPer100g = nuts.proteins100g
+            carbsPer100g = nuts.carbohydrates100g
+            fatPer100g = nuts.fat100g
         }
     }
     
     private var ratio: Double { amountGrams / 100.0 }
-    private var calculatedCalories: Double { caloriesPer100g * ratio }
-    private var calculatedProtein: Double { proteinPer100g * ratio }
-    private var calculatedCarbs: Double { carbsPer100g * ratio }
-    private var calculatedFat: Double { fatPer100g * ratio }
+    private var calculatedCalories: Double { (caloriesPer100g ?? 0) * ratio }
+    private var calculatedProtein: Double { (proteinPer100g ?? 0) * ratio }
+    private var calculatedCarbs: Double { (carbsPer100g ?? 0) * ratio }
+    private var calculatedFat: Double { (fatPer100g ?? 0) * ratio }
     
     private func saveEntry() {
         guard let selectedMealType = mealType else {
@@ -246,10 +246,10 @@ struct FoodEntryFormView: View {
             let newSavedFood = SavedFood(
                 name: name,
                 barcode: barcode,
-                caloriesPer100g: caloriesPer100g,
-                proteinPer100g: proteinPer100g,
-                carbsPer100g: carbsPer100g,
-                fatPer100g: fatPer100g
+                caloriesPer100g: caloriesPer100g ?? 0,
+                proteinPer100g: proteinPer100g ?? 0,
+                carbsPer100g: carbsPer100g ?? 0,
+                fatPer100g: fatPer100g ?? 0
             )
             modelContext.insert(newSavedFood)
         }
