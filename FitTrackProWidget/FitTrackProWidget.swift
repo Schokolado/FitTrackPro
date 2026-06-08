@@ -206,7 +206,7 @@ struct DashboardWidgetView: View {
             // Left: Calories
             CalorieWidgetView(entry: entry)
                 .frame(maxWidth: .infinity)
-                .padding(.horizontal, 6)
+                .padding(.horizontal, 8)
             
             // Middle: Data
             VStack(alignment: .leading, spacing: 6) {
@@ -307,11 +307,11 @@ struct MacroCircle: View {
                     .rotationEffect(.degrees(-90))
                 
                 Text("\(Int(value))")
-                    .font(.system(size: 9, weight: .bold))
+                    .font(.system(size: 10, weight: .bold))
                     .foregroundColor(.primary)
                     .minimumScaleFactor(0.5)
             }
-            .frame(width: 28, height: 28)
+            .frame(width: 32, height: 32)
         }
     }
 }
