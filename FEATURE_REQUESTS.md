@@ -17,3 +17,7 @@ Diese Datei sammelt Ideen, Wünsche und optionale Features für die App, die akt
 - [ ] **Verbrannte Kalorien in der App anzeigen**
   - **Beschreibung:** Die durch Workouts und Schritte verbrannten Kalorien (z.B. per HealthKit `activeEnergyBurned` oder eigener Schätzung) sollen direkt auf dem Dashboard oder im Ernährungs-Tab ausgewiesen werden.
   - **Ziel:** Der Nutzer erhält einen besseren Überblick über seinen echten Tagesumsatz und kann so seine zugeführten Kalorien besser steuern.
+
+- [ ] **Widgets erweitern und verfeinern**
+  - **Beschreibung:** Die aktuellen Widgets (klein und mittel) weiter überarbeiten (z.B. Design-Polishing) und eventuell ganz neue Widgets hinzufügen (z.B. ein großes Widget oder spezielle Widgets nur für Workouts/Makros).
+  - **Ziel:** Dem Nutzer noch mehr Informationen und Schnellzugriffe direkt auf dem Homescreen bieten.
