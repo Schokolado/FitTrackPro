@@ -88,7 +88,7 @@ struct OnboardingWelcomePage: View {
 
     var body: some View {
         ZStack {
-            Color.black
+            Color(uiColor: .systemBackground)
                 .ignoresSafeArea()
 
             VStack(spacing: 32) {
@@ -102,11 +102,11 @@ struct OnboardingWelcomePage: View {
 
                     Text("Vigr")
                         .font(.system(size: 42, weight: .black, design: .rounded))
-                        .foregroundColor(.white)
+                        .foregroundColor(.primary)
 
                     Text("Dein persönlicher Fitness-\nBegleiter für jeden Tag.")
                         .font(.title3)
-                        .foregroundColor(.white.opacity(0.85))
+                        .foregroundColor(.secondary)
                         .multilineTextAlignment(.center)
                 }
 
@@ -120,10 +120,10 @@ struct OnboardingWelcomePage: View {
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 18)
-                    .foregroundColor(.brand)
-                    .background(.white)
+                    .foregroundColor(.white)
+                    .background(Color.brand)
                     .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
-                    .shadow(color: .black.opacity(0.15), radius: 10, y: 5)
+                    .shadow(color: Color.brand.opacity(0.3), radius: 10, y: 5)
                 }
                 .padding(.horizontal, 32)
                 .padding(.bottom, 80)
