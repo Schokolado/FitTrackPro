@@ -37,7 +37,7 @@ struct ExerciseSelectionView: View {
             let sortedCategories = groupedExercises.keys.sorted()
             
             ForEach(sortedCategories, id: \.self) { category in
-                Section(header: Text(category).font(.headline)) {
+                Section(header: Text(category).font(.title3).fontWeight(.bold).foregroundColor(.primary)) {
                     let sortedExercises = (groupedExercises[category] ?? []).sorted { ex1, ex2 in
                         let s1 = ex1.sortOrder == 0 ? 999 : ex1.sortOrder
                         let s2 = ex2.sortOrder == 0 ? 999 : ex2.sortOrder

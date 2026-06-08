@@ -20,7 +20,19 @@ struct ExerciseLibraryView: View {
                     let sortedCategories = grouped.keys.sorted()
                     
                     ForEach(sortedCategories, id: \.self) { category in
-                        Section(header: Text(category).font(.headline).padding(.leading, 16)) {
+                        Section(header: 
+                            HStack {
+                                Text(category)
+                                    .font(.title2)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(.primary)
+                                Spacer()
+                            }
+                            .padding(.vertical, 8)
+                            .padding(.horizontal, 16)
+                            .background(Color.backgroundPrimary)
+                            .listRowInsets(EdgeInsets())
+                        ) {
                             ForEach(grouped[category] ?? []) { exercise in
                                 ZStack {
                                     ExerciseCardView(exercise: exercise)
