@@ -5,7 +5,7 @@ import SwiftData
 struct Provider: TimelineProvider {
     @MainActor
     func placeholder(in context: Context) -> DashboardEntry {
-        DashboardEntry(date: Date(), caloriesGoal: 2000, caloriesConsumed: 1200, protein: 50, carbs: 120, fat: 30, lastWorkout: "Oberkörper", weight: 75.5)
+        DashboardEntry(date: Date(), caloriesGoal: 2000, caloriesConsumed: 1200, protein: 50, proteinGoal: 150, carbs: 120, carbsGoal: 250, fat: 30, fatGoal: 70, lastWorkout: "Oberkörper", weight: 75.5, steps: 5400, stepGoal: 10000)
     }
 
     @MainActor
@@ -33,6 +33,7 @@ struct Provider: TimelineProvider {
             formatter.timeZone = TimeZone.current
             let todayString = formatter.string(from: date)
             
+            // 1. Calories and Macros
             let logsDescriptor = FetchDescriptor<DailyLog>()
             let logs = try context.fetch(logsDescriptor)
             let todayLog = logs.first(where: { $0.dateString == todayString })
@@ -51,33 +52,55 @@ struct Provider: TimelineProvider {
                 }
             }
             
+            // 2. Steps
+            let stepsDescriptor = FetchDescriptor<StepEntry>()
+            let stepsLogs = try context.fetch(stepsDescriptor)
+            let todayStepsEntry = stepsLogs.first(where: { $0.dateString == todayString })
+            let steps = todayStepsEntry?.steps ?? 0
+            
+            // 3. Workouts
             var lastWorkoutName = "Keine"
             let workoutDescriptor = FetchDescriptor<WorkoutSession>(sortBy: [SortDescriptor(\.startTime, order: .reverse)])
             if let lastWorkout = try context.fetch(workoutDescriptor).first {
                 lastWorkoutName = lastWorkout.plan?.name ?? "Freies Training"
             }
             
+            // 4. Weight
             var latestWeight: Double? = nil
             let weightDescriptor = FetchDescriptor<WeightEntry>(sortBy: [SortDescriptor(\.timestamp, order: .reverse)])
             if let lastWeightEntry = try context.fetch(weightDescriptor).first {
                 latestWeight = lastWeightEntry.weightKg
             }
             
+            // 5. Goals
             let userDefaults = UserDefaults(suiteName: "group.com.riccardopfeiler.FitTrackPro") ?? .standard
-            let caloriesGoal = userDefaults.integer(forKey: "calorieGoal") == 0 ? 2000 : userDefaults.integer(forKey: "calorieGoal")
+            
+            let calGoal = userDefaults.double(forKey: "dailyCalorieGoal")
+            let pGoal = userDefaults.double(forKey: "nutritionGoalProtein")
+            let cGoal = userDefaults.double(forKey: "nutritionGoalCarbs")
+            let fGoal = userDefaults.double(forKey: "nutritionGoalFat")
+            
+            let stepGoalKey = userDefaults.integer(forKey: "dailyStepGoal")
+            let stepGoalKey2 = userDefaults.integer(forKey: "daily_step_goal")
+            let sGoal = max(stepGoalKey, stepGoalKey2)
             
             return DashboardEntry(
                 date: date,
-                caloriesGoal: Double(caloriesGoal),
+                caloriesGoal: calGoal > 0 ? calGoal : 2500,
                 caloriesConsumed: caloriesConsumed,
                 protein: protein,
+                proteinGoal: pGoal > 0 ? pGoal : 150,
                 carbs: carbs,
+                carbsGoal: cGoal > 0 ? cGoal : 250,
                 fat: fat,
+                fatGoal: fGoal > 0 ? fGoal : 70,
                 lastWorkout: lastWorkoutName,
-                weight: latestWeight
+                weight: latestWeight,
+                steps: steps,
+                stepGoal: sGoal > 0 ? sGoal : 10000
             )
         } catch {
-            return DashboardEntry(date: date, caloriesGoal: 2000, caloriesConsumed: 0, protein: 0, carbs: 0, fat: 0, lastWorkout: "Keine Daten", weight: nil)
+            return DashboardEntry(date: date, caloriesGoal: 2500, caloriesConsumed: 0, protein: 0, proteinGoal: 150, carbs: 0, carbsGoal: 250, fat: 0, fatGoal: 70, lastWorkout: "Fehler", weight: nil, steps: 0, stepGoal: 10000)
         }
     }
 }
@@ -87,10 +110,15 @@ struct DashboardEntry: TimelineEntry {
     let caloriesGoal: Double
     let caloriesConsumed: Double
     let protein: Double
+    let proteinGoal: Double
     let carbs: Double
+    let carbsGoal: Double
     let fat: Double
+    let fatGoal: Double
     let lastWorkout: String
     let weight: Double?
+    let steps: Int
+    let stepGoal: Int
 }
 
 struct CalorieWidgetView: View {
@@ -128,35 +156,84 @@ struct DashboardWidgetView: View {
     var entry: Provider.Entry
     
     var body: some View {
-        HStack(spacing: 20) {
+        HStack(spacing: 12) {
             CalorieWidgetView(entry: entry)
                 .frame(maxWidth: .infinity)
             
-            VStack(alignment: .leading, spacing: 16) {
+            VStack(alignment: .leading, spacing: 10) {
+                // Macros
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("Letztes Workout")
+                    Text("Makros")
                         .font(.caption2)
                         .foregroundColor(.secondary)
-                    Text(entry.lastWorkout)
-                        .font(.footnote).bold()
-                        .lineLimit(2)
-                        .minimumScaleFactor(0.8)
+                    HStack(spacing: 6) {
+                        MacroBar(color: .red, label: "P", value: entry.protein, goal: entry.proteinGoal)
+                        MacroBar(color: .blue, label: "K", value: entry.carbs, goal: entry.carbsGoal)
+                        MacroBar(color: .yellow, label: "F", value: entry.fat, goal: entry.fatGoal)
+                    }
                 }
                 
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Gewicht")
+                // Steps
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Schritte")
                         .font(.caption2)
                         .foregroundColor(.secondary)
-                    if let w = entry.weight {
-                        Text("\(String(format: "%.1f", w)) kg")
-                            .font(.footnote).bold()
-                    } else {
-                        Text("-- kg")
-                            .font(.footnote).bold()
+                    Text("\(entry.steps)")
+                        .font(.footnote).bold()
+                        .foregroundColor(entry.steps >= entry.stepGoal ? .green : .primary)
+                }
+                
+                // Workout & Weight
+                HStack {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Workout")
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+                        Text(entry.lastWorkout)
+                            .font(.system(size: 10, weight: .bold))
+                            .lineLimit(1)
+                    }
+                    Spacer()
+                    VStack(alignment: .trailing, spacing: 2) {
+                        Text("Gewicht")
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+                        if let w = entry.weight {
+                            Text("\(String(format: "%.1f", w)) kg")
+                                .font(.system(size: 10, weight: .bold))
+                        } else {
+                            Text("-- kg")
+                                .font(.system(size: 10, weight: .bold))
+                        }
                     }
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
+        }
+    }
+}
+
+struct MacroBar: View {
+    var color: Color
+    var label: String
+    var value: Double
+    var goal: Double
+    
+    var body: some View {
+        VStack(spacing: 2) {
+            Text(label)
+                .font(.system(size: 8, weight: .bold))
+                .foregroundColor(color)
+            GeometryReader { geometry in
+                ZStack(alignment: .bottom) {
+                    RoundedRectangle(cornerRadius: 2)
+                        .fill(Color.gray.opacity(0.2))
+                    RoundedRectangle(cornerRadius: 2)
+                        .fill(color)
+                        .frame(height: min(CGFloat(value / max(goal, 1)) * geometry.size.height, geometry.size.height))
+                }
+            }
+            .frame(width: 8, height: 20)
         }
     }
 }

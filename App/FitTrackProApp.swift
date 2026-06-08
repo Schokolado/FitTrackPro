@@ -6,6 +6,7 @@ struct FitTrackProApp: App {
     @State private var modelContainer: ModelContainer?
     @StateObject private var themeManager = ThemeManager()
     @AppStorage(AppStorageKeys.hasCompletedOnboarding) private var hasCompletedOnboarding = false
+    @Environment(\.scenePhase) private var scenePhase
 
     var body: some Scene {
         WindowGroup {
@@ -49,6 +50,11 @@ struct FitTrackProApp: App {
                                 }
                             }
                         }
+                }
+            }
+            .onChange(of: scenePhase) { oldPhase, newPhase in
+                if newPhase == .background || newPhase == .inactive {
+                    WidgetDataSync.sync()
                 }
             }
         }
@@ -113,3 +119,28 @@ struct SplashScreenView: View {
     }
 }
 
+import WidgetKit
+
+struct WidgetDataSync {
+    static func sync() {
+        let standard = UserDefaults.standard
+        let shared = UserDefaults(suiteName: "group.com.riccardopfeiler.FitTrackPro")
+        
+        let keys = [
+            "dailyCalorieGoal", 
+            "nutritionGoalProtein", 
+            "nutritionGoalCarbs", 
+            "nutritionGoalFat", 
+            "daily_step_goal", 
+            "dailyStepGoal"
+        ]
+        
+        for key in keys {
+            if standard.object(forKey: key) != nil {
+                shared?.set(standard.object(forKey: key), forKey: key)
+            }
+        }
+        
+        WidgetCenter.shared.reloadAllTimelines()
+    }
+}
