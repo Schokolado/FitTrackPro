@@ -1,4 +1,5 @@
 import SwiftUI
+import SwiftData
 
 struct OnboardingView: View {
     @AppStorage(AppStorageKeys.hasCompletedOnboarding) private var hasCompletedOnboarding = false
