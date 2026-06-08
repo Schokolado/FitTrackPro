@@ -103,7 +103,7 @@ struct OnboardingWelcomePage: View {
                         .font(.system(size: 80, weight: .semibold))
                         .foregroundColor(.white)
 
-                    Text("FitTrackPro")
+                    Text("Vigr")
                         .font(.system(size: 42, weight: .black, design: .rounded))
                         .foregroundColor(.white)
 

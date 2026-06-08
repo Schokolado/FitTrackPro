@@ -345,8 +345,8 @@ struct FitTrackProWidget: Widget {
                     .background(Color(UIColor.systemBackground))
             }
         }
-        .configurationDisplayName("FitTrack Pro")
-        .description("Behalte deine Kalorien und Fitness im Blick.")
+        .configurationDisplayName("Vigr")
+        .description("Dein täglicher Fitness-Überblick.")
         .supportedFamilies([.systemSmall, .systemMedium])
     }
 }
