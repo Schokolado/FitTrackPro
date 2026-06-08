@@ -69,7 +69,7 @@ struct SplashScreenView: View {
     var body: some View {
         GeometryReader { geo in
             ZStack {
-                Color.black
+                Color(uiColor: .systemBackground)
                 
                 // Das Logo bleibt immer exakt im absoluten Zentrum des Bildschirms
                 ZStack {
