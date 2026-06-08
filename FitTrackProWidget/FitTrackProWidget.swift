@@ -187,10 +187,10 @@ struct FitTrackProWidget: Widget {
         StaticConfiguration(kind: kind, provider: Provider()) { entry in
             if #available(iOS 17.0, *) {
                 WidgetSelectorView(entry: entry)
-                    .containerBackground(Color("BackgroundPrimary", bundle: nil).opacity(0.8), for: .widget)
+                    .containerBackground(Color(UIColor.systemBackground).opacity(0.8), for: .widget)
             } else {
                 WidgetSelectorView(entry: entry)
-                    .background(Color.black)
+                    .background(Color(UIColor.systemBackground))
             }
         }
         .configurationDisplayName("FitTrack Pro")
