@@ -214,7 +214,7 @@ struct DashboardWidgetView: View {
                     Text("Makros")
                         .font(.system(size: 9))
                         .foregroundColor(.secondary)
-                    HStack(spacing: 2) {
+                    HStack(spacing: 8) {
                         MacroCircle(color: .red, label: "P", value: entry.protein, goal: entry.proteinGoal)
                         MacroCircle(color: .blue, label: "K", value: entry.carbs, goal: entry.carbsGoal)
                         MacroCircle(color: .yellow, label: "F", value: entry.fat, goal: entry.fatGoal)
@@ -298,19 +298,19 @@ struct MacroCircle: View {
             
             ZStack {
                 Circle()
-                    .stroke(Color.gray.opacity(0.2), lineWidth: 3)
+                    .stroke(Color.gray.opacity(0.2), lineWidth: 4)
                 
                 Circle()
                     .trim(from: 0, to: min(CGFloat(value / max(goal, 1)), 1.0))
-                    .stroke(color, style: StrokeStyle(lineWidth: 3, lineCap: .round))
+                    .stroke(color, style: StrokeStyle(lineWidth: 4, lineCap: .round))
                     .rotationEffect(.degrees(-90))
                 
                 Text("\(Int(value))")
-                    .font(.system(size: 8, weight: .bold))
+                    .font(.system(size: 9, weight: .bold))
                     .foregroundColor(.primary)
                     .minimumScaleFactor(0.5)
             }
-            .frame(width: 22, height: 22)
+            .frame(width: 28, height: 28)
         }
     }
 }
