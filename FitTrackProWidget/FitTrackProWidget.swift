@@ -147,9 +147,9 @@ struct SmallWidgetView: View {
             .frame(height: 80)
             
             HStack(spacing: 8) {
-                MacroBar(color: .red, label: "P", value: entry.protein, goal: entry.proteinGoal)
-                MacroBar(color: .blue, label: "K", value: entry.carbs, goal: entry.carbsGoal)
-                MacroBar(color: .yellow, label: "F", value: entry.fat, goal: entry.fatGoal)
+                MacroCircle(color: .red, label: "P", value: entry.protein, goal: entry.proteinGoal)
+                MacroCircle(color: .blue, label: "K", value: entry.carbs, goal: entry.carbsGoal)
+                MacroCircle(color: .yellow, label: "F", value: entry.fat, goal: entry.fatGoal)
             }
         }
     }
@@ -215,9 +215,9 @@ struct DashboardWidgetView: View {
                         .font(.system(size: 9))
                         .foregroundColor(.secondary)
                     HStack(spacing: 2) {
-                        MacroBar(color: .red, label: "P", value: entry.protein, goal: entry.proteinGoal)
-                        MacroBar(color: .blue, label: "K", value: entry.carbs, goal: entry.carbsGoal)
-                        MacroBar(color: .yellow, label: "F", value: entry.fat, goal: entry.fatGoal)
+                        MacroCircle(color: .red, label: "P", value: entry.protein, goal: entry.proteinGoal)
+                        MacroCircle(color: .blue, label: "K", value: entry.carbs, goal: entry.carbsGoal)
+                        MacroCircle(color: .yellow, label: "F", value: entry.fat, goal: entry.fatGoal)
                     }
                 }
                 
@@ -284,7 +284,7 @@ struct DashboardWidgetView: View {
     }
 }
 
-struct MacroBar: View {
+struct MacroCircle: View {
     var color: Color
     var label: String
     var value: Double
@@ -295,25 +295,23 @@ struct MacroBar: View {
             Text(label)
                 .font(.system(size: 8, weight: .bold))
                 .foregroundColor(color)
-            GeometryReader { geometry in
-                ZStack(alignment: .bottom) {
-                    RoundedRectangle(cornerRadius: 3)
-                        .fill(Color.gray.opacity(0.2))
-                        .frame(width: 6)
-                    RoundedRectangle(cornerRadius: 3)
-                        .fill(color)
-                        .frame(width: 6, height: min(CGFloat(value / max(goal, 1)) * geometry.size.height, geometry.size.height))
-                }
-                .frame(maxWidth: .infinity)
+            
+            ZStack {
+                Circle()
+                    .stroke(Color.gray.opacity(0.2), lineWidth: 3)
+                
+                Circle()
+                    .trim(from: 0, to: min(CGFloat(value / max(goal, 1)), 1.0))
+                    .stroke(color, style: StrokeStyle(lineWidth: 3, lineCap: .round))
+                    .rotationEffect(.degrees(-90))
+                
+                Text("\(Int(value))")
+                    .font(.system(size: 8, weight: .bold))
+                    .foregroundColor(.primary)
+                    .minimumScaleFactor(0.5)
             }
-            .frame(height: 22)
-            Text("\(Int(value))")
-                .font(.system(size: 8, weight: .medium))
-                .foregroundColor(.secondary)
-                .lineLimit(1)
-                .minimumScaleFactor(0.5)
+            .frame(width: 22, height: 22)
         }
-        .frame(width: 18)
     }
 }
 
