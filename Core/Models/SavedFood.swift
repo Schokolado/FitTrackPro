@@ -14,6 +14,10 @@ final class SavedFood {
     var carbsPer100g: Double = 0.0
     var fatPer100g: Double = 0.0
     
+    // CloudKit requires all relationships to have an inverse
+    @Relationship(deleteRule: .nullify, inverse: \RecipeIngredient.savedFood)
+    var ingredientsUsingThis: [RecipeIngredient]? = []
+    
     init(id: UUID = UUID(), name: String, barcode: String? = nil, caloriesPer100g: Double, proteinPer100g: Double, carbsPer100g: Double, fatPer100g: Double) {
         self.id = id
         self.name = name

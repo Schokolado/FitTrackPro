@@ -33,6 +33,7 @@ struct SettingsView: View {
     
     @State private var isSyncing = false
     @State private var showSyncCompleteAlert = false
+    @State private var showWipeAlert = false
     
     @State private var birthDate: Date = Calendar.current.date(byAdding: .year, value: -25, to: Date()) ?? Date()
     @EnvironmentObject var themeManager: ThemeManager
@@ -235,8 +236,30 @@ struct SettingsView: View {
                             .multilineTextAlignment(.trailing)
                     }
                 }
+                Section(header: Text("Gefahrenzone").foregroundColor(.red)) {
+                    Button(role: .destructive) {
+                        showWipeAlert = true
+                    } label: {
+                        HStack {
+                            Image(systemName: "trash")
+                            Text("Datenbank vollständig zurücksetzen")
+                        }
+                    }
+                }
             }
             .navigationTitle("Einstellungen")
+            .navigationBarTitleDisplayMode(.large)
+            .alert("Datenbank zurücksetzen?", isPresented: $showWipeAlert) {
+                Button("Abbrechen", role: .cancel) { }
+                Button("Endgültig löschen", role: .destructive) {
+                    wipeDatabase()
+                }
+            } message: {
+                Text("Bist du sicher? Alle lokal und in der iCloud gespeicherten Einträge (Gewicht, Mahlzeiten, Workouts, etc.) werden unwiderruflich gelöscht. Diese Aktion kann nicht rückgängig gemacht werden.")
+            }
+            .alert("Synchronisation abgeschlossen", isPresented: $showSyncCompleteAlert) {
+                Button("OK", role: .cancel) { }
+            }
         }
         .id(navId)
         .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("TabReselected"))) { notification in
@@ -246,6 +269,38 @@ struct SettingsView: View {
         }
         .onDisappear {
             CloudProfileService.shared.pushLocalToCloud()
+        }
+    }
+    
+    @MainActor
+    private func wipeDatabase() {
+        // Delete all models from SwiftData Context
+        do {
+            try modelContext.delete(model: DailyLog.self)
+            try modelContext.delete(model: FoodEntry.self)
+            try modelContext.delete(model: WeightEntry.self)
+            try modelContext.delete(model: WorkoutSession.self)
+            try modelContext.delete(model: WorkoutSet.self)
+            try modelContext.delete(model: StepEntry.self)
+            try modelContext.delete(model: SavedFood.self)
+            try modelContext.delete(model: Recipe.self)
+            try modelContext.delete(model: RecipeIngredient.self)
+            try modelContext.delete(model: PlanExercise.self)
+            try modelContext.delete(model: PlanGroup.self)
+            try modelContext.delete(model: TrainingPlan.self)
+            try modelContext.delete(model: Exercise.self)
+            
+            // Re-seed standard exercises
+            SeedDataService.shared.seedExercisesIfNeeded(context: modelContext)
+            
+            healthKitEnabled = false
+            healthKitAutoSync = false
+            
+            // Show alert or reset UI
+            navId = UUID()
+            
+        } catch {
+            print("Failed to wipe database: \(error)")
         }
     }
     
