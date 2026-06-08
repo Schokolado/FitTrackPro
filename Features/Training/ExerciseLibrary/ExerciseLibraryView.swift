@@ -21,17 +21,12 @@ struct ExerciseLibraryView: View {
                     
                     ForEach(sortedCategories, id: \.self) { category in
                         Section(header: 
-                            HStack {
-                                Text(category)
-                                    .font(.title2)
-                                    .fontWeight(.bold)
-                                    .foregroundColor(.primary)
-                                Spacer()
-                            }
-                            .padding(.vertical, 8)
-                            .padding(.horizontal, 16)
-                            .background(Color.backgroundPrimary)
-                            .listRowInsets(EdgeInsets())
+                            Text(category)
+                                .font(.title3)
+                                .fontWeight(.bold)
+                                .foregroundColor(.primary)
+                                .textCase(nil)
+                                .padding(.leading, -8) // slight offset to align with cards
                         ) {
                             ForEach(grouped[category] ?? []) { exercise in
                                 ZStack {
@@ -57,7 +52,7 @@ struct ExerciseLibraryView: View {
                         .listRowSeparator(.hidden)
                         .listRowBackground(Color.clear)
                 }
-                .listStyle(.plain)
+                .listStyle(.grouped)
                 .scrollContentBackground(.hidden)
             }
             .safeAreaInset(edge: .top) {
