@@ -29,9 +29,8 @@ struct StatisticsView: View {
     @State private var showingShareSheet = false
 
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(spacing: 20) {
+        ScrollView {
+            VStack(spacing: 20) {
                     // ─── Header Picker ─────────────────────────────────
                     Picker("Ansicht", selection: $selectedSegment) {
                         Text("Übungen").tag(0)
@@ -99,7 +98,6 @@ struct StatisticsView: View {
                     ShareSheet(activityItems: [url])
                 }
             }
-        }
         .id(navId)
         .onAppear {
             preselectExercise()

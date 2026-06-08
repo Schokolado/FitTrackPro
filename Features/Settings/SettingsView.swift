@@ -45,8 +45,7 @@ struct SettingsView: View {
     @State private var navId = UUID()
     
     var body: some View {
-        NavigationStack {
-            Form {
+        Form {
                 // MARK: Profil
                 Section(header: Text("Mein Profil")) {
                     HStack {
@@ -298,7 +297,7 @@ struct SettingsView: View {
             } message: {
                 Text("Dies sucht nach allen doppelten Einträgen (z.B. Gewicht) und behält nur einen. Die gelöschten Duplikate werden auch aus iCloud entfernt.")
             }
-            .alert("Datenbank zurücksetzen?", isPresented: $showWipeAlert) {
+            .alert("Datenbank löschen?", isPresented: $showWipeAlert) {
                 Button("Abbrechen", role: .cancel) { }
                 Button("Endgültig löschen", role: .destructive) {
                     wipeDatabase()
@@ -309,7 +308,6 @@ struct SettingsView: View {
             .alert("Synchronisation abgeschlossen", isPresented: $showSyncCompleteAlert) {
                 Button("OK", role: .cancel) { }
             }
-        }
         .id(navId)
         .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("TabReselected"))) { notification in
             if let tab = notification.object as? Int, tab == 4 {
