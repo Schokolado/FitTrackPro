@@ -574,7 +574,7 @@ struct OnboardingWelcomeBackPage: View {
                         HStack {
                             Text("Makros")
                             Spacer()
-                            Text("\(cloudProtein, specifier: "%.0f")g P • \(cloudCarbs, specifier: "%.0f")g C • \(cloudFat, specifier: "%.0f")g F")
+                            Text("K \(cloudCarbs, specifier: "%.0f")g • P \(cloudProtein, specifier: "%.0f")g • F \(cloudFat, specifier: "%.0f")g")
                                 .font(.footnote.bold())
                                 .foregroundColor(.secondary)
                         }
@@ -582,36 +582,37 @@ struct OnboardingWelcomeBackPage: View {
                     .padding()
                     .background(Color.backgroundPrimary)
                     .cornerRadius(12)
-                    
-                    VStack(spacing: 12) {
-                        Button(action: {
-                            onAcceptCloudData()
-                        }) {
-                            HStack {
-                                Text("Daten übernehmen & Starten")
-                                    .font(.headline)
-                                Image(systemName: "checkmark.circle.fill")
-                            }
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 16)
-                            .foregroundColor(.white)
-                            .background(Color.brand)
-                            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                        }
-                        
-                        Button(action: {
-                            withAnimation { currentPage = 0 }
-                        }) {
-                            Text("Ignorieren & neu eingeben")
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
-                                .padding(.vertical, 8)
-                        }
-                    }
-                    .padding(.top, 8)
                 }
                 .padding(.bottom, 24)
             }
+            
+            // Buttons pinned to the bottom
+            VStack(spacing: 12) {
+                Button(action: {
+                    onAcceptCloudData()
+                }) {
+                    HStack {
+                        Text("Daten übernehmen & Starten")
+                            .font(.headline)
+                        Image(systemName: "checkmark.circle.fill")
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 16)
+                    .foregroundColor(.white)
+                    .background(Color.brand)
+                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                }
+                
+                Button(action: {
+                    withAnimation { currentPage = 0 }
+                }) {
+                    Text("Ignorieren & neu eingeben")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                        .padding(.vertical, 8)
+                }
+            }
+            .padding(.top, 8)
             .onAppear {
                 let service = CloudProfileService.shared
                 cloudName = service.getCloudName()
