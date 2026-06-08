@@ -271,7 +271,7 @@ struct SettingsView: View {
                 Section {
                     Link("Datenschutzerklärung", destination: URL(string: "https://www.apple.com/legal/privacy/")!)
                         .foregroundColor(.brand)
-                        
+                } footer: {
                     if let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String,
                        let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String {
                         HStack {
@@ -281,7 +281,7 @@ struct SettingsView: View {
                                 .foregroundColor(.secondary)
                             Spacer()
                         }
-                        .listRowBackground(Color.clear)
+                        .padding(.top, 16)
                     }
                 }
             }
