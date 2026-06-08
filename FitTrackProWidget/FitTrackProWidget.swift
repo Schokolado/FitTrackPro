@@ -304,11 +304,11 @@ struct MacroCircle: View {
                     .rotationEffect(.degrees(-90))
                 
                 Text("\(Int(value))")
-                    .font(.system(size: 10, weight: .bold))
+                    .font(.system(size: 11, weight: .bold))
                     .foregroundColor(.primary)
                     .minimumScaleFactor(0.5)
             }
-            .frame(width: 32, height: 32)
+            .frame(width: 36, height: 36)
         }
     }
 }
