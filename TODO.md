@@ -225,20 +225,20 @@
 
 ## Milestone 14 – WidgetKit Extension
 
-- [ ] `FitTrackProWidgetBundle.swift` – `@main` WidgetBundle
-- [ ] `WidgetDataService.swift` – App Group Shared UserDefaults
-- [ ] **Widget 1 – Kalorienbilanz (systemSmall)**:
-  - [ ] Kreisdiagramm / Ring mit Kalorien-Fortschritt
-  - [ ] Makro-Mini-Balken (P / K / F)
-  - [ ] Deep Link: Tap öffnet Ernährungs-Tab
-- [ ] **Widget 2 – Fitness-Dashboard (systemMedium)**:
-  - [ ] Kalorien-Ring (links)
-  - [ ] Letztes Workout (Name + Datum, Mitte)
-  - [ ] Aktuelles Gewicht (rechts)
-  - [ ] Deep Link: Tap öffnet Dashboard
-- [ ] `TimelineProvider` mit 15-Minuten-Refresh
-- [ ] Widget-Preview in Xcode Canvas testen
-- [ ] Widget-Refresh nach allen relevanten Daten-Events (Meal, Workout, Weight)
+- [x] `FitTrackProWidgetBundle.swift` – `@main` WidgetBundle
+- [x] `WidgetDataService.swift` – App Group Shared UserDefaults
+- [x] **Widget 1 – Kalorienbilanz (systemSmall)**:
+  - [x] Kreisdiagramm / Ring mit Kalorien-Fortschritt
+  - [x] Makro-Mini-Balken (P / K / F)
+  - [x] Deep Link: Tap öffnet Ernährungs-Tab
+- [x] **Widget 2 – Fitness-Dashboard (systemMedium)**:
+  - [x] Kalorien-Ring (links)
+  - [x] Letztes Workout (Name + Datum, Mitte)
+  - [x] Aktuelles Gewicht (rechts)
+  - [x] Deep Link: Tap öffnet Dashboard
+- [x] `TimelineProvider` mit 15-Minuten-Refresh
+- [x] Widget-Preview in Xcode Canvas testen
+- [x] Widget-Refresh nach allen relevanten Daten-Events (Meal, Workout, Weight)
 
 ---
 

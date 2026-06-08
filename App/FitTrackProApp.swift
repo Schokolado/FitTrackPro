@@ -27,25 +27,8 @@ struct FitTrackProApp: App {
                         .transition(AnyTransition.opacity)
                         .onAppear {
                             Task.detached(priority: .userInitiated) {
-                                let schema = Schema([
-                                    Exercise.self,
-                                    TrainingPlan.self,
-                                    PlanGroup.self,
-                                    PlanExercise.self,
-                                    WorkoutSession.self,
-                                    WorkoutSet.self,
-                                    FoodEntry.self,
-                                    DailyLog.self,
-                                    WeightEntry.self,
-                                    StepEntry.self,
-                                    SavedFood.self,
-                                    Recipe.self,
-                                    RecipeIngredient.self
-                                ])
-                                let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false, cloudKitDatabase: .automatic)
-                                
                                 do {
-                                    let newContainer = try ModelContainer(for: schema, configurations: [config])
+                                    let newContainer = try SharedContainer.create()
                                     
                                     // Seed default exercises during splash screen
                                     await MainActor.run {
