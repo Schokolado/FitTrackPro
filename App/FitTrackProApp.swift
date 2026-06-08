@@ -80,23 +80,19 @@ struct SplashScreenView: View {
                         .scaleEffect(isAnimating ? 1.5 : 0.8)
                         .opacity(isAnimating ? 0 : 1)
                     
-                    if let uiImage = UIImage(named: "LaunchLogoV3_raw.png") {
-                        Image(uiImage: uiImage)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 120, height: 120)
-                            .clipShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
-                            .shadow(color: Color.black.opacity(0.2), radius: 15, x: 0, y: 8)
-                            .scaleEffect(isPulsing ? 1.05 : 0.95)
-                    } else {
-                        ProgressView()
-                    }
+                    Image("VigrLogo")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 120, height: 120)
+                        .clipShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
+                        .shadow(color: Color.black.opacity(0.2), radius: 15, x: 0, y: 8)
+                        .scaleEffect(isPulsing ? 1.05 : 0.95)
                 }
                 .position(x: geo.size.width / 2, y: geo.size.height / 2)
                 
                 // Der Text
                 if showText {
-                    Text("FitTrackPro")
+                    Text("Vigr")
                         .font(.system(size: 36, weight: .black, design: .rounded))
                         .foregroundColor(.primary)
                         .transition(AnyTransition.opacity.combined(with: .move(edge: .bottom)))

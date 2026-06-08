@@ -88,20 +88,19 @@ struct OnboardingWelcomePage: View {
 
     var body: some View {
         ZStack {
-            LinearGradient(
-                colors: [Color.brand, Color.brand.opacity(0.7)],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            .ignoresSafeArea()
+            Color.black
+                .ignoresSafeArea()
 
             VStack(spacing: 32) {
                 Spacer()
 
                 VStack(spacing: 16) {
-                    Image(systemName: "figure.strengthtraining.traditional")
-                        .font(.system(size: 80, weight: .semibold))
-                        .foregroundColor(.white)
+                    Image("VigrLogo")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 120, height: 120)
+                        .clipShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
+                        .shadow(color: .brand.opacity(0.3), radius: 20, x: 0, y: 10)
 
                     Text("Vigr")
                         .font(.system(size: 42, weight: .black, design: .rounded))
