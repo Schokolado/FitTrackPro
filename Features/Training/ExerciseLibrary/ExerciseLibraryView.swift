@@ -15,18 +15,26 @@ struct ExerciseLibraryView: View {
     var body: some View {
         Group {
                 List {
-                    ForEach(viewModel.filterExercises(allExercises)) { exercise in
-                        ZStack {
-                            ExerciseCardView(exercise: exercise)
-                            
-                            NavigationLink(destination: ExerciseDetailView(exercise: exercise)) {
-                                EmptyView()
+                    let exercises = viewModel.filterExercises(allExercises)
+                    let grouped = Dictionary(grouping: exercises, by: { $0.category })
+                    let sortedCategories = grouped.keys.sorted()
+                    
+                    ForEach(sortedCategories, id: \.self) { category in
+                        Section(header: Text(category).font(.headline).padding(.leading, 16)) {
+                            ForEach(grouped[category] ?? []) { exercise in
+                                ZStack {
+                                    ExerciseCardView(exercise: exercise)
+                                    
+                                    NavigationLink(destination: ExerciseDetailView(exercise: exercise)) {
+                                        EmptyView()
+                                    }
+                                    .opacity(0)
+                                }
+                                .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
+                                .listRowSeparator(.hidden)
+                                .listRowBackground(Color.clear)
                             }
-                            .opacity(0)
                         }
-                        .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
-                        .listRowSeparator(.hidden)
-                        .listRowBackground(Color.clear)
                     }
                     .onDelete(perform: deleteExercises)
                     

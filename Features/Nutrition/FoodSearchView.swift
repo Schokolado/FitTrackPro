@@ -336,7 +336,9 @@ struct FoodSearchView: View {
                                 let tempEntry = FoodEntry(name: food.name, barcode: food.barcode, calories: food.caloriesPer100g, proteinGrams: food.proteinPer100g, carbsGrams: food.carbsPer100g, fatGrams: food.fatPer100g)
                                 tempEntry.amountGrams = 100 // Default reference
                                 selectedEntry = tempEntry
-                                showForm = true
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                    showForm = true
+                                }
                             }
                         }) {
                             VStack(alignment: .leading) {
@@ -373,7 +375,9 @@ struct FoodSearchView: View {
                                 tempEntry.recipeNote = ingredientsText
                                 
                                 selectedEntry = tempEntry
-                                showForm = true
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                    showForm = true
+                                }
                             }
                         }) {
                             VStack(alignment: .leading) {
