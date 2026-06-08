@@ -10,6 +10,9 @@ struct DashboardView: View {
     @AppStorage(AppStorageKeys.healthKitEnabled) private var healthKitEnabled = false
     @Environment(\.scenePhase) private var scenePhase
     
+    @AppStorage("cached_today_steps") private var cachedTodaySteps: Int = 0
+    @AppStorage("cached_today_steps_date") private var cachedTodayStepsDate: String = ""
+    
     @State private var todaySteps: Int = 0
     
     @Query(sort: \WeightEntry.timestamp, order: .reverse) private var weightEntries: [WeightEntry]
@@ -190,6 +193,12 @@ struct DashboardView: View {
             }
         }
         .task {
+            // Load from cache instantly
+            let todayString = Date().iso8601String()
+            if cachedTodayStepsDate == todayString {
+                todaySteps = cachedTodaySteps
+            }
+            
             await refreshSteps()
         }
         .onChange(of: scenePhase) { _, newPhase in
@@ -206,6 +215,8 @@ struct DashboardView: View {
             if let steps = try? await HealthKitService.shared.fetchSteps() {
                 await MainActor.run {
                     self.todaySteps = steps
+                    self.cachedTodaySteps = steps
+                    self.cachedTodayStepsDate = Date().iso8601String()
                 }
             }
         }

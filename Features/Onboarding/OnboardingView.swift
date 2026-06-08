@@ -65,30 +65,36 @@ struct OnboardingView: View {
                     .tag(2)
                 OnboardingGoalsPage(currentPage: $currentPage)
                     .tag(3)
-                OnboardingFinishPage {
+                OnboardingFinishPage { useHealthKit in
                     Task {
-                        // Apple Health Berechtigungen anfragen
-                        try? await HealthKitService.shared.requestAuthorization()
-                        
-                        await MainActor.run {
-                            // Apple Health aktivieren und AutoSync einschalten
-                            UserDefaults.standard.set(true, forKey: AppStorageKeys.healthKitEnabled)
-                            UserDefaults.standard.set(true, forKey: "autoSyncHealthKit")
-                        }
-                        
-                        // Historische Gewichtsdaten aus Apple Health importieren
-                        do {
-                            let imported = try await HealthKitService.shared.importHistoricalWeights()
+                        if useHealthKit {
+                            // Apple Health Berechtigungen anfragen
+                            try? await HealthKitService.shared.requestAuthorization()
+                            
                             await MainActor.run {
-                                for item in imported {
-                                    let entry = WeightEntry(weightKg: item.weightKg, timestamp: item.timestamp, notes: "Aus Apple Health importiert")
-                                    entry.syncedToHealthKit = true
-                                    modelContext.insert(entry)
-                                }
-                                try? modelContext.save()
+                                // Apple Health aktivieren und AutoSync einschalten
+                                UserDefaults.standard.set(true, forKey: AppStorageKeys.healthKitEnabled)
+                                UserDefaults.standard.set(true, forKey: "autoSyncHealthKit")
                             }
-                        } catch {
-                            print("Failed to import historical weights during onboarding: \(error)")
+                            
+                            // Historische Gewichtsdaten aus Apple Health importieren
+                            do {
+                                let imported = try await HealthKitService.shared.importHistoricalWeights()
+                                await MainActor.run {
+                                    for item in imported {
+                                        let entry = WeightEntry(weightKg: item.weightKg, timestamp: item.timestamp, notes: "Aus Apple Health importiert")
+                                        entry.syncedToHealthKit = true
+                                        modelContext.insert(entry)
+                                    }
+                                    try? modelContext.save()
+                                }
+                            } catch {
+                                print("Failed to import historical weights during onboarding: \(error)")
+                            }
+                        } else {
+                            await MainActor.run {
+                                UserDefaults.standard.set(false, forKey: AppStorageKeys.healthKitEnabled)
+                            }
                         }
                         
                         await MainActor.run {

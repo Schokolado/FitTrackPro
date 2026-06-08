@@ -413,7 +413,7 @@ struct GoalSliderRow: View {
 // MARK: - Page 5: Finish
 
 struct OnboardingFinishPage: View {
-    let onComplete: () -> Void
+    let onComplete: (Bool) -> Void
     @State private var showCheckmark = false
     @State private var showContent = false
 
@@ -467,21 +467,32 @@ struct OnboardingFinishPage: View {
                 Spacer()
 
                 if showContent {
-                    Button(action: onComplete) {
-                        HStack(spacing: 10) {
-                            Text("App starten")
-                                .font(.headline)
-                            Image(systemName: "arrow.right")
+                    VStack(spacing: 16) {
+                        Button(action: { onComplete(true) }) {
+                            HStack(spacing: 10) {
+                                Text("Mit Apple Health starten")
+                                    .font(.headline)
+                                Image(systemName: "heart.text.square.fill")
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 18)
+                            .foregroundColor(.brand)
+                            .background(.white)
+                            .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                            .shadow(color: .black.opacity(0.15), radius: 10, y: 5)
                         }
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 18)
-                        .foregroundColor(.brand)
-                        .background(.white)
-                        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
-                        .shadow(color: .black.opacity(0.15), radius: 10, y: 5)
+                        
+                        Button(action: {
+                            onComplete(false)
+                        }) {
+                            Text("Manuell eintragen (ohne Apple Health)")
+                                .font(.subheadline)
+                                .foregroundColor(.white.opacity(0.8))
+                                .padding(.vertical, 8)
+                        }
                     }
                     .padding(.horizontal, 32)
-                    .padding(.bottom, 80)
+                    .padding(.bottom, 60)
                     .transition(.move(edge: .bottom).combined(with: .opacity))
                 }
             }
