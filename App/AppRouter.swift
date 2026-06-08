@@ -4,6 +4,7 @@ struct AppRouter: View {
     @Environment(WorkoutManager.self) private var workoutManager
     @State private var showingWorkoutSession = false
     @AppStorage("mainSelectedTab") private var selectedTab = 0
+    @AppStorage("appTheme") private var appTheme: AppTheme = .system
     
     private var tabSelection: Binding<Int> {
         Binding(
@@ -60,12 +61,14 @@ struct AppRouter: View {
                     .tag(4)
             }
             .tint(.brand)
-            
-            if let vm = workoutManager.activeViewModel {
-                WorkoutMiniPlayerView(viewModel: vm, planName: workoutManager.activeSession?.plan?.name) {
-                    showingWorkoutSession = true
+            .preferredColorScheme(appTheme.colorScheme)
+            .overlay {
+                if let vm = workoutManager.activeViewModel, !showingWorkoutSession {
+                    WorkoutMiniPlayerView(viewModel: vm, planName: workoutManager.activeSession?.plan?.name) {
+                        showingWorkoutSession = true
+                    }
+                    .padding(.bottom, 49) // Approximate tab bar height padding
                 }
-                .padding(.bottom, 49) // Approximate tab bar height padding
             }
         }
         .fullScreenCover(isPresented: $showingWorkoutSession) {

@@ -6,6 +6,7 @@ struct SettingsView: View {
     @Environment(\.modelContext) private var modelContext
     @AppStorage(AppStorageKeys.prefillExerciseHistory) private var prefillExerciseHistory = true
     @AppStorage("zeroWeightIsBodyweight") private var zeroWeightIsBodyweight = true
+    @AppStorage("appTheme") private var appTheme: AppTheme = .system
     
     @AppStorage(AppStorageKeys.healthKitEnabled) private var healthKitEnabled = false
     @AppStorage(AppStorageKeys.healthKitAutoSync) private var healthKitAutoSync = true
@@ -83,6 +84,15 @@ struct SettingsView: View {
                 .onAppear {
                     if birthDateInterval > 0 {
                         birthDate = Date(timeIntervalSince1970: birthDateInterval)
+                    }
+                }
+                
+                // MARK: Erscheinungsbild
+                Section(header: Text("Erscheinungsbild")) {
+                    Picker("Design", selection: $appTheme) {
+                        ForEach(AppTheme.allCases) { theme in
+                            Text(theme.rawValue).tag(theme)
+                        }
                     }
                 }
 
