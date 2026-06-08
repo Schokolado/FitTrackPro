@@ -665,6 +665,9 @@ struct TrainingMainView: View {
                         }
                 }
             }
+            .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("OpenWorkoutSelection"))) { _ in
+                selectedTab = 0
+            }
             .overlay(alignment: .bottomTrailing) {
                 VStack(alignment: .trailing, spacing: 16) {
                     if isFabExpanded {

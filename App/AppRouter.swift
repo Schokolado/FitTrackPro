@@ -64,6 +64,16 @@ struct AppRouter: View {
                 showingWorkoutSession = true
             }
         }
+        .onOpenURL { url in
+            if url.host == "add-meal" {
+                selectedTab = 2
+                NotificationCenter.default.post(name: NSNotification.Name("ResetNutritionToToday"), object: nil)
+                NotificationCenter.default.post(name: NSNotification.Name("OpenNutritionAddEntry"), object: nil)
+            } else if url.host == "start-workout" {
+                selectedTab = 1
+                NotificationCenter.default.post(name: NSNotification.Name("OpenWorkoutSelection"), object: nil)
+            }
+        }
     }
 }
 

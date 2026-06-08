@@ -121,6 +121,40 @@ struct DashboardEntry: TimelineEntry {
     let stepGoal: Int
 }
 
+struct SmallWidgetView: View {
+    var entry: Provider.Entry
+    
+    var body: some View {
+        VStack(spacing: 8) {
+            ZStack {
+                Circle()
+                    .stroke(Color.gray.opacity(0.2), lineWidth: 6)
+                
+                Circle()
+                    .trim(from: 0, to: min(CGFloat(entry.caloriesConsumed / max(entry.caloriesGoal, 1)), 1.0))
+                    .stroke(Color.orange, style: StrokeStyle(lineWidth: 6, lineCap: .round))
+                    .rotationEffect(.degrees(-90))
+                
+                VStack(spacing: 0) {
+                    Text("\(Int(entry.caloriesConsumed))")
+                        .font(.system(size: 20, weight: .bold, design: .rounded))
+                        .minimumScaleFactor(0.8)
+                    Text("/ \(Int(entry.caloriesGoal))")
+                        .font(.system(size: 8))
+                        .foregroundColor(.secondary)
+                }
+            }
+            .frame(height: 80)
+            
+            HStack(spacing: 8) {
+                MacroBar(color: .red, label: "P", value: entry.protein, goal: entry.proteinGoal)
+                MacroBar(color: .blue, label: "K", value: entry.carbs, goal: entry.carbsGoal)
+                MacroBar(color: .yellow, label: "F", value: entry.fat, goal: entry.fatGoal)
+            }
+        }
+    }
+}
+
 struct CalorieWidgetView: View {
     var entry: Provider.Entry
     
@@ -160,55 +194,77 @@ struct DashboardWidgetView: View {
             CalorieWidgetView(entry: entry)
                 .frame(maxWidth: .infinity)
             
-            VStack(alignment: .leading, spacing: 10) {
-                // Macros
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Makros")
-                        .font(.caption2)
-                        .foregroundColor(.secondary)
-                    HStack(spacing: 6) {
-                        MacroBar(color: .red, label: "P", value: entry.protein, goal: entry.proteinGoal)
-                        MacroBar(color: .blue, label: "K", value: entry.carbs, goal: entry.carbsGoal)
-                        MacroBar(color: .yellow, label: "F", value: entry.fat, goal: entry.fatGoal)
+            VStack(alignment: .leading, spacing: 6) {
+                // Macros & Steps Row
+                HStack {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Makros")
+                            .font(.system(size: 10))
+                            .foregroundColor(.secondary)
+                        HStack(spacing: 4) {
+                            MacroBar(color: .red, label: "P", value: entry.protein, goal: entry.proteinGoal)
+                            MacroBar(color: .blue, label: "K", value: entry.carbs, goal: entry.carbsGoal)
+                            MacroBar(color: .yellow, label: "F", value: entry.fat, goal: entry.fatGoal)
+                        }
+                    }
+                    Spacer()
+                    VStack(alignment: .trailing, spacing: 2) {
+                        Text("Schritte")
+                            .font(.system(size: 10))
+                            .foregroundColor(.secondary)
+                        Text("\(entry.steps)")
+                            .font(.system(size: 12, weight: .bold))
+                            .foregroundColor(entry.steps >= entry.stepGoal ? .green : .primary)
                     }
                 }
                 
-                // Steps
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("Schritte")
-                        .font(.caption2)
-                        .foregroundColor(.secondary)
-                    Text("\(entry.steps)")
-                        .font(.footnote).bold()
-                        .foregroundColor(entry.steps >= entry.stepGoal ? .green : .primary)
-                }
+                Spacer()
                 
                 // Workout & Weight
                 HStack {
                     VStack(alignment: .leading, spacing: 2) {
-                        Text("Workout")
-                            .font(.caption2)
+                        Text("Letztes Workout")
+                            .font(.system(size: 10))
                             .foregroundColor(.secondary)
                         Text(entry.lastWorkout)
                             .font(.system(size: 10, weight: .bold))
                             .lineLimit(1)
                     }
-                    Spacer()
-                    VStack(alignment: .trailing, spacing: 2) {
-                        Text("Gewicht")
-                            .font(.caption2)
-                            .foregroundColor(.secondary)
-                        if let w = entry.weight {
-                            Text("\(String(format: "%.1f", w)) kg")
-                                .font(.system(size: 10, weight: .bold))
-                        } else {
-                            Text("-- kg")
-                                .font(.system(size: 10, weight: .bold))
+                }
+                
+                Spacer()
+                
+                // Quick Actions
+                HStack(spacing: 8) {
+                    Link(destination: URL(string: "fittrackpro://start-workout")!) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "play.fill")
+                            Text("Workout")
                         }
+                        .font(.system(size: 10, weight: .bold))
+                        .padding(.vertical, 6)
+                        .padding(.horizontal, 8)
+                        .background(Color.green.opacity(0.2))
+                        .foregroundColor(.green)
+                        .cornerRadius(6)
+                    }
+                    
+                    Link(destination: URL(string: "fittrackpro://add-meal")!) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "plus")
+                            Text("Mahlzeit")
+                        }
+                        .font(.system(size: 10, weight: .bold))
+                        .padding(.vertical, 6)
+                        .padding(.horizontal, 8)
+                        .background(Color.orange.opacity(0.2))
+                        .foregroundColor(.orange)
+                        .cornerRadius(6)
                     }
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.vertical, 4)
         }
     }
 }
@@ -233,7 +289,7 @@ struct MacroBar: View {
                         .frame(height: min(CGFloat(value / max(goal, 1)) * geometry.size.height, geometry.size.height))
                 }
             }
-            .frame(width: 8, height: 20)
+            .frame(width: 8, height: 24)
         }
     }
 }
@@ -245,13 +301,13 @@ struct WidgetSelectorView: View {
     var body: some View {
         switch family {
         case .systemSmall:
-            CalorieWidgetView(entry: entry)
+            SmallWidgetView(entry: entry)
                 .padding()
         case .systemMedium:
             DashboardWidgetView(entry: entry)
                 .padding()
         default:
-            CalorieWidgetView(entry: entry)
+            SmallWidgetView(entry: entry)
                 .padding()
         }
     }
