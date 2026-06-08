@@ -91,7 +91,7 @@ actor FoodAPIService {
         self.session = URLSession.shared
         #endif
     }
-    func fetchProduct(barcode: String) async throws -> OFFProduct? {
+    func fetchProduct(barcode: String, retries: Int = 1) async throws -> OFFProduct? {
         guard let url = URL(string: "https://world.openfoodfacts.org/api/v0/product/\(barcode).json") else {
             throw FoodAPIError.networkError
         }
@@ -119,6 +119,10 @@ actor FoodAPIService {
             throw FoodAPIError.decodingError
         } catch {
             print("Network error: \(error)")
+            if retries > 0 {
+                try? await Task.sleep(nanoseconds: 500_000_000)
+                return try await fetchProduct(barcode: barcode, retries: retries - 1)
+            }
             throw FoodAPIError.networkError
         }
     }

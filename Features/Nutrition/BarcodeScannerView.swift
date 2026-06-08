@@ -31,7 +31,7 @@ struct BarcodeScannerRepresentable: UIViewControllerRepresentable {
             Task {
                 let service = FoodAPIService()
                 do {
-                    let product = try await service.fetchProduct(barcode: barcode)
+                    let product = try await service.fetchProduct(barcode: barcode, retries: 1)
                     DispatchQueue.main.async {
                         self.parent.isFetching = false
                         self.parent.onProductFound(product)
@@ -39,7 +39,7 @@ struct BarcodeScannerRepresentable: UIViewControllerRepresentable {
                 } catch {
                     DispatchQueue.main.async {
                         self.parent.isFetching = false
-                        self.parent.onProductFound(nil)
+                        vc.isProcessing = false
                     }
                 }
             }

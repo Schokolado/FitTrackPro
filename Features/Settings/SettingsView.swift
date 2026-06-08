@@ -8,7 +8,7 @@ struct SettingsView: View {
     @AppStorage("zeroWeightIsBodyweight") private var zeroWeightIsBodyweight = true
     
     @AppStorage(AppStorageKeys.healthKitEnabled) private var healthKitEnabled = false
-    @AppStorage(AppStorageKeys.healthKitAutoSync) private var healthKitAutoSync = false
+    @AppStorage(AppStorageKeys.healthKitAutoSync) private var healthKitAutoSync = true
     
     @AppStorage("timerFav1") private var timerFav1: Int = 30
     @AppStorage("timerFav2") private var timerFav2: Int = 60
@@ -206,37 +206,7 @@ struct SettingsView: View {
                     Stepper("Favorit 2: \(timerFav2) Sek", value: $timerFav2, in: 10...300, step: 10)
                     Stepper("Favorit 3: \(timerFav3) Sek", value: $timerFav3, in: 10...300, step: 10)
                 }
-                
-                Section(header: Text("Ernährungs-Ziele")) {
-                    HStack {
-                        Text("Kalorien")
-                        Spacer()
-                        TextField("kcal", value: $dailyCalorieGoal, format: .number)
-                            .keyboardType(.decimalPad)
-                            .multilineTextAlignment(.trailing)
-                    }
-                    HStack {
-                        Text("Protein (g)")
-                        Spacer()
-                        TextField("g", value: $nutritionGoalProtein, format: .number)
-                            .keyboardType(.decimalPad)
-                            .multilineTextAlignment(.trailing)
-                    }
-                    HStack {
-                        Text("Kohlenhydrate (g)")
-                        Spacer()
-                        TextField("g", value: $nutritionGoalCarbs, format: .number)
-                            .keyboardType(.decimalPad)
-                            .multilineTextAlignment(.trailing)
-                    }
-                    HStack {
-                        Text("Fett (g)")
-                        Spacer()
-                        TextField("g", value: $nutritionGoalFat, format: .number)
-                            .keyboardType(.decimalPad)
-                            .multilineTextAlignment(.trailing)
-                    }
-                }
+
                 Section(header: Text("Gefahrenzone").foregroundColor(.red)) {
                     Button(role: .destructive) {
                         showDeduplicateAlert = true
@@ -254,6 +224,20 @@ struct SettingsView: View {
                             Image(systemName: "trash")
                             Text("Datenbank vollständig zurücksetzen")
                         }
+                    }
+                }
+                
+                Section {
+                    if let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String,
+                       let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String {
+                        HStack {
+                            Spacer()
+                            Text("Version \(version) (\(build))")
+                                .font(.footnote)
+                                .foregroundColor(.secondary)
+                            Spacer()
+                        }
+                        .listRowBackground(Color.clear)
                     }
                 }
             }
@@ -342,6 +326,27 @@ struct SettingsView: View {
                     deleteCount += 1
                 } else {
                     uniqueSeen.append((entry.timestamp, entry.weightKg))
+                }
+            }
+            
+            // Deduplicate Exercises
+            let exDescriptor = FetchDescriptor<Exercise>()
+            let allExercises = try modelContext.fetch(exDescriptor)
+            var canonicalExercises: [String: Exercise] = [:]
+            
+            for ex in allExercises {
+                let nameKey = ex.name.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+                if let canonical = canonicalExercises[nameKey] {
+                    if let sets = ex.workoutSets {
+                        for s in sets { s.exercise = canonical }
+                    }
+                    if let plans = ex.planExercises {
+                        for p in plans { p.exercise = canonical }
+                    }
+                    modelContext.delete(ex)
+                    deleteCount += 1
+                } else {
+                    canonicalExercises[nameKey] = ex
                 }
             }
             

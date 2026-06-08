@@ -6,7 +6,7 @@ struct WeightEntryFormView: View {
     @Environment(\.dismiss) private var dismiss
     
     @AppStorage(AppStorageKeys.healthKitEnabled) private var healthKitEnabled = false
-    @AppStorage(AppStorageKeys.healthKitAutoSync) private var healthKitAutoSync = false
+    @AppStorage(AppStorageKeys.healthKitAutoSync) private var healthKitAutoSync = true
     
     let entryToEdit: WeightEntry?
     

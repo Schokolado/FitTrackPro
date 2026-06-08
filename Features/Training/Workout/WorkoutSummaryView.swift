@@ -13,7 +13,7 @@ struct WorkoutSummaryView: View {
     @State private var showingCancelAlert = false
     
     @AppStorage(AppStorageKeys.healthKitEnabled) private var healthKitEnabled = false
-    @AppStorage(AppStorageKeys.healthKitAutoSync) private var healthKitAutoSync = false
+    @AppStorage(AppStorageKeys.healthKitAutoSync) private var healthKitAutoSync = true
     @State private var syncToHealth: Bool = false
     
     // Computed statistics

@@ -13,7 +13,7 @@ struct FoodEntryFormView: View {
     var onSave: ((String) -> Void)? = nil
     
     @AppStorage(AppStorageKeys.healthKitEnabled) private var healthKitEnabled = false
-    @AppStorage(AppStorageKeys.healthKitAutoSync) private var healthKitAutoSync = false
+    @AppStorage(AppStorageKeys.healthKitAutoSync) private var healthKitAutoSync = true
     
     @State private var showingValidationError = false
     @State private var showingScanner = false
