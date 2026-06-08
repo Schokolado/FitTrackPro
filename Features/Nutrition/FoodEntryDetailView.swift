@@ -1,7 +1,11 @@
 import SwiftUI
+import SwiftData
 
 struct FoodEntryDetailView: View {
     let entry: FoodEntry
+    @Environment(\.modelContext) private var modelContext
+    @Environment(\.dismiss) private var dismiss
+    @State private var showingDeleteConfirmation = false
     
     var body: some View {
         ScrollView {
@@ -48,12 +52,38 @@ struct FoodEntryDetailView: View {
                 }
                 .padding()
                 .cardStyle()
+                
+                // Delete Button
+                Button(role: .destructive, action: {
+                    showingDeleteConfirmation = true
+                }) {
+                    HStack {
+                        Image(systemName: "trash")
+                        Text("Eintrag löschen")
+                    }
+                    .font(.headline)
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(Color.red.opacity(0.1))
+                    .foregroundColor(.red)
+                    .cornerRadius(12)
+                }
+                .padding(.top, Spacing.md)
             }
             .padding()
         }
         .background(Color.backgroundPrimary)
         .navigationTitle("Details")
         .navigationBarTitleDisplayMode(.inline)
+        .alert("Eintrag löschen?", isPresented: $showingDeleteConfirmation) {
+            Button("Abbrechen", role: .cancel) { }
+            Button("Löschen", role: .destructive) {
+                modelContext.delete(entry)
+                dismiss()
+            }
+        } message: {
+            Text("Möchtest du dieses Lebensmittel wirklich entfernen?")
+        }
     }
     
     private func macroRow(title: String, value: Double, unit: String, color: Color) -> some View {
