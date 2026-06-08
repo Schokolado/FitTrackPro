@@ -39,6 +39,9 @@ class SeedDataService {
   { "name": "Beinstrecker (Maschine)", "category": "Beine", "defaultRestDuration": 90, "sortOrder": 23 },
   { "name": "Ausfallschritte (Lunges)", "category": "Beine", "defaultRestDuration": 90, "sortOrder": 24 },
   { "name": "Wadenheben", "category": "Beine", "defaultRestDuration": 60, "sortOrder": 25 },
+  { "name": "Romanian Deadlift", "category": "Beine", "defaultRestDuration": 120, "sortOrder": 26 },
+  { "name": "Adduktoren (Maschine)", "category": "Beine", "defaultRestDuration": 90, "sortOrder": 27 },
+  { "name": "Abduktoren (Maschine)", "category": "Beine", "defaultRestDuration": 90, "sortOrder": 28 },
   
   { "name": "Schulterdrücken (Kurzhanteln)", "category": "Schultern", "defaultRestDuration": 90, "sortOrder": 30 },
   { "name": "Military Press (Langhantel)", "category": "Schultern", "defaultRestDuration": 90, "sortOrder": 31 },
@@ -87,6 +90,9 @@ class SeedDataService {
   { "name": "Leg Extension (Machine)", "category": "Legs", "defaultRestDuration": 90, "sortOrder": 23 },
   { "name": "Lunges", "category": "Legs", "defaultRestDuration": 90, "sortOrder": 24 },
   { "name": "Calf Raises", "category": "Legs", "defaultRestDuration": 60, "sortOrder": 25 },
+  { "name": "Romanian Deadlift", "category": "Legs", "defaultRestDuration": 120, "sortOrder": 26 },
+  { "name": "Adductor (Machine)", "category": "Legs", "defaultRestDuration": 90, "sortOrder": 27 },
+  { "name": "Abductor (Machine)", "category": "Legs", "defaultRestDuration": 90, "sortOrder": 28 },
   
   { "name": "Shoulder Press (Dumbbell)", "category": "Shoulders", "defaultRestDuration": 90, "sortOrder": 30 },
   { "name": "Military Press (Barbell)", "category": "Shoulders", "defaultRestDuration": 90, "sortOrder": 31 },

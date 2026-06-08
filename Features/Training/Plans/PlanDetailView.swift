@@ -244,12 +244,31 @@ struct PlanDetailView: View {
             }
             .disabled(editName.trimmingCharacters(in: .whitespaces).isEmpty)
         }
-        .alert("Notizen bearbeiten", isPresented: $showingEditNotesAlert) {
-            TextField("Notizen", text: $editNotes)
-            Button("Abbrechen", role: .cancel) { }
-            Button("Speichern") {
-                plan.notes = editNotes
+        .sheet(isPresented: $showingEditNotesAlert) {
+            NavigationStack {
+                Form {
+                    Section(header: Text("Notizen")) {
+                        TextField("Notizen eingeben...", text: $editNotes, axis: .vertical)
+                            .lineLimit(5...20)
+                    }
+                }
+                .navigationTitle("Notizen bearbeiten")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Abbrechen") {
+                            showingEditNotesAlert = false
+                        }
+                    }
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Speichern") {
+                            plan.notes = editNotes
+                            showingEditNotesAlert = false
+                        }
+                    }
+                }
             }
+            .presentationDetents([.medium, .large])
         }
         .alert("Plan löschen", isPresented: $showingDeleteAlert) {
             Button("Löschen", role: .destructive) {
