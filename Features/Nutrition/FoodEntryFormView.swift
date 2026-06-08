@@ -19,6 +19,7 @@ struct FoodEntryFormView: View {
     @State private var showingScanner = false
     
     @State private var name: String = ""
+    @State private var barcode: String? = nil
     @State private var amountGrams: Double = 100.0
     
     @State private var caloriesPer100g: Double = 0.0
@@ -189,6 +190,7 @@ struct FoodEntryFormView: View {
     
     private func applyProduct(_ product: OFFProduct) {
         name = product.productName ?? ""
+        barcode = product.code
         if let sq = product.servingQuantity, sq > 0 {
             amountGrams = sq
         } else {
@@ -234,6 +236,23 @@ struct FoodEntryFormView: View {
         )
         
         modelContext.insert(newEntry)
+        
+        // Auto-save to Eigene Lebensmittel
+        let fetchDescriptor = FetchDescriptor<SavedFood>()
+        let savedFoods = (try? modelContext.fetch(fetchDescriptor)) ?? []
+        let exists = savedFoods.contains { $0.name.lowercased() == name.lowercased() }
+        
+        if !exists {
+            let newSavedFood = SavedFood(
+                name: name,
+                barcode: barcode,
+                caloriesPer100g: caloriesPer100g,
+                proteinPer100g: proteinPer100g,
+                carbsPer100g: carbsPer100g,
+                fatPer100g: fatPer100g
+            )
+            modelContext.insert(newSavedFood)
+        }
         
         if healthKitEnabled && healthKitAutoSync {
             Task { @MainActor in

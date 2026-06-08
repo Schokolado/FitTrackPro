@@ -11,6 +11,8 @@ struct FoodManagementView: View {
     // Navigation State
     @State private var showSavedFoodForm = false
     @State private var showRecipeBuilder = false
+    @State private var foodToEdit: SavedFood?
+    @State private var recipeToEdit: Recipe?
     
     var body: some View {
         VStack(spacing: 0) {
@@ -49,6 +51,12 @@ struct FoodManagementView: View {
         .sheet(isPresented: $showRecipeBuilder) {
             RecipeBuilderView()
         }
+        .sheet(item: $foodToEdit) { food in
+            SavedFoodFormView(foodToEdit: food)
+        }
+        .sheet(item: $recipeToEdit) { recipe in
+            RecipeBuilderView(recipeToEdit: recipe)
+        }
     }
     
     private var savedFoodsList: some View {
@@ -58,12 +66,17 @@ struct FoodManagementView: View {
                     .foregroundColor(.secondary)
             } else {
                 ForEach(savedFoods) { food in
-                    VStack(alignment: .leading) {
-                        Text(food.name)
-                            .font(.headline)
-                        Text("\(Int(food.caloriesPer100g)) kcal / 100g")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
+                    Button(action: {
+                        foodToEdit = food
+                    }) {
+                        VStack(alignment: .leading) {
+                            Text(food.name)
+                                .font(.headline)
+                                .foregroundColor(.primary)
+                            Text("\(Int(food.caloriesPer100g)) kcal / 100g")
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                        }
                     }
                     .swipeActions(edge: .trailing) {
                         Button(role: .destructive) {
@@ -71,6 +84,7 @@ struct FoodManagementView: View {
                         } label: {
                             Label("Löschen", systemImage: "trash")
                         }
+                        .tint(.red)
                     }
                 }
             }
@@ -84,12 +98,17 @@ struct FoodManagementView: View {
                     .foregroundColor(.secondary)
             } else {
                 ForEach(recipes) { recipe in
-                    VStack(alignment: .leading) {
-                        Text(recipe.name)
-                            .font(.headline)
-                        Text("\(Int(recipe.totalCalories)) kcal | \(Int(recipe.portions)) Portion(en)")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
+                    Button(action: {
+                        recipeToEdit = recipe
+                    }) {
+                        VStack(alignment: .leading) {
+                            Text(recipe.name)
+                                .font(.headline)
+                                .foregroundColor(.primary)
+                            Text("\(Int(recipe.totalCalories)) kcal | \(Int(recipe.portions)) Portion(en)")
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                        }
                     }
                     .swipeActions(edge: .trailing) {
                         Button(role: .destructive) {
@@ -97,6 +116,7 @@ struct FoodManagementView: View {
                         } label: {
                             Label("Löschen", systemImage: "trash")
                         }
+                        .tint(.red)
                     }
                 }
             }

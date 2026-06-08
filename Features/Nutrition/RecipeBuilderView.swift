@@ -5,6 +5,8 @@ struct RecipeBuilderView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     
+    var recipeToEdit: Recipe?
+    
     @State private var recipeName: String = ""
     @State private var portions: Double = 1.0
     @State private var ingredients: [RecipeIngredient] = []
@@ -101,7 +103,7 @@ struct RecipeBuilderView: View {
                     }
                 }
             }
-            .navigationTitle("Neues Rezept")
+            .navigationTitle(recipeToEdit == nil ? "Neues Rezept" : "Rezept bearbeiten")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -123,6 +125,13 @@ struct RecipeBuilderView: View {
                     ingredients.append(newIng)
                 })
             }
+            .onAppear {
+                if let recipe = recipeToEdit {
+                    recipeName = recipe.name
+                    portions = recipe.portions
+                    ingredients = recipe.ingredients ?? []
+                }
+            }
         }
     }
     
@@ -131,12 +140,31 @@ struct RecipeBuilderView: View {
     }
     
     private func saveRecipe() {
-        let recipe = Recipe(name: recipeName, portions: portions)
-        modelContext.insert(recipe)
-        
-        for ingredient in ingredients {
-            ingredient.recipe = recipe
-            modelContext.insert(ingredient)
+        if let recipe = recipeToEdit {
+            recipe.name = recipeName
+            recipe.portions = portions
+            
+            let oldIngredients = recipe.ingredients ?? []
+            for old in oldIngredients {
+                if !ingredients.contains(where: { $0.id == old.id }) {
+                    modelContext.delete(old)
+                }
+            }
+            recipe.ingredients = ingredients
+            for ingredient in ingredients {
+                ingredient.recipe = recipe
+                if ingredient.modelContext == nil {
+                    modelContext.insert(ingredient)
+                }
+            }
+        } else {
+            let recipe = Recipe(name: recipeName, portions: portions)
+            modelContext.insert(recipe)
+            
+            for ingredient in ingredients {
+                ingredient.recipe = recipe
+                modelContext.insert(ingredient)
+            }
         }
         
         dismiss()

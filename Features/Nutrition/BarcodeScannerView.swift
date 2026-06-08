@@ -2,6 +2,7 @@ import SwiftUI
 import AVFoundation
 
 struct BarcodeScannerRepresentable: UIViewControllerRepresentable {
+    @Binding var isFetching: Bool
     var onProductFound: (OFFProduct?) -> Void
     
     func makeUIViewController(context: Context) -> ScannerViewController {
@@ -24,15 +25,20 @@ struct BarcodeScannerRepresentable: UIViewControllerRepresentable {
         }
         
         func didFindBarcode(_ barcode: String, in vc: ScannerViewController) {
+            DispatchQueue.main.async {
+                self.parent.isFetching = true
+            }
             Task {
                 let service = FoodAPIService()
                 do {
                     let product = try await service.fetchProduct(barcode: barcode)
                     DispatchQueue.main.async {
+                        self.parent.isFetching = false
                         self.parent.onProductFound(product)
                     }
                 } catch {
                     DispatchQueue.main.async {
+                        self.parent.isFetching = false
                         self.parent.onProductFound(nil)
                     }
                 }
@@ -132,10 +138,11 @@ class ScannerViewController: UIViewController, AVCaptureMetadataOutputObjectsDel
 struct BarcodeScannerView: View {
     @Environment(\.dismiss) private var dismiss
     var onProductFound: (OFFProduct?) -> Void
+    @State private var isFetching = false
     
     var body: some View {
         ZStack {
-            BarcodeScannerRepresentable(onProductFound: onProductFound)
+            BarcodeScannerRepresentable(isFetching: $isFetching, onProductFound: onProductFound)
                 .edgesIgnoringSafeArea(.all)
             
             VStack {
@@ -154,13 +161,29 @@ struct BarcodeScannerView: View {
                 
                 Spacer()
                 
-                Text("Bitte richte die Kamera auf den Barcode.")
-                    .font(.headline)
-                    .foregroundColor(.white)
+                if isFetching {
+                    VStack {
+                        ProgressView()
+                            .scaleEffect(1.5)
+                            .tint(.white)
+                        Text("Suche Produkt...")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .padding(.top, 8)
+                    }
                     .padding()
-                    .background(Color.black.opacity(0.7))
+                    .background(Color.black.opacity(0.8))
                     .cornerRadius(12)
                     .padding(.bottom, 60)
+                } else {
+                    Text("Bitte richte die Kamera auf den Barcode.")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .padding()
+                        .background(Color.black.opacity(0.7))
+                        .cornerRadius(12)
+                        .padding(.bottom, 60)
+                }
             }
         }
     }

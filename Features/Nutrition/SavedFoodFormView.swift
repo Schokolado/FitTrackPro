@@ -5,6 +5,8 @@ struct SavedFoodFormView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     
+    var foodToEdit: SavedFood?
+    
     @State private var name: String = ""
     @State private var barcode: String = ""
     @State private var calories: Double = 0
@@ -12,13 +14,25 @@ struct SavedFoodFormView: View {
     @State private var carbs: Double = 0
     @State private var fat: Double = 0
     
+    @State private var showingScanner = false
+    
     var body: some View {
         NavigationStack {
             Form {
                 Section(header: Text("Allgemein")) {
                     TextField("Name (z.B. Vollkornbrot)", text: $name)
-                    TextField("Barcode (optional)", text: $barcode)
-                        .keyboardType(.numberPad)
+                    HStack {
+                        TextField("Barcode (optional)", text: $barcode)
+                            .keyboardType(.numberPad)
+                        
+                        Button(action: {
+                            showingScanner = true
+                        }) {
+                            Image(systemName: "barcode.viewfinder")
+                                .foregroundColor(.accentColor)
+                        }
+                        .buttonStyle(BorderlessButtonStyle())
+                    }
                 }
                 
                 Section(header: Text("Nährwerte pro 100g / Portion")) {
@@ -62,18 +76,50 @@ struct SavedFoodFormView: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Speichern") {
-                        let newFood = SavedFood(
-                            name: name,
-                            barcode: barcode.isEmpty ? nil : barcode,
-                            caloriesPer100g: calories,
-                            proteinPer100g: protein,
-                            carbsPer100g: carbs,
-                            fatPer100g: fat
-                        )
-                        modelContext.insert(newFood)
+                        if let food = foodToEdit {
+                            food.name = name
+                            food.barcode = barcode.isEmpty ? nil : barcode
+                            food.caloriesPer100g = calories
+                            food.proteinPer100g = protein
+                            food.carbsPer100g = carbs
+                            food.fatPer100g = fat
+                        } else {
+                            let newFood = SavedFood(
+                                name: name,
+                                barcode: barcode.isEmpty ? nil : barcode,
+                                caloriesPer100g: calories,
+                                proteinPer100g: protein,
+                                carbsPer100g: carbs,
+                                fatPer100g: fat
+                            )
+                            modelContext.insert(newFood)
+                        }
                         dismiss()
                     }
                     .disabled(name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                }
+            }
+            .sheet(isPresented: $showingScanner) {
+                BarcodeScannerView(onProductFound: { product in
+                    showingScanner = false
+                    if let product = product {
+                        barcode = product.code ?? ""
+                        if name.isEmpty { name = product.productName ?? "" }
+                        if calories == 0 { calories = product.nutriments?.energyKcal100g ?? 0 }
+                        if protein == 0 { protein = product.nutriments?.proteins100g ?? 0 }
+                        if carbs == 0 { carbs = product.nutriments?.carbohydrates100g ?? 0 }
+                        if fat == 0 { fat = product.nutriments?.fat100g ?? 0 }
+                    }
+                })
+            }
+            .onAppear {
+                if let food = foodToEdit {
+                    name = food.name
+                    barcode = food.barcode ?? ""
+                    calories = food.caloriesPer100g
+                    protein = food.proteinPer100g
+                    carbs = food.carbsPer100g
+                    fat = food.fatPer100g
                 }
             }
         }
