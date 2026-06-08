@@ -313,10 +313,23 @@ struct SettingsView: View {
         // Import historical weights
         do {
             let imported = try await service.importHistoricalWeights()
+            
+            // Check for existing weights to prevent duplicates
+            let descriptor = FetchDescriptor<WeightEntry>()
+            let existingWeights = (try? modelContext.fetch(descriptor)) ?? []
+            
             for item in imported {
-                let entry = WeightEntry(weightKg: item.weightKg, timestamp: item.timestamp, notes: "Aus Apple Health importiert")
-                entry.syncedToHealthKit = true
-                modelContext.insert(entry)
+                // Check if a weight entry already exists with similar timestamp and weight
+                let exists = existingWeights.contains {
+                    abs($0.timestamp.timeIntervalSince1970 - item.timestamp.timeIntervalSince1970) < 60 &&
+                    abs($0.weightKg - item.weightKg) < 0.1
+                }
+                
+                if !exists {
+                    let entry = WeightEntry(weightKg: item.weightKg, timestamp: item.timestamp, notes: "Aus Apple Health importiert")
+                    entry.syncedToHealthKit = true
+                    modelContext.insert(entry)
+                }
             }
         } catch {
             print("Failed to import historical weights: \(error)")

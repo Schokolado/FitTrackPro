@@ -28,18 +28,30 @@ struct OnboardingView: View {
                         do {
                             let imported = try await HealthKitService.shared.importHistoricalWeights()
                             await MainActor.run {
+                                let descriptor = FetchDescriptor<WeightEntry>()
+                                let existingWeights = (try? modelContext.fetch(descriptor)) ?? []
+                                
                                 for item in imported {
-                                    let entry = WeightEntry(weightKg: item.weightKg, timestamp: item.timestamp, notes: "Aus Apple Health importiert")
-                                    entry.syncedToHealthKit = true
-                                    modelContext.insert(entry)
+                                    let exists = existingWeights.contains {
+                                        abs($0.timestamp.timeIntervalSince1970 - item.timestamp.timeIntervalSince1970) < 60 &&
+                                        abs($0.weightKg - item.weightKg) < 0.1
+                                    }
+                                    if !exists {
+                                        let entry = WeightEntry(weightKg: item.weightKg, timestamp: item.timestamp, notes: "Aus Apple Health importiert")
+                                        entry.syncedToHealthKit = true
+                                        modelContext.insert(entry)
+                                    }
                                 }
                                 
                                 // Auch das Onboarding-Gewicht als ersten Eintrag setzen, falls HealthKit leer war
                                 if imported.isEmpty {
                                     let weight = CloudProfileService.shared.getCloudWeight()
                                     if weight > 0 {
-                                        let entry = WeightEntry(weightKg: weight, timestamp: Date(), notes: "Aus iCloud wiederhergestellt")
-                                        modelContext.insert(entry)
+                                        let exists = existingWeights.contains { abs($0.weightKg - weight) < 0.1 }
+                                        if !exists {
+                                            let entry = WeightEntry(weightKg: weight, timestamp: Date(), notes: "Aus iCloud wiederhergestellt")
+                                            modelContext.insert(entry)
+                                        }
                                     }
                                 }
                                 
@@ -81,10 +93,19 @@ struct OnboardingView: View {
                             do {
                                 let imported = try await HealthKitService.shared.importHistoricalWeights()
                                 await MainActor.run {
+                                    let descriptor = FetchDescriptor<WeightEntry>()
+                                    let existingWeights = (try? modelContext.fetch(descriptor)) ?? []
+                                    
                                     for item in imported {
-                                        let entry = WeightEntry(weightKg: item.weightKg, timestamp: item.timestamp, notes: "Aus Apple Health importiert")
-                                        entry.syncedToHealthKit = true
-                                        modelContext.insert(entry)
+                                        let exists = existingWeights.contains {
+                                            abs($0.timestamp.timeIntervalSince1970 - item.timestamp.timeIntervalSince1970) < 60 &&
+                                            abs($0.weightKg - item.weightKg) < 0.1
+                                        }
+                                        if !exists {
+                                            let entry = WeightEntry(weightKg: item.weightKg, timestamp: item.timestamp, notes: "Aus Apple Health importiert")
+                                            entry.syncedToHealthKit = true
+                                            modelContext.insert(entry)
+                                        }
                                     }
                                     try? modelContext.save()
                                 }
