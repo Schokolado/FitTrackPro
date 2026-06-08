@@ -83,7 +83,7 @@ struct SplashScreenView: View {
                     Image("VigrLogoTransparent")
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 200, height: 200)
+                        .frame(width: 260, height: 260)
                         .scaleEffect(isPulsing ? 1.05 : 0.95)
                 }
                 .position(x: geo.size.width / 2, y: geo.size.height / 2)
