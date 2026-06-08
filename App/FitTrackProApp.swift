@@ -69,7 +69,7 @@ struct SplashScreenView: View {
     var body: some View {
         GeometryReader { geo in
             ZStack {
-                Color(uiColor: .systemGroupedBackground)
+                Color.black
                 
                 // Das Logo bleibt immer exakt im absoluten Zentrum des Bildschirms
                 ZStack {
@@ -80,12 +80,10 @@ struct SplashScreenView: View {
                         .scaleEffect(isAnimating ? 1.5 : 0.8)
                         .opacity(isAnimating ? 0 : 1)
                     
-                    Image("VigrLogo")
+                    Image("VigrLogoTransparent")
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 120, height: 120)
-                        .clipShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
-                        .shadow(color: Color.black.opacity(0.2), radius: 15, x: 0, y: 8)
+                        .frame(width: 140, height: 140)
                         .scaleEffect(isPulsing ? 1.05 : 0.95)
                 }
                 .position(x: geo.size.width / 2, y: geo.size.height / 2)

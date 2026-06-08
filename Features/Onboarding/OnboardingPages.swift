@@ -95,12 +95,10 @@ struct OnboardingWelcomePage: View {
                 Spacer()
 
                 VStack(spacing: 16) {
-                    Image("VigrLogo")
+                    Image("VigrLogoTransparent")
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 120, height: 120)
-                        .clipShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
-                        .shadow(color: .brand.opacity(0.3), radius: 20, x: 0, y: 10)
+                        .frame(width: 140, height: 140)
 
                     Text("Vigr")
                         .font(.system(size: 42, weight: .black, design: .rounded))
