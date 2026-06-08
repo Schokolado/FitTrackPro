@@ -76,14 +76,14 @@ struct SplashScreenView: View {
                     // Expanding outer ring (Ripple effect)
                     Circle()
                         .fill(Color.brand.opacity(0.3))
-                        .frame(width: 140, height: 140)
+                        .frame(width: 200, height: 200)
                         .scaleEffect(isAnimating ? 1.5 : 0.8)
                         .opacity(isAnimating ? 0 : 1)
                     
                     Image("VigrLogoTransparent")
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 140, height: 140)
+                        .frame(width: 200, height: 200)
                         .scaleEffect(isPulsing ? 1.05 : 0.95)
                 }
                 .position(x: geo.size.width / 2, y: geo.size.height / 2)

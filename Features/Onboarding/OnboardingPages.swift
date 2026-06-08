@@ -98,7 +98,7 @@ struct OnboardingWelcomePage: View {
                     Image("VigrLogoTransparent")
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 140, height: 140)
+                        .frame(width: 200, height: 200)
 
                     Text("Vigr")
                         .font(.system(size: 42, weight: .black, design: .rounded))
