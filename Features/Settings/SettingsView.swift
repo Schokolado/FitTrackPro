@@ -7,6 +7,8 @@ struct SettingsView: View {
     @AppStorage(AppStorageKeys.prefillExerciseHistory) private var prefillExerciseHistory = true
     @AppStorage("zeroWeightIsBodyweight") private var zeroWeightIsBodyweight = true
     @AppStorage("appTheme") private var appTheme: AppTheme = .system
+    @AppStorage("notificationsEnabled") private var notificationsEnabled = true
+    @State private var cloudKitStatus: CKAccountStatus = .couldNotDetermine
     
     @AppStorage(AppStorageKeys.healthKitEnabled) private var healthKitEnabled = false
     @AppStorage(AppStorageKeys.healthKitAutoSync) private var healthKitAutoSync = true
@@ -194,13 +196,45 @@ struct SettingsView: View {
                 
                 Section {
                     HStack {
-                        Label("Automatisch aktiv", systemImage: "checkmark.icloud.fill")
-                            .foregroundColor(.green)
+                        if cloudKitStatus == .available {
+                            Label("Aktiv & Verbunden", systemImage: "checkmark.icloud.fill")
+                                .foregroundColor(.green)
+                        } else if cloudKitStatus == .noAccount {
+                            Label("Nicht angemeldet", systemImage: "xmark.icloud.fill")
+                                .foregroundColor(.red)
+                        } else if cloudKitStatus == .restricted {
+                            Label("Eingeschränkt", systemImage: "exclamationmark.icloud.fill")
+                                .foregroundColor(.orange)
+                        } else {
+                            Label("Status wird geprüft...", systemImage: "arrow.triangle.2.circlepath.icloud.fill")
+                                .foregroundColor(.secondary)
+                        }
                     }
                 } header: {
                     Label("iCloud Sync", systemImage: "icloud.fill")
                 } footer: {
                     Text("Deine Daten werden automatisch und sicher über deinen iCloud-Account synchronisiert (sofern dein iPhone in iCloud angemeldet ist).")
+                }
+                .task {
+                    do {
+                        let status = try await CKContainer.default().accountStatus()
+                        await MainActor.run {
+                            self.cloudKitStatus = status
+                        }
+                    } catch {
+                        await MainActor.run {
+                            self.cloudKitStatus = .couldNotDetermine
+                        }
+                    }
+                }
+                
+                Section(header: Text("Benachrichtigungen")) {
+                    Toggle("Pausen-Timer Push", isOn: $notificationsEnabled)
+                        .onChange(of: notificationsEnabled) { _, newValue in
+                            if newValue {
+                                NotificationService.shared.requestAuthorization()
+                            }
+                        }
                 }
                 
                 Section(header: Text("Darstellung")) {
@@ -238,6 +272,9 @@ struct SettingsView: View {
                 }
                 
                 Section {
+                    Link("Datenschutzerklärung", destination: URL(string: "https://www.apple.com/legal/privacy/")!)
+                        .foregroundColor(.brand)
+                        
                     if let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String,
                        let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String {
                         HStack {

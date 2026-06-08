@@ -201,13 +201,13 @@
 ## Milestone 12 – Einstellungen
 
 - [x] `SettingsView.swift` – vollständige Einstellungsseite
-- [ ] HealthKit Sync-Modus (Auto / Manuell)
-- [ ] Kalorien- und Makroziele
-- [ ] Standard-Pausendauer konfigurieren
-- [ ] Benachrichtigungen aktivieren/deaktivieren
-- [ ] iCloud-Sync Status anzeigen (CloudKit-Badge: Synced / Syncing / Offline)
-- [ ] App-Version und Build-Nummer anzeigen
-- [ ] Datenschutzerklärung verlinken
+- [x] HealthKit Sync-Modus (Auto / Manuell)
+- [x] Kalorien- und Makroziele
+- [x] Standard-Pausendauer konfigurieren
+- [x] Benachrichtigungen aktivieren/deaktivieren
+- [x] iCloud-Sync Status anzeigen (CloudKit-Badge: Synced / Syncing / Offline)
+- [x] App-Version und Build-Nummer anzeigen
+- [x] Datenschutzerklärung verlinken
 
 ---
 
