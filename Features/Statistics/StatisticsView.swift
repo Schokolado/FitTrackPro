@@ -392,6 +392,24 @@ struct StatisticsView: View {
         }
     }
 
+    private var chartWeightEntries: [ChartDataPoint] {
+        let rawEntries = Array(filteredWeightEntries.reversed())
+        var chartEntries: [ChartDataPoint] = []
+        if rawEntries.count > 40 {
+            let chunkSize = rawEntries.count / 40
+            for i in stride(from: 0, to: rawEntries.count, by: chunkSize) {
+                let endIndex = min(i + chunkSize, rawEntries.count)
+                let chunk = rawEntries[i..<endIndex]
+                let avgWeight = chunk.map { $0.weightKg }.reduce(0, +) / Double(chunk.count)
+                let middleTimestamp = rawEntries[i + chunk.count / 2].timestamp
+                chartEntries.append(ChartDataPoint(timestamp: middleTimestamp, weightKg: avgWeight))
+            }
+        } else {
+            chartEntries = rawEntries.map { ChartDataPoint(timestamp: $0.timestamp, weightKg: $0.weightKg) }
+        }
+        return chartEntries
+    }
+
     private var weightStatisticsSection: some View {
         VStack(spacing: 16) {
             // Current weight header
@@ -439,7 +457,6 @@ struct StatisticsView: View {
 
             // Chart
             if !filteredWeightEntries.isEmpty {
-                let sorted = filteredWeightEntries.reversed()
                 let weights = filteredWeightEntries.map(\.weightKg)
                 let minW = (weights.min() ?? 0) - 3
                 let maxW = (weights.max() ?? 100) + 3
@@ -449,7 +466,7 @@ struct StatisticsView: View {
                         .font(.title3.bold())
 
                     Chart {
-                        ForEach(Array(sorted), id: \.id) { entry in
+                        ForEach(chartWeightEntries) { entry in
                             LineMark(
                                 x: .value("Datum", entry.timestamp),
                                 y: .value("Gewicht", entry.weightKg)

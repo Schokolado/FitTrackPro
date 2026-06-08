@@ -208,6 +208,13 @@ struct DashboardView: View {
                 }
             }
         }
+        .onChange(of: healthKitEnabled) { _, newValue in
+            if newValue {
+                Task {
+                    await refreshSteps()
+                }
+            }
+        }
     }
     
     private func refreshSteps() async {

@@ -11,6 +11,12 @@ enum WeightTimeRange: String, CaseIterable, Identifiable {
     var id: Self { self }
 }
 
+struct ChartDataPoint: Identifiable {
+    let id = UUID()
+    let timestamp: Date
+    let weightKg: Double
+}
+
 struct WeightTrackerView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \WeightEntry.timestamp, order: .reverse) private var entries: [WeightEntry]
@@ -45,6 +51,28 @@ struct WeightTrackerView: View {
                 return true
             }
         }
+    }
+    
+    var chartEntries: [ChartDataPoint] {
+        let rawEntries = filteredEntries.reversed()
+        guard rawEntries.count > 40 else {
+            return rawEntries.map { ChartDataPoint(timestamp: $0.timestamp, weightKg: $0.weightKg) }
+        }
+        
+        // Downsample to max 40 points to prevent chart lag
+        let array = Array(rawEntries)
+        let chunkSize = array.count / 40
+        var result: [ChartDataPoint] = []
+        
+        for i in stride(from: 0, to: array.count, by: chunkSize) {
+            let endIndex = min(i + chunkSize, array.count)
+            let chunk = array[i..<endIndex]
+            let avgWeight = chunk.map { $0.weightKg }.reduce(0, +) / Double(chunk.count)
+            let middleTimestamp = array[i + chunk.count / 2].timestamp
+            result.append(ChartDataPoint(timestamp: middleTimestamp, weightKg: avgWeight))
+        }
+        
+        return result
     }
     
     var groupedEntries: [(String, [WeightEntry])] {
@@ -144,7 +172,7 @@ struct WeightTrackerView: View {
                             .padding(.horizontal)
                         
                         Chart {
-                            ForEach(filteredEntries.reversed()) { entry in
+                            ForEach(chartEntries) { entry in
                                 LineMark(
                                     x: .value("Datum", entry.timestamp),
                                     y: .value("Gewicht", entry.weightKg)
@@ -290,8 +318,8 @@ struct WeightTrackerView: View {
         }
     }
     
-    private func findClosestEntry(to date: Date) -> WeightEntry? {
-        filteredEntries.min(by: { abs($0.timestamp.timeIntervalSince(date)) < abs($1.timestamp.timeIntervalSince(date)) })
+    private func findClosestEntry(to date: Date) -> ChartDataPoint? {
+        chartEntries.min(by: { abs($0.timestamp.timeIntervalSince(date)) < abs($1.timestamp.timeIntervalSince(date)) })
     }
     
     private func deleteEntry(_ entry: WeightEntry) {
