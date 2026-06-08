@@ -187,7 +187,7 @@ struct DashboardView: View {
             .background(Color.backgroundPrimary.ignoresSafeArea())
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    NavigationLink(destination: SettingsView()) {
+                    NavigationLink(destination: LazyView(SettingsView())) {
                         Image(systemName: "gearshape.fill")
                             .foregroundColor(.primary)
                     }

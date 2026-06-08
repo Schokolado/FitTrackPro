@@ -237,9 +237,7 @@ struct SettingsView: View {
                 }
                 
                 Section(header: Text("Darstellung")) {
-                    NavigationLink("Farben & Kategorien") {
-                        ThemeSettingsView()
-                    }
+                    NavigationLink("Farben & Kategorien", destination: LazyView(ThemeSettingsView()))
                 }
                 
                 Section(header: Text("Pausen-Timer")) {

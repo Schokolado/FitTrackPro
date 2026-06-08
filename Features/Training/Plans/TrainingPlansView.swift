@@ -648,7 +648,7 @@ struct TrainingMainView: View {
             .background(Color.backgroundPrimary)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    NavigationLink(destination: StatisticsView()) {
+                    NavigationLink(destination: LazyView(StatisticsView())) {
                         Image(systemName: "chart.xyaxis.line")
                             .foregroundColor(.primary)
                     }
