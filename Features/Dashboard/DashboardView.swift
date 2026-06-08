@@ -8,6 +8,7 @@ struct DashboardView: View {
     @AppStorage("daily_step_goal") private var dailyStepGoal: Int = 10000
     @AppStorage("userName") private var userName: String = ""
     @AppStorage(AppStorageKeys.healthKitEnabled) private var healthKitEnabled = false
+    @Environment(\.scenePhase) private var scenePhase
     
     @State private var todaySteps: Int = 0
     
@@ -137,16 +138,6 @@ struct DashboardView: View {
                     }
                     .buttonStyle(PlainButtonStyle())
                     .padding(.horizontal)
-                    .task {
-                        if healthKitEnabled {
-                            if let steps = try? await HealthKitService.shared.fetchSteps() {
-                                await MainActor.run {
-                                    todaySteps = steps
-                                }
-                            }
-                        }
-                    }
-                    
 
                     // Grid for Weight and Training
                     LazyVGrid(columns: [GridItem(.flexible(), spacing: 16), GridItem(.flexible(), spacing: 16)], spacing: 16) {
@@ -196,6 +187,26 @@ struct DashboardView: View {
         .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("TabReselected"))) { notification in
             if let tab = notification.object as? Int, tab == 0 {
                 navId = UUID()
+            }
+        }
+        .task {
+            await refreshSteps()
+        }
+        .onChange(of: scenePhase) { _, newPhase in
+            if newPhase == .active {
+                Task {
+                    await refreshSteps()
+                }
+            }
+        }
+    }
+    
+    private func refreshSteps() async {
+        if healthKitEnabled {
+            if let steps = try? await HealthKitService.shared.fetchSteps() {
+                await MainActor.run {
+                    self.todaySteps = steps
+                }
             }
         }
     }
