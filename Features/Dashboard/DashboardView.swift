@@ -181,10 +181,18 @@ struct DashboardView: View {
                     MoodSummaryCard()
                         .padding(.horizontal)
                 }
-                .padding(.bottom, 120) // Platz für Tabbar & MiniPlayer
+                .padding(.bottom, 24)
             }
-            .background(Color.backgroundPrimary)
-            .navigationBarHidden(true)
+            .scrollContentBackground(.hidden)
+            .background(Color.backgroundPrimary.ignoresSafeArea())
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    NavigationLink(destination: SettingsView()) {
+                        Image(systemName: "gearshape.fill")
+                            .foregroundColor(.primary)
+                    }
+                }
+            }
         }
         .id(navId)
         .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("TabReselected"))) { notification in

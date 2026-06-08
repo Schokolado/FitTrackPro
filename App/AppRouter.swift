@@ -43,22 +43,6 @@ struct AppRouter: View {
                         Label("Ernährung", systemImage: "fork.knife")
                     }
                     .tag(2)
-                
-                StatisticsView()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .background(Color.backgroundPrimary)
-                    .globalMiniPlayerSafeArea(isActive: workoutManager.activeViewModel != nil)
-                    .tabItem {
-                        Label("Statistik", systemImage: "chart.xyaxis.line")
-                    }
-                    .tag(3)
-                
-                SettingsView()
-                    .globalMiniPlayerSafeArea(isActive: workoutManager.activeViewModel != nil)
-                    .tabItem {
-                        Label("Einstellungen", systemImage: "gearshape.fill")
-                    }
-                    .tag(4)
             }
             .tint(.brand)
             .preferredColorScheme(appTheme.colorScheme)

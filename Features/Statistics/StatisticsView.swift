@@ -9,9 +9,6 @@ struct StatisticsView: View {
     @Query(sort: \WorkoutSession.startTime, order: .reverse)
     private var allSessions: [WorkoutSession]
 
-    @Query(sort: \WeightEntry.timestamp, order: .reverse)
-    private var weightEntries: [WeightEntry]
-
     @Query(sort: \Exercise.name)
     private var allExercises: [Exercise]
 
@@ -39,7 +36,6 @@ struct StatisticsView: View {
                     Picker("Ansicht", selection: $selectedSegment) {
                         Text("Übungen").tag(0)
                         Text("Pläne").tag(1)
-                        Text("Gewicht").tag(2)
                     }
                     .pickerStyle(.segmented)
                     .padding(.horizontal)
@@ -68,8 +64,6 @@ struct StatisticsView: View {
                         exerciseStatisticsSection
                     } else if selectedSegment == 1 {
                         planStatisticsSection
-                    } else {
-                        weightStatisticsSection
                     }
                 }
                 .padding(.bottom, 120)
@@ -371,188 +365,7 @@ struct StatisticsView: View {
         .frame(height: 250)
     }
 
-    // MARK: - Gewicht-Sektion
 
-    @State private var weightTimeRange: WeightTimeRange = .month
-
-    private var filteredWeightEntries: [WeightEntry] {
-        let now = Date()
-        let calendar = Calendar.current
-        return weightEntries.filter { entry in
-            switch weightTimeRange {
-            case .week:
-                return entry.timestamp >= (calendar.date(byAdding: .day, value: -7, to: now) ?? now)
-            case .month:
-                return entry.timestamp >= (calendar.date(byAdding: .month, value: -1, to: now) ?? now)
-            case .year:
-                return entry.timestamp >= (calendar.date(byAdding: .year, value: -1, to: now) ?? now)
-            case .all:
-                return true
-            }
-        }
-    }
-
-    private var chartWeightEntries: [ChartDataPoint] {
-        let rawEntries = Array(filteredWeightEntries.reversed())
-        var chartEntries: [ChartDataPoint] = []
-        if rawEntries.count > 40 {
-            let chunkSize = rawEntries.count / 40
-            for i in stride(from: 0, to: rawEntries.count, by: chunkSize) {
-                let endIndex = min(i + chunkSize, rawEntries.count)
-                let chunk = rawEntries[i..<endIndex]
-                let avgWeight = chunk.map { $0.weightKg }.reduce(0, +) / Double(chunk.count)
-                let middleTimestamp = rawEntries[i + chunk.count / 2].timestamp
-                chartEntries.append(ChartDataPoint(timestamp: middleTimestamp, weightKg: avgWeight))
-            }
-        } else {
-            chartEntries = rawEntries.map { ChartDataPoint(timestamp: $0.timestamp, weightKg: $0.weightKg) }
-        }
-        return chartEntries
-    }
-
-    private var weightStatisticsSection: some View {
-        VStack(spacing: 16) {
-            // Current weight header
-            if let latest = weightEntries.first {
-                VStack(spacing: 6) {
-                    Text("Aktuelles Gewicht")
-                        .font(.subheadline)
-                        .foregroundStyle(Color.textSecondary)
-                    HStack(alignment: .firstTextBaseline, spacing: 4) {
-                        Text(latest.weightKg, format: .number.precision(.fractionLength(1)))
-                            .font(.system(size: 40, weight: .bold, design: .rounded))
-                        Text("kg")
-                            .font(.title3)
-                            .foregroundStyle(Color.textSecondary)
-                    }
-
-                    // Trend
-                    if weightEntries.count > 1 {
-                        let diff = latest.weightKg - weightEntries[1].weightKg
-                        HStack(spacing: 4) {
-                            Image(systemName: diff > 0 ? "arrow.up.right" : (diff < 0 ? "arrow.down.right" : "arrow.right"))
-                            Text("\(abs(diff), specifier: "%.1f") kg")
-                        }
-                        .font(.subheadline.bold())
-                        .foregroundStyle(diff > 0 ? .red : (diff < 0 ? .green : Color.textSecondary))
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 4)
-                        .background(
-                            Capsule()
-                                .fill(diff > 0 ? Color.red.opacity(0.12) : (diff < 0 ? Color.green.opacity(0.12) : Color.secondary.opacity(0.12)))
-                        )
-                    }
-                }
-                .padding(.top, 4)
-            }
-
-            // Time range picker
-            Picker("Zeitraum", selection: $weightTimeRange) {
-                ForEach(WeightTimeRange.allCases) { range in
-                    Text(range.rawValue).tag(range)
-                }
-            }
-            .pickerStyle(.segmented)
-            .padding(.horizontal)
-
-            // Chart
-            if !filteredWeightEntries.isEmpty {
-                let weights = filteredWeightEntries.map(\.weightKg)
-                let minW = (weights.min() ?? 0) - 3
-                let maxW = (weights.max() ?? 100) + 3
-
-                VStack(alignment: .leading, spacing: 12) {
-                    Text("Gewichtsverlauf")
-                        .font(.title3.bold())
-
-                    Chart {
-                        ForEach(chartWeightEntries) { entry in
-                            LineMark(
-                                x: .value("Datum", entry.timestamp),
-                                y: .value("Gewicht", entry.weightKg)
-                            )
-                            .interpolationMethod(.catmullRom)
-                            .foregroundStyle(Color.brand)
-
-                            AreaMark(
-                                x: .value("Datum", entry.timestamp),
-                                yStart: .value("Base", minW),
-                                yEnd: .value("Gewicht", entry.weightKg)
-                            )
-                            .interpolationMethod(.catmullRom)
-                            .foregroundStyle(
-                                LinearGradient(
-                                    colors: [Color.brand.opacity(0.25), Color.brand.opacity(0.0)],
-                                    startPoint: .top,
-                                    endPoint: .bottom
-                                )
-                            )
-
-                            PointMark(
-                                x: .value("Datum", entry.timestamp),
-                                y: .value("Gewicht", entry.weightKg)
-                            )
-                            .symbolSize(20)
-                            .foregroundStyle(Color.brand)
-                        }
-                    }
-                    .chartYScale(domain: minW...maxW)
-                    .chartXScale(range: .plotDimension(padding: 10))
-                    .frame(height: 220)
-
-                    // Min / Avg / Max summary
-                    if let minVal = weights.min(), let maxVal = weights.max() {
-                        let avg = weights.reduce(0, +) / Double(weights.count)
-                        HStack {
-                            VStack(alignment: .leading) {
-                                Text("Min")
-                                    .font(.caption2)
-                                    .foregroundStyle(Color.textSecondary)
-                                Text("\(minVal, specifier: "%.1f") kg")
-                                    .font(.caption.bold())
-                            }
-                            Spacer()
-                            VStack {
-                                Text("Ø")
-                                    .font(.caption2)
-                                    .foregroundStyle(Color.textSecondary)
-                                Text("\(avg, specifier: "%.1f") kg")
-                                    .font(.caption.bold())
-                            }
-                            Spacer()
-                            VStack(alignment: .trailing) {
-                                Text("Max")
-                                    .font(.caption2)
-                                    .foregroundStyle(Color.textSecondary)
-                                Text("\(maxVal, specifier: "%.1f") kg")
-                                    .font(.caption.bold())
-                                    .foregroundStyle(Color.brandSecondary)
-                            }
-                        }
-                    }
-                }
-                .padding()
-                .background(Color.backgroundCard)
-                .cornerRadius(16)
-                .padding(.horizontal)
-            } else {
-                VStack(spacing: 12) {
-                    Image(systemName: "scalemass")
-                        .font(.system(size: 44))
-                        .foregroundStyle(Color.brand.opacity(0.6))
-                    Text("Noch keine Daten")
-                        .font(.headline)
-                    Text("Trage dein Gewicht auf dem Home-Screen ein, um deinen Verlauf hier zu sehen.")
-                        .font(.subheadline)
-                        .foregroundStyle(Color.textSecondary)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal, 32)
-                }
-                .frame(maxWidth: .infinity)
-                .frame(height: 250)
-            }
-        }
-    }
 }
 
 // MARK: - Supporting Views

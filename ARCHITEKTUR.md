@@ -232,21 +232,18 @@ PlanExercise E  (supersetGroup: 2) ─┘  → Supersatz
 
 ## 4. Navigation & Routing
 
-Die App nutzt eine `TabView` mit fünf Haupt-Tabs:
+Die App nutzt eine `TabView` mit drei Haupt-Tabs:
 
 | Tab | Icon | Feature |
-|-----|------|---------|
-| Home | house.fill | Dashboard |
-| Training | dumbbell.fill | Pläne & Mediathek |
-| Ernährung | fork.knife | Kalorien & Makros |
-| Statistik | chart.xyaxis.line | Analyse & Fortschritt |
-| Einstellungen | gearshape.fill | Health, Export, Profil |
+| :--- | :--- | :--- |
+| **Home** | `house.fill` | `DashboardView` (Zusammenfassung, Quick Actions, Settings via Icon) |
+| **Training** | `dumbbell.fill` | `TrainingMainView` (Pläne, Übungen, Historie, Statistiken via Icon) |
+| **Ernährung** | `fork.knife` | `NutritionDashboardView` (Makros, Tracker) |
 
 Innerhalb von **Training** gibt es eine interne Navigation:
 - `TrainingPlansView` → `PlanDetailView` → `WorkoutSessionView` (Full-Screen Cover)
 - `ExerciseLibraryView` → `ExerciseDetailView`
 
-**WorkoutSessionView** wird als `.fullScreenCover` präsentiert, um den immersiven Workout-Modus zu ermöglichen.
 
 ---
 

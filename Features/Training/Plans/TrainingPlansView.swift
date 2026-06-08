@@ -646,6 +646,14 @@ struct TrainingMainView: View {
                 Spacer(minLength: 0)
             }
             .background(Color.backgroundPrimary)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    NavigationLink(destination: StatisticsView()) {
+                        Image(systemName: "chart.xyaxis.line")
+                            .foregroundColor(.primary)
+                    }
+                }
+            }
             .overlay {
                 if isFabExpanded {
                     Color.black.opacity(0.4)

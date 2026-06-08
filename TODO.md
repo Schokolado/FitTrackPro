@@ -162,7 +162,7 @@
 - [x] Filterung nach Plan
 - [x] Filterung nach Zeitraum (frei wählbar)
 - [x] Diagramm: Volumen über Zeit (Swift Charts, Balkendiagramm)
-- [x] Diagramm: Max. Gewicht über Zeit (Liniendiagramm)
+- [x] Diagramm: Max. Gewicht über Zeit (verschoben ins Dashboard)
 - [x] Diagramm: Sätze und Wiederholungen über Zeit
 - [x] `ExerciseProgressChart.swift` – Wiederverwendbare Chart-Komponente
 - [x] `PlanProgressView.swift` – Plan-spezifische Auswertung
