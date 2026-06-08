@@ -46,13 +46,12 @@ struct AppRouter: View {
             }
             .tint(.brand)
             .preferredColorScheme(appTheme.colorScheme)
-            .overlay {
-                if let vm = workoutManager.activeViewModel, !showingWorkoutSession {
-                    WorkoutMiniPlayerView(viewModel: vm, planName: workoutManager.activeSession?.plan?.name) {
-                        showingWorkoutSession = true
-                    }
-                    .padding(.bottom, 49) // Approximate tab bar height padding
+            
+            if let vm = workoutManager.activeViewModel, !showingWorkoutSession {
+                WorkoutMiniPlayerView(viewModel: vm, planName: workoutManager.activeSession?.plan?.name) {
+                    showingWorkoutSession = true
                 }
+                .padding(.bottom, 49) // Approximate tab bar height padding
             }
         }
         .fullScreenCover(isPresented: $showingWorkoutSession) {
