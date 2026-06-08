@@ -9,6 +9,54 @@ struct OnboardingView: View {
     var body: some View {
         ZStack(alignment: .bottom) {
             TabView(selection: $currentPage) {
+                OnboardingWelcomeBackPage(currentPage: $currentPage) {
+                    Task {
+                        // 1. Pull data from iCloud
+                        await MainActor.run {
+                            CloudProfileService.shared.pullCloudToLocal()
+                        }
+                        
+                        // 2. Apple Health Berechtigungen anfragen
+                        try? await HealthKitService.shared.requestAuthorization()
+                        
+                        await MainActor.run {
+                            UserDefaults.standard.set(true, forKey: AppStorageKeys.healthKitEnabled)
+                            UserDefaults.standard.set(true, forKey: "autoSyncHealthKit")
+                        }
+                        
+                        // 3. Historische Daten importieren
+                        do {
+                            let imported = try await HealthKitService.shared.importHistoricalWeights()
+                            await MainActor.run {
+                                for item in imported {
+                                    let entry = WeightEntry(weightKg: item.weightKg, timestamp: item.timestamp, notes: "Aus Apple Health importiert")
+                                    entry.syncedToHealthKit = true
+                                    modelContext.insert(entry)
+                                }
+                                
+                                // Auch das Onboarding-Gewicht als ersten Eintrag setzen, falls HealthKit leer war
+                                if imported.isEmpty {
+                                    let weight = CloudProfileService.shared.getCloudWeight()
+                                    if weight > 0 {
+                                        let entry = WeightEntry(weightKg: weight, timestamp: Date(), notes: "Aus iCloud wiederhergestellt")
+                                        modelContext.insert(entry)
+                                    }
+                                }
+                                
+                                try? modelContext.save()
+                            }
+                        } catch {
+                            print("Failed to import historical weights: \(error)")
+                        }
+                        
+                        // 4. Onboarding beenden
+                        await MainActor.run {
+                            hasCompletedOnboarding = true
+                        }
+                    }
+                }
+                .tag(-1)
+                
                 OnboardingWelcomePage(currentPage: $currentPage)
                     .tag(0)
                 OnboardingProfilePage(currentPage: $currentPage)
@@ -44,6 +92,9 @@ struct OnboardingView: View {
                         }
                         
                         await MainActor.run {
+                            // Push new profile to iCloud
+                            CloudProfileService.shared.pushLocalToCloud()
+                            
                             // Onboarding beenden
                             hasCompletedOnboarding = true
                         }
@@ -55,8 +106,8 @@ struct OnboardingView: View {
             .animation(.easeInOut, value: currentPage)
             .ignoresSafeArea()
 
-            // Page dots indicator
-            if currentPage < 4 {
+            // Page dots indicator (nur für reguläres Onboarding 0-3 anzeigen)
+            if currentPage >= 0 && currentPage < 4 {
                 HStack(spacing: 8) {
                     ForEach(0..<4) { index in
                         Circle()
@@ -66,6 +117,11 @@ struct OnboardingView: View {
                     }
                 }
                 .padding(.bottom, 48)
+            }
+        }
+        .onAppear {
+            if CloudProfileService.shared.hasCloudProfile() {
+                currentPage = -1
             }
         }
     }

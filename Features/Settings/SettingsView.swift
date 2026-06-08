@@ -244,6 +244,9 @@ struct SettingsView: View {
                 navId = UUID()
             }
         }
+        .onDisappear {
+            CloudProfileService.shared.pushLocalToCloud()
+        }
     }
     
     @MainActor

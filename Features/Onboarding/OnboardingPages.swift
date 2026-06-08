@@ -205,11 +205,10 @@ struct OnboardingProfilePage: View {
     }
 }
 
-// MARK: - Page 3: Body Data
-
 struct OnboardingBodyPage: View {
     @Binding var currentPage: Int
     @AppStorage(AppStorageKeys.userHeightCm) private var heightCm: Double = 175
+    @AppStorage(AppStorageKeys.onboardingWeightKg) private var savedOnboardingWeightKg: Double = 0.0
     @Environment(\.modelContext) private var modelContext
     @State private var weightKg: Double = 75
 
@@ -273,6 +272,8 @@ struct OnboardingBodyPage: View {
                     // Save as first WeightEntry
                     let entry = WeightEntry(weightKg: weightKg, timestamp: Date(), notes: "Erster Eintrag (Onboarding)")
                     modelContext.insert(entry)
+                    
+                    savedOnboardingWeightKg = weightKg
                     
                     // Write weight to Apple Health if no entry exists for today
                     Task {
@@ -483,6 +484,99 @@ struct OnboardingFinishPage: View {
                     .padding(.bottom, 80)
                     .transition(.move(edge: .bottom).combined(with: .opacity))
                 }
+            }
+        }
+    }
+}
+
+// MARK: - Page -1: Welcome Back (Cloud Sync)
+
+struct OnboardingWelcomeBackPage: View {
+    @Binding var currentPage: Int
+    var onAcceptCloudData: () -> Void
+    
+    @State private var cloudName = ""
+    @State private var cloudHeight = 0.0
+    @State private var cloudWeight = 0.0
+    @State private var cloudCalories = 0.0
+    @State private var cloudSteps = 0
+    
+    var body: some View {
+        OnboardingPageContainer(
+            title: "Willkommen zurück!",
+            subtitle: "Wir haben ein gesichertes Profil in deiner iCloud gefunden.",
+            systemImage: "icloud.and.arrow.down",
+            gradientColors: [Color.brand, Color.brandSecondary]
+        ) {
+            VStack(spacing: 24) {
+                if !cloudName.isEmpty {
+                    Text("Hallo \(cloudName) 👋")
+                        .font(.title2.bold())
+                }
+                
+                VStack(spacing: 12) {
+                    HStack {
+                        Text("Größe")
+                        Spacer()
+                        Text("\(cloudHeight, specifier: "%.0f") cm").bold()
+                    }
+                    Divider()
+                    HStack {
+                        Text("Gewicht")
+                        Spacer()
+                        Text("\(cloudWeight, specifier: "%.1f") kg").bold()
+                    }
+                    Divider()
+                    HStack {
+                        Text("Kalorienziel")
+                        Spacer()
+                        Text("\(cloudCalories, specifier: "%.0f") kcal").bold()
+                    }
+                    Divider()
+                    HStack {
+                        Text("Schrittziel")
+                        Spacer()
+                        Text("\(cloudSteps)").bold()
+                    }
+                }
+                .padding()
+                .background(Color.backgroundPrimary)
+                .cornerRadius(12)
+                
+                VStack(spacing: 12) {
+                    Button(action: {
+                        onAcceptCloudData()
+                    }) {
+                        HStack {
+                            Text("Daten übernehmen & Starten")
+                                .font(.headline)
+                            Image(systemName: "checkmark.circle.fill")
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 16)
+                        .foregroundColor(.white)
+                        .background(Color.brand)
+                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    }
+                    
+                    Button(action: {
+                        withAnimation { currentPage = 0 }
+                    }) {
+                        Text("Ignorieren & neu eingeben")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                            .padding(.vertical, 8)
+                    }
+                }
+                .padding(.top, 8)
+            }
+            .onAppear {
+                let service = CloudProfileService.shared
+                cloudName = service.getCloudName()
+                cloudHeight = service.getCloudHeight()
+                cloudWeight = service.getCloudWeight()
+                cloudCalories = service.getCloudCalorieGoal()
+                cloudSteps = service.getCloudStepGoal()
             }
         }
     }
