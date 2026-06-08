@@ -86,14 +86,22 @@ class CloudProfileService {
         }
         
         for key in doubleKeys {
-            let val = local.double(forKey: key)
+            var val = local.double(forKey: key)
+            if val == 0 {
+                if key == AppStorageKeys.dailyCalorieGoal { val = 2500 }
+                else if key == "nutritionGoalProtein" { val = 150 }
+                else if key == "nutritionGoalCarbs" { val = 250 }
+                else if key == "nutritionGoalFat" { val = 70 }
+                else if key == AppStorageKeys.userHeightCm { val = 175 }
+            }
             if val > 0 { // Avoid pushing default 0 values if not set
                 store.set(val, forKey: key)
             }
         }
         
         for key in intKeys {
-            let val = local.integer(forKey: key)
+            var val = local.integer(forKey: key)
+            if val == 0 && key == AppStorageKeys.dailyStepGoal { val = 10000 }
             if val > 0 {
                 store.set(val, forKey: key)
             }
@@ -147,7 +155,8 @@ class CloudProfileService {
     }
     
     func getCloudHeight() -> Double {
-        return store.double(forKey: AppStorageKeys.userHeightCm)
+        let val = store.double(forKey: AppStorageKeys.userHeightCm)
+        return val > 0 ? val : 175
     }
     
     func getCloudWeight() -> Double {
@@ -155,10 +164,31 @@ class CloudProfileService {
     }
     
     func getCloudCalorieGoal() -> Double {
-        return store.double(forKey: AppStorageKeys.dailyCalorieGoal)
+        let val = store.double(forKey: AppStorageKeys.dailyCalorieGoal)
+        return val > 0 ? val : 2500
     }
     
     func getCloudStepGoal() -> Int {
-        return Int(store.longLong(forKey: AppStorageKeys.dailyStepGoal))
+        let val = Int(store.longLong(forKey: AppStorageKeys.dailyStepGoal))
+        return val > 0 ? val : 10000
+    }
+    
+    func getCloudBirthday() -> Double {
+        return store.double(forKey: AppStorageKeys.userBirthDate)
+    }
+    
+    func getCloudProtein() -> Double {
+        let val = store.double(forKey: "nutritionGoalProtein")
+        return val > 0 ? val : 150
+    }
+    
+    func getCloudCarbs() -> Double {
+        let val = store.double(forKey: "nutritionGoalCarbs")
+        return val > 0 ? val : 250
+    }
+    
+    func getCloudFat() -> Double {
+        let val = store.double(forKey: "nutritionGoalFat")
+        return val > 0 ? val : 70
     }
 }

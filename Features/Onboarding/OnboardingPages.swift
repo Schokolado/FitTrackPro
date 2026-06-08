@@ -500,6 +500,20 @@ struct OnboardingWelcomeBackPage: View {
     @State private var cloudWeight = 0.0
     @State private var cloudCalories = 0.0
     @State private var cloudSteps = 0
+    @State private var cloudBirthday = 0.0
+    @State private var cloudProtein = 0.0
+    @State private var cloudCarbs = 0.0
+    @State private var cloudFat = 0.0
+    
+    private var formattedBirthday: String {
+        guard cloudBirthday > 0 else { return "Nicht gesetzt" }
+        let date = Date(timeIntervalSince1970: cloudBirthday)
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .none
+        formatter.locale = Locale(identifier: "de_DE")
+        return formatter.string(from: date)
+    }
     
     var body: some View {
         OnboardingPageContainer(
@@ -508,67 +522,84 @@ struct OnboardingWelcomeBackPage: View {
             systemImage: "icloud.and.arrow.down",
             gradientColors: [Color.brand, Color.brandSecondary]
         ) {
-            VStack(spacing: 24) {
-                if !cloudName.isEmpty {
-                    Text("Hallo \(cloudName) 👋")
-                        .font(.title2.bold())
-                }
-                
-                VStack(spacing: 12) {
-                    HStack {
-                        Text("Größe")
-                        Spacer()
-                        Text("\(cloudHeight, specifier: "%.0f") cm").bold()
-                    }
-                    Divider()
-                    HStack {
-                        Text("Gewicht")
-                        Spacer()
-                        Text("\(cloudWeight, specifier: "%.1f") kg").bold()
-                    }
-                    Divider()
-                    HStack {
-                        Text("Kalorienziel")
-                        Spacer()
-                        Text("\(cloudCalories, specifier: "%.0f") kcal").bold()
-                    }
-                    Divider()
-                    HStack {
-                        Text("Schrittziel")
-                        Spacer()
-                        Text("\(cloudSteps)").bold()
-                    }
-                }
-                .padding()
-                .background(Color.backgroundPrimary)
-                .cornerRadius(12)
-                
-                VStack(spacing: 12) {
-                    Button(action: {
-                        onAcceptCloudData()
-                    }) {
-                        HStack {
-                            Text("Daten übernehmen & Starten")
-                                .font(.headline)
-                            Image(systemName: "checkmark.circle.fill")
-                        }
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 16)
-                        .foregroundColor(.white)
-                        .background(Color.brand)
-                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: 24) {
+                    if !cloudName.isEmpty {
+                        Text("Hallo \(cloudName) 👋")
+                            .font(.title2.bold())
                     }
                     
-                    Button(action: {
-                        withAnimation { currentPage = 0 }
-                    }) {
-                        Text("Ignorieren & neu eingeben")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                            .padding(.vertical, 8)
+                    VStack(spacing: 12) {
+                        HStack {
+                            Text("Geburtstag")
+                            Spacer()
+                            Text(formattedBirthday).bold()
+                        }
+                        Divider()
+                        HStack {
+                            Text("Größe")
+                            Spacer()
+                            Text("\(cloudHeight, specifier: "%.0f") cm").bold()
+                        }
+                        Divider()
+                        HStack {
+                            Text("Gewicht")
+                            Spacer()
+                            Text("\(cloudWeight, specifier: "%.1f") kg").bold()
+                        }
+                        Divider()
+                        HStack {
+                            Text("Schrittziel")
+                            Spacer()
+                            Text("\(cloudSteps)").bold()
+                        }
+                        Divider()
+                        HStack {
+                            Text("Kalorien")
+                            Spacer()
+                            Text("\(cloudCalories, specifier: "%.0f") kcal").bold()
+                        }
+                        Divider()
+                        HStack {
+                            Text("Makros")
+                            Spacer()
+                            Text("\(cloudProtein, specifier: "%.0f")g P • \(cloudCarbs, specifier: "%.0f")g C • \(cloudFat, specifier: "%.0f")g F")
+                                .font(.footnote.bold())
+                                .foregroundColor(.secondary)
+                        }
                     }
+                    .padding()
+                    .background(Color.backgroundPrimary)
+                    .cornerRadius(12)
+                    
+                    VStack(spacing: 12) {
+                        Button(action: {
+                            onAcceptCloudData()
+                        }) {
+                            HStack {
+                                Text("Daten übernehmen & Starten")
+                                    .font(.headline)
+                                Image(systemName: "checkmark.circle.fill")
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 16)
+                            .foregroundColor(.white)
+                            .background(Color.brand)
+                            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                        }
+                        
+                        Button(action: {
+                            withAnimation { currentPage = 0 }
+                        }) {
+                            Text("Ignorieren & neu eingeben")
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                                .padding(.vertical, 8)
+                        }
+                    }
+                    .padding(.top, 8)
                 }
-                .padding(.top, 8)
+                .padding(.bottom, 24)
             }
             .onAppear {
                 let service = CloudProfileService.shared
@@ -577,6 +608,10 @@ struct OnboardingWelcomeBackPage: View {
                 cloudWeight = service.getCloudWeight()
                 cloudCalories = service.getCloudCalorieGoal()
                 cloudSteps = service.getCloudStepGoal()
+                cloudBirthday = service.getCloudBirthday()
+                cloudProtein = service.getCloudProtein()
+                cloudCarbs = service.getCloudCarbs()
+                cloudFat = service.getCloudFat()
             }
         }
     }
