@@ -208,7 +208,7 @@ struct DashboardWidgetView: View {
                 .frame(width: 80)
             
             // Middle: Data
-            VStack(alignment: .leading, spacing: 6) {
+            VStack(alignment: .leading, spacing: 8) {
                 // Macros
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Makros")
@@ -220,8 +220,6 @@ struct DashboardWidgetView: View {
                         MacroCircle(color: .yellow, label: "F", value: entry.fat, goal: entry.fatGoal)
                     }
                 }
-                
-                Spacer()
                 
                 // Workout
                 VStack(alignment: .leading, spacing: 1) {
