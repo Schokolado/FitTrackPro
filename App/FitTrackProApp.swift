@@ -77,7 +77,7 @@ struct SplashScreenView: View {
                     Circle()
                         .fill(Color.brand.opacity(0.3))
                         .frame(width: 200, height: 200)
-                        .scaleEffect(isAnimating ? 1.2 : 0.8)
+                        .scaleEffect(isAnimating ? 1.1 : 0.8)
                         .opacity(isAnimating ? 0 : 1)
                     
                     Image("VigrLogoTransparent")
