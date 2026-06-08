@@ -51,7 +51,7 @@ struct OnboardingPageContainer<Content: View>: View {
                         .fill(.regularMaterial)
                 )
                 .padding(.horizontal, 20)
-                .padding(.bottom, 100)
+                .padding(.bottom, 40)
             }
         }
         .onTapGesture {
