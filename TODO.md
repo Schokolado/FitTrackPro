@@ -184,14 +184,14 @@
 
 ## Milestone 11 – Apple Health Integration
 
-- [ ] `HealthKitService.swift` implementieren
-- [ ] Berechtigungen anfragen (Workout, Gewicht)
-- [ ] Workout-Daten exportieren (`HKWorkout`) - **OHNE** Kalorien
-- [ ] Gewicht exportieren (`HKQuantitySample`)
-- [ ] Einstellungen: Toggle „Automatisch synchronisieren"
-- [ ] Automatischer Sync nach Workout-Abschluss (wenn aktiviert)
-- [ ] Manueller Sync-Button nach Workout (wenn deaktiviert)
-- [ ] Sync-Status pro Session tracken (`syncedToHealthKit: Bool`)
+- [x] `HealthKitService.swift` implementieren
+- [x] Berechtigungen anfragen (Workout, Gewicht)
+- [x] Workout-Daten exportieren (`HKWorkout`) - **OHNE** Kalorien
+- [x] Gewicht exportieren (`HKQuantitySample`)
+- [x] Einstellungen: Toggle „Automatisch synchronisieren"
+- [x] Automatischer Sync nach Workout-Abschluss (wenn aktiviert)
+- [x] Manueller Sync-Button nach Workout (wenn deaktiviert)
+- [x] Sync-Status pro Session tracken (`syncedToHealthKit: Bool`)
 - [ ] Zukünftig: Gewicht aus Apple Health einlesen und jeweilige Einträge erstellen (Notiz: "Import aus Health")
 - [ ] Zukünftig: Kalorien und Makro Export in Apple Health
 - [ ] Zukünftig: Kalorienangabe bei Workout (evtl. berechnen durch Apple Watch Daten, Statistik, prüfen was möglich ist)
