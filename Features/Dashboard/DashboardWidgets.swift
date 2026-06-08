@@ -76,7 +76,7 @@ struct MacroBadge: View {
             Circle()
                 .fill(color)
                 .frame(width: 8, height: 8)
-            Text("\(value)g \(label)")
+            Text("\(label) \(value)g")
                 .font(.caption2.bold())
                 .foregroundColor(.secondary)
         }
