@@ -329,7 +329,7 @@ final class HealthKitService {
         let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: false)
         
         return try await withCheckedThrowingContinuation { continuation in
-            let query = HKSampleQuery(sampleType: weightType, predicate: nil, limit: HKObjectQueryNoLimit, sortDescriptors: [sortDescriptor]) { _, samples, error in
+            let query = HKSampleQuery(sampleType: weightType, predicate: nil, limit: 100, sortDescriptors: [sortDescriptor]) { _, samples, error in
                 if let error = error {
                     continuation.resume(throwing: error)
                     return

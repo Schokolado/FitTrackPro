@@ -64,13 +64,14 @@ class CloudProfileService {
             name: NSUbiquitousKeyValueStore.didChangeExternallyNotification,
             object: store
         )
-        // Prompt the store to pull latest values from iCloud
-        store.synchronize()
+        // Background synchronize to avoid blocking main thread
+        Task.detached {
+            NSUbiquitousKeyValueStore.default.synchronize()
+        }
     }
     
     /// Checks if a profile exists in iCloud by looking for a saved username.
     func hasCloudProfile() -> Bool {
-        store.synchronize()
         if let name = store.string(forKey: AppStorageKeys.userName), !name.isEmpty {
             return true
         }
@@ -107,7 +108,9 @@ class CloudProfileService {
             }
         }
         
-        store.synchronize()
+        Task.detached {
+            NSUbiquitousKeyValueStore.default.synchronize()
+        }
     }
     
     /// Pulls values from iCloud Key-Value store and saves them to local UserDefaults.
