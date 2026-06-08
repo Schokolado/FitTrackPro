@@ -202,10 +202,11 @@ struct DashboardWidgetView: View {
     }
     
     var body: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: 12) {
             // Left: Calories
             CalorieWidgetView(entry: entry)
                 .frame(maxWidth: .infinity)
+                .padding(.horizontal, 6)
             
             // Middle: Data
             VStack(alignment: .leading, spacing: 6) {
