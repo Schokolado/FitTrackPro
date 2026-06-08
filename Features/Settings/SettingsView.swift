@@ -34,6 +34,7 @@ struct SettingsView: View {
     @State private var isSyncing = false
     @State private var showSyncCompleteAlert = false
     @State private var showWipeAlert = false
+    @State private var showDeduplicateAlert = false
     
     @State private var birthDate: Date = Calendar.current.date(byAdding: .year, value: -25, to: Date()) ?? Date()
     @EnvironmentObject var themeManager: ThemeManager
@@ -238,6 +239,15 @@ struct SettingsView: View {
                 }
                 Section(header: Text("Gefahrenzone").foregroundColor(.red)) {
                     Button(role: .destructive) {
+                        showDeduplicateAlert = true
+                    } label: {
+                        HStack {
+                            Image(systemName: "wand.and.stars")
+                            Text("Duplikate bereinigen")
+                        }
+                    }
+                    
+                    Button(role: .destructive) {
                         showWipeAlert = true
                     } label: {
                         HStack {
@@ -249,6 +259,14 @@ struct SettingsView: View {
             }
             .navigationTitle("Einstellungen")
             .navigationBarTitleDisplayMode(.large)
+            .alert("Duplikate löschen?", isPresented: $showDeduplicateAlert) {
+                Button("Abbrechen", role: .cancel) { }
+                Button("Bereinigen", role: .destructive) {
+                    deduplicateDatabase()
+                }
+            } message: {
+                Text("Dies sucht nach allen doppelten Einträgen (z.B. Gewicht) und behält nur einen. Die gelöschten Duplikate werden auch aus iCloud entfernt.")
+            }
             .alert("Datenbank zurücksetzen?", isPresented: $showWipeAlert) {
                 Button("Abbrechen", role: .cancel) { }
                 Button("Endgültig löschen", role: .destructive) {
@@ -301,6 +319,37 @@ struct SettingsView: View {
             
         } catch {
             print("Failed to wipe database: \(error)")
+        }
+    }
+    
+    @MainActor
+    private func deduplicateDatabase() {
+        do {
+            let descriptor = FetchDescriptor<WeightEntry>(sortBy: [SortDescriptor(\.timestamp)])
+            let allWeights = try modelContext.fetch(descriptor)
+            
+            var uniqueSeen: [(Date, Double)] = []
+            var deleteCount = 0
+            
+            for entry in allWeights {
+                let isDuplicate = uniqueSeen.contains {
+                    abs($0.0.timeIntervalSince1970 - entry.timestamp.timeIntervalSince1970) < 60 &&
+                    abs($0.1 - entry.weightKg) < 0.1
+                }
+                
+                if isDuplicate {
+                    modelContext.delete(entry)
+                    deleteCount += 1
+                } else {
+                    uniqueSeen.append((entry.timestamp, entry.weightKg))
+                }
+            }
+            
+            try modelContext.save()
+            print("Deduplication finished. Deleted \(deleteCount) duplicate entries.")
+            navId = UUID()
+        } catch {
+            print("Failed to deduplicate: \(error)")
         }
     }
     
