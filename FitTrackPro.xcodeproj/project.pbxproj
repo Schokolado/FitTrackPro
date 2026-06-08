@@ -18,6 +18,7 @@
 		380089B701426AB15C964150 /* PDFEmptyPlanTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2821A135BC074705A9A9FA /* PDFEmptyPlanTemplate.swift */; };
 		40673D404A445CA10E57F22B /* FoodAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBAC85A08230019A83ADA120 /* FoodAPIService.swift */; };
 		40AF43ADC79F42BF4F4FED0E /* SavedFood.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F1E036C0773BC613277B244 /* SavedFood.swift */; };
+		4306C50BE04344262C514B4D /* VigrLaunchLogo_clean_v2.png in Resources */ = {isa = PBXBuildFile; fileRef = CE84A8B4990CB0DD19E92B42 /* VigrLaunchLogo_clean_v2.png */; };
 		4EB368596D38FCD7A2939AF9 /* ShareSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6407741AB6E0A6224B4A45E8 /* ShareSheet.swift */; };
 		5D85FC800B43DA2130CD7736 /* WorkoutManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22D4AD56870B8E2E36F11173 /* WorkoutManager.swift */; };
 		620B08C35A23A7D3D80D25F8 /* BarcodeScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31B8F76A071FF82963F58CB1 /* BarcodeScannerView.swift */; };
@@ -209,6 +210,7 @@
 		C8078C8FF9F0DB706D95F1BC /* Recipe.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Recipe.swift; sourceTree = "<group>"; };
 		C9941A700145BCF946FB8E80 /* DashboardWidgets.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DashboardWidgets.swift; sourceTree = "<group>"; };
 		CD22A5EC738385F901017E44 /* FoodEntryDetailView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = FoodEntryDetailView.swift; path = Features/Nutrition/FoodEntryDetailView.swift; sourceTree = "<group>"; };
+		CE84A8B4990CB0DD19E92B42 /* VigrLaunchLogo_clean_v2.png */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = image.png; path = VigrLaunchLogo_clean_v2.png; sourceTree = "<group>"; };
 		CFED6926A8A26CC69B4ABA71 /* PlanProgressView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PlanProgressView.swift; sourceTree = "<group>"; };
 		D27B3101E182EF24EBEDD955 /* PDFEmptyPlanTemplate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PDFEmptyPlanTemplate.swift; sourceTree = "<group>"; };
 		D874C7BBAA626D0DBA57A291 /* ExerciseIconView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ExerciseIconView.swift; sourceTree = "<group>"; };
@@ -424,6 +426,7 @@
 				E3B449F615856AB3CAEA6A7E /* FitTrackPro */,
 				7873B79B6F53AEF1024130B5 /* FitTrackPro.entitlements */,
 				FDD72F53A184E3C9A05BBC05 /* VigrLaunchLogo_raw.png */,
+				CE84A8B4990CB0DD19E92B42 /* VigrLaunchLogo_clean_v2.png */,
 			);
 			sourceTree = "<group>";
 		};
@@ -780,6 +783,7 @@
 				A3268CA138CE40874E8F2CFF /* LaunchScreen.storyboard in Resources */,
 				EFE16CD833F4617F911E2A45 /* LaunchLogoV3_raw.png in Resources */,
 				016F39B52EFA1ED9E15955AA /* VigrLaunchLogo_raw.png in Resources */,
+				4306C50BE04344262C514B4D /* VigrLaunchLogo_clean_v2.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
