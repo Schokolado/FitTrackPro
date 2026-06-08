@@ -21,3 +21,22 @@ Diese Datei sammelt Ideen, Wünsche und optionale Features für die App, die akt
 - [ ] **Widgets erweitern und verfeinern**
   - **Beschreibung:** Die aktuellen Widgets (klein und mittel) weiter überarbeiten (z.B. Design-Polishing) und eventuell ganz neue Widgets hinzufügen (z.B. ein großes Widget oder spezielle Widgets nur für Workouts/Makros).
   - **Ziel:** Dem Nutzer noch mehr Informationen und Schnellzugriffe direkt auf dem Homescreen bieten.
+
+- [ ] **Erweiterte Statistik**
+  - **Beschreibung:** Auswertungen über "Muscle Fokus" (welche Muskelgruppen wurden wie stark trainiert) und ein übersichtlicher Trainings-Kalender.
+  
+- [ ] **Push-Benachrichtigungen / Reminder**
+  - **Beschreibung:** Erinnerungen für Workouts, Makro-Ziele (z.B. "Noch 50g Protein") und Schrittziele (z.B. "Noch 2000 Schritte bis zum Ziel").
+
+- [ ] **Plan-Detailansicht verbessern**
+  - **Beschreibung:** In der Detailansicht eines Trainingsplans soll direkt die Anzahl der enthaltenen Übungen angezeigt werden.
+
+- [ ] **Voraussichtliche Trainingsdauer**
+  - **Beschreibung:** Basierend auf den Übungen, Sätzen und Pausenzeiten soll die ungefähre Dauer eines Trainingsplans geschätzt und angezeigt werden.
+
+- [ ] **App-Rebranding**
+  - **Beschreibung:** Die App soll einen einzigartigeren Namen erhalten (aktuell "FitTrackPro").
+
+- [ ] **Monetarisierung (In-App Käufe / Pro-Version)**
+  - **Beschreibung:** Einbindung von Monetarisierungsmöglichkeiten.
+  - **Features:** Premium-Pläne freischalten, App-Icon ändern, Spenden-Button, Dashboard-Widgets anordnen, weitere Homescreen-Widgets, Apple Watch Support, Werbeeinblendungen.
