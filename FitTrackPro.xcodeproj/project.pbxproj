@@ -45,6 +45,19 @@
 		C3F3B44F2FD774E600461A0C /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C3F3B44E2FD774E500461A0C /* WidgetKit.framework */; };
 		C3F3B4512FD774E600461A0C /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C3F3B4502FD774E600461A0C /* SwiftUI.framework */; };
 		C3F3B4602FD774E800461A0C /* FitTrackProWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = C3F3B44C2FD774E500461A0C /* FitTrackProWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		C3F3B4682FD7772000461A0C /* SharedContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3F3B4662FD7772000461A0C /* SharedContainer.swift */; };
+		C3F3B4692FD7772000461A0C /* SharedContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3F3B4662FD7772000461A0C /* SharedContainer.swift */; };
+		C3F3B46A2FD7779600461A0C /* WorkoutSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3FDADE72FCADD8C00E8767F /* WorkoutSet.swift */; };
+		C3F3B46B2FD7779600461A0C /* StepEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14C4D49E2A6FED96E1D13A96 /* StepEntry.swift */; };
+		C3F3B46C2FD7779600461A0C /* DailyLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3FDADE02FCADD8C00E8767F /* DailyLog.swift */; };
+		C3F3B46D2FD7779600461A0C /* TrainingPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3FDADE42FCADD8C00E8767F /* TrainingPlan.swift */; };
+		C3F3B46E2FD7779600461A0C /* Exercise.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3FDADE12FCADD8C00E8767F /* Exercise.swift */; };
+		C3F3B46F2FD7779600461A0C /* WeightEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3FDADE52FCADD8C00E8767F /* WeightEntry.swift */; };
+		C3F3B4702FD7779600461A0C /* Recipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8078C8FF9F0DB706D95F1BC /* Recipe.swift */; };
+		C3F3B4712FD7779600461A0C /* FoodEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3FDADE22FCADD8C00E8767F /* FoodEntry.swift */; };
+		C3F3B4722FD7779600461A0C /* PlanExercise.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3FDADE32FCADD8C00E8767F /* PlanExercise.swift */; };
+		C3F3B4732FD7779600461A0C /* SavedFood.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F1E036C0773BC613277B244 /* SavedFood.swift */; };
+		C3F3B4742FD7779600461A0C /* WorkoutSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3FDADE62FCADD8C00E8767F /* WorkoutSession.swift */; };
 		C3FDADD82FCAD75500E8767F /* View+Modifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3FDADC12FCAD75500E8767F /* View+Modifiers.swift */; };
 		C3FDADD92FCAD75500E8767F /* FitTrackProApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3FDADBD2FCAD75500E8767F /* FitTrackProApp.swift */; };
 		C3FDADDA2FCAD75500E8767F /* Color+Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3FDADC02FCAD75500E8767F /* Color+Theme.swift */; };
@@ -155,6 +168,7 @@
 		C3F3B44C2FD774E500461A0C /* FitTrackProWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = FitTrackProWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		C3F3B44E2FD774E500461A0C /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		C3F3B4502FD774E600461A0C /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		C3F3B4662FD7772000461A0C /* SharedContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedContainer.swift; sourceTree = "<group>"; };
 		C3FDADAE2FCAD62A00E8767F /* FitTrackPro.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FitTrackPro.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C3FDADBC2FCAD75500E8767F /* AppRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRouter.swift; sourceTree = "<group>"; };
 		C3FDADBD2FCAD75500E8767F /* FitTrackProApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FitTrackProApp.swift; sourceTree = "<group>"; };
@@ -385,6 +399,14 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		C3F3B4672FD7772000461A0C /* Database */ = {
+			isa = PBXGroup;
+			children = (
+				C3F3B4662FD7772000461A0C /* SharedContainer.swift */,
+			);
+			path = Database;
+			sourceTree = "<group>";
+		};
 		C3FDADA52FCAD62A00E8767F = {
 			isa = PBXGroup;
 			children = (
@@ -466,6 +488,7 @@
 		C3FDADC52FCAD75500E8767F /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				C3F3B4672FD7772000461A0C /* Database */,
 				C3FDADC22FCAD75500E8767F /* Extensions */,
 				C3FDADC32FCAD75500E8767F /* Models */,
 				C3FDADC42FCAD75500E8767F /* Services */,
@@ -763,6 +786,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C3F3B4692FD7772000461A0C /* SharedContainer.swift in Sources */,
+				C3F3B46A2FD7779600461A0C /* WorkoutSet.swift in Sources */,
+				C3F3B46B2FD7779600461A0C /* StepEntry.swift in Sources */,
+				C3F3B46C2FD7779600461A0C /* DailyLog.swift in Sources */,
+				C3F3B46D2FD7779600461A0C /* TrainingPlan.swift in Sources */,
+				C3F3B46E2FD7779600461A0C /* Exercise.swift in Sources */,
+				C3F3B46F2FD7779600461A0C /* WeightEntry.swift in Sources */,
+				C3F3B4702FD7779600461A0C /* Recipe.swift in Sources */,
+				C3F3B4712FD7779600461A0C /* FoodEntry.swift in Sources */,
+				C3F3B4722FD7779600461A0C /* PlanExercise.swift in Sources */,
+				C3F3B4732FD7779600461A0C /* SavedFood.swift in Sources */,
+				C3F3B4742FD7779600461A0C /* WorkoutSession.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -835,6 +870,7 @@
 				7CD9E6A4D85E879AC604018A /* PDFExportService.swift in Sources */,
 				380089B701426AB15C964150 /* PDFEmptyPlanTemplate.swift in Sources */,
 				72045EB5E7F437C519DD8609 /* PDFHistoricalPlanTemplate.swift in Sources */,
+				C3F3B4682FD7772000461A0C /* SharedContainer.swift in Sources */,
 				EE0C9316F2165B76F5AD7B22 /* HealthKitService.swift in Sources */,
 				FA9E573B81DB8506278969A5 /* StepEntry.swift in Sources */,
 				E31D2818DCA11AFE1D911A1F /* StepTrackerView.swift in Sources */,

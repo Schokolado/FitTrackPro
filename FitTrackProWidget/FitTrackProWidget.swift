@@ -28,27 +28,39 @@ struct Provider: TimelineProvider {
             let container = try SharedContainer.create()
             let context = container.mainContext
             
-            let startOfDay = Calendar.current.startOfDay(for: date)
-            let endOfDay = Calendar.current.date(byAdding: .day, value: 1, to: startOfDay)!
+            let formatter = ISO8601DateFormatter()
+            formatter.formatOptions = [.withFullDate]
+            formatter.timeZone = TimeZone.current
+            let todayString = formatter.string(from: date)
+            
             let logsDescriptor = FetchDescriptor<DailyLog>()
             let logs = try context.fetch(logsDescriptor)
-            let todayLog = logs.first(where: { Calendar.current.isDate($0.date, inSameDayAs: date) })
+            let todayLog = logs.first(where: { $0.dateString == todayString })
             
-            let caloriesConsumed = todayLog?.consumedCalories ?? 0
-            let protein = todayLog?.consumedProtein ?? 0
-            let carbs = todayLog?.consumedCarbs ?? 0
-            let fat = todayLog?.consumedFat ?? 0
+            var caloriesConsumed: Double = 0
+            var protein: Double = 0
+            var carbs: Double = 0
+            var fat: Double = 0
+            
+            if let entries = todayLog?.foodEntries {
+                for entry in entries {
+                    caloriesConsumed += entry.calories
+                    protein += entry.proteinGrams
+                    carbs += entry.carbsGrams
+                    fat += entry.fatGrams
+                }
+            }
             
             var lastWorkoutName = "Keine"
             let workoutDescriptor = FetchDescriptor<WorkoutSession>(sortBy: [SortDescriptor(\.startTime, order: .reverse)])
             if let lastWorkout = try context.fetch(workoutDescriptor).first {
-                lastWorkoutName = lastWorkout.planName ?? "Freies Training"
+                lastWorkoutName = lastWorkout.plan?.name ?? "Freies Training"
             }
             
             var latestWeight: Double? = nil
-            let weightDescriptor = FetchDescriptor<WeightEntry>(sortBy: [SortDescriptor(\.date, order: .reverse)])
+            let weightDescriptor = FetchDescriptor<WeightEntry>(sortBy: [SortDescriptor(\.timestamp, order: .reverse)])
             if let lastWeightEntry = try context.fetch(weightDescriptor).first {
-                latestWeight = lastWeightEntry.weight
+                latestWeight = lastWeightEntry.weightKg
             }
             
             let userDefaults = UserDefaults(suiteName: "group.com.riccardopfeiler.FitTrackPro") ?? .standard

@@ -13,7 +13,10 @@ final class StepEntry {
         self.id = id
         self.steps = steps
         self.timestamp = date
-        self.dateString = date.iso8601String()
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withFullDate]
+        formatter.timeZone = TimeZone.current
+        self.dateString = formatter.string(from: date)
         self.isManual = isManual
     }
 }
