@@ -323,8 +323,8 @@ struct FoodSearchView: View {
             let filteredFoods = searchText.isEmpty ? savedFoods : savedFoods.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
             let filteredRecipes = searchText.isEmpty ? recipes : recipes.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
             
-            if !filteredFoods.isEmpty || !filteredRecipes.isEmpty {
-                Section(header: Text("Eigene Lebensmittel & Rezepte")) {
+            if !filteredFoods.isEmpty {
+                Section(header: Text("Eigene Lebensmittel")) {
                     ForEach(filteredFoods) { food in
                         Button(action: {
                             if onIngredientSelected != nil {
@@ -351,7 +351,11 @@ struct FoodSearchView: View {
                         }
                         .foregroundColor(.primary)
                     }
-                    
+                }
+            }
+            
+            if !filteredRecipes.isEmpty {
+                Section(header: Text("Meine Rezepte")) {
                     ForEach(filteredRecipes) { recipe in
                         Button(action: {
                             if onIngredientSelected != nil {
