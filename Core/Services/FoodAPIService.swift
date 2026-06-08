@@ -92,7 +92,7 @@ actor FoodAPIService {
         #endif
     }
     func fetchProduct(barcode: String, retries: Int = 1) async throws -> OFFProduct? {
-        guard let url = URL(string: "https://world.openfoodfacts.org/api/v0/product/\(barcode).json") else {
+        guard let url = URL(string: "https://de.openfoodfacts.org/api/v0/product/\(barcode).json") else {
             throw FoodAPIError.networkError
         }
         
@@ -129,7 +129,7 @@ actor FoodAPIService {
     
     func searchProducts(query: String, page: Int = 1) async throws -> [OFFProduct] {
         guard let encodedQuery = query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
-              let url = URL(string: "https://world.openfoodfacts.org/cgi/search.pl?search_terms=\(encodedQuery)&search_simple=1&action=process&json=1&page_size=20&page=\(page)") else {
+              let url = URL(string: "https://de.openfoodfacts.org/cgi/search.pl?search_terms=\(encodedQuery)&search_simple=1&action=process&json=1&page_size=20&page=\(page)") else {
             throw FoodAPIError.networkError
         }
         
