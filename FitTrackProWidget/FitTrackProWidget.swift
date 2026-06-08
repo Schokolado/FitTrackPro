@@ -189,6 +189,18 @@ struct CalorieWidgetView: View {
 struct DashboardWidgetView: View {
     var entry: Provider.Entry
     
+    private func formatNumber(_ number: Int) -> String {
+        if number >= 1000 {
+            let k = Double(number) / 1000.0
+            if k.truncatingRemainder(dividingBy: 1) == 0 {
+                return "\(Int(k))k"
+            } else {
+                return String(format: "%.1fk", k)
+            }
+        }
+        return "\(number)"
+    }
+    
     var body: some View {
         HStack(spacing: 8) {
             // Left: Calories
@@ -226,7 +238,7 @@ struct DashboardWidgetView: View {
                     Text("Schritte")
                         .font(.system(size: 9))
                         .foregroundColor(.secondary)
-                    Text("\(entry.steps)")
+                    Text("\(formatNumber(entry.steps)) / \(formatNumber(entry.stepGoal))")
                         .font(.system(size: 10, weight: .bold))
                         .foregroundColor(entry.steps >= entry.stepGoal ? .green : .primary)
                 }
