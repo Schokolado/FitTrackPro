@@ -13,3 +13,7 @@ Diese Datei sammelt Ideen, Wünsche und optionale Features für die App, die akt
   - **Beschreibung:** Wenn die Kalorien um einen bestimmten Wert (z.B. 400 kcal) über dem Ziel liegen, soll sich der Kreis im Dashboard rot färben. Wenn am Abend noch deutlich zu wenige Kalorien (z.B. 400 kcal unter Ziel) erreicht wurden, soll er sich orange färben.
   - **Konfiguration:** Das Limit (z.B. 400 kcal) soll in den Settings einstellbar sein.
   - **Design-Aspekt:** Die Idee kann designtechnisch noch verfeinert werden (z.B. fließende Farbverläufe oder Warn-Icons), um besser zum modernen UI zu passen.
+
+- [ ] **Verbrannte Kalorien in der App anzeigen**
+  - **Beschreibung:** Die durch Workouts und Schritte verbrannten Kalorien (z.B. per HealthKit `activeEnergyBurned` oder eigener Schätzung) sollen direkt auf dem Dashboard oder im Ernährungs-Tab ausgewiesen werden.
+  - **Ziel:** Der Nutzer erhält einen besseren Überblick über seinen echten Tagesumsatz und kann so seine zugeführten Kalorien besser steuern.
