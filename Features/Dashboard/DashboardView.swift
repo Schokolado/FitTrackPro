@@ -151,8 +151,11 @@ struct DashboardView: View {
                 .toolbar {
                     if isEditMode {
                         ToolbarItem(placement: .navigationBarTrailing) {
-                            Button("Fertig") {
+                            Button(action: {
                                 withAnimation { isEditMode = false }
+                                currentDraggedItem = nil
+                            }) {
+                                Text("Fertig")
                             }
                             .fontWeight(.bold)
                         }
@@ -161,6 +164,9 @@ struct DashboardView: View {
                             Menu {
                                 Button(action: {
                                     isEditMode.toggle()
+                                    if !isEditMode {
+                                        currentDraggedItem = nil
+                                    }
                                 }) {
                                     Label("Dashboard anpassen", systemImage: "slider.horizontal.3")
                                 }
