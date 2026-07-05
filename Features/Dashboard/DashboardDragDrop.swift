@@ -46,16 +46,13 @@ extension View {
 
 struct DashboardDropDelegate: DropDelegate {
     let item: DashboardCardType
-    @Binding var currentDraggedItem: DashboardCardType?
-    @Binding var currentlyHoveredArea: String?
     let layoutManager: DashboardLayoutManager
-    var onCleanup: () -> Void
     
     static var lastMoveTime: TimeInterval = 0
     
     func dropEntered(info: DropInfo) {
-        currentlyHoveredArea = item.rawValue
-        if let current = currentDraggedItem, current != item {
+        layoutManager.hoveredArea = item.rawValue
+        if let current = layoutManager.draggedItem, current != item {
             let now = Date().timeIntervalSince1970
             if now - DashboardDropDelegate.lastMoveTime < 0.3 { return }
             DashboardDropDelegate.lastMoveTime = now
@@ -73,8 +70,8 @@ struct DashboardDropDelegate: DropDelegate {
     func dropExited(info: DropInfo) {
         let area = item.rawValue
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            if self.currentlyHoveredArea == area {
-                self.onCleanup()
+            if self.layoutManager.hoveredArea == area {
+                self.layoutManager.draggedItem = nil
             }
         }
     }
@@ -82,7 +79,7 @@ struct DashboardDropDelegate: DropDelegate {
     func performDrop(info: DropInfo) -> Bool {
         layoutManager.save()
         DispatchQueue.main.async {
-            self.onCleanup()
+            self.layoutManager.draggedItem = nil
         }
         return true
     }
@@ -90,24 +87,23 @@ struct DashboardDropDelegate: DropDelegate {
 
 // MARK: - Dashboard Reset Drop Delegate
 struct DashboardResetDropDelegate: DropDelegate {
-    @Binding var currentlyHoveredArea: String?
-    var onCleanup: () -> Void
+    let layoutManager: DashboardLayoutManager
     
     func dropEntered(info: DropInfo) {
-        currentlyHoveredArea = "background"
+        layoutManager.hoveredArea = "background"
     }
     
     func dropExited(info: DropInfo) {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            if self.currentlyHoveredArea == "background" {
-                self.onCleanup()
+            if self.layoutManager.hoveredArea == "background" {
+                self.layoutManager.draggedItem = nil
             }
         }
     }
     
     func performDrop(info: DropInfo) -> Bool {
         DispatchQueue.main.async {
-            self.onCleanup()
+            self.layoutManager.draggedItem = nil
         }
         return true
     }

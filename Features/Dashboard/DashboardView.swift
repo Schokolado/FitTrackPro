@@ -9,7 +9,6 @@ struct DashboardView: View {
     @AppStorage("dailyCalorieGoal") private var dailyCalorieGoal: Double = 2500
     @AppStorage("daily_step_goal") private var dailyStepGoal: Int = 10000
     @AppStorage("userName") private var userName: String = ""
-    @State private var currentlyHoveredArea: String? = nil
     @AppStorage(AppStorageKeys.healthKitEnabled) private var healthKitEnabled = false
     @Environment(\.scenePhase) private var scenePhase
     
@@ -62,7 +61,6 @@ struct DashboardView: View {
     }
     @State private var navId = UUID()
     @StateObject private var layoutManager = DashboardLayoutManager()
-    @State private var currentDraggedItem: DashboardCardType?
     @State private var isEditMode = false
     
     var body: some View {
@@ -146,12 +144,7 @@ struct DashboardView: View {
                 .scrollContentBackground(.hidden)
                 .background(
                     Color.backgroundPrimary.ignoresSafeArea()
-                        .onDrop(of: [UTType.plainText], delegate: DashboardResetDropDelegate(
-                            currentlyHoveredArea: $currentlyHoveredArea,
-                            onCleanup: {
-                                self.currentDraggedItem = nil
-                            }
-                        ))
+                        .onDrop(of: [UTType.plainText], delegate: DashboardResetDropDelegate(layoutManager: layoutManager))
                 )
                 .navigationTitle("")
                 .navigationBarTitleDisplayMode(.inline)
@@ -160,7 +153,7 @@ struct DashboardView: View {
                         ToolbarItem(placement: .navigationBarTrailing) {
                             Button(action: {
                                 withAnimation { isEditMode = false }
-                                currentDraggedItem = nil
+                                layoutManager.draggedItem = nil
                             }) {
                                 Text("Fertig")
                             }
@@ -172,7 +165,7 @@ struct DashboardView: View {
                                 Button(action: {
                                     isEditMode.toggle()
                                     if !isEditMode {
-                                        currentDraggedItem = nil
+                                        layoutManager.draggedItem = nil
                                     }
                                 }) {
                                     Label("Dashboard anpassen", systemImage: "slider.horizontal.3")
@@ -257,7 +250,7 @@ struct DashboardView: View {
         if isEditMode {
             baseContent
                 .contentShape(.dragPreview, RoundedRectangle(cornerRadius: 24, style: .continuous))
-                .opacity(currentDraggedItem == card.type ? 0.001 : 1.0)
+                .opacity(layoutManager.draggedItem == card.type ? 0.001 : 1.0)
                 .overlay(alignment: .topTrailing) {
                     Button {
                         withAnimation { layoutManager.toggleSize(for: card.type) }
@@ -271,8 +264,9 @@ struct DashboardView: View {
                     .transition(.scale)
                 }
                 .onDrag {
-                    self.currentlyHoveredArea = card.type.rawValue
-                    self.currentDraggedItem = card.type
+                    if !isEditMode { return NSItemProvider() }
+                    layoutManager.hoveredArea = card.type.rawValue
+                    layoutManager.draggedItem = card.type
                     return NSItemProvider(object: card.type.rawValue as NSString)
                 } preview: {
                     let screenWidth = UIScreen.main.bounds.width - 32
@@ -283,12 +277,7 @@ struct DashboardView: View {
                 }
                 .onDrop(of: [UTType.plainText], delegate: DashboardDropDelegate(
                     item: card.type,
-                    currentDraggedItem: $currentDraggedItem,
-                    currentlyHoveredArea: $currentlyHoveredArea,
-                    layoutManager: layoutManager,
-                    onCleanup: {
-                        self.currentDraggedItem = nil
-                    }
+                    layoutManager: layoutManager
                 ))
         } else {
             baseContent

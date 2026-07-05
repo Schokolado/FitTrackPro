@@ -62,6 +62,9 @@ class DashboardLayoutManager: ObservableObject {
         didSet { save() }
     }
     
+    @Published var draggedItem: DashboardCardType? = nil
+    @Published var hoveredArea: String? = nil
+    
     private let storageKey = "dashboard_layout_config"
     
     init() {
