@@ -68,7 +68,15 @@ class DashboardLayoutManager: ObservableObject {
         if let data = UserDefaults.standard.data(forKey: storageKey),
            let decoded = try? JSONDecoder().decode([DashboardCardConfig].self, from: data),
            !decoded.isEmpty {
-            self.cards = decoded
+            
+            var loadedCards = decoded
+            // Ensure any new cards added to defaultLayout are included
+            for defaultCard in DashboardCardConfig.defaultLayout {
+                if !loadedCards.contains(where: { $0.type == defaultCard.type }) {
+                    loadedCards.append(defaultCard)
+                }
+            }
+            self.cards = loadedCards
         } else {
             self.cards = DashboardCardConfig.defaultLayout
         }
