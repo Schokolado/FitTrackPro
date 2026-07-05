@@ -273,9 +273,13 @@ struct DashboardView: View {
     
     @ViewBuilder
     private func renderCardWithEditOverlay(_ card: DashboardCardConfig) -> some View {
-        let content = renderCard(card)
-            .allowsHitTesting(!isEditMode)
-            .jiggle(isEnabled: isEditMode)
+        let content = ZStack {
+            renderCard(card)
+            if isEditMode {
+                Color.black.opacity(0.001) // Captures touches for drag & drop
+            }
+        }
+        .jiggle(isEnabled: isEditMode)
             .overlay(alignment: .topTrailing) {
                 if isEditMode {
                     Button {
