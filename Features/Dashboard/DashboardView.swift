@@ -264,7 +264,7 @@ struct DashboardView: View {
                     .transition(.scale)
                 }
                 .onDrag {
-                    if !isEditMode { return NSItemProvider() }
+                    if !isEditMode || layoutManager.isDropping { return NSItemProvider() }
                     layoutManager.hoveredArea = card.type.rawValue
                     layoutManager.draggedItem = card.type
                     return NSItemProvider(object: card.type.rawValue as NSString)

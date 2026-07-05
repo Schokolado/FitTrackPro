@@ -64,6 +64,7 @@ class DashboardLayoutManager: ObservableObject {
     
     @Published var draggedItem: DashboardCardType? = nil
     @Published var hoveredArea: String? = nil
+    @Published var isDropping: Bool = false
     
     private let storageKey = "dashboard_layout_config"
     
