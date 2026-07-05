@@ -22,28 +22,31 @@ struct EnergyDetailView: View {
                 .frame(minHeight: 300)
             } else if let result = result {
                 VStack(spacing: 32) {
-                // Header Ring
-                ZStack {
-                    Circle()
-                        .stroke(Color.secondary.opacity(0.2), lineWidth: 16)
-                        .frame(width: 180, height: 180)
-                    
-                    Circle()
-                        .trim(from: 0, to: CGFloat(result.currentEnergy) / 100.0)
-                        .stroke(energyColor(result.currentEnergy), style: StrokeStyle(lineWidth: 16, lineCap: .round))
-                        .rotationEffect(.degrees(-90))
-                        .frame(width: 180, height: 180)
-                    
-                    VStack {
-                        Text("\(result.currentEnergy)%")
-                            .font(.system(size: 64, weight: .bold, design: .rounded))
-                            .foregroundColor(energyColor(result.currentEnergy))
-                        Text("Verbleibend")
-                            .font(.headline)
-                            .foregroundColor(.secondary)
+                // Header Circular Progress
+                VStack(spacing: 16) {
+                    ZStack {
+                        Circle()
+                            .stroke(Color.secondary.opacity(0.2), lineWidth: 18)
+                        
+                        Circle()
+                            .trim(from: 0, to: CGFloat(result.currentEnergy) / 100.0)
+                            .stroke(energyColor(result.currentEnergy), style: StrokeStyle(lineWidth: 18, lineCap: .round))
+                            .rotationEffect(.degrees(-90))
+                            .animation(.spring(response: 0.6, dampingFraction: 0.8), value: CGFloat(result.currentEnergy))
+                        
+                        VStack(spacing: 4) {
+                            Text("\(result.currentEnergy)%")
+                                .font(.system(size: 40, weight: .bold, design: .rounded))
+                                .foregroundColor(energyColor(result.currentEnergy))
+                            
+                            Text("Verbleibend")
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                        }
                     }
+                    .frame(width: 160, height: 160)
+                    .padding(.top, 20)
                 }
-                .padding(.top, 24)
                 
                 // Details
                 VStack(spacing: 16) {
