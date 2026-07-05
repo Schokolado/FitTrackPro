@@ -1,5 +1,14 @@
 import SwiftUI
 import SwiftData
+import AppIntents
+
+extension Bundle {
+    var appName: String {
+        return object(forInfoDictionaryKey: "CFBundleDisplayName") as? String ?? 
+               object(forInfoDictionaryKey: "CFBundleName") as? String ?? 
+               "Vantage"
+    }
+}
 
 @main
 struct FitTrackProApp: App {
@@ -28,25 +37,35 @@ struct FitTrackProApp: App {
                         .transition(AnyTransition.opacity)
                         .onAppear {
                             Task.detached(priority: .userInitiated) {
-                                do {
-                                    let newContainer = try SharedContainer.create()
-                                    
-                                    // Seed default exercises during splash screen
-                                    await MainActor.run {
-                                        let context = newContainer.mainContext
-                                        SeedDataService.shared.seedExercisesIfNeeded(context: context)
-                                    }
-                                    
-                                    // Give the splash screen a minimum of 2 seconds to show off the cool animation
-                                    try? await Task.sleep(nanoseconds: 2_000_000_000)
-                                    
-                                    await MainActor.run {
-                                        withAnimation(.easeInOut(duration: 0.6)) {
-                                            self.modelContainer = newContainer
+                                var newContainer: ModelContainer? = nil
+                                var attempts = 0
+                                while newContainer == nil && attempts < 5 {
+                                    do {
+                                        newContainer = try SharedContainer.create()
+                                    } catch {
+                                        attempts += 1
+                                        if attempts >= 5 {
+                                            fatalError("Could not create ModelContainer: \(error)")
                                         }
+                                        try? await Task.sleep(nanoseconds: 500_000_000) // 0.5s wait
                                     }
-                                } catch {
-                                    fatalError("Could not create ModelContainer: \(error)")
+                                }
+                                
+                                guard let container = newContainer else { return }
+                                
+                                // Seed default exercises during splash screen
+                                await MainActor.run {
+                                    let context = container.mainContext
+                                    SeedDataService.shared.seedExercisesIfNeeded(context: context)
+                                }
+                                
+                                // Give the splash screen a minimum of 2 seconds to show off the cool animation
+                                try? await Task.sleep(nanoseconds: 2_000_000_000)
+                                
+                                await MainActor.run {
+                                    withAnimation(.easeInOut(duration: 0.6)) {
+                                        self.modelContainer = container
+                                    }
                                 }
                             }
                         }
@@ -73,13 +92,6 @@ struct SplashScreenView: View {
                 
                 // Das Logo bleibt immer exakt im absoluten Zentrum des Bildschirms
                 ZStack {
-                    // Expanding outer ring (Ripple effect)
-                    Circle()
-                        .fill(Color.brand.opacity(0.3))
-                        .frame(width: 200, height: 200)
-                        .scaleEffect(isAnimating ? 1.1 : 0.8)
-                        .opacity(isAnimating ? 0 : 1)
-                    
                     Image("VigrLogoTransparent")
                         .resizable()
                         .scaledToFit()
@@ -90,7 +102,7 @@ struct SplashScreenView: View {
                 
                 // Der Text
                 if showText {
-                    Text("Vigr")
+                    Text(Bundle.main.appName)
                         .font(.system(size: 36, weight: .black, design: .rounded))
                         .foregroundColor(.primary)
                         .transition(AnyTransition.opacity.combined(with: .move(edge: .bottom)))

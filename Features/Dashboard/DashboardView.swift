@@ -4,6 +4,7 @@ import SwiftData
 struct DashboardView: View {
     @Binding var selectedTab: Int
     @Environment(\.modelContext) private var modelContext
+    @Environment(WorkoutManager.self) private var workoutManager
     @AppStorage("dailyCalorieGoal") private var dailyCalorieGoal: Double = 2500
     @AppStorage("daily_step_goal") private var dailyStepGoal: Int = 10000
     @AppStorage("userName") private var userName: String = ""
@@ -19,6 +20,7 @@ struct DashboardView: View {
     @Query private var allFoodEntries: [FoodEntry]
     @Query(sort: \WorkoutSession.startTime, order: .reverse) private var workouts: [WorkoutSession]
     @Query private var manualStepEntries: [StepEntry]
+    @Query(sort: \WaterEntry.timestamp, order: .reverse) private var waterEntries: [WaterEntry]
     
     var todayFoodEntries: [FoodEntry] {
         let todayString = Date().iso8601String()
@@ -26,13 +28,19 @@ struct DashboardView: View {
     }
     
     var todayWorkouts: [WorkoutSession] {
-        workouts.filter { Calendar.current.isDateInToday($0.startTime) }
+        workouts.filter { Calendar.current.isDateInToday($0.startTime) && $0.endTime != nil }
+    }
+    
+    var yesterdayWorkout: WorkoutSession? {
+        let calendar = Calendar.current
+        return workouts.first { calendar.isDateInYesterday($0.startTime) && $0.endTime != nil }
     }
     
     var totalTodaySteps: Int {
         let todayString = Date().iso8601String()
         let manual = manualStepEntries.filter { $0.dateString == todayString }.reduce(0) { $0 + $1.steps }
-        return todaySteps + manual
+        let currentSteps = (cachedTodayStepsDate == todayString) ? todaySteps : 0
+        return currentSteps + manual
     }
     
     var consumedCalories: Double {
@@ -51,145 +59,158 @@ struct DashboardView: View {
         todayFoodEntries.reduce(0.0) { $0 + $1.fatGrams }
     }
     @State private var navId = UUID()
+    @StateObject private var layoutManager = DashboardLayoutManager()
+    @State private var isEditMode = false
     
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(spacing: 24) {
-                    // Header
-                    HStack {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(greetingMessage)
-                                .font(.title2)
-                                .foregroundColor(.secondary)
-                            
-                            if userName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                                Text("Willkommen zurück")
-                                    .font(.largeTitle.bold())
-                            } else {
-                                Text("Willkommen zurück,")
-                                    .font(.largeTitle.bold())
-                                Text(userName)
-                                    .font(.largeTitle.bold())
-                                    .foregroundColor(.brand)
+            if isEditMode {
+                List {
+                    ForEach(layoutManager.cards) { card in
+                        HStack {
+                            Image(systemName: card.type.icon)
+                                .foregroundColor(.brand)
+                                .frame(width: 30)
+                            Text(card.type.displayName)
+                            Spacer()
+                            Button(action: {
+                                layoutManager.toggleSize(for: card.type)
+                            }) {
+                                Text(card.size == .large ? "Large" : "Small")
+                                    .font(.caption)
+                                    .padding(.horizontal, 10)
+                                    .padding(.vertical, 5)
+                                    .background(Color.secondary.opacity(0.2))
+                                    .cornerRadius(8)
                             }
-                        }
-                        Spacer()
-                    }
-                    .padding(.horizontal)
-                    .padding(.top, 10)
-                    
-                    // Quick Actions
-                    HStack(spacing: 16) {
-                        Button(action: {
-                            selectedTab = 1 // Training Tab
-                            UserDefaults.standard.set(0, forKey: "trainingSelectedTab") // Pläne
-                        }) {
-                            HStack {
-                                Image(systemName: "play.fill")
-                                Text("Workout")
-                            }
-                            .font(.subheadline.bold())
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color.green.opacity(0.15))
-                            .foregroundColor(.green)
-                            .cornerRadius(12)
-                        }
-                        
-                        Button(action: {
-                            selectedTab = 2 // Nutrition Tab
-                            NotificationCenter.default.post(name: NSNotification.Name("ResetNutritionToToday"), object: nil)
-                            NotificationCenter.default.post(name: NSNotification.Name("OpenNutritionAddEntry"), object: nil)
-                        }) {
-                            HStack {
-                                Image(systemName: "plus.circle.fill")
-                                Text("Mahlzeit")
-                            }
-                            .font(.subheadline.bold())
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color.orange.opacity(0.15))
-                            .foregroundColor(.orange)
-                            .cornerRadius(12)
+                            .buttonStyle(PlainButtonStyle())
                         }
                     }
-                    .padding(.horizontal)
-                    
-                    // Nutrition Card
-                    Button(action: {
-                        selectedTab = 2 // Tab Index für Ernährung
-                        NotificationCenter.default.post(name: NSNotification.Name("ResetNutritionToToday"), object: nil)
-                    }) {
-                        NutritionSummaryCard(
-                            consumed: consumedCalories,
-                            goal: dailyCalorieGoal,
-                            carbs: consumedCarbs,
-                            protein: consumedProtein,
-                            fat: consumedFat
-                        )
+                    .onMove { indices, newOffset in
+                        layoutManager.move(from: indices, to: newOffset)
                     }
-                    .buttonStyle(PlainButtonStyle())
-                    .padding(.horizontal)
-                    
-                    // Step Card
-                    NavigationLink(destination: StepTrackerView()) {
-                        StepSummaryCard(
-                            steps: totalTodaySteps,
-                            goal: dailyStepGoal
-                        )
-                    }
-                    .buttonStyle(PlainButtonStyle())
-                    .padding(.horizontal)
-
-                    // Grid for Weight and Training
-                    LazyVGrid(columns: [GridItem(.flexible(), spacing: 16), GridItem(.flexible(), spacing: 16)], spacing: 16) {
-                        NavigationLink(destination: WeightTrackerView()) {
-                            WeightSummaryCard(entries: weightEntries)
+                }
+                .environment(\.editMode, .constant(.active))
+                .navigationTitle("Dashboard anpassen")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button("Fertig") {
+                            withAnimation { isEditMode = false }
                         }
-                        .buttonStyle(PlainButtonStyle())
-                        
-                        Button(action: {
-                            if todayWorkouts.isEmpty {
-                                UserDefaults.standard.set(0, forKey: "trainingSelectedTab") // Pläne
-                            } else {
-                                UserDefaults.standard.set(2, forKey: "trainingSelectedTab") // Historie
-                                if let latest = todayWorkouts.first {
-                                    UserDefaults.standard.set(latest.id.uuidString, forKey: "openHistorySessionId")
+                        .fontWeight(.bold)
+                    }
+                }
+            } else {
+                ScrollView {
+                    VStack(spacing: 24) {
+                        // Header
+                        HStack {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(greetingMessage)
+                                    .font(.title2)
+                                    .foregroundColor(.secondary)
+                                
+                                if userName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                                    Text("Willkommen zurück")
+                                        .font(.largeTitle.bold())
+                                } else {
+                                    Text("Willkommen zurück,")
+                                        .font(.largeTitle.bold())
+                                    Text(userName)
+                                        .font(.largeTitle.bold())
+                                        .foregroundColor(.brand)
                                 }
                             }
-                            selectedTab = 1 // Tab Index für Training
-                        }) {
-                            TrainingSummaryCard(workouts: todayWorkouts)
+                            Spacer()
                         }
-                        .buttonStyle(PlainButtonStyle())
-                    }
-                    .padding(.horizontal)
-                    
-                    // Recovery Card
-                    RecoveryMockupCard()
                         .padding(.horizontal)
-                    
-                    // Grid for Water and Sleep
-                    LazyVGrid(columns: [GridItem(.flexible(), spacing: 16), GridItem(.flexible(), spacing: 16)], spacing: 16) {
-                        WaterTrackerMockupCard()
-                        SleepTrackerMockupCard()
-                    }
-                    .padding(.horizontal)
-                    
-                    // Mood Card
-                    MoodSummaryCard()
+                        .padding(.top, 10)
+                        
+                        // Quick Actions
+                        HStack(spacing: 16) {
+                            Button(action: {
+                                selectedTab = 1 // Training Tab
+                                UserDefaults.standard.set(0, forKey: "trainingSelectedTab") // Pläne
+                            }) {
+                                HStack {
+                                    Image(systemName: "play.fill")
+                                    Text("Workout")
+                                }
+                                .font(.subheadline.bold())
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .background(Color.green.opacity(0.15))
+                                .foregroundColor(.green)
+                                .cornerRadius(12)
+                            }
+                            
+                            Button(action: {
+                                selectedTab = 2 // Nutrition Tab
+                                NotificationCenter.default.post(name: NSNotification.Name("ResetNutritionToToday"), object: nil)
+                                NotificationCenter.default.post(name: NSNotification.Name("OpenNutritionAddEntry"), object: nil)
+                            }) {
+                                HStack {
+                                    Image(systemName: "plus.circle.fill")
+                                    Text("Mahlzeit")
+                                }
+                                .font(.subheadline.bold())
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .background(Color.orange.opacity(0.15))
+                                .foregroundColor(.orange)
+                                .cornerRadius(12)
+                            }
+                        }
                         .padding(.horizontal)
+                        
+                        // Dynamic Cards
+                        let rows = groupCardsForRows(layoutManager.cards)
+                        ForEach(rows.indices, id: \.self) { index in
+                            let row = rows[index]
+                            if row[0].size == .large {
+                                // Large card
+                                renderCard(row[0])
+                                    .padding(.horizontal)
+                            } else {
+                                // Small cards
+                                LazyVGrid(columns: [GridItem(.flexible(), spacing: 16), GridItem(.flexible(), spacing: 16)], spacing: 16) {
+                                    renderCard(row[0])
+                                    if row.count > 1 {
+                                        renderCard(row[1])
+                                    } else {
+                                        Color.clear
+                                    }
+                                }
+                                .padding(.horizontal)
+                            }
+                        }
+                    }
+                    .padding(.bottom, 24)
                 }
-                .padding(.bottom, 24)
-            }
-            .scrollContentBackground(.hidden)
-            .background(Color.backgroundPrimary.ignoresSafeArea())
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    NavigationLink(destination: LazyView(SettingsView())) {
-                        Image(systemName: "gearshape.fill")
-                            .foregroundColor(.primary)
+                .refreshable {
+                    await refreshSteps()
+                }
+                .scrollContentBackground(.hidden)
+                .background(Color.backgroundPrimary.ignoresSafeArea())
+                .navigationTitle("")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Menu {
+                            Button(action: {
+                                withAnimation { isEditMode = true }
+                            }) {
+                                Label("Dashboard anpassen", systemImage: "slider.horizontal.3")
+                            }
+                            
+                            NavigationLink(destination: LazyView(SettingsView())) {
+                                Label("Einstellungen", systemImage: "gearshape.fill")
+                            }
+                        } label: {
+                            Image(systemName: "ellipsis.circle.fill")
+                                .foregroundColor(.primary)
+                        }
                     }
                 }
             }
@@ -223,6 +244,11 @@ struct DashboardView: View {
                 }
             }
         }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.significantTimeChangeNotification)) { _ in
+            Task {
+                await refreshSteps()
+            }
+        }
     }
     
     private func refreshSteps() async {
@@ -243,6 +269,131 @@ struct DashboardView: View {
         case 0..<12: return "Guten Morgen"
         case 12..<18: return "Guten Tag"
         default: return "Guten Abend"
+        }
+    }
+    
+    // MARK: - Dynamic Rendering
+    
+    private func groupCardsForRows(_ cards: [DashboardCardConfig]) -> [[DashboardCardConfig]] {
+        var rows: [[DashboardCardConfig]] = []
+        var currentRow: [DashboardCardConfig] = []
+        
+        for card in cards {
+            if card.size == .large {
+                if !currentRow.isEmpty {
+                    rows.append(currentRow)
+                    currentRow = []
+                }
+                rows.append([card])
+            } else {
+                currentRow.append(card)
+                if currentRow.count == 2 {
+                    rows.append(currentRow)
+                    currentRow = []
+                }
+            }
+        }
+        if !currentRow.isEmpty {
+            rows.append(currentRow)
+        }
+        return rows
+    }
+    
+    @ViewBuilder
+    private func renderCard(_ config: DashboardCardConfig) -> some View {
+        switch config.type {
+        case .nutrition:
+            Button(action: {
+                selectedTab = 2
+                NotificationCenter.default.post(name: NSNotification.Name("ResetNutritionToToday"), object: nil)
+            }) {
+                if config.size == .large {
+                    NutritionSummaryCard(consumed: consumedCalories, goal: dailyCalorieGoal, carbs: consumedCarbs, protein: consumedProtein, fat: consumedFat)
+                } else {
+                    NutritionSummaryCardSmall(consumed: consumedCalories, goal: dailyCalorieGoal)
+                }
+            }
+            .buttonStyle(PlainButtonStyle())
+            
+        case .steps:
+            NavigationLink(destination: StepTrackerView()) {
+                if config.size == .large {
+                    StepSummaryCard(steps: totalTodaySteps, goal: dailyStepGoal)
+                } else {
+                    StepSummaryCardSmall(steps: totalTodaySteps, goal: dailyStepGoal)
+                }
+            }
+            .buttonStyle(PlainButtonStyle())
+            
+        case .weight:
+            NavigationLink(destination: WeightTrackerView()) {
+                if config.size == .large {
+                    WeightSummaryCardLarge(entries: weightEntries)
+                } else {
+                    WeightSummaryCard(entries: weightEntries)
+                }
+            }
+            .buttonStyle(PlainButtonStyle())
+            
+        case .training:
+            Button(action: {
+                if workoutManager.isWorkoutActive {
+                    NotificationCenter.default.post(name: NSNotification.Name("OpenActiveWorkout"), object: nil)
+                } else if todayWorkouts.isEmpty {
+                    UserDefaults.standard.set(0, forKey: "trainingSelectedTab")
+                    selectedTab = 1
+                } else {
+                    UserDefaults.standard.set(2, forKey: "trainingSelectedTab")
+                    if let latest = todayWorkouts.first {
+                        UserDefaults.standard.set(latest.id.uuidString, forKey: "openHistorySessionId")
+                    }
+                    selectedTab = 1
+                }
+            }) {
+                if config.size == .large {
+                    TrainingSummaryCardLarge(workouts: todayWorkouts, activeSession: workoutManager.activeSession, yesterdayWorkout: yesterdayWorkout)
+                } else {
+                    TrainingSummaryCard(workouts: todayWorkouts, activeSession: workoutManager.activeSession, yesterdayWorkout: yesterdayWorkout)
+                }
+            }
+            .buttonStyle(PlainButtonStyle())
+            
+        case .recovery:
+            NavigationLink(destination: RecoveryView()) {
+                if config.size == .large {
+                    RecoveryCard()
+                } else {
+                    RecoveryCardSmall()
+                }
+            }
+            .buttonStyle(PlainButtonStyle())
+            
+        case .water:
+            NavigationLink(destination: WaterTrackerView()) {
+                if config.size == .large {
+                    WaterTrackerCardLarge(entries: waterEntries)
+                } else {
+                    WaterTrackerCard(entries: waterEntries)
+                }
+            }
+            .buttonStyle(PlainButtonStyle())
+            
+        case .sleep:
+            NavigationLink(destination: SleepTrackerView()) {
+                if config.size == .large {
+                    SleepTrackerCardLarge()
+                } else {
+                    SleepTrackerCard()
+                }
+            }
+            .buttonStyle(PlainButtonStyle())
+            
+        case .mood:
+            if config.size == .large {
+                MoodSummaryCard()
+            } else {
+                MoodSummaryCardSmall()
+            }
         }
     }
 }

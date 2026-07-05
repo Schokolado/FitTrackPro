@@ -15,6 +15,7 @@ struct WorkoutSessionView: View {
     @State private var showingFinishSheet = false
     @State private var showingSkipRestAlert = false
     @AppStorage("requireRestTimerConfirm") private var requireRestTimerConfirm = true
+    @AppStorage("keepScreenOnDuringWorkout") private var keepScreenOnDuringWorkout = true
     
     @State private var showingExerciseSelection = false
     @State private var pendingExerciseToAdd: Exercise?
@@ -24,8 +25,10 @@ struct WorkoutSessionView: View {
     @AppStorage("timerFav2") private var timerFav2: Int = 60
     @AppStorage("timerFav3") private var timerFav3: Int = 90
     @State private var showingCustomTimerAlert = false
-    @State private var customTimerSeconds: String = ""
-    
+    @State private var customTimerSeconds = ""
+    @State private var isPlanNotesExpanded = false
+    @State private var showingSessionNotesSheet = false
+    @State private var sessionNotesText = ""
     @State private var showingAutoFinishAlert = false
     @State private var hasShownAutoFinishAlert = false
     
@@ -98,7 +101,14 @@ struct WorkoutSessionView: View {
                 workoutSetsList
                     .background(Color.backgroundPrimary)
                     .safeAreaInset(edge: .top) {
-                        WorkoutTimerHeaderView(viewModel: viewModel, planName: session.plan?.name) {
+                        WorkoutTimerHeaderView(
+                            viewModel: viewModel,
+                            planName: session.plan?.name,
+                            hasNotes: {
+                                if let n = session.plan?.notes, !n.isEmpty { return true }
+                                return false
+                            }()
+                        ) {
                             showingCustomTimerAlert = true
                         } onSkipRestTimer: {
                             if requireRestTimerConfirm {
@@ -106,6 +116,9 @@ struct WorkoutSessionView: View {
                             } else {
                                 viewModel.skipRestTimer()
                             }
+                        } onShowNotes: {
+                            sessionNotesText = session.notes
+                            showingSessionNotesSheet = true
                         } onMinimize: {
                             dismiss()
                         }
@@ -172,6 +185,32 @@ struct WorkoutSessionView: View {
             } message: {
                 Text("Möchtest du diese Übung dauerhaft zu '\(session.plan?.name ?? "deinem Plan")' hinzufügen?")
             }
+            .sheet(isPresented: $showingSessionNotesSheet) {
+                NavigationStack {
+                    Form {
+                        Section(header: Text("Plan-Notizen")) {
+                            if let planNotes = session.plan?.notes, !planNotes.isEmpty {
+                                Text(planNotes)
+                                    .font(.body)
+                                    .foregroundColor(.primary)
+                            } else {
+                                Text("Keine Notizen für diesen Plan.")
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                    }
+                    .navigationTitle("Notizen")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .confirmationAction) {
+                            Button("Fertig") {
+                                showingSessionNotesSheet = false
+                            }
+                        }
+                    }
+                }
+                .presentationDetents([.medium, .large])
+            }
             .alert("Eigener Timer", isPresented: $showingCustomTimerAlert) {
                 TextField("Sekunden", text: $customTimerSeconds)
                     .keyboardType(.numberPad)
@@ -211,6 +250,10 @@ struct WorkoutSessionView: View {
             .onAppear {
                 NotificationService.shared.requestAuthorization()
                 
+                if keepScreenOnDuringWorkout {
+                    UIApplication.shared.isIdleTimerDisabled = true
+                }
+                
                 if let firstUncompleted = sessionExerciseGroups.first(where: { !isGroupCompleted($0) }) {
                     expandedGroupIds.insert(firstUncompleted.id)
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
@@ -218,19 +261,42 @@ struct WorkoutSessionView: View {
                     }
                 }
             }
+            .onDisappear {
+                UIApplication.shared.isIdleTimerDisabled = false
+            }
             // Milestone 5: Workout Summary
             .sheet(isPresented: $showingFinishSheet) {
                 WorkoutSummaryView(session: session)
                     .interactiveDismissDisabled() // User must click "Speichern"
             }
             .onReceive(NotificationCenter.default.publisher(for: .workoutFinished)) { _ in
-                // End workout in manager and dismiss the view
                 let finishedId = session.id.uuidString
-                workoutManager.endWorkout()
+                UIApplication.shared.isIdleTimerDisabled = false
                 UserDefaults.standard.set(1, forKey: "mainSelectedTab")
                 UserDefaults.standard.set(2, forKey: "trainingSelectedTab")
                 UserDefaults.standard.set(finishedId, forKey: "openHistorySessionId")
                 dismiss()
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    workoutManager.endWorkout()
+                }
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .workoutCancelled)) { _ in
+                UIApplication.shared.isIdleTimerDisabled = false
+                UserDefaults.standard.set(1, forKey: "mainSelectedTab")
+                UserDefaults.standard.set(0, forKey: "trainingSelectedTab") // Zurück zu den Plänen
+                dismiss()
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    workoutManager.endWorkout()
+                }
+            }
+            .onReceive(NotificationCenter.default.publisher(for: UITextField.textDidBeginEditingNotification)) { obj in
+                if let textField = obj.object as? UITextField {
+                    DispatchQueue.main.async {
+                        textField.selectedTextRange = textField.textRange(from: textField.beginningOfDocument, to: textField.endOfDocument)
+                    }
+                }
             }
             .alert("Training beenden?", isPresented: $showingConfirmFinishAlert) {
                 Button("Ja, beenden") {
@@ -426,7 +492,10 @@ struct WorkoutSupersetGroupCard: View {
                             session: session,
                             viewModel: viewModel,
                             isSuperset: true,
-                            groupIsCollapsed: .constant(false)
+                            groupIsCollapsed: Binding(
+                                get: { !isExpanded },
+                                set: { isExpanded = !$0 }
+                            )
                         )
                         
                         if index < sessionGroup.exerciseGroups.count - 1 {
@@ -502,6 +571,7 @@ struct WorkoutExerciseInnerView: View {
     let viewModel: WorkoutSessionViewModel
     let isSuperset: Bool
     @Binding var groupIsCollapsed: Bool
+    @State private var showingNotesSheet = false
     
     private var isCompleted: Bool {
         !sets.isEmpty && sets.allSatisfy { $0.isCompleted }
@@ -532,6 +602,16 @@ struct WorkoutExerciseInnerView: View {
                             Text(exercise.name)
                                 .font(.headline)
                                 .foregroundColor(.primary)
+                            
+                            let combinedNotes = [planExercise?.planSpecificNotes, exercise.notes].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: "\n\n")
+                            if !combinedNotes.isEmpty {
+                                Image(systemName: "note.text")
+                                    .font(.subheadline)
+                                    .foregroundColor(.brand)
+                                    .onTapGesture {
+                                        showingNotesSheet = true
+                                    }
+                            }
                         }
                         Spacer()
                     }
@@ -559,8 +639,25 @@ struct WorkoutExerciseInnerView: View {
                 .buttonStyle(.borderless)
             }
             .padding(.horizontal)
-            .padding(.top, isSuperset ? 8 : Spacing.sm)
-            .padding(.bottom, (isSuperset ? false : groupIsCollapsed) ? Spacing.sm : 8)
+            .padding(.vertical, isSuperset ? 4 : Spacing.sm)
+            .sheet(isPresented: $showingNotesSheet) {
+                NavigationStack {
+                    ScrollView {
+                        let combinedNotes = [planExercise?.planSpecificNotes, exercise.notes].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: "\n\n")
+                        Text(combinedNotes)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding()
+                    }
+                    .navigationTitle("Übungs-Notizen")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .cancellationAction) {
+                            Button("Schließen") { showingNotesSheet = false }
+                        }
+                    }
+                }
+                .presentationDetents([.medium, .large])
+            }
             
             if !(isSuperset ? false : groupIsCollapsed) {
                 ForEach(Array(sets.enumerated()), id: \.element.id) { index, workoutSet in
@@ -605,10 +702,13 @@ struct WorkoutExerciseInnerView: View {
             existingSets = sets.filter { $0.exercise?.id == exercise.id && $0.planExercise == nil }
         }
         
-        let newSetNumber = (existingSets.max(by: { $0.setNumber < $1.setNumber })?.setNumber ?? 0) + 1
+        let lastSet = existingSets.max(by: { $0.setNumber < $1.setNumber })
+        let newSetNumber = (lastSet?.setNumber ?? 0) + 1
         
         let newSet = WorkoutSet(
             setNumber: newSetNumber,
+            actualWeight: lastSet?.actualWeight ?? 0.0,
+            actualReps: lastSet?.actualReps ?? 0,
             session: session,
             exercise: exercise,
             planExercise: planExercise

@@ -24,6 +24,14 @@ enum AppStorageKeys {
     // Dashboard-Ziele
     static let dailyCalorieGoal         = "dailyCalorieGoal"             // Double, default: 2500
     static let dailyStepGoal            = "daily_step_goal"              // Int, default: 10000
+    static let dailyWaterGoalML         = "dailyWaterGoalML"             // Double
+    static let dailySleepGoalHours      = "dailySleepGoalHours"          // Double
+    
+    // Wasser Presets
+    static let waterQuickAddPreset1     = "waterQuickAddPreset1"         // Double
+    static let waterQuickAddPreset2     = "waterQuickAddPreset2"         // Double
+    static let waterQuickAddPreset3     = "waterQuickAddPreset3"         // Double
+
     static let targetWeightKg           = "target_weight_kg"             // Double, default: 0 (disabled)
 }
 

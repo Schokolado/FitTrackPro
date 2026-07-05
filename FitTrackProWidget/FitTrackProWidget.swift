@@ -5,7 +5,7 @@ import SwiftData
 struct Provider: TimelineProvider {
     @MainActor
     func placeholder(in context: Context) -> DashboardEntry {
-        DashboardEntry(date: Date(), caloriesGoal: 2000, caloriesConsumed: 1200, protein: 50, proteinGoal: 150, carbs: 120, carbsGoal: 250, fat: 30, fatGoal: 70, lastWorkout: "Oberkörper", weight: 75.5, steps: 5400, stepGoal: 10000)
+        DashboardEntry(date: Date(), caloriesGoal: 2000, caloriesConsumed: 1200, protein: 50, proteinGoal: 150, carbs: 120, carbsGoal: 250, fat: 30, fatGoal: 70, lastWorkout: "Oberkörper", lastWorkoutDate: Date(), weight: 75.5, steps: 5400, stepGoal: 10000)
     }
 
     @MainActor
@@ -60,9 +60,11 @@ struct Provider: TimelineProvider {
             
             // 3. Workouts
             var lastWorkoutName = "Keine"
+            var lastWorkoutDate: Date? = nil
             let workoutDescriptor = FetchDescriptor<WorkoutSession>(sortBy: [SortDescriptor(\.startTime, order: .reverse)])
             if let lastWorkout = try context.fetch(workoutDescriptor).first {
                 lastWorkoutName = lastWorkout.plan?.name ?? "Freies Training"
+                lastWorkoutDate = lastWorkout.startTime
             }
             
             // 4. Weight
@@ -95,12 +97,13 @@ struct Provider: TimelineProvider {
                 fat: fat,
                 fatGoal: fGoal > 0 ? fGoal : 70,
                 lastWorkout: lastWorkoutName,
+                lastWorkoutDate: lastWorkoutDate,
                 weight: latestWeight,
                 steps: steps,
                 stepGoal: sGoal > 0 ? sGoal : 10000
             )
         } catch {
-            return DashboardEntry(date: date, caloriesGoal: 2500, caloriesConsumed: 0, protein: 0, proteinGoal: 150, carbs: 0, carbsGoal: 250, fat: 0, fatGoal: 70, lastWorkout: "Fehler", weight: nil, steps: 0, stepGoal: 10000)
+            return DashboardEntry(date: date, caloriesGoal: 2500, caloriesConsumed: 0, protein: 0, proteinGoal: 150, carbs: 0, carbsGoal: 250, fat: 0, fatGoal: 70, lastWorkout: "Fehler", lastWorkoutDate: nil, weight: nil, steps: 0, stepGoal: 10000)
         }
     }
 }
@@ -116,6 +119,7 @@ struct DashboardEntry: TimelineEntry {
     let fat: Double
     let fatGoal: Double
     let lastWorkout: String
+    let lastWorkoutDate: Date?
     let weight: Double?
     let steps: Int
     let stepGoal: Int
@@ -173,12 +177,12 @@ struct CalorieWidgetView: View {
                     .stroke(Color.orange, style: StrokeStyle(lineWidth: 8, lineCap: .round))
                     .rotationEffect(.degrees(-90))
                 
-                VStack(spacing: 2) {
+                VStack(spacing: 0) {
                     Text("\(Int(entry.caloriesConsumed))")
-                        .font(.system(.title2, design: .rounded).bold())
+                        .font(.system(size: 20, weight: .bold, design: .rounded))
                         .minimumScaleFactor(0.8)
                     Text("/ \(Int(entry.caloriesGoal))")
-                        .font(.system(size: 10))
+                        .font(.system(size: 8))
                         .foregroundColor(.secondary)
                 }
             }
@@ -223,9 +227,17 @@ struct DashboardWidgetView: View {
                 
                 // Workout
                 VStack(alignment: .leading, spacing: 1) {
-                    Text("Letztes Workout")
-                        .font(.system(size: 9))
-                        .foregroundColor(.secondary)
+                    if let date = entry.lastWorkoutDate {
+                        Text("Letztes Workout \(date.formatted(.dateTime.day(.twoDigits).month(.twoDigits).year(.defaultDigits)))")
+                            .font(.system(size: 9))
+                            .foregroundColor(.secondary)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.8)
+                    } else {
+                        Text("Letztes Workout")
+                            .font(.system(size: 9))
+                            .foregroundColor(.secondary)
+                    }
                     Text(entry.lastWorkout)
                         .font(.system(size: 10, weight: .bold))
                         .lineLimit(1)
@@ -345,8 +357,8 @@ struct FitTrackProWidget: Widget {
                     .background(Color(UIColor.systemBackground))
             }
         }
-        .configurationDisplayName("Vigr")
-        .description("Dein täglicher Fitness-Überblick.")
+        .configurationDisplayName("Vantage")
+        .description("Zeigt dein aktuelles Workout an.")
         .supportedFamilies([.systemSmall, .systemMedium])
     }
 }

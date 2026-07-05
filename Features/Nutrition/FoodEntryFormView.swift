@@ -18,6 +18,7 @@ struct FoodEntryFormView: View {
     @State private var showingValidationError = false
     @State private var showingScanner = false
     
+    @State private var selectedDate: Date = Date()
     @State private var name: String = ""
     @State private var barcode: String? = nil
     @State private var amountGrams: Double = 100.0
@@ -44,6 +45,7 @@ struct FoodEntryFormView: View {
                 }
                 
                 Section(header: Text("Details")) {
+                    DatePicker("Datum", selection: $selectedDate, displayedComponents: .date)
                     TextField("Name", text: $name)
                     Picker("Mahlzeit", selection: $mealType) {
                         Text("Bitte wählen").tag(MealType?.none)
@@ -60,37 +62,6 @@ struct FoodEntryFormView: View {
                             .frame(width: 80)
                         Stepper("", value: $amountGrams, in: 0...5000, step: 10)
                             .labelsHidden()
-                    }
-                }
-                
-                Section(header: Text("Nährwerte (pro 100g/ml)")) {
-                    HStack {
-                        Text("Kalorien (kcal)")
-                        Spacer()
-                        TextField("kcal", value: $caloriesPer100g, format: .number)
-                            .keyboardType(.decimalPad)
-                            .multilineTextAlignment(.trailing)
-                    }
-                    HStack {
-                        Text("Protein (g)")
-                        Spacer()
-                        TextField("g", value: $proteinPer100g, format: .number)
-                            .keyboardType(.decimalPad)
-                            .multilineTextAlignment(.trailing)
-                    }
-                    HStack {
-                        Text("Kohlenhydrate (g)")
-                        Spacer()
-                        TextField("g", value: $carbsPer100g, format: .number)
-                            .keyboardType(.decimalPad)
-                            .multilineTextAlignment(.trailing)
-                    }
-                    HStack {
-                        Text("Fett (g)")
-                        Spacer()
-                        TextField("g", value: $fatPer100g, format: .number)
-                            .keyboardType(.decimalPad)
-                            .multilineTextAlignment(.trailing)
                     }
                 }
                 
@@ -120,6 +91,8 @@ struct FoodEntryFormView: View {
                             .foregroundColor(.secondary)
                     }
                 }
+                
+                nutritionSection
             }
             .navigationTitle("Eintrag hinzufügen")
             .navigationBarTitleDisplayMode(.inline)
@@ -169,21 +142,63 @@ struct FoodEntryFormView: View {
                 }
             }
             .onAppear {
-                if let product = prefilledProduct {
-                    applyProduct(product)
-                } else if let entry = prefilledEntry {
-                    name = entry.name
-                    amountGrams = entry.amountGrams > 0 ? entry.amountGrams : 100.0
-                    
-                    // Reverse calculate per 100g from the entry's totals
-                    let ratio = amountGrams / 100.0
-                    if ratio > 0 {
-                        caloriesPer100g = entry.calories / ratio
-                        proteinPer100g = entry.proteinGrams / ratio
-                        carbsPer100g = entry.carbsGrams / ratio
-                        fatPer100g = entry.fatGrams / ratio
-                    }
-                }
+                setupData()
+                selectedDate = targetDate
+            }
+            .onChange(of: prefilledProduct?.code) { oldValue, newValue in
+                setupData()
+            }
+            .onChange(of: prefilledEntry?.id) { oldValue, newValue in
+                setupData()
+            }
+        }
+    }
+    private var nutritionSection: some View {
+        Section(header: Text("Nährwerte (pro 100g/ml)")) {
+            HStack {
+                Text("Kalorien (kcal)")
+                Spacer()
+                TextField("kcal", value: $caloriesPer100g, format: .number)
+                    .keyboardType(.decimalPad)
+                    .multilineTextAlignment(.trailing)
+            }
+            HStack {
+                Text("Protein (g)")
+                Spacer()
+                TextField("g", value: $proteinPer100g, format: .number)
+                    .keyboardType(.decimalPad)
+                    .multilineTextAlignment(.trailing)
+            }
+            HStack {
+                Text("Kohlenhydrate (g)")
+                Spacer()
+                TextField("g", value: $carbsPer100g, format: .number)
+                    .keyboardType(.decimalPad)
+                    .multilineTextAlignment(.trailing)
+            }
+            HStack {
+                Text("Fett (g)")
+                Spacer()
+                TextField("g", value: $fatPer100g, format: .number)
+                    .keyboardType(.decimalPad)
+                    .multilineTextAlignment(.trailing)
+            }
+        }
+    }
+    
+    private func setupData() {
+        if let product = prefilledProduct {
+            applyProduct(product)
+        } else if let entry = prefilledEntry {
+            name = entry.name
+            amountGrams = entry.amountGrams > 0 ? entry.amountGrams : 100.0
+            
+            let ratio = amountGrams / 100.0
+            if ratio > 0 {
+                caloriesPer100g = entry.calories / ratio
+                proteinPer100g = entry.proteinGrams / ratio
+                carbsPer100g = entry.carbsGrams / ratio
+                fatPer100g = entry.fatGrams / ratio
             }
         }
     }
@@ -216,7 +231,7 @@ struct FoodEntryFormView: View {
             return
         }
         
-        let dateString = targetDate.iso8601String()
+        let dateString = selectedDate.iso8601String()
         let todayLog = allDailyLogs.first(where: { $0.dateString == dateString }) ?? {
             let newLog = DailyLog(dateString: dateString)
             modelContext.insert(newLog)
@@ -225,7 +240,7 @@ struct FoodEntryFormView: View {
         
         let newEntry = FoodEntry(
             name: name,
-            timestamp: targetDate,
+            timestamp: selectedDate,
             mealType: selectedMealType,
             amountGrams: amountGrams,
             calories: calculatedCalories,

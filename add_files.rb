@@ -1,51 +1,36 @@
 require 'xcodeproj'
-
-project_path = 'FitTrackPro.xcodeproj'
-project = Xcodeproj::Project.open(project_path)
+project = Xcodeproj::Project.open('FitTrackPro.xcodeproj')
 target = project.targets.first
 
-main_group = project.main_group
+def add_file(project, target, file_path)
+  group_path = File.dirname(file_path)
+  group_names = group_path.split('/')
+  
+  current_group = project.main_group
+  group_names.each do |name|
+    next if name == '.'
+    found_group = current_group.children.find { |c| c.class == Xcodeproj::Project::Object::PBXGroup && c.name == name }
+    if found_group.nil?
+      found_group = current_group.children.find { |c| c.class == Xcodeproj::Project::Object::PBXGroup && c.path == name }
+    end
+    if found_group.nil?
+      found_group = current_group.new_group(name)
+    end
+    current_group = found_group
+  end
 
-# Helper to find or create nested groups from main_group
-def find_or_create_nested_group(main_group, path_parts)
-  path_parts.reduce(main_group) do |parent, name|
-    parent[name] || parent.new_group(name, name)
+  file_name = File.basename(file_path)
+  unless current_group.files.any? { |f| f.path == file_name || f.name == file_name }
+    file_ref = current_group.new_file(file_name)
+    target.add_file_references([file_ref])
+    puts "Added #{file_path}"
+  else
+    puts "Already exists: #{file_path}"
   end
 end
 
-# Files to add: [group path parts array, filesystem path relative to project root]
-files_to_add = [
-  # Red: SettingsView in proper location
-  [['Features', 'Settings'],              'Features/Settings/SettingsView.swift'],
-  [['Features', 'Settings'],              'Features/Settings/ThemeSettingsView.swift'],
-  # Yellow: New extension files
-  [['Core', 'Extensions'],                'Core/Extensions/NotificationNames.swift'],
-  [['Core', 'Extensions'],                'Core/Extensions/Logger+App.swift'],
-  [['Core', 'Extensions'],                'Core/Extensions/TrainingPlan+Grouping.swift'],
-  [['Core', 'Managers'],                  'Core/Managers/ThemeManager.swift'],
-  [['Core', 'Views'],                     'Core/Views/ExerciseIconView.swift'],
-]
-
-files_to_add.each do |group_path, file_path|
-  full_path = File.join(File.dirname(File.expand_path(project_path)), file_path)
-  unless File.exist?(full_path)
-    puts "SKIP (not found): #{file_path}"
-    next
-  end
-
-  group = find_or_create_nested_group(main_group, group_path)
-
-  # Skip if already referenced in this group
-  base_name = File.basename(file_path)
-  if group.files.any? { |f| f.path == base_name }
-    puts "Already in project: #{file_path}"
-    next
-  end
-
-  file_ref = group.new_file(base_name)
-  target.add_file_references([file_ref])
-  puts "Added: #{file_path}"
-end
+add_file(project, target, 'Core/Models/SleepDaySummary.swift')
+add_file(project, target, 'Features/SleepTracker/SleepDetailView.swift')
 
 project.save
-puts "Done – project saved."
+puts "Project saved"

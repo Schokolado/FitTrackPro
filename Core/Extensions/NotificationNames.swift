@@ -7,4 +7,5 @@ extension Notification.Name {
     /// Posted when a workout summary is saved or discarded,
     /// signalling the parent `WorkoutSessionView` to dismiss itself.
     static let workoutFinished = Notification.Name("com.fittrackpro.workoutFinished")
+    static let workoutCancelled = Notification.Name("com.fittrackpro.workoutCancelled")
 }

@@ -94,13 +94,13 @@ struct OnboardingWelcomePage: View {
             VStack(spacing: 32) {
                 Spacer()
 
-                VStack(spacing: 16) {
+                VStack(spacing: 8) {
                     Image("VigrLogoTransparent")
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 260, height: 260)
+                        .frame(width: 250, height: 250)
 
-                    Text("Vigr")
+                    Text(Bundle.main.appName)
                         .font(.system(size: 42, weight: .black, design: .rounded))
                         .foregroundColor(.primary)
 

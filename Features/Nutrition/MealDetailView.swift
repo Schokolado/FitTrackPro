@@ -8,6 +8,7 @@ struct MealDetailView: View {
     let dateString: String
     
     @Query private var allDailyLogs: [DailyLog]
+    @Query(sort: \FoodEntry.timestamp, order: .reverse) private var allFoodEntries: [FoodEntry]
     
     @State private var showingFoodSearch = false
     @State private var showingSavedAlert = false
@@ -17,6 +18,9 @@ struct MealDetailView: View {
     @State private var scannedProduct: OFFProduct? = nil
     @State private var showingAddEntryFromScanner = false
     
+    @State private var showingRecentEntryForm = false
+    @State private var selectedRecentEntry: FoodEntry? = nil
+    
     private var todayLog: DailyLog? {
         allDailyLogs.first { $0.dateString == dateString }
     }
@@ -25,8 +29,38 @@ struct MealDetailView: View {
         todayLog?.foodEntries?.filter { $0.mealType == mealType } ?? []
     }
     
+    private var recentFoods: [FoodEntry] {
+        var uniqueNames = Set<String>()
+        var result = [FoodEntry]()
+        
+        for entry in allFoodEntries {
+            guard entry.mealType == mealType else { continue }
+            // Don't show foods that are already added today for this meal
+            let alreadyAdded = entries.contains { $0.name == entry.name }
+            if !alreadyAdded && !uniqueNames.contains(entry.name) {
+                uniqueNames.insert(entry.name)
+                result.append(entry)
+            }
+            if result.count >= 5 { break }
+        }
+        
+        return result
+    }
+    
     private var totalCalories: Double {
         entries.reduce(0) { $0 + $1.calories }
+    }
+    
+    private var totalProtein: Double {
+        entries.reduce(0) { $0 + $1.proteinGrams }
+    }
+    
+    private var totalCarbs: Double {
+        entries.reduce(0) { $0 + $1.carbsGrams }
+    }
+    
+    private var totalFat: Double {
+        entries.reduce(0) { $0 + $1.fatGrams }
     }
     
     private var parsedDate: Date {
@@ -40,10 +74,28 @@ struct MealDetailView: View {
         List {
             Section(header: Text("Zusammenfassung")) {
                 HStack {
-                    Text("Gesamtkalorien")
+                    Text("Kalorien")
                     Spacer()
                     Text("\(Int(totalCalories)) kcal")
                         .fontWeight(.bold)
+                }
+                HStack {
+                    Text("Protein")
+                    Spacer()
+                    Text("\(String(format: "%.1f", totalProtein)) g")
+                        .foregroundColor(.secondary)
+                }
+                HStack {
+                    Text("Kohlenhydrate")
+                    Spacer()
+                    Text("\(String(format: "%.1f", totalCarbs)) g")
+                        .foregroundColor(.secondary)
+                }
+                HStack {
+                    Text("Fett")
+                    Spacer()
+                    Text("\(String(format: "%.1f", totalFat)) g")
+                        .foregroundColor(.secondary)
                 }
             }
             
@@ -89,7 +141,7 @@ struct MealDetailView: View {
                     HStack {
                         Image(systemName: "plus.circle.fill")
                             .foregroundColor(.brand)
-                        Text("Lebensmittel hinzufügen")
+                        Text("Lebensmittel suchen")
                             .foregroundColor(.primary)
                     }
                 }
@@ -102,6 +154,40 @@ struct MealDetailView: View {
                             .foregroundColor(.brand)
                         Text("Barcode scannen")
                             .foregroundColor(.primary)
+                    }
+                }
+            }
+            
+            if !recentFoods.isEmpty {
+                Section(header: Text("Zuletzt gegessen (Vorschläge)")) {
+                    ForEach(recentFoods) { entry in
+                        Button(action: {
+                            selectedRecentEntry = entry
+                            showingRecentEntryForm = true
+                        }) {
+                            HStack {
+                                Image(systemName: "clock.arrow.circlepath")
+                                    .foregroundColor(.brand)
+                                    .font(.subheadline)
+                                    .frame(width: 24)
+                                    
+                                VStack(alignment: .leading) {
+                                    Text(entry.name)
+                                        .font(.subheadline)
+                                        .fontWeight(.medium)
+                                        .foregroundColor(.primary)
+                                    Text("\(Int(entry.amountGrams)) g")
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
+                                Spacer()
+                                Text("\(Int(entry.calories)) kcal")
+                                    .font(.subheadline)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(.primary)
+                            }
+                            .padding(.vertical, 4)
+                        }
                     }
                 }
             }
@@ -154,9 +240,17 @@ struct MealDetailView: View {
                 #endif
             }
         }
-        .sheet(isPresented: $showingAddEntryFromScanner) {
-            FoodEntryFormView(mealType: mealType, prefilledProduct: scannedProduct, targetDate: parsedDate) { savedName in
-                showingAddEntryFromScanner = false
+        .sheet(item: $scannedProduct) { product in
+            FoodEntryFormView(mealType: mealType, prefilledProduct: product, targetDate: parsedDate) { savedName in
+                scannedProduct = nil
+                savedFoodName = savedName
+                showingSavedAlert = true
+            }
+            .presentationDetents([.large])
+        }
+        .sheet(item: $selectedRecentEntry) { entry in
+            FoodEntryFormView(mealType: mealType, prefilledProduct: nil, prefilledEntry: entry, targetDate: parsedDate) { savedName in
+                selectedRecentEntry = nil
                 savedFoodName = savedName
                 showingSavedAlert = true
             }

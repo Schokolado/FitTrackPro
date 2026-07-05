@@ -58,6 +58,7 @@ struct NutritionSummaryCard: View {
                 .foregroundColor(.gray)
         }
         .padding(20)
+        .frame(height: 130)
         .background(
             RoundedRectangle(cornerRadius: 24, style: .continuous)
                 .fill(Color.backgroundSecondary)
@@ -88,13 +89,15 @@ struct WeightSummaryCard: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            HStack {
+            HStack(alignment: .top) {
                 Image(systemName: "scalemass")
                     .foregroundColor(.brand)
                     .font(.title2)
+                    .frame(width: 28, height: 28)
                 Spacer()
                 Image(systemName: "chevron.right")
                     .foregroundColor(.gray)
+                    .frame(width: 28, height: 28)
             }
             
             Spacer()
@@ -138,16 +141,20 @@ struct WeightSummaryCard: View {
 
 struct TrainingSummaryCard: View {
     let workouts: [WorkoutSession]
+    var activeSession: WorkoutSession? = nil
+    var yesterdayWorkout: WorkoutSession? = nil
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            HStack {
+            HStack(alignment: .top) {
                 Image(systemName: "figure.run")
                     .foregroundColor(.blue)
                     .font(.title2)
+                    .frame(width: 28, height: 28)
                 Spacer()
                 Image(systemName: "chevron.right")
                     .foregroundColor(.gray)
+                    .frame(width: 28, height: 28)
             }
             
             Spacer()
@@ -157,7 +164,23 @@ struct TrainingSummaryCard: View {
                     .font(.subheadline)
                     .foregroundColor(.secondary)
                 
-                if let workout = workouts.first {
+                if let active = activeSession {
+                    Text("Laufend")
+                        .font(.system(size: 24, weight: .bold, design: .rounded))
+                        .foregroundColor(.brand)
+                    Text(active.plan?.name ?? "Freies Workout")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .lineLimit(1)
+                } else if workouts.count > 1 {
+                    Text("\(workouts.count) Erledigt")
+                        .font(.system(size: 24, weight: .bold, design: .rounded))
+                        .foregroundColor(.green)
+                    Text("Historie ansehen")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .lineLimit(1)
+                } else if let workout = workouts.first {
                     Text("Erledigt")
                         .font(.system(size: 24, weight: .bold, design: .rounded))
                         .foregroundColor(.green)
@@ -168,9 +191,16 @@ struct TrainingSummaryCard: View {
                 } else {
                     Text("Anstehend")
                         .font(.system(size: 24, weight: .bold, design: .rounded))
-                    Text("Tippen zum Starten")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
+                    if let yesterday = yesterdayWorkout {
+                        Text("Gestern: \(yesterday.plan?.name ?? "Freies Workout")")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .lineLimit(1)
+                    } else {
+                        Text("Tippen zum Starten")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
                 }
             }
         }
@@ -234,6 +264,7 @@ struct StepSummaryCard: View {
                 .foregroundColor(.gray)
         }
         .padding(20)
+        .frame(height: 130)
         .background(
             RoundedRectangle(cornerRadius: 24, style: .continuous)
                 .fill(Color.backgroundSecondary)
@@ -242,136 +273,7 @@ struct StepSummaryCard: View {
     }
 }
 
-struct WaterTrackerMockupCard: View {
-    var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Image(systemName: "drop.fill")
-                    .foregroundColor(.cyan)
-                    .font(.title2)
-                Spacer()
-                Text("Coming Soon")
-                    .font(.caption2.bold())
-                    .padding(.horizontal, 6)
-                    .padding(.vertical, 2)
-                    .background(Color.cyan.opacity(0.2))
-                    .foregroundColor(.cyan)
-                    .clipShape(Capsule())
-            }
-            Spacer()
-            VStack(alignment: .leading, spacing: 4) {
-                Text("Wasser")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                Text("1.2 L")
-                    .font(.system(size: 24, weight: .bold, design: .rounded))
-                Text("von 2.5 L")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-            }
-        }
-        .padding(20)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .frame(height: 160)
-        .background(
-            RoundedRectangle(cornerRadius: 24, style: .continuous)
-                .fill(Color.backgroundSecondary)
-                .shadow(color: .black.opacity(0.05), radius: 15, y: 8)
-        )
-    }
-}
 
-struct SleepTrackerMockupCard: View {
-    var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Image(systemName: "moon.zzz.fill")
-                    .foregroundColor(.indigo)
-                    .font(.title2)
-                Spacer()
-                Text("Coming Soon")
-                    .font(.caption2.bold())
-                    .padding(.horizontal, 6)
-                    .padding(.vertical, 2)
-                    .background(Color.indigo.opacity(0.2))
-                    .foregroundColor(.indigo)
-                    .clipShape(Capsule())
-            }
-            Spacer()
-            VStack(alignment: .leading, spacing: 4) {
-                Text("Schlaf")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                Text("7h 15m")
-                    .font(.system(size: 24, weight: .bold, design: .rounded))
-                Text("Gute Qualität")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-            }
-        }
-        .padding(20)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .frame(height: 160)
-        .background(
-            RoundedRectangle(cornerRadius: 24, style: .continuous)
-                .fill(Color.backgroundSecondary)
-                .shadow(color: .black.opacity(0.05), radius: 15, y: 8)
-        )
-    }
-}
-
-struct RecoveryMockupCard: View {
-    var body: some View {
-        HStack(spacing: 20) {
-            // Circular Progress
-            ZStack {
-                Circle()
-                    .stroke(Color.teal.opacity(0.2), lineWidth: 10)
-                
-                Circle()
-                    .trim(from: 0, to: 0.85)
-                    .stroke(Color.teal, style: StrokeStyle(lineWidth: 10, lineCap: .round))
-                    .rotationEffect(.degrees(-90))
-                
-                VStack(spacing: 2) {
-                    Image(systemName: "battery.100.bolt")
-                        .foregroundColor(.teal)
-                        .font(.caption)
-                    Text("85%")
-                        .font(.system(size: 16, weight: .bold, design: .rounded))
-                }
-            }
-            .frame(width: 90, height: 90)
-            
-            // Texts
-            VStack(alignment: .leading, spacing: 8) {
-                HStack {
-                    Text("Akku / Recovery")
-                        .font(.headline)
-                        .foregroundColor(.primary)
-                    Spacer()
-                    Text("Coming Soon")
-                        .font(.caption2.bold())
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 2)
-                        .background(Color.teal.opacity(0.2))
-                        .foregroundColor(.teal)
-                        .clipShape(Capsule())
-                }
-                
-                Text("Bereit für ein intensives Training heute!")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-            }
-        }
-        .padding(20)
-        .background(
-            RoundedRectangle(cornerRadius: 24, style: .continuous)
-                .fill(Color.backgroundSecondary)
-                .shadow(color: .black.opacity(0.05), radius: 15, y: 8)
-        )
-    }
-}
 
 struct MoodSummaryCard: View {
     var body: some View {
@@ -409,6 +311,7 @@ struct MoodSummaryCard: View {
             }
         }
         .padding(20)
+        .frame(height: 130)
         .background(
             RoundedRectangle(cornerRadius: 24, style: .continuous)
                 .fill(Color.backgroundSecondary)

@@ -1,0 +1,10 @@
+// Localizable.strings (German)
+"tab.dashboard" = "Home";
+"tab.training" = "Training";
+"tab.nutrition" = "Ernährung";
+"tab.statistics" = "Statistik";
+"tab.settings" = "Einstellungen";
+
+"general.save" = "Speichern";
+"general.cancel" = "Abbrechen";
+"general.delete" = "Löschen";

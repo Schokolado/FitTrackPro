@@ -1,0 +1,351 @@
+ kg
+-- kg
+/ \(Int(entry.caloriesGoal))
+/ \(Int(goalCalories)) kcal
+1
+1 = Sehr leicht • 5 = Maximum
+1.2 L
+2
+3
+4
+5
+7h 15m
+85%
+ANGEHALTEN
+Abbrechen
+Absolviere Workouts mit dieser Übung, um Fortschritte zu sehen.
+Absolviere dein erstes Workout, um es hier zu sehen.
+Absolvierte Workouts: \(sessions.count)
+Akku / Recovery
+Aktiv & Verbunden
+Aktuelles Gewicht
+Alle
+Alle bisherigen Daten wurden erfolgreich mit Apple Health synchronisiert.
+Alles bereit!
+Allgemein
+Als PDF exportieren
+Anstehend
+Apple Health
+Apple Health ist auf diesem Gerät nicht verfügbar.
+Aus Datenbank scannen
+Barcode scannen
+Bearbeiten
+Beenden
+Beenden & Neu starten
+Benachrichtigungen
+Berechnet (für \(Int(amountGrams))g/ml)
+Bereinigen
+Bereit für ein intensives Training heute!
+Bilder
+Bilder hinzufügen
+Biologisches Geschlecht
+Bist du sicher, dass du das Training abbrechen und verwerfen möchtest? Alle bisherigen Einträge gehen verloren.
+Bist du sicher, dass du das Training beenden möchtest?
+Bist du sicher, dass du den Trainingsplan '\(plan.name)' unwiderruflich löschen möchtest?
+Bist du sicher, dass du diesen Gewichtseintrag löschen möchtest? Dies kann nicht rückgängig gemacht werden.
+Bist du sicher? Alle lokal und in der iCloud gespeicherten Einträge (Gewicht, Mahlzeiten, Workouts, etc.) werden unwiderruflich gelöscht. Diese Aktion kann nicht rückgängig gemacht werden.
+Bitte richte die Kamera auf den Barcode.
+Bitte wähle eine Mahlzeit aus (z.B. Frühstück).
+Bitte wählen
+Bottom \(context.state.emoji)
+Coming Soon
+Cooldown fortsetzen
+Darstellung
+Daten übernehmen & Starten
+Datenbank vollständig zurücksetzen
+Datenbank-Suche (OpenFoodFacts)
+Datum: ____________________  Dauer: _________
+Dein Name
+Dein bisheriger Fortschritt in diesem Workout geht verloren.
+Dein persönlicher Fitness-\nBegleiter für jeden Tag.
+Dein persönliches Profil ist gespeichert.\nLass uns deine Fitness tracken.
+Deine Daten werden automatisch und sicher über deinen iCloud-Account synchronisiert (sofern dein iPhone in iCloud angemeldet ist).
+Detail \(openId)
+Details
+Dies sucht nach allen doppelten Einträgen (z.B. Gewicht) und behält nur einen. Die gelöschten Duplikate werden auch aus iCloud entfernt.
+Diese Aktion kann nicht rückgängig gemacht werden.
+Dieses Gewicht wird als erster Eintrag in deinem Gewichtstagebuch gespeichert.
+Divers
+Du hast alle Übungen erfolgreich abgeschlossen. Möchtest du das Workout jetzt beenden oder weiterlaufen lassen (z.B. für Cooldown)?
+Du hast bereits ein laufendes Workout. Möchtest du dieses beenden und das neue Workout starten?
+Du hast diese Übung bisher noch nicht abgeschlossen.
+Duplikate bereinigen
+Duplizieren
+Eigene Lebensmittel
+Eigene Rezepte
+Eigene Übung
+Eingeschränkt
+Einstellungen
+Eintrag hinzufügen
+Eintrag löschen
+Einträge
+Endgültig löschen
+Erledigt
+Ernährung
+Ernährung heute
+Erreicht am \(dateString)
+Erscheinungsbild
+Erstelle einen Trainingsplan im Training-Tab.
+Erstellen
+Erster Eintrag
+Es wurden keine Schrittdaten für diesen Zeitraum gefunden.
+Farben & Kategorien
+Fertig
+Fett
+Fett (g)
+Filter
+Füge einen neuen Trainingsplan über das '+' unten rechts hinzu.
+Geburtsdatum
+Geburtstag
+Gefahrenzone
+Gelöschte Übung
+Gesamtkalorien
+Gesamtnährwerte
+Geschlecht
+Gewicht
+Gewicht (kg)
+Gewicht gesamt
+Gib die gewünschte Pausenzeit in Sekunden ein.
+Gruppe zuweisen
+Gruppen
+Gruppen verwalten
+Größe
+Gute Qualität
+Hallo \(cloudName) 👋
+Hello \(context.state.emoji)
+Heute
+Hier kannst du eigene Farben für alle deine genutzten Muskelgruppen und Kategorien festlegen. Wenn du eine neue Kategorie erstellst, erscheint sie automatisch hier.
+Hinzufügen
+Historie
+Historie (\(selectedTimeRange.rawValue))
+Historie inkl. Daten
+Historie: \(plan.name)
+Historischer Verlauf
+Home
+Ignorieren & neu eingeben
+Individuell...
+Intensität
+Ja, abbrechen
+Ja, beenden
+Ja, im Plan speichern
+Ja, verwerfen
+Jetzt loslegen
+Kalorien
+Kalorien (kcal)
+Kategorie
+Kategorien
+Kein Supersatz
+Keine Ergebnisse gefunden.
+Keine Gruppen gefunden
+Keine Pläne in dieser Gruppe
+Keine Trainingspläne
+Keine Workouts im gewählten Zeitraum.
+Keine lokalen Treffer.
+Kohlenhydrate
+Kohlenhydrate (g)
+Körpergröße
+L
+Leading
+Lebensmittel hinzufügen
+Leerer Plan
+Leerer Plan (Vorlage)
+Letztes Workout
+Löschen
+Mahlzeit
+Makros
+Manuell
+Manuell eintragen (ohne Apple Health)
+Manuell hinzufügen
+Max
+Max Gewicht & Ø Gewicht
+Medien & Video
+Mehr
+Mein Profil
+Meine Rezepte
+Menge (g/ml)
+Min
+Mit Apple Health starten
+Männlich
+Möchtest du die Pause wirklich überspringen?
+Möchtest du diese Übung wirklich aus dem Plan entfernen?
+Möchtest du diesen Trainingsplan wirklich löschen?
+Möchtest du dieses Lebensmittel wirklich entfernen?
+Name
+Nein, nur heute
+Neue Gruppe erstellen
+Neue Kategorie...
+Neue Übung
+Neue Übung erstellen
+Neuer Plan
+Neues Lebensmittel
+Nicht angemeldet
+Nicht mehr fragen
+Nicht zugeordnet
+Noch keine Daten
+Noch keine Daten vorhanden.
+Noch keine Einträge für diese Mahlzeit.
+Noch keine Einträge vorhanden.
+Noch keine Einträge.
+Noch keine Trainings absolviert
+Noch keine Zutaten hinzugefügt.
+Noch keine eigenen Lebensmittel gespeichert.
+Noch keine eigenen Rezepte erstellt.
+Notizen
+Notizen bearbeiten
+Notizen hinzufügen
+Nährwerte
+Nährwerte (pro 100g/ml)
+Nährwerte pro 100g / Portion
+OK
+Open
+PDF erstellen...
+Page 1
+Page 2
+Page 3
+Pause (sek)
+Pause: \(viewModel.formatTime(viewModel.restTimeRemaining))
+Pausen-Timer
+Persönlicher Rekord
+Plan löschen
+Plan umbenennen
+Pläne
+Portionen
+Pro Portion
+Protein
+Protein (g)
+Reihenfolge ändern
+Rezept-Details
+Rezeptzutaten
+SATZPAUSE
+Satz \(set.setNumber)
+Satz hinzufügen
+Satz löschen
+Schlaf
+Schließen
+Schritt-Historie
+Schritte
+Schritte / Tag
+Schritte eintragen
+Schritte erfassen
+Schritte heute
+Schrittziel
+Seite \(pageIndex + 1) / \(totalPages)
+Simulator Mock Scan
+Simulator Mock Scan (Coca Cola)
+Speichern
+Standard-Pause
+Standard-Pause (Sekunden)
+Starten
+Statistik
+Status wird geprüft...
+Stimmung
+Suche Produkt...
+Supersatz
+Supersatz mit...
+Supersatz: \(linked.exercise?.name ?? 
+Sätze
+T \(context.state.emoji)
+Tippen zum Starten
+Trage hier Schritte ein, wenn du dein Handy nicht bei dir hattest oder sie manuell trackst.
+Trailing
+Training
+Trainingsfrequenz
+Trainingsplan
+Tägliche Ziele
+Um die Datenbank nicht zu überlasten, warte bitte ein paar Sekunden zwischen den Suchanfragen.
+Umbenennen
+Verlauf
+Verlauf (\(selectedTimeRange.rawValue))
+Version \(version) (\(build))
+Verwalten
+Verwaltung
+Video-Tutorial ansehen
+Video-Tutorial hinzufügen
+Volumen (kg)
+WORKOUT ANGEHALTEN
+Was möchtest du mit der Satzpause machen?
+Wasser
+Wdh
+Wdh.
+Weiblich
+Weitere Ergebnisse online suchen...
+Weitere laden...
+Wenn aktiviert, werden beim Hinzufügen einer Übung zum Plan automatisch die Sätze, Wiederholungen und Gewichte aus dem letzten Training übernommen.
+Wie anstrengend war es? (RPE)
+Wie fühlst du dich heute?
+Wie fühlst du dich?
+Wiederholungen
+Willkommen zurück
+Willkommen zurück,
+Workout
+Workout Details
+Workout Starten
+Workout abgeschlossen!
+Workout beenden
+Workout fortsetzen
+Workout löschen
+Workout starten
+Workouts
+Wähle oben eine Übung, um deinen Fortschritt zu sehen.
+Ziel: \(dailyStepGoal)
+Zurück
+Zusammenfassung
+Zutat hinzufügen
+Zutaten
+\(Int(calculatedCalories)) kcal
+\(Int(consumed))
+\(Int(current)) / \(Int(goal)) g
+\(Int(defaultRestDuration)) s
+\(Int(entry.amountGrams)) g
+\(Int(entry.calories)) kcal
+\(Int(entry.caloriesConsumed))
+\(Int(exercise.defaultRestDuration)) Sekunden
+\(Int(food.caloriesPer100g)) kcal / 100g
+\(Int(heightCm)) cm
+\(Int(max(goal - consumed, 0))) kcal verbleibend
+\(Int(recipe.totalCalories)) kcal | \(Int(recipe.portions)) Portion(en)
+\(Int(record.weightKg)) kg × \(record.totalReps) Wdh.
+\(Int(totalCalories)) kcal
+\(Int(totalCals))
+\(Int(totalCals)) kcal
+\(Int(value))
+\(cloudSteps)
+\(completedSessions.count)
+\(data.manualSteps) manuell
+\(data.totalSteps) Schritte
+\(entries.count) Einträge
+\(entry.weightKg, format: .number.precision(.fractionLength(1))) kg
+\(exercise.name) Historie
+\(formatNumber(entry.steps)) / \(formatNumber(entry.stepGoal))
+\(group.sessions.count) Einheiten
+\(item.planCount) Pläne
+\(label) \(value)g
+\(max(goal - steps, 0)) Schritte verbleibend
+\(plan.planExercises?.count ?? 0) Übungen
+\(repCount) Wdh. · \(duration)
+\(savedFoodName) wurde hinzugefügt.
+\(set.actualReps) Wdh
+\(set.setNumber)
+\(sets.count) Sätze
+\(steps)
+\(timerFav1) Sek
+\(timerFav2) Sek
+\(timerFav3) Sek
+\(workoutSet.setNumber)
+cm
+iCloud Sync
+kg
+von 2.5 L
+× \(set.actualReps)
+Ø
+Überspringen
+Übung auswählen
+Übung hinzufügen
+Übung löschen
+Übung verschieben
+Übungen
+Übungs-Historie
+Übungs-Historie: \(exercise.name)
+Übungsdetails
+Übungsdetails ansehen
+•

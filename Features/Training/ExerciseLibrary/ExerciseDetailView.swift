@@ -287,10 +287,11 @@ struct ExerciseHistoryPreview: View {
                     HStack {
                         Text(set.timestamp, format: .dateTime.day().month().year())
                             .font(.subheadline)
-                            .foregroundColor(.secondary)
                         Spacer()
-                        Text("\(set.actualWeight, specifier: "%.1f") kg × \(set.actualReps)")
+                        let isCardio = exercise.category.lowercased() == "cardio"
+                        Text(isCardio ? "Lvl \(Int(set.actualWeight)) • \(set.actualReps) Min" : "\(set.actualWeight, specifier: "%.1f") kg × \(set.actualReps)")
                             .font(.subheadline.bold())
+                            .foregroundColor(.primary)
                     }
                     .padding(.vertical, 2)
                 }

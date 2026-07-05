@@ -6,6 +6,8 @@ struct WorkoutSetRowView: View {
     let onComplete: () -> Void
     
     var body: some View {
+        let isCardio = workoutSet.exercise?.category.lowercased() == "cardio"
+        
         HStack {
             // Set Number
             Text("\(workoutSet.setNumber)")
@@ -24,7 +26,7 @@ struct WorkoutSetRowView: View {
                     .padding(8)
                     .background(Color.backgroundSecondary)
                     .cornerRadius(8)
-                Text("kg")
+                Text(isCardio ? "Lvl" : "kg")
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
@@ -41,7 +43,7 @@ struct WorkoutSetRowView: View {
                     .padding(8)
                     .background(Color.backgroundSecondary)
                     .cornerRadius(8)
-                Text("Wdh")
+                Text(isCardio ? "Min" : "Wdh")
                     .font(.caption)
                     .foregroundColor(.secondary)
             }

@@ -8,45 +8,58 @@
 
 /* Begin PBXBuildFile section */
 		016F39B52EFA1ED9E15955AA /* VigrLaunchLogo_raw.png in Resources */ = {isa = PBXBuildFile; fileRef = FDD72F53A184E3C9A05BBC05 /* VigrLaunchLogo_raw.png */; };
+		033E67791FF3FE854FA2153C /* WaterEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2586E3633792ECC44AEC5D6E /* WaterEntry.swift */; };
 		0730E4F7D51B730CE3A5A89E /* MealDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1E8E706AC5DE77A2BF50419 /* MealDetailView.swift */; };
+		106ED8499BEEF97D6572CF25 /* WaterTrackerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F03F7FF2A96E0099C9CBCDB /* WaterTrackerView.swift */; };
+		177A1073CEB02209C676C53F /* RecoveryFactorDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 830BB571B479FBB51E2FF7D1 /* RecoveryFactorDetailView.swift */; };
 		21C10E70757DE05AEDA3DC64 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD6744A2D4B3D0CF12153D62 /* SettingsView.swift */; };
 		28E5FDA46357AB349294F2C4 /* WorkoutHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA156830A304954C68A7705E /* WorkoutHistoryView.swift */; };
 		298736F920D0568FA68B990B /* ExerciseProgressChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72B3B803B4E0D184E744BCDC /* ExerciseProgressChart.swift */; };
 		2A446D9576D848A5C1EE63AB /* SavedFoodFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F05BF8D53602698DFD4650 /* SavedFoodFormView.swift */; };
 		2B934108FF060CCF528CC462 /* WeightEntryFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E6E96E7913E710AC58042F /* WeightEntryFormView.swift */; };
 		30C857921D56527B0F1E71AF /* NotificationNames.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBD770BA5BDC13445B2DF3A7 /* NotificationNames.swift */; };
+		320020B5059CEA25898255D1 /* SleepTrackerCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ECA52CA920C0329CF78E855 /* SleepTrackerCard.swift */; };
 		380089B701426AB15C964150 /* PDFEmptyPlanTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2821A135BC074705A9A9FA /* PDFEmptyPlanTemplate.swift */; };
 		40673D404A445CA10E57F22B /* FoodAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBAC85A08230019A83ADA120 /* FoodAPIService.swift */; };
 		40AF43ADC79F42BF4F4FED0E /* SavedFood.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F1E036C0773BC613277B244 /* SavedFood.swift */; };
 		4306C50BE04344262C514B4D /* VigrLaunchLogo_clean_v2.png in Resources */ = {isa = PBXBuildFile; fileRef = CE84A8B4990CB0DD19E92B42 /* VigrLaunchLogo_clean_v2.png */; };
 		4EB368596D38FCD7A2939AF9 /* ShareSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6407741AB6E0A6224B4A45E8 /* ShareSheet.swift */; };
+		522B399CB259DC69081FED03 /* RecoveryCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13DDE9988564BE01DF60DAF6 /* RecoveryCard.swift */; };
+		5CE1360ADF96275BE4736BD0 /* WaterEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2586E3633792ECC44AEC5D6E /* WaterEntry.swift */; };
 		5D85FC800B43DA2130CD7736 /* WorkoutManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22D4AD56870B8E2E36F11173 /* WorkoutManager.swift */; };
 		620B08C35A23A7D3D80D25F8 /* BarcodeScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31B8F76A071FF82963F58CB1 /* BarcodeScannerView.swift */; };
 		64261F875325D055589257F0 /* StatisticsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E7BD54E9C6ABBD3BA0DE353 /* StatisticsViewModel.swift */; };
 		6878E9929B88B7B40D4254EA /* FoodEntryDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD22A5EC738385F901017E44 /* FoodEntryDetailView.swift */; };
+		6FB78C2F14023A25FB036E7C /* RecoveryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB4B171FAF0CE862A7770D60 /* RecoveryView.swift */; };
 		72045EB5E7F437C519DD8609 /* PDFHistoricalPlanTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C92A58CE14A4EB0289D654D /* PDFHistoricalPlanTemplate.swift */; };
 		76B55E2E29C4912E33E0EBF6 /* StatisticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FCB2AFC6611A944CF53EA52 /* StatisticsView.swift */; };
 		7736521E105C767634646913 /* PlanProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFED6926A8A26CC69B4ABA71 /* PlanProgressView.swift */; };
+		78C0C57587AB0BBD5AB25DED /* SleepEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3487FC2FBEBD711E16603961 /* SleepEntry.swift */; };
 		7BE1477690BC9D513707F251 /* WorkoutMiniPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7929DBB78E8F83266C1EED06 /* WorkoutMiniPlayerView.swift */; };
 		7CBB425E5DE5B0FCB43EC8F8 /* MediaStorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24F89C11D3C0BFE0B9A05259 /* MediaStorageService.swift */; };
 		7CD9E6A4D85E879AC604018A /* PDFExportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B440B5B2FDC7EAC02A57ED7D /* PDFExportService.swift */; };
+		8035EB568C12C2CAFABDD4C8 /* SleepEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3487FC2FBEBD711E16603961 /* SleepEntry.swift */; };
 		812EF5ED4BB3C57C65D4A4CF /* FoodSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7768BF38EA403DA6D3786DE7 /* FoodSearchView.swift */; };
+		835DD1FD7CCBE4867C3A4717 /* RecoveryCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B26CED2CCDE98BD78211150A /* RecoveryCalculator.swift */; };
+		8847EE5D677DD10B6431B1C6 /* SleepDaySummary.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C788BD557D9D46689CC4E4 /* SleepDaySummary.swift */; };
+		8992A9FD8BA322B5FEA07D59 /* SleepTrackerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BD9C409E7580960E860DC64 /* SleepTrackerView.swift */; };
+		8A152A99B69842E60A5D2118 /* DashboardWidgetsLarge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A73E019B516854433164C9 /* DashboardWidgetsLarge.swift */; };
 		91DC3E9E046A131BFD3F0A4B /* OnboardingPages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E98D3DF243C997C39782B23 /* OnboardingPages.swift */; };
 		930A83FC2209564F95B960AE /* ZoomableImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E63AA023B39CEE387F13D43F /* ZoomableImageView.swift */; };
 		93E5B549071D1D2F18CB0FAE /* ThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8047FC412A6662A3D5CFC08E /* ThemeManager.swift */; };
 		96DA7B033B60C03ABA5C53E3 /* Logger+App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E60A4D4AD221410CA99DE81 /* Logger+App.swift */; };
+		97CCF1255DFE94D66E8FFE88 /* SleepEntryFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A3D09F3A4FAA8BD143F3C3C /* SleepEntryFormView.swift */; };
 		A08B4EB64636BFF4EA1B16BE /* ThemeSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47F44B3F101BC7D765C71322 /* ThemeSettingsView.swift */; };
 		A1B2C3D4E5F6A7B8C9D0E1F3 /* ExerciseCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6A7B8C9D0E1F2 /* ExerciseCardView.swift */; };
 		A3268CA138CE40874E8F2CFF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6591C297DAF6F333CB811C09 /* LaunchScreen.storyboard */; };
+		A33F7966C8450171C53DFEE4 /* DashboardWidgetsSmall.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46670F6BD0AA10C07463B9CA /* DashboardWidgetsSmall.swift */; };
 		A61BB3ADC489DCE23A7794B0 /* TrainingPlan+Grouping.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE9B37B479CDA0811F3D0A4 /* TrainingPlan+Grouping.swift */; };
 		B1C2D3E4F5A6B7C8D9E0F1A3 /* SupersetIconStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D3E4F5A6B7C8D9E0F1A2 /* SupersetIconStack.swift */; };
 		B2C3D4E5F6A7B8C9D0E1F2A4 /* WorkoutTimerHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C3D4E5F6A7B8C9D0E1F2A3 /* WorkoutTimerHeaderView.swift */; };
+		B96C34A88E74ADEA03037BD5 /* WaterTrackerCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = D852CA8C97C2C31A686297EE /* WaterTrackerCard.swift */; };
 		BDC247244B80892759642F20 /* FoodManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F907E74067D3280BFDE23BEB /* FoodManagementView.swift */; };
 		C15C887F2F04AEAFCC42A9E9 /* ExerciseIconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D874C7BBAA626D0DBA57A291 /* ExerciseIconView.swift */; };
 		C166854380B2634C9C5DA1DF /* NutritionDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B27C48E182A0E7EF0578249 /* NutritionDashboardView.swift */; };
-		C3F3B44F2FD774E600461A0C /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C3F3B44E2FD774E500461A0C /* WidgetKit.framework */; };
-		C3F3B4512FD774E600461A0C /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C3F3B4502FD774E600461A0C /* SwiftUI.framework */; };
-		C3F3B4602FD774E800461A0C /* FitTrackProWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = C3F3B44C2FD774E500461A0C /* FitTrackProWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		C3F3B4682FD7772000461A0C /* SharedContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3F3B4662FD7772000461A0C /* SharedContainer.swift */; };
 		C3F3B4692FD7772000461A0C /* SharedContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3F3B4662FD7772000461A0C /* SharedContainer.swift */; };
 		C3F3B46A2FD7779600461A0C /* WorkoutSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3FDADE72FCADD8C00E8767F /* WorkoutSet.swift */; };
@@ -97,9 +110,12 @@
 		D57502ADBBBD61C9E59DC34F /* StepEntryFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11192C42A9773F3ADA87A3EE /* StepEntryFormView.swift */; };
 		D5C346BFB6515A430F3EE731 /* RecipeBuilderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89E73F9AD9D778043116C753 /* RecipeBuilderView.swift */; };
 		D8A4DD32E4A9C74D8C584558 /* ExerciseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C70F2FA26F6E20418F5972C /* ExerciseService.swift */; };
+		DAC25EB5369A894A79AA2D73 /* DashboardLayoutConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33FF33E55A558B76FA1FEA94 /* DashboardLayoutConfig.swift */; };
 		DD645FE7B7EE4DE4F6BDC23F /* Recipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8078C8FF9F0DB706D95F1BC /* Recipe.swift */; };
+		DDF3E978152FCE654481E6BD /* SleepDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33D9B394B33DD6365783A674 /* SleepDetailView.swift */; };
 		E31D2818DCA11AFE1D911A1F /* StepTrackerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E911E84FE3DD36A90CF8A68 /* StepTrackerView.swift */; };
 		E4D8520B764D043C948E1905 /* WeightTrackerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 155FE0B4357D418A5970D74E /* WeightTrackerView.swift */; };
+		E79AA067016B6BAA79F64047 /* WaterEntryFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BCFB8ED37C7468B88298E85 /* WaterEntryFormView.swift */; };
 		EE0C9316F2165B76F5AD7B22 /* HealthKitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4A91C0254048053692B158F /* HealthKitService.swift */; };
 		EF5C5D14436FFEC5911CF909 /* FoodEntryFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E3C57FB6083B5D9869C682 /* FoodEntryFormView.swift */; };
 		EFE16CD833F4617F911E2A45 /* LaunchLogoV3_raw.png in Resources */ = {isa = PBXBuildFile; fileRef = 37AFABFA3E418177CC1F871F /* LaunchLogoV3_raw.png */; };
@@ -123,7 +139,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				C3F3B4602FD774E800461A0C /* FitTrackProWidgetExtension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -132,16 +147,27 @@
 
 /* Begin PBXFileReference section */
 		11192C42A9773F3ADA87A3EE /* StepEntryFormView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = StepEntryFormView.swift; sourceTree = "<group>"; };
+		13DDE9988564BE01DF60DAF6 /* RecoveryCard.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RecoveryCard.swift; sourceTree = "<group>"; };
 		14C4D49E2A6FED96E1D13A96 /* StepEntry.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = StepEntry.swift; sourceTree = "<group>"; };
 		155FE0B4357D418A5970D74E /* WeightTrackerView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WeightTrackerView.swift; path = Features/WeightTracker/WeightTrackerView.swift; sourceTree = "<group>"; };
 		1E98D3DF243C997C39782B23 /* OnboardingPages.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = OnboardingPages.swift; sourceTree = "<group>"; };
 		22D4AD56870B8E2E36F11173 /* WorkoutManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WorkoutManager.swift; sourceTree = "<group>"; };
 		24F89C11D3C0BFE0B9A05259 /* MediaStorageService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MediaStorageService.swift; sourceTree = "<group>"; };
+		2586E3633792ECC44AEC5D6E /* WaterEntry.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WaterEntry.swift; sourceTree = "<group>"; };
+		2BD9C409E7580960E860DC64 /* SleepTrackerView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SleepTrackerView.swift; sourceTree = "<group>"; };
 		31B8F76A071FF82963F58CB1 /* BarcodeScannerView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BarcodeScannerView.swift; sourceTree = "<group>"; };
+		33D9B394B33DD6365783A674 /* SleepDetailView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SleepDetailView.swift; sourceTree = "<group>"; };
+		33FF33E55A558B76FA1FEA94 /* DashboardLayoutConfig.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DashboardLayoutConfig.swift; sourceTree = "<group>"; };
+		3487FC2FBEBD711E16603961 /* SleepEntry.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SleepEntry.swift; sourceTree = "<group>"; };
 		37AFABFA3E418177CC1F871F /* LaunchLogoV3_raw.png */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = image.png; path = LaunchLogoV3_raw.png; sourceTree = "<group>"; };
+		3BCFB8ED37C7468B88298E85 /* WaterEntryFormView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WaterEntryFormView.swift; sourceTree = "<group>"; };
 		3C92A58CE14A4EB0289D654D /* PDFHistoricalPlanTemplate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PDFHistoricalPlanTemplate.swift; sourceTree = "<group>"; };
+		46670F6BD0AA10C07463B9CA /* DashboardWidgetsSmall.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DashboardWidgetsSmall.swift; sourceTree = "<group>"; };
 		47F44B3F101BC7D765C71322 /* ThemeSettingsView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ThemeSettingsView.swift; sourceTree = "<group>"; };
+		49A73E019B516854433164C9 /* DashboardWidgetsLarge.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DashboardWidgetsLarge.swift; sourceTree = "<group>"; };
 		49E6E96E7913E710AC58042F /* WeightEntryFormView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WeightEntryFormView.swift; path = Features/WeightTracker/WeightEntryFormView.swift; sourceTree = "<group>"; };
+		4ECA52CA920C0329CF78E855 /* SleepTrackerCard.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SleepTrackerCard.swift; sourceTree = "<group>"; };
+		5A3D09F3A4FAA8BD143F3C3C /* SleepEntryFormView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SleepEntryFormView.swift; sourceTree = "<group>"; };
 		5B27C48E182A0E7EF0578249 /* NutritionDashboardView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NutritionDashboardView.swift; sourceTree = "<group>"; };
 		6407741AB6E0A6224B4A45E8 /* ShareSheet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ShareSheet.swift; sourceTree = "<group>"; };
 		6591C297DAF6F333CB811C09 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -152,27 +178,26 @@
 		7C70F2FA26F6E20418F5972C /* ExerciseService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ExerciseService.swift; sourceTree = "<group>"; };
 		7F1E036C0773BC613277B244 /* SavedFood.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SavedFood.swift; sourceTree = "<group>"; };
 		8047FC412A6662A3D5CFC08E /* ThemeManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ThemeManager.swift; sourceTree = "<group>"; };
+		830BB571B479FBB51E2FF7D1 /* RecoveryFactorDetailView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RecoveryFactorDetailView.swift; sourceTree = "<group>"; };
 		8419465B90755D5DA410C4EE /* OnboardingView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		84F05BF8D53602698DFD4650 /* SavedFoodFormView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SavedFoodFormView.swift; sourceTree = "<group>"; };
 		8731522474B83B7321837381 /* DashboardView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DashboardView.swift; path = Features/Dashboard/DashboardView.swift; sourceTree = "<group>"; };
 		89E73F9AD9D778043116C753 /* RecipeBuilderView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RecipeBuilderView.swift; sourceTree = "<group>"; };
-		8C8C605932452F98C794D9B1 /* ShareSheet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ShareSheet.swift; sourceTree = "<group>"; };
 		8E7BD54E9C6ABBD3BA0DE353 /* StatisticsViewModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = StatisticsViewModel.swift; sourceTree = "<group>"; };
 		8E911E84FE3DD36A90CF8A68 /* StepTrackerView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = StepTrackerView.swift; sourceTree = "<group>"; };
+		8F03F7FF2A96E0099C9CBCDB /* WaterTrackerView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WaterTrackerView.swift; sourceTree = "<group>"; };
 		9E60A4D4AD221410CA99DE81 /* Logger+App.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "Logger+App.swift"; sourceTree = "<group>"; };
 		9FCB2AFC6611A944CF53EA52 /* StatisticsView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = StatisticsView.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F6A7B8C9D0E1F2 /* ExerciseCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Training/ExerciseLibrary/ExerciseCardView.swift; sourceTree = SOURCE_ROOT; };
 		B1C2D3E4F5A6B7C8D9E0F1A2 /* SupersetIconStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupersetIconStack.swift; sourceTree = "<group>"; };
 		B1E8E706AC5DE77A2BF50419 /* MealDetailView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MealDetailView.swift; path = Features/Nutrition/MealDetailView.swift; sourceTree = "<group>"; };
+		B26CED2CCDE98BD78211150A /* RecoveryCalculator.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RecoveryCalculator.swift; sourceTree = "<group>"; };
 		B2C3D4E5F6A7B8C9D0E1F2A3 /* WorkoutTimerHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutTimerHeaderView.swift; sourceTree = "<group>"; };
 		B440B5B2FDC7EAC02A57ED7D /* PDFExportService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PDFExportService.swift; sourceTree = "<group>"; };
+		BB4B171FAF0CE862A7770D60 /* RecoveryView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RecoveryView.swift; sourceTree = "<group>"; };
 		BE2821A135BC074705A9A9FA /* PDFEmptyPlanTemplate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PDFEmptyPlanTemplate.swift; sourceTree = "<group>"; };
-		C3F3B44C2FD774E500461A0C /* FitTrackProWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = FitTrackProWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
-		C3F3B44E2FD774E500461A0C /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
-		C3F3B4502FD774E600461A0C /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		C3F3B4662FD7772000461A0C /* SharedContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedContainer.swift; sourceTree = "<group>"; };
 		C3F3B4752FD7790400461A0C /* FitTrackProWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = FitTrackProWidgetExtension.entitlements; sourceTree = "<group>"; };
-		C3FDADAE2FCAD62A00E8767F /* FitTrackPro.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FitTrackPro.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C3FDADBC2FCAD75500E8767F /* AppRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRouter.swift; sourceTree = "<group>"; };
 		C3FDADBD2FCAD75500E8767F /* FitTrackProApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FitTrackProApp.swift; sourceTree = "<group>"; };
 		C3FDADBF2FCAD75500E8767F /* AppStorageKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStorageKeys.swift; sourceTree = "<group>"; };
@@ -212,14 +237,13 @@
 		CD22A5EC738385F901017E44 /* FoodEntryDetailView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = FoodEntryDetailView.swift; path = Features/Nutrition/FoodEntryDetailView.swift; sourceTree = "<group>"; };
 		CE84A8B4990CB0DD19E92B42 /* VigrLaunchLogo_clean_v2.png */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = image.png; path = VigrLaunchLogo_clean_v2.png; sourceTree = "<group>"; };
 		CFED6926A8A26CC69B4ABA71 /* PlanProgressView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PlanProgressView.swift; sourceTree = "<group>"; };
-		D27B3101E182EF24EBEDD955 /* PDFEmptyPlanTemplate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PDFEmptyPlanTemplate.swift; sourceTree = "<group>"; };
+		D852CA8C97C2C31A686297EE /* WaterTrackerCard.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WaterTrackerCard.swift; sourceTree = "<group>"; };
 		D874C7BBAA626D0DBA57A291 /* ExerciseIconView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ExerciseIconView.swift; sourceTree = "<group>"; };
 		DFE9B37B479CDA0811F3D0A4 /* TrainingPlan+Grouping.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "TrainingPlan+Grouping.swift"; sourceTree = "<group>"; };
-		E33CE25CE693490BED7F534C /* PDFExportService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PDFExportService.swift; sourceTree = "<group>"; };
+		E1C788BD557D9D46689CC4E4 /* SleepDaySummary.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SleepDaySummary.swift; sourceTree = "<group>"; };
 		E63AA023B39CEE387F13D43F /* ZoomableImageView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ZoomableImageView.swift; path = Core/Views/ZoomableImageView.swift; sourceTree = "<group>"; };
-		E9FE98CE6125C7316D8C113A /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		EBD770BA5BDC13445B2DF3A7 /* NotificationNames.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NotificationNames.swift; sourceTree = "<group>"; };
-		F01BA0DEE481E3C4527CA324 /* PDFHistoricalPlanTemplate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PDFHistoricalPlanTemplate.swift; sourceTree = "<group>"; };
+		F4A435075AD4A147434FDAF1 /* FitTrackPro */ = {isa = PBXFileReference; includeInIndex = 0; path = FitTrackPro; sourceTree = BUILT_PRODUCTS_DIR; };
 		F4A91C0254048053692B158F /* HealthKitService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = HealthKitService.swift; sourceTree = "<group>"; };
 		F6E3C57FB6083B5D9869C682 /* FoodEntryFormView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FoodEntryFormView.swift; sourceTree = "<group>"; };
 		F907E74067D3280BFDE23BEB /* FoodManagementView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FoodManagementView.swift; sourceTree = "<group>"; };
@@ -255,8 +279,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C3F3B4512FD774E600461A0C /* SwiftUI.framework in Frameworks */,
-				C3F3B44F2FD774E600461A0C /* WidgetKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -296,6 +318,28 @@
 			name = Features;
 			sourceTree = "<group>";
 		};
+		3C3C0F60059FB34280CB54EF /* SleepTracker */ = {
+			isa = PBXGroup;
+			children = (
+				2BD9C409E7580960E860DC64 /* SleepTrackerView.swift */,
+				5A3D09F3A4FAA8BD143F3C3C /* SleepEntryFormView.swift */,
+				33D9B394B33DD6365783A674 /* SleepDetailView.swift */,
+			);
+			name = SleepTracker;
+			path = SleepTracker;
+			sourceTree = "<group>";
+		};
+		4BB9914CD8D0A015B6B032D7 /* Recovery */ = {
+			isa = PBXGroup;
+			children = (
+				B26CED2CCDE98BD78211150A /* RecoveryCalculator.swift */,
+				BB4B171FAF0CE862A7770D60 /* RecoveryView.swift */,
+				830BB571B479FBB51E2FF7D1 /* RecoveryFactorDetailView.swift */,
+			);
+			name = Recovery;
+			path = Recovery;
+			sourceTree = "<group>";
+		};
 		4DA697A554E88C9B74785009 /* Views */ = {
 			isa = PBXGroup;
 			children = (
@@ -316,7 +360,6 @@
 		56AC3307DD980C2BD09C374D /* UI */ = {
 			isa = PBXGroup;
 			children = (
-				8C8C605932452F98C794D9B1 /* ShareSheet.swift */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -360,8 +403,6 @@
 		8324A5AD77F73D33E5163689 /* PDF */ = {
 			isa = PBXGroup;
 			children = (
-				D27B3101E182EF24EBEDD955 /* PDFEmptyPlanTemplate.swift */,
-				F01BA0DEE481E3C4527CA324 /* PDFHistoricalPlanTemplate.swift */,
 			);
 			name = PDF;
 			sourceTree = "<group>";
@@ -374,6 +415,16 @@
 			);
 			name = Onboarding;
 			path = Features/Onboarding;
+			sourceTree = "<group>";
+		};
+		89DFA7D1F6E3FA55367A496B /* WaterTracker */ = {
+			isa = PBXGroup;
+			children = (
+				8F03F7FF2A96E0099C9CBCDB /* WaterTrackerView.swift */,
+				3BCFB8ED37C7468B88298E85 /* WaterEntryFormView.swift */,
+			);
+			name = WaterTracker;
+			path = WaterTracker;
 			sourceTree = "<group>";
 		};
 		96B8891F3604C30ADACA4863 /* Core */ = {
@@ -398,8 +449,6 @@
 		C3F3B44D2FD774E500461A0C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				C3F3B44E2FD774E500461A0C /* WidgetKit.framework */,
-				C3F3B4502FD774E600461A0C /* SwiftUI.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -433,8 +482,7 @@
 		C3FDADAF2FCAD62A00E8767F /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				C3FDADAE2FCAD62A00E8767F /* FitTrackPro.app */,
-				C3F3B44C2FD774E500461A0C /* FitTrackProWidgetExtension.appex */,
+				F4A435075AD4A147434FDAF1 /* FitTrackPro */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -475,6 +523,10 @@
 				14C4D49E2A6FED96E1D13A96 /* StepEntry.swift */,
 				7F1E036C0773BC613277B244 /* SavedFood.swift */,
 				C8078C8FF9F0DB706D95F1BC /* Recipe.swift */,
+				2586E3633792ECC44AEC5D6E /* WaterEntry.swift */,
+				3487FC2FBEBD711E16603961 /* SleepEntry.swift */,
+				E1C788BD557D9D46689CC4E4 /* SleepDaySummary.swift */,
+				33FF33E55A558B76FA1FEA94 /* DashboardLayoutConfig.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -511,6 +563,11 @@
 			isa = PBXGroup;
 			children = (
 				C9941A700145BCF946FB8E80 /* DashboardWidgets.swift */,
+				D852CA8C97C2C31A686297EE /* WaterTrackerCard.swift */,
+				4ECA52CA920C0329CF78E855 /* SleepTrackerCard.swift */,
+				13DDE9988564BE01DF60DAF6 /* RecoveryCard.swift */,
+				46670F6BD0AA10C07463B9CA /* DashboardWidgetsSmall.swift */,
+				49A73E019B516854433164C9 /* DashboardWidgetsLarge.swift */,
 			);
 			path = Dashboard;
 			sourceTree = "<group>";
@@ -615,6 +672,9 @@
 				C3FDADCE2FCAD75500E8767F /* WeightTracker */,
 				11E0CA9F7DA3197A005B5974 /* Core */,
 				6F091C893AB96B8916FBDD46 /* Steps */,
+				89DFA7D1F6E3FA55367A496B /* WaterTracker */,
+				3C3C0F60059FB34280CB54EF /* SleepTracker */,
+				4BB9914CD8D0A015B6B032D7 /* Recovery */,
 			);
 			path = Features;
 			sourceTree = "<group>";
@@ -639,7 +699,6 @@
 		DB28F1472EA2E93B5F73C216 /* App */ = {
 			isa = PBXGroup;
 			children = (
-				E9FE98CE6125C7316D8C113A /* Info.plist */,
 				6591C297DAF6F333CB811C09 /* LaunchScreen.storyboard */,
 			);
 			name = App;
@@ -679,7 +738,6 @@
 		FDD7E62335CED01D0A6D3E0C /* Services */ = {
 			isa = PBXGroup;
 			children = (
-				E33CE25CE693490BED7F534C /* PDFExportService.swift */,
 			);
 			name = Services;
 			sourceTree = "<group>";
@@ -704,7 +762,6 @@
 			);
 			name = FitTrackProWidgetExtension;
 			productName = FitTrackProWidgetExtension;
-			productReference = C3F3B44C2FD774E500461A0C /* FitTrackProWidgetExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
 		C3FDADAD2FCAD62A00E8767F /* FitTrackPro */ = {
@@ -723,7 +780,7 @@
 			);
 			name = FitTrackPro;
 			productName = FitTrackPro;
-			productReference = C3FDADAE2FCAD62A00E8767F /* FitTrackPro.app */;
+			productReference = F4A435075AD4A147434FDAF1 /* FitTrackPro */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -745,7 +802,7 @@
 				};
 			};
 			buildConfigurationList = C3FDADA92FCAD62A00E8767F /* Build configuration list for PBXProject "FitTrackPro" */;
-			developmentRegion = en;
+			developmentRegion = de;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
@@ -806,6 +863,8 @@
 				C3F3B4722FD7779600461A0C /* PlanExercise.swift in Sources */,
 				C3F3B4732FD7779600461A0C /* SavedFood.swift in Sources */,
 				C3F3B4742FD7779600461A0C /* WorkoutSession.swift in Sources */,
+				033E67791FF3FE854FA2153C /* WaterEntry.swift in Sources */,
+				78C0C57587AB0BBD5AB25DED /* SleepEntry.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -888,6 +947,23 @@
 				BDC247244B80892759642F20 /* FoodManagementView.swift in Sources */,
 				D5C346BFB6515A430F3EE731 /* RecipeBuilderView.swift in Sources */,
 				2A446D9576D848A5C1EE63AB /* SavedFoodFormView.swift in Sources */,
+				5CE1360ADF96275BE4736BD0 /* WaterEntry.swift in Sources */,
+				8035EB568C12C2CAFABDD4C8 /* SleepEntry.swift in Sources */,
+				B96C34A88E74ADEA03037BD5 /* WaterTrackerCard.swift in Sources */,
+				320020B5059CEA25898255D1 /* SleepTrackerCard.swift in Sources */,
+				522B399CB259DC69081FED03 /* RecoveryCard.swift in Sources */,
+				106ED8499BEEF97D6572CF25 /* WaterTrackerView.swift in Sources */,
+				E79AA067016B6BAA79F64047 /* WaterEntryFormView.swift in Sources */,
+				8992A9FD8BA322B5FEA07D59 /* SleepTrackerView.swift in Sources */,
+				97CCF1255DFE94D66E8FFE88 /* SleepEntryFormView.swift in Sources */,
+				835DD1FD7CCBE4867C3A4717 /* RecoveryCalculator.swift in Sources */,
+				6FB78C2F14023A25FB036E7C /* RecoveryView.swift in Sources */,
+				8847EE5D677DD10B6431B1C6 /* SleepDaySummary.swift in Sources */,
+				DDF3E978152FCE654481E6BD /* SleepDetailView.swift in Sources */,
+				177A1073CEB02209C676C53F /* RecoveryFactorDetailView.swift in Sources */,
+				DAC25EB5369A894A79AA2D73 /* DashboardLayoutConfig.swift in Sources */,
+				A33F7966C8450171C53DFEE4 /* DashboardWidgetsSmall.swift in Sources */,
+				8A152A99B69842E60A5D2118 /* DashboardWidgetsLarge.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1128,8 +1204,8 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1168,8 +1244,8 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

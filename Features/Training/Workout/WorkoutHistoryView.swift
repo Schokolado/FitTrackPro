@@ -199,7 +199,7 @@ struct WorkoutHistoryCard: View {
                     Text(session.plan?.name ?? "Freies Workout")
                         .font(.headline)
                         .foregroundColor(.primary)
-                    Text(session.startTime, format: .dateTime.weekday(.wide).day().month().year())
+                    Text(session.startTime, format: .dateTime.weekday(.wide).day().month().year().hour().minute())
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
@@ -289,9 +289,12 @@ struct RatingBadge: View {
 struct WorkoutHistoryDetailView: View {
     let session: WorkoutSession
     let activeSessionId: UUID?
+    @State private var showingDeleteAlert = false
+    @State private var isNotesExpanded = false
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     @State private var showDeleteConfirm = false
+    @State private var showActiveWarning = false
 
     private var duration: String {
         durationString(session: session, activeSessionId: activeSessionId)
@@ -299,6 +302,18 @@ struct WorkoutHistoryDetailView: View {
 
     private var completedSets: [WorkoutSet] {
         (session.sets ?? []).filter { $0.isCompleted }
+    }
+    
+    private var completedExerciseCount: Int {
+        Set(completedSets.compactMap { $0.exercise?.id }).count
+    }
+    
+    private var totalPlannedExerciseCount: Int {
+        Set((session.sets ?? []).compactMap { $0.exercise?.id }).count
+    }
+    
+    private var totalPlannedSetsCount: Int {
+        (session.sets ?? []).count
     }
 
     private var totalVolume: Double {
@@ -321,6 +336,12 @@ struct WorkoutHistoryDetailView: View {
         return dict
     }
 
+    private var skippedExercises: [Exercise] {
+        let allExercises = Set((session.sets ?? []).compactMap { $0.exercise })
+        let completedExercises = Set(completedSets.compactMap { $0.exercise })
+        return Array(allExercises.subtracting(completedExercises)).sorted { $0.name < $1.name }
+    }
+
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
@@ -331,7 +352,7 @@ struct WorkoutHistoryDetailView: View {
                         VStack(alignment: .leading, spacing: 4) {
                             Text(session.plan?.name ?? "Freies Workout")
                                 .font(.title2.bold())
-                            Text(session.startTime, format: .dateTime.weekday(.wide).day().month().year())
+                            Text(session.startTime, format: .dateTime.weekday(.wide).day().month().year().hour().minute())
                                 .font(.subheadline)
                                 .foregroundColor(.secondary)
                         }
@@ -340,12 +361,20 @@ struct WorkoutHistoryDetailView: View {
 
                     Divider()
 
-                    // Stats grid
-                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                    // Grid for stats
+                    LazyVGrid(columns: [
+                        GridItem(.flexible(), spacing: 12),
+                        GridItem(.flexible(), spacing: 12)
+                    ], spacing: 12) {
                         DetailStatBox(icon: "clock.fill", label: "Dauer", value: duration, color: .brand)
                         DetailStatBox(icon: "scalemass.fill", label: "Volumen", value: String(format: "%.0f kg", totalVolume), color: .purple)
-                        DetailStatBox(icon: "dumbbell.fill", label: "Übungen", value: "\(exerciseGroups.count)", color: .blue)
-                        DetailStatBox(icon: "square.stack.3d.up.fill", label: "Sätze", value: "\(completedSets.count)", color: .orange)
+                        
+                        let exValue = completedExerciseCount < totalPlannedExerciseCount ? "\(completedExerciseCount) von \(totalPlannedExerciseCount)" : "\(completedExerciseCount)"
+                        DetailStatBox(icon: "dumbbell.fill", label: "Übungen", value: exValue, color: .blue)
+                        
+                        let setsValue = completedSets.count < totalPlannedSetsCount ? "\(completedSets.count) von \(totalPlannedSetsCount)" : "\(completedSets.count)"
+                        let setsLabel = completedSets.count < totalPlannedSetsCount ? "Sätzen" : "Sätze"
+                        DetailStatBox(icon: "square.stack.3d.up.fill", label: setsLabel, value: setsValue, color: .orange)
                     }
 
                     // Ratings
@@ -385,12 +414,26 @@ struct WorkoutHistoryDetailView: View {
                     // Notes
                     if !session.notes.isEmpty {
                         Divider()
-                        HStack {
+                        VStack(alignment: .leading, spacing: 4) {
                             Text(session.notes)
                                 .font(.subheadline)
                                 .foregroundColor(.secondary)
                                 .multilineTextAlignment(.leading)
-                            Spacer()
+                                .lineLimit(isNotesExpanded ? nil : 2)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            
+                            if session.notes.count > 100 || session.notes.filter({ $0 == "\n" }).count > 1 {
+                                Button(action: {
+                                    withAnimation(.easeInOut(duration: 0.2)) {
+                                        isNotesExpanded.toggle()
+                                    }
+                                }) {
+                                    Text(isNotesExpanded ? "Weniger anzeigen" : "Mehr anzeigen...")
+                                        .font(.caption.bold())
+                                        .foregroundColor(.brand)
+                                }
+                                .padding(.top, 2)
+                            }
                         }
                     }
                 }
@@ -403,12 +446,42 @@ struct WorkoutHistoryDetailView: View {
                 // Exercise breakdown
                 if !exerciseGroups.isEmpty {
                     VStack(alignment: .leading, spacing: 12) {
-                        Text("Übungen")
+                        Text("Erledigte Übungen")
                             .font(.headline)
                             .padding(.horizontal, 4)
 
                         ForEach(exerciseGroups, id: \.0.id) { exercise, sets in
-                            ExerciseHistoryBlock(exercise: exercise, sets: sets)
+                            let totalPlanned = (session.sets ?? []).filter { $0.exercise?.id == exercise.id }.count
+                            ExerciseHistoryBlock(exercise: exercise, sets: sets, totalPlannedSets: totalPlanned)
+                        }
+                    }
+                }
+                
+                // Skipped Exercises
+                if !skippedExercises.isEmpty {
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("Nicht absolviert")
+                            .font(.headline)
+                            .padding(.horizontal, 4)
+                            .padding(.top, 8)
+
+                        ForEach(skippedExercises) { exercise in
+                            HStack(spacing: 12) {
+                                ExerciseIconView(exercise: exercise, size: 28)
+                                    .grayscale(1.0)
+                                    .opacity(0.6)
+                                Text(exercise.name)
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary)
+                                Spacer()
+                                Image(systemName: "xmark.circle")
+                                    .foregroundColor(.secondary)
+                            }
+                            .padding(14)
+                            .background(
+                                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                    .fill(Color.backgroundSecondary.opacity(0.6))
+                            )
                         }
                     }
                 }
@@ -431,7 +504,11 @@ struct WorkoutHistoryDetailView: View {
 
                 // Delete Button
                 Button(role: .destructive) {
-                    showDeleteConfirm = true
+                    if session.id == activeSessionId {
+                        showActiveWarning = true
+                    } else {
+                        showDeleteConfirm = true
+                    }
                 } label: {
                     Label("Workout löschen", systemImage: "trash")
                         .frame(maxWidth: .infinity)
@@ -448,7 +525,7 @@ struct WorkoutHistoryDetailView: View {
         .background(Color.backgroundPrimary)
         .navigationTitle("Workout Details")
         .navigationBarTitleDisplayMode(.inline)
-        .confirmationDialog("Workout wirklich löschen?", isPresented: $showDeleteConfirm, titleVisibility: .visible) {
+        .alert("Workout wirklich löschen?", isPresented: $showDeleteConfirm) {
             Button("Löschen", role: .destructive) {
                 modelContext.delete(session)
                 dismiss()
@@ -456,6 +533,11 @@ struct WorkoutHistoryDetailView: View {
             Button("Abbrechen", role: .cancel) {}
         } message: {
             Text("Diese Aktion kann nicht rückgängig gemacht werden.")
+        }
+        .alert("Löschen nicht möglich", isPresented: $showActiveWarning) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("Bitte beende das Workout zuerst, bevor du es löschen kannst.")
         }
     }
 }
@@ -493,6 +575,7 @@ struct DetailStatBox: View {
 struct ExerciseHistoryBlock: View {
     let exercise: Exercise
     let sets: [WorkoutSet]
+    let totalPlannedSets: Int
     @AppStorage("zeroWeightIsBodyweight") private var zeroWeightIsBodyweight = true
 
     var body: some View {
@@ -502,9 +585,15 @@ struct ExerciseHistoryBlock: View {
                 Text(exercise.name)
                     .font(.subheadline.bold())
                 Spacer()
-                Text("\(sets.count) Sätze")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+                if sets.count < totalPlannedSets {
+                    Text("\(sets.count) von \(totalPlannedSets) Sätzen")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                } else {
+                    Text("\(sets.count) Sätze")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
             }
             VStack(spacing: 8) {
                 ForEach(sets.sorted(by: { $0.setNumber < $1.setNumber })) { set in
@@ -518,11 +607,13 @@ struct ExerciseHistoryBlock: View {
                         
                         Spacer()
                         
+                        let isCardio = exercise.category.lowercased() == "cardio"
+                        
                         HStack(spacing: 6) {
-                            Image(systemName: "dumbbell.fill")
+                            Image(systemName: isCardio ? "speedometer" : "dumbbell.fill")
                                 .font(.caption2)
                                 .foregroundColor(.secondary)
-                            Text(set.actualWeight > 0 ? "\(set.actualWeight, specifier: "%.1f") kg" : (zeroWeightIsBodyweight ? "Körpergewicht" : "0 kg"))
+                            Text(isCardio ? "Level \(Int(set.actualWeight))" : (set.actualWeight > 0 ? "\(set.actualWeight, specifier: "%.1f") kg" : (zeroWeightIsBodyweight ? "Körpergewicht" : "0 kg")))
                                 .font(.subheadline.bold())
                                 .fixedSize()
                         }
@@ -530,10 +621,10 @@ struct ExerciseHistoryBlock: View {
                         Spacer()
                         
                         HStack(spacing: 6) {
-                            Image(systemName: "arrow.triangle.2.circlepath")
+                            Image(systemName: isCardio ? "clock.fill" : "arrow.triangle.2.circlepath")
                                 .font(.caption2)
                                 .foregroundColor(.secondary)
-                            Text("\(set.actualReps) Wdh")
+                            Text("\(set.actualReps) \(isCardio ? "Min" : "Wdh")")
                                 .font(.subheadline.bold())
                         }
                         .frame(minWidth: 70, alignment: .leading)

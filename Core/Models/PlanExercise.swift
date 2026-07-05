@@ -10,6 +10,7 @@ final class PlanExercise {
     var targetReps: Int = 0
     var targetWeight: Double?
     var restDuration: TimeInterval = 90.0
+    var planSpecificNotes: String = ""
 
     var plan: TrainingPlan?
     var exercise: Exercise?
@@ -17,7 +18,7 @@ final class PlanExercise {
     @Relationship(deleteRule: .nullify, inverse: \WorkoutSet.planExercise)
     var workoutSets: [WorkoutSet]?
 
-    init(id: UUID = UUID(), sortOrder: Int = 0, supersetGroup: Int? = nil, targetSets: Int = 0, targetReps: Int = 0, targetWeight: Double? = nil, restDuration: TimeInterval = 90.0, plan: TrainingPlan? = nil, exercise: Exercise? = nil) {
+    init(id: UUID = UUID(), sortOrder: Int = 0, supersetGroup: Int? = nil, targetSets: Int = 0, targetReps: Int = 0, targetWeight: Double? = nil, restDuration: TimeInterval = 90.0, planSpecificNotes: String = "", plan: TrainingPlan? = nil, exercise: Exercise? = nil) {
         self.id = id
         self.sortOrder = sortOrder
         self.supersetGroup = supersetGroup
@@ -25,6 +26,7 @@ final class PlanExercise {
         self.targetReps = targetReps
         self.targetWeight = targetWeight
         self.restDuration = restDuration
+        self.planSpecificNotes = planSpecificNotes
         self.plan = plan
         self.exercise = exercise
     }

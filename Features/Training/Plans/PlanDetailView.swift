@@ -10,11 +10,11 @@ struct PlanDetailView: View {
     
     @State private var showingExerciseSelection = false
     @State private var showingEditNameAlert = false
-    @State private var showingEditNotesAlert = false
+    @State private var showingNotesSheet = false
+    @State private var startNotesEditing = false
     @State private var showingDeleteAlert = false
     @State private var showingActiveWorkoutAlert = false
     @State private var editName = ""
-    @State private var editNotes = ""
     @State private var showingReorderSheet = false
     @State private var refreshId = UUID()
     @State private var newlyAddedExerciseIds: Set<UUID> = []
@@ -71,11 +71,25 @@ struct PlanDetailView: View {
                         .padding(.top, 4)
                         
                     if !plan.notes.isEmpty {
-                        Text(plan.notes)
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.horizontal)
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(plan.notes)
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                                .lineLimit(2)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            
+                            if plan.notes.count > 100 || plan.notes.filter({ $0 == "\n" }).count > 1 {
+                                Button(action: {
+                                    startNotesEditing = false
+                                    showingNotesSheet = true
+                                }) {
+                                    Text("Mehr anzeigen...")
+                                        .font(.caption.bold())
+                                        .foregroundColor(.brand)
+                                }
+                            }
+                        }
+                        .padding(.horizontal)
                     }
                     
                     if !groupedExercises.isEmpty {
@@ -99,6 +113,36 @@ struct PlanDetailView: View {
                     }
                 }
             }
+        }
+        .onAppear {
+            autoFillPlanFromHistory()
+        }
+    }
+    
+    private func autoFillPlanFromHistory() {
+        let sortedExercises = (plan.planExercises ?? []).filter { $0.exercise != nil }
+        var changed = false
+        
+        for planEx in sortedExercises {
+            if let exerciseId = planEx.exercise?.id {
+                var descriptor = FetchDescriptor<WorkoutSet>(
+                    predicate: #Predicate<WorkoutSet> { $0.exercise?.id == exerciseId && $0.isCompleted == true },
+                    sortBy: [SortDescriptor(\.timestamp, order: .reverse)]
+                )
+                descriptor.fetchLimit = 1
+                
+                if let lastSet = try? modelContext.fetch(descriptor).first {
+                    if planEx.targetWeight != lastSet.actualWeight || planEx.targetReps != lastSet.actualReps {
+                        planEx.targetWeight = lastSet.actualWeight
+                        planEx.targetReps = lastSet.actualReps
+                        changed = true
+                    }
+                }
+            }
+        }
+        
+        if changed {
+            try? modelContext.save()
         }
     }
     
@@ -172,8 +216,8 @@ struct PlanDetailView: View {
                     }
                     
                     Button {
-                        editNotes = plan.notes
-                        showingEditNotesAlert = true
+                        startNotesEditing = true
+                        showingNotesSheet = true
                     } label: {
                         Label("Notizen bearbeiten", systemImage: "note.text")
                     }
@@ -244,31 +288,15 @@ struct PlanDetailView: View {
             }
             .disabled(editName.trimmingCharacters(in: .whitespaces).isEmpty)
         }
-        .sheet(isPresented: $showingEditNotesAlert) {
-            NavigationStack {
-                Form {
-                    Section(header: Text("Notizen")) {
-                        TextField("Notizen eingeben...", text: $editNotes, axis: .vertical)
-                            .lineLimit(5...20)
-                    }
-                }
-                .navigationTitle("Notizen bearbeiten")
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItem(placement: .cancellationAction) {
-                        Button("Abbrechen") {
-                            showingEditNotesAlert = false
-                        }
-                    }
-                    ToolbarItem(placement: .confirmationAction) {
-                        Button("Speichern") {
-                            plan.notes = editNotes
-                            showingEditNotesAlert = false
-                        }
-                    }
-                }
+        .sheet(isPresented: $showingNotesSheet) {
+            PlanNotesSheetView(
+                plan: plan,
+                showingNotesSheet: $showingNotesSheet,
+                startEditing: startNotesEditing
+            )
+            .onDisappear {
+                startNotesEditing = false
             }
-            .presentationDetents([.medium, .large])
         }
         .alert("Plan löschen", isPresented: $showingDeleteAlert) {
             Button("Löschen", role: .destructive) {
@@ -290,7 +318,10 @@ struct PlanDetailView: View {
             .disabled(newGroupName.trimmingCharacters(in: .whitespaces).isEmpty)
         }
         .alert("Aktives Workout beenden?", isPresented: $showingActiveWorkoutAlert) {
-            Button("Beenden & Neu starten", role: .destructive) {
+            Button("Abbrechen & Neu starten", role: .destructive) {
+                if let activeSession = workoutManager.activeSession {
+                    modelContext.delete(activeSession)
+                }
                 workoutManager.endWorkout()
                 executeStartWorkout()
             }
@@ -310,6 +341,13 @@ struct PlanDetailView: View {
         }
         .onAppear {
             cleanupPlanExercises()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UITextField.textDidBeginEditingNotification)) { obj in
+            if let textField = obj.object as? UITextField {
+                DispatchQueue.main.async {
+                    textField.selectedTextRange = textField.textRange(from: textField.beginningOfDocument, to: textField.endOfDocument)
+                }
+            }
         }
         .sheet(isPresented: $showingShareSheet, onDismiss: {
             if let url = generatedPDFUrl {
@@ -406,11 +444,26 @@ struct PlanDetailView: View {
             .sorted { $0.sortOrder < $1.sortOrder }
         
         for planEx in sortedExercises {
+            var lastWeight: Double? = nil
+            var lastReps: Int? = nil
+            
+            if let exerciseId = planEx.exercise?.id {
+                let recentSets = allSessions.lazy
+                    .flatMap { $0.sets ?? [] }
+                    .filter { $0.exercise?.id == exerciseId && $0.isCompleted }
+                    .sorted { $0.timestamp > $1.timestamp }
+                
+                if let lastSet = recentSets.first {
+                    lastWeight = lastSet.actualWeight
+                    lastReps = lastSet.actualReps
+                }
+            }
+            
             for setIndex in 0..<planEx.targetSets {
                 let workoutSet = WorkoutSet(
                     setNumber: setIndex + 1,
-                    actualWeight: planEx.targetWeight ?? 0.0,
-                    actualReps: planEx.targetReps
+                    actualWeight: lastWeight ?? planEx.targetWeight ?? 0.0,
+                    actualReps: lastReps ?? planEx.targetReps
                 )
                 modelContext.insert(workoutSet)
                 // Fix SwiftData relationship dropping by assigning after insertion
@@ -642,5 +695,64 @@ struct PlanExerciseReorderView: View {
         for (index, planEx) in remaining.enumerated() {
             planEx.sortOrder = index
         }
+    }
+}
+
+struct PlanNotesSheetView: View {
+    @Bindable var plan: TrainingPlan
+    @Binding var showingNotesSheet: Bool
+    @State private var isEditingNotes: Bool
+    @State private var editNotes: String
+    
+    init(plan: TrainingPlan, showingNotesSheet: Binding<Bool>, startEditing: Bool) {
+        self.plan = plan
+        self._showingNotesSheet = showingNotesSheet
+        self._isEditingNotes = State(initialValue: startEditing)
+        self._editNotes = State(initialValue: plan.notes)
+    }
+    
+    var body: some View {
+        NavigationStack {
+            VStack {
+                if isEditingNotes {
+                    TextEditor(text: $editNotes)
+                        .padding(8)
+                        .background(Color(.systemGray6))
+                        .cornerRadius(8)
+                        .padding()
+                } else {
+                    ScrollView {
+                        Text(plan.notes.isEmpty ? "Keine Notizen vorhanden." : plan.notes)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding()
+                    }
+                }
+            }
+            .navigationTitle(isEditingNotes ? "Notizen bearbeiten" : "Plan-Notizen")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    if isEditingNotes && !plan.notes.isEmpty {
+                        Button("Abbrechen") { isEditingNotes = false }
+                    } else {
+                        Button("Schließen") { showingNotesSheet = false }
+                    }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    if isEditingNotes {
+                        Button("Speichern") {
+                            plan.notes = editNotes.trimmingCharacters(in: .whitespacesAndNewlines)
+                            showingNotesSheet = false
+                        }
+                    } else {
+                        Button("Bearbeiten") {
+                            editNotes = plan.notes
+                            isEditingNotes = true
+                        }
+                    }
+                }
+            }
+        }
+        .presentationDetents([.medium, .large])
     }
 }

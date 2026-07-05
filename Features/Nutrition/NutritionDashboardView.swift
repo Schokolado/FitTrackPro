@@ -18,6 +18,7 @@ struct NutritionDashboardView: View {
     @State private var showingDatePicker = false
     
     @AppStorage("dailyCalorieGoal") private var goalCalories: Double = 2500
+    @AppStorage("nutritionTolerance") private var nutritionTolerance: Double = 300
     @AppStorage("nutritionGoalProtein") private var goalProtein: Double = 150
     @AppStorage("nutritionGoalCarbs") private var goalCarbs: Double = 250
     @AppStorage("nutritionGoalFat") private var goalFat: Double = 70
@@ -37,7 +38,12 @@ struct NutritionDashboardView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: Spacing.lg) {
-                    WeekCalendarView(selectedDate: $selectedDate)
+                    WeekCalendarView(
+                        selectedDate: $selectedDate,
+                        allDailyLogs: allDailyLogs,
+                        goalCalories: goalCalories,
+                        tolerance: nutritionTolerance
+                    )
                     
                     macroSummarySection
                     
@@ -70,7 +76,7 @@ struct NutritionDashboardView: View {
                 .presentationDetents([.large])
             }
             .sheet(isPresented: $showingFoodSearch) {
-                FoodSearchView(mealType: selectedMealType) { savedName in
+                FoodSearchView(mealType: selectedMealType, targetDate: selectedDate) { savedName in
                     showingFoodSearch = false
                     savedFoodName = savedName
                     showingSavedAlert = true
@@ -283,6 +289,9 @@ extension Date {
 // WeekCalendarView added below
 struct WeekCalendarView: View {
     @Binding var selectedDate: Date
+    let allDailyLogs: [DailyLog]
+    let goalCalories: Double
+    let tolerance: Double
     @State private var showingDatePicker = false
     
     // Berechnet die 7 Tage der Woche (Mo-So), in der sich das selectedDate befindet.
@@ -342,21 +351,38 @@ struct WeekCalendarView: View {
                 ForEach(weekDates, id: \.self) { date in
                     let isSelected = Calendar.current.isDate(date, inSameDayAs: selectedDate)
                     let isToday = Calendar.current.isDate(date, inSameDayAs: Date())
+                    let isPast = Calendar.current.startOfDay(for: date) < Calendar.current.startOfDay(for: Date())
                     
-                    VStack(spacing: 6) {
+                    let log = allDailyLogs.first(where: { $0.dateString == date.iso8601String() })
+                    let totalCals: Double = log?.foodEntries?.reduce(0.0) { $0 + $1.calories } ?? 0.0
+                    
+                    let dotColor: Color = {
+                        guard isPast else { return .clear }
+                        if totalCals == 0 { return .red }
+                        if abs(totalCals - goalCalories) <= tolerance { return .green }
+                        return .orange
+                    }()
+                    
+                    VStack(spacing: 2) {
                         Text(dayOfWeek(for: date))
                             .font(.caption2)
                             .fontWeight(.semibold)
                             .foregroundColor(isSelected ? .white : (isToday ? .brand : .secondary))
+                            .padding(.bottom, 2)
                         
                         Text(dayOfMonth(for: date))
                             .font(.system(size: 18, weight: isSelected ? .bold : .regular))
                             .foregroundColor(isSelected ? .white : .primary)
+                        
+                        Circle()
+                            .fill(dotColor)
+                            .frame(width: 4, height: 4)
+                            .padding(.top, 4)
                     }
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, 10)
+                    .padding(.vertical, 8)
                     .background(isSelected ? Color.brand : Color.clear)
-                    .clipShape(Capsule())
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
                     .onTapGesture {
                         withAnimation {
                             selectedDate = date
@@ -394,7 +420,7 @@ struct WeekCalendarView: View {
 #Preview {
     ZStack {
         Color(.systemGroupedBackground).edgesIgnoringSafeArea(.all)
-        WeekCalendarView(selectedDate: .constant(Date()))
+        WeekCalendarView(selectedDate: .constant(Date()), allDailyLogs: [], goalCalories: 2500, tolerance: 300)
             .padding()
     }
 }

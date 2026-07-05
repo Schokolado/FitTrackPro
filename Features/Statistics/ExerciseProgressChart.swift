@@ -55,7 +55,7 @@ struct ExerciseProgressChart: View {
             .symbolSize(dataPoints.count > 10 ? 20 : 35)
         }
         .chartXAxis {
-            AxisMarks(values: .stride(by: .day, count: adaptiveStride)) { value in
+            AxisMarks { value in
                 AxisValueLabel(format: .dateTime.day().month(.abbreviated))
                     .foregroundStyle(Color.textSecondary)
                 AxisGridLine(stroke: StrokeStyle(lineWidth: 0.5))
@@ -100,14 +100,6 @@ struct ExerciseProgressChart: View {
     }
 
     // MARK: - Helpers
-    private var adaptiveStride: Int {
-        // Weniger Labels bei vielen Datenpunkten
-        switch dataPoints.count {
-        case 0...7:   return 1
-        case 8...20:  return 3
-        default:      return 7
-        }
-    }
 
     private func yAxisLabel(_ value: Double) -> String {
         switch metric {

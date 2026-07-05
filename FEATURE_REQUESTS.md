@@ -4,6 +4,14 @@ Diese Datei sammelt Ideen, Wünsche und optionale Features für die App, die akt
 
 ## UI / UX Verbesserungen
 
+- [ ] **Interaktives Workout Live Activity (Lockscreen)**
+  - **Beschreibung:** Das reine Info-Widget auf dem Lockscreen (Live Activity) soll interaktiv gemacht werden (App Intents), sodass man Workouts oder Pausen-Timer direkt vom Sperrbildschirm aus pausieren oder stoppen kann.
+  - **Ziel:** Schnellere Bedienung während des Trainings ohne Entsperren des Handys.
+
+- [ ] **Chart X-Achsen Beschriftungen am Rand**
+  - **Beschreibung:** Im WeightTracker (und potenziell anderen Charts) werden die Labels an der X-Achse (z.B. das Jahr "2026") am rechten oder linken Rand abgeschnitten, da SwiftUI Charts diese ohne zusätzliches Padding an den Rand drückt.
+  - **Ziel:** Eine robuste und saubere Lösung finden, bei der die äußeren Datenpunkte gut beschriftet sind, ohne dass das gesamte Diagramm "zusammengestaucht" aussieht.
+
 - [ ] **Interaktives Pull-to-Minimize für WorkoutSessionView**
   - **Beschreibung:** Anstatt das Workout über das `.fullScreenCover` mittels einfachem Klick/Swipe zu schließen, soll die `WorkoutSessionView` als Custom-Overlay (ZStack) umgebaut werden.
   - **Ziel:** Der Nutzer kann das Workout-Fenster interaktiv an den Finger gekoppelt nach unten ziehen (y-Offset ändert sich proportional zur Fingerbewegung), um es nahtlos in den Mini-Player übergehen zu lassen. Wenn man nicht weit genug zieht, federt die Ansicht zurück nach oben.
@@ -39,4 +47,4 @@ Diese Datei sammelt Ideen, Wünsche und optionale Features für die App, die akt
 
 - [ ] **Monetarisierung (In-App Käufe / Pro-Version)**
   - **Beschreibung:** Einbindung von Monetarisierungsmöglichkeiten.
-  - **Features:** Premium-Pläne freischalten, App-Icon ändern, Spenden-Button, Dashboard-Widgets anordnen, weitere Homescreen-Widgets, Apple Watch Support, Werbeeinblendungen.
+  - **Features:** FatSecret-Datenbank Integration (hochwertigere Suchergebnisse statt OpenFoodFacts), Premium-Pläne freischalten, App-Icon ändern, Spenden-Button, Dashboard-Widgets anordnen, weitere Homescreen-Widgets, Apple Watch Support, Werbeeinblendungen.

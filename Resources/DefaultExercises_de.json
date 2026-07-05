@@ -10,6 +10,7 @@
   { "name": "Latzug", "category": "Rücken", "defaultRestDuration": 90, "sortOrder": 12 },
   { "name": "Rudern vorgebeugt (Langhantel)", "category": "Rücken", "defaultRestDuration": 90, "sortOrder": 13 },
   { "name": "Rudern sitzend (Kabelzug)", "category": "Rücken", "defaultRestDuration": 90, "sortOrder": 14 },
+  { "name": "Rudern sitzend (Maschine)", "category": "Rücken", "defaultRestDuration": 90, "sortOrder": 15 },
   
   { "name": "Kniebeugen (Langhantel)", "category": "Beine", "defaultRestDuration": 120, "sortOrder": 20 },
   { "name": "Beinpresse", "category": "Beine", "defaultRestDuration": 120, "sortOrder": 21 },
@@ -21,7 +22,10 @@
   { "name": "Schulterdrücken (Kurzhanteln)", "category": "Schultern", "defaultRestDuration": 90, "sortOrder": 30 },
   { "name": "Military Press (Langhantel)", "category": "Schultern", "defaultRestDuration": 90, "sortOrder": 31 },
   { "name": "Seitheben (Kurzhanteln)", "category": "Schultern", "defaultRestDuration": 60, "sortOrder": 32 },
-  { "name": "Face Pulls (Kabelzug)", "category": "Schultern", "defaultRestDuration": 60, "sortOrder": 33 },
+  { "name": "Seitheben (Sitzend)", "category": "Schultern", "defaultRestDuration": 60, "sortOrder": 33 },
+  { "name": "Seitheben (Maschine)", "category": "Schultern", "defaultRestDuration": 60, "sortOrder": 34 },
+  { "name": "Face Pulls (Kabelzug)", "category": "Schultern", "defaultRestDuration": 60, "sortOrder": 35 },
+  { "name": "Shrugs", "category": "Schultern", "defaultRestDuration": 60, "sortOrder": 36 },
   
   { "name": "Bizeps Curls (Kurzhanteln)", "category": "Arme", "defaultRestDuration": 60, "sortOrder": 40 },
   { "name": "Hammer Curls", "category": "Arme", "defaultRestDuration": 60, "sortOrder": 41 },

@@ -60,13 +60,15 @@ struct ExerciseHistoryView: View {
                                 
                                 Spacer()
                                 
-                                Text("\(set.actualWeight, specifier: "%.1f") kg")
+                                let isCardio = exercise.category.lowercased() == "cardio"
+                                
+                                Text(isCardio ? "Level \(Int(set.actualWeight))" : "\(set.actualWeight, specifier: "%.1f") kg")
                                     .font(.headline)
                                     .frame(width: 80, alignment: .trailing)
                                 
-                                Text("× \(set.actualReps)")
+                                Text(isCardio ? "\(set.actualReps) Min" : "× \(set.actualReps)")
                                     .font(.headline)
-                                    .frame(width: 50, alignment: .trailing)
+                                    .frame(width: 60, alignment: .trailing)
                             }
                         }
                     }

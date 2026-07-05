@@ -206,7 +206,7 @@ struct WorkoutSummaryView: View {
         } catch {
             print("Error deleting session: \(error)")
         }
-        NotificationCenter.default.post(name: .workoutFinished, object: nil)
+        NotificationCenter.default.post(name: .workoutCancelled, object: nil)
     }
 }
 

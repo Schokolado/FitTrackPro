@@ -15,4 +15,8 @@ final class DailyLog {
         self.dateString = dateString
         self.waterIntakeML = waterIntakeML
     }
+    
+    func addWater(_ ml: Double) {
+        self.waterIntakeML += ml
+    }
 }

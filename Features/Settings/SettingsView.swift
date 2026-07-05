@@ -17,6 +17,7 @@ struct SettingsView: View {
     @AppStorage("timerFav2") private var timerFav2: Int = 60
     @AppStorage("timerFav3") private var timerFav3: Int = 90
     @AppStorage("requireRestTimerConfirm") private var requireRestTimerConfirm = true
+    @AppStorage("keepScreenOnDuringWorkout") private var keepScreenOnDuringWorkout = true
     
     @AppStorage("nutritionGoalProtein") private var nutritionGoalProtein: Double = 150
     @AppStorage("nutritionGoalCarbs") private var nutritionGoalCarbs: Double = 250
@@ -28,7 +29,14 @@ struct SettingsView: View {
     @AppStorage(AppStorageKeys.userBiologicalSex) private var userSex: String = "other"
     @AppStorage(AppStorageKeys.userHeightCm) private var heightCm: Double = 175
     @AppStorage(AppStorageKeys.dailyCalorieGoal) private var dailyCalorieGoal: Double = 2500
+    @AppStorage("nutritionTolerance") private var nutritionTolerance: Double = 300
     @AppStorage(AppStorageKeys.dailyStepGoal) private var dailyStepGoal: Int = 10000
+    @AppStorage(AppStorageKeys.dailyWaterGoalML) private var dailyWaterGoalML: Double = 2500
+    @AppStorage(AppStorageKeys.dailySleepGoalHours) private var dailySleepGoalHours: Double = 8.0
+    
+    @AppStorage(AppStorageKeys.waterQuickAddPreset1) private var waterPreset1: Double = 250
+    @AppStorage(AppStorageKeys.waterQuickAddPreset2) private var waterPreset2: Double = 500
+    @AppStorage(AppStorageKeys.waterQuickAddPreset3) private var waterPreset3: Double = 750
     
     @Query(filter: #Predicate<WorkoutSession> { $0.syncedToHealthKit == false }) private var unsyncedWorkouts: [WorkoutSession]
     @Query(filter: #Predicate<WeightEntry> { $0.syncedToHealthKit == false }) private var unsyncedWeights: [WeightEntry]
@@ -100,9 +108,16 @@ struct SettingsView: View {
                 // MARK: Ziele
                 Section(header: Text("Tägliche Ziele")) {
                     HStack {
-                        Label("Kalorien", systemImage: "flame")
+                        Label("Kalorienziel", systemImage: "flame")
                         Spacer()
                         TextField("kcal", value: $dailyCalorieGoal, format: .number)
+                            .keyboardType(.decimalPad)
+                            .multilineTextAlignment(.trailing)
+                    }
+                    HStack {
+                        Label("Toleranz (+/-)", systemImage: "arrow.up.and.down")
+                        Spacer()
+                        TextField("kcal", value: $nutritionTolerance, format: .number)
                             .keyboardType(.decimalPad)
                             .multilineTextAlignment(.trailing)
                     }
@@ -137,9 +152,47 @@ struct SettingsView: View {
                         .keyboardType(.numberPad)
                         .multilineTextAlignment(.trailing)
                     }
+                    
+                    HStack {
+                        Label("Wasser / Tag", systemImage: "drop")
+                        Spacer()
+                        Stepper("\(Int(dailyWaterGoalML)) ml", value: $dailyWaterGoalML, in: 500...5000, step: 250)
+                    }
+                    
+                    HStack {
+                        Label("Schlaf / Tag", systemImage: "moon.zzz")
+                        Spacer()
+                        Stepper(String(format: "%.1f Stunden", dailySleepGoalHours), value: $dailySleepGoalHours, in: 4.0...12.0, step: 0.5)
+                    }
+                    
+                    DisclosureGroup("Wasser Schnellwahl") {
+                        HStack {
+                            Text("Preset 1")
+                            Spacer()
+                            TextField("ml", value: $waterPreset1, format: .number)
+                                .keyboardType(.numberPad)
+                                .multilineTextAlignment(.trailing)
+                        }
+                        HStack {
+                            Text("Preset 2")
+                            Spacer()
+                            TextField("ml", value: $waterPreset2, format: .number)
+                                .keyboardType(.numberPad)
+                                .multilineTextAlignment(.trailing)
+                        }
+                        HStack {
+                            Text("Preset 3")
+                            Spacer()
+                            TextField("ml", value: $waterPreset3, format: .number)
+                                .keyboardType(.numberPad)
+                                .multilineTextAlignment(.trailing)
+                        }
+                    }
                 }
 
-                Section(header: Text("Trainingsplan")) {
+                Section(header: Text("Training")) {
+                    Toggle("Bildschirm während Workout anlassen", isOn: $keepScreenOnDuringWorkout)
+                    
                     Toggle("0 kg als Körpergewicht werten", isOn: $zeroWeightIsBodyweight)
                     
                     Toggle("Werte aus Historie übernehmen", isOn: $prefillExerciseHistory)

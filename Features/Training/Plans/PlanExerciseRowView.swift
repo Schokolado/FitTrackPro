@@ -9,6 +9,8 @@ struct PlanExerciseRowView: View {
     var onSupersetChanged: (() -> Void)? = nil
     @Binding var isExpanded: Bool
     @State private var showingDeleteAlert = false
+    @State private var showingNotesSheet = false
+    @State private var startEditingNotes = false
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -37,6 +39,16 @@ struct PlanExerciseRowView: View {
                             Text(exercise.name)
                                 .font(.headline)
                                 .foregroundColor(.primary)
+                            
+                            if !planExercise.planSpecificNotes.isEmpty {
+                                Image(systemName: "note.text")
+                                    .font(.subheadline)
+                                    .foregroundColor(.brand)
+                                    .onTapGesture {
+                                        startEditingNotes = false
+                                        showingNotesSheet = true
+                                    }
+                            }
                             
                             Spacer()
                         }
@@ -102,6 +114,15 @@ struct PlanExerciseRowView: View {
                         Divider()
                         
                         Button {
+                            startEditingNotes = true
+                            showingNotesSheet = true
+                        } label: {
+                            Label(planExercise.planSpecificNotes.isEmpty ? "Notiz hinzufügen" : "Notiz bearbeiten", systemImage: "note.text")
+                        }
+                        
+                        Divider()
+                        
+                        Button {
                             onReorder?()
                         } label: {
                             Label("Übung verschieben", systemImage: "arrow.up.arrow.down")
@@ -144,22 +165,25 @@ struct PlanExerciseRowView: View {
                                 .textFieldStyle(.roundedBorder)
                         }
                         
+                        let isCardio = planExercise.exercise?.category.lowercased() == "cardio"
+                        
                         VStack(alignment: .leading) {
-                            Text("Wdh.")
+                            Text(isCardio ? "Zeit (Min)" : "Wdh.")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
-                            TextField("Wdh.", value: $planExercise.targetReps, format: .number)
+                            TextField(isCardio ? "Min" : "Wdh.", value: $planExercise.targetReps, format: .number)
                                 .keyboardType(.numberPad)
                                 .textFieldStyle(.roundedBorder)
                         }
                     }
                     
                     HStack(spacing: 16) {
+                        let isCardio = planExercise.exercise?.category.lowercased() == "cardio"
                         VStack(alignment: .leading) {
-                            Text("Gewicht (kg)")
+                            Text(isCardio ? "Level" : "Gewicht (kg)")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
-                            TextField("Gewicht", value: $planExercise.targetWeight, format: .number)
+                            TextField(isCardio ? "Level" : "Gewicht", value: $planExercise.targetWeight, format: .number)
                                 .keyboardType(.decimalPad)
                                 .textFieldStyle(.roundedBorder)
                         }
@@ -198,6 +222,10 @@ struct PlanExerciseRowView: View {
             }
         } message: {
             Text("Möchtest du diese Übung wirklich aus dem Plan entfernen?")
+        }
+        .sheet(isPresented: $showingNotesSheet) {
+            PlanExerciseNotesSheet(planExercise: planExercise, isEditing: $startEditingNotes)
+                .presentationDetents([.medium, .large])
         }
     }
     
@@ -261,7 +289,8 @@ struct PlanExerciseHistoryButton: View {
     var body: some View {
         Button(action: { showingHistory = true }) {
             if let lastSet = pastSets.first {
-                Text("Zuletzt: \(lastSet.actualWeight, specifier: "%.1f") kg × \(lastSet.actualReps)")
+                let isCardio = exercise.category.lowercased() == "cardio"
+                Text(isCardio ? "Zuletzt: Lvl \(Int(lastSet.actualWeight)) • \(lastSet.actualReps) Min" : "Zuletzt: \(lastSet.actualWeight, specifier: "%.1f") kg × \(lastSet.actualReps)")
                     .font(.caption)
                     .foregroundColor(.brand)
                     .padding(.horizontal, 8)
@@ -278,6 +307,68 @@ struct PlanExerciseHistoryButton: View {
         .sheet(isPresented: $showingHistory) {
             NavigationStack {
                 ExerciseHistoryView(exercise: exercise)
+            }
+        }
+    }
+}
+
+struct PlanExerciseNotesSheet: View {
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var modelContext
+    @Bindable var planExercise: PlanExercise
+    @Binding var isEditing: Bool
+    @State private var draftNotes = ""
+
+    var body: some View {
+        NavigationStack {
+            VStack {
+                if isEditing {
+                    TextEditor(text: $draftNotes)
+                        .padding(8)
+                        .background(Color(.systemGray6))
+                        .cornerRadius(8)
+                        .padding()
+                } else {
+                    ScrollView {
+                        Text(planExercise.planSpecificNotes.isEmpty ? "Keine Notizen vorhanden." : planExercise.planSpecificNotes)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding()
+                    }
+                }
+            }
+            .navigationTitle("Notiz zur Übung")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    if isEditing && !planExercise.planSpecificNotes.isEmpty {
+                        Button("Abbrechen") { isEditing = false }
+                    } else {
+                        Button("Schließen") { dismiss() }
+                    }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    if isEditing {
+                        Button("Speichern") {
+                            planExercise.planSpecificNotes = draftNotes.trimmingCharacters(in: .whitespacesAndNewlines)
+                            try? modelContext.save()
+                            isEditing = false
+                            if planExercise.planSpecificNotes.isEmpty {
+                                dismiss()
+                            }
+                        }
+                    } else {
+                        Button("Bearbeiten") {
+                            draftNotes = planExercise.planSpecificNotes
+                            isEditing = true
+                        }
+                    }
+                }
+            }
+            .onAppear {
+                draftNotes = planExercise.planSpecificNotes
+                if draftNotes.isEmpty {
+                    isEditing = true
+                }
             }
         }
     }

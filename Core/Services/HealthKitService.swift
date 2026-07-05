@@ -26,6 +26,10 @@ final class HealthKitService {
         if let carbsType = HKObjectType.quantityType(forIdentifier: .dietaryCarbohydrates) { types.insert(carbsType) }
         if let proteinType = HKObjectType.quantityType(forIdentifier: .dietaryProtein) { types.insert(proteinType) }
         if let fatType = HKObjectType.quantityType(forIdentifier: .dietaryFatTotal) { types.insert(fatType) }
+        if let waterType = HKObjectType.quantityType(forIdentifier: .dietaryWater) { types.insert(waterType) }
+        
+        let sleepType = HKObjectType.categoryType(forIdentifier: .sleepAnalysis)!
+        types.insert(sleepType)
         
         return types
     }()
@@ -39,6 +43,16 @@ final class HealthKitService {
         if let weightType = HKObjectType.quantityType(forIdentifier: .bodyMass) {
             types.insert(weightType)
         }
+        if let hrvType = HKObjectType.quantityType(forIdentifier: .heartRateVariabilitySDNN) {
+            types.insert(hrvType)
+        }
+        if let rhrType = HKObjectType.quantityType(forIdentifier: .restingHeartRate) {
+            types.insert(rhrType)
+        }
+        
+        let sleepType = HKObjectType.categoryType(forIdentifier: .sleepAnalysis)!
+        types.insert(sleepType)
+        
         return types
     }()
     
@@ -351,6 +365,348 @@ final class HealthKitService {
                 }
                 
                 continuation.resume(returning: result)
+            }
+            healthStore.execute(query)
+        }
+    }
+    
+    // MARK: - Water & Sleep Export
+    
+    func saveWaterIntake(ml: Double, date: Date) async throws {
+        guard isAvailable else { throw HealthKitError.notAvailable }
+        guard let waterType = HKQuantityType.quantityType(forIdentifier: .dietaryWater) else {
+            throw HealthKitError.notAvailable
+        }
+        
+        let quantity = HKQuantity(unit: .literUnit(with: .milli), doubleValue: ml)
+        let sample = HKQuantitySample(type: waterType, quantity: quantity, start: date, end: date)
+        
+        do {
+            try await healthStore.save(sample)
+        } catch {
+            throw HealthKitError.saveFailed(error)
+        }
+    }
+    
+    func saveSleep(bedTime: Date, wakeTime: Date) async throws {
+        guard isAvailable else { throw HealthKitError.notAvailable }
+        guard let sleepType = HKObjectType.categoryType(forIdentifier: .sleepAnalysis) else {
+            throw HealthKitError.notAvailable
+        }
+        
+        let sample = HKCategorySample(type: sleepType, value: HKCategoryValueSleepAnalysis.asleepUnspecified.rawValue, start: bedTime, end: wakeTime)
+        
+        do {
+            try await healthStore.save(sample)
+        } catch {
+            throw HealthKitError.saveFailed(error)
+        }
+    }
+    
+    // MARK: - Recovery Imports
+    
+    func fetchSleepData(for date: Date) async throws -> SleepDaySummary? {
+        guard isAvailable else { throw HealthKitError.notAvailable }
+        guard let sleepType = HKObjectType.categoryType(forIdentifier: .sleepAnalysis) else { return nil }
+        
+        let calendar = Calendar.current
+        // Ein "Schlaftag" nach Apple Health Logik geht typischerweise von 18:00 Uhr des Vortags bis 18:00 Uhr des aktuellen Tags
+        let boundaryToday = calendar.date(bySettingHour: 18, minute: 0, second: 0, of: date)!
+        let boundaryYesterday = calendar.date(byAdding: .day, value: -1, to: boundaryToday)!
+        
+        let predicate = HKQuery.predicateForSamples(withStart: boundaryYesterday, end: boundaryToday, options: .strictEndDate)
+        let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierEndDate, ascending: false)
+        
+        return try await withCheckedThrowingContinuation { continuation in
+            let query = HKSampleQuery(sampleType: sleepType, predicate: predicate, limit: HKObjectQueryNoLimit, sortDescriptors: [sortDescriptor]) { _, samples, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+                
+                guard let sleepSamples = samples as? [HKCategorySample], !sleepSamples.isEmpty else {
+                    continuation.resume(returning: nil)
+                    return
+                }
+                
+                let allSleepPhases = sleepSamples.filter { 
+                    $0.value == HKCategoryValueSleepAnalysis.asleepCore.rawValue ||
+                    $0.value == HKCategoryValueSleepAnalysis.asleepDeep.rawValue ||
+                    $0.value == HKCategoryValueSleepAnalysis.asleepREM.rawValue ||
+                    $0.value == HKCategoryValueSleepAnalysis.asleepUnspecified.rawValue ||
+                    $0.value == HKCategoryValueSleepAnalysis.awake.rawValue
+                }
+                
+                guard !allSleepPhases.isEmpty else {
+                    continuation.resume(returning: nil)
+                    return
+                }
+                
+                var remIntervals: [DateInterval] = []
+                var coreIntervals: [DateInterval] = []
+                var deepIntervals: [DateInterval] = []
+                var awakeIntervals: [DateInterval] = []
+                var unspecifiedIntervals: [DateInterval] = []
+                
+                for sample in allSleepPhases {
+                    let interval = DateInterval(start: sample.startDate, end: sample.endDate)
+                    switch sample.value {
+                    case HKCategoryValueSleepAnalysis.asleepREM.rawValue:
+                        remIntervals.append(interval)
+                    case HKCategoryValueSleepAnalysis.asleepCore.rawValue:
+                        coreIntervals.append(interval)
+                    case HKCategoryValueSleepAnalysis.asleepDeep.rawValue:
+                        deepIntervals.append(interval)
+                    case HKCategoryValueSleepAnalysis.awake.rawValue:
+                        awakeIntervals.append(interval)
+                    case HKCategoryValueSleepAnalysis.asleepUnspecified.rawValue:
+                        unspecifiedIntervals.append(interval)
+                    default:
+                        break
+                    }
+                }
+                
+                // Helper to merge overlapping intervals
+                func merge(_ intervals: [DateInterval]) -> [DateInterval] {
+                    guard !intervals.isEmpty else { return [] }
+                    let sorted = intervals.sorted { $0.start < $1.start }
+                    var merged: [DateInterval] = [sorted[0]]
+                    for i in 1..<sorted.count {
+                        let current = sorted[i]
+                        let last = merged.last!
+                        if current.start <= last.end {
+                            if current.end > last.end {
+                                merged[merged.count - 1] = DateInterval(start: last.start, end: current.end)
+                            }
+                        } else {
+                            merged.append(current)
+                        }
+                    }
+                    return merged
+                }
+                
+                // Helper to calculate total duration in minutes
+                func duration(of intervals: [DateInterval]) -> Double {
+                    intervals.reduce(0) { $0 + $1.duration } / 60.0
+                }
+                
+                let mergedRem = merge(remIntervals)
+                let mergedCore = merge(coreIntervals)
+                let mergedDeep = merge(deepIntervals)
+                let mergedAwake = merge(awakeIntervals)
+                
+                // Detailed phases all together
+                let allDetailed = merge(mergedRem + mergedCore + mergedDeep)
+                
+                // Filter out unspecified intervals that overlap with detailed phases
+                var validUnspecified: [DateInterval] = []
+                for unspec in merge(unspecifiedIntervals) {
+                    var currentStart = unspec.start
+                    let currentEnd = unspec.end
+                    var hasOverlap = false
+                    
+                    for detailed in allDetailed {
+                        if detailed.end <= currentStart || detailed.start >= currentEnd {
+                            continue // No overlap
+                        }
+                        // Overlap exists, we simply drop this unspecified sample for basic processing 
+                        // (Apple Health usually entirely overrides unspecified if detailed exists in the same night)
+                        hasOverlap = true
+                        break
+                    }
+                    if !hasOverlap {
+                        validUnspecified.append(unspec)
+                    }
+                }
+                
+                let rem = duration(of: mergedRem)
+                let core = duration(of: mergedCore)
+                let deep = duration(of: mergedDeep)
+                let awake = duration(of: mergedAwake)
+                let unspecified = duration(of: validUnspecified)
+                
+                let totalDuration = rem + core + deep + unspecified
+                
+                // --- Session Grouping ---
+                // We combine all actual sleep intervals (detailed + valid unspecified)
+                // If the gap between one sleep interval and the next is > 60 minutes, it's a new session.
+                let allSleepIntervals = merge(allDetailed + validUnspecified)
+                var sessions: [SleepSession] = []
+                
+                if !allSleepIntervals.isEmpty {
+                    var currentSessionStart = allSleepIntervals[0].start
+                    var currentSessionEnd = allSleepIntervals[0].end
+                    var currentSessionDuration: Double = allSleepIntervals[0].duration
+                    
+                    for i in 1..<allSleepIntervals.count {
+                        let interval = allSleepIntervals[i]
+                        let gap = interval.start.timeIntervalSince(currentSessionEnd)
+                        
+                        if gap > 3600 { // 60 minutes gap threshold
+                            // Close current session
+                            sessions.append(SleepSession(
+                                startDate: currentSessionStart,
+                                endDate: currentSessionEnd,
+                                durationMinutes: currentSessionDuration / 60.0
+                            ))
+                            // Start new session
+                            currentSessionStart = interval.start
+                            currentSessionEnd = interval.end
+                            currentSessionDuration = interval.duration
+                        } else {
+                            // Extend current session
+                            currentSessionEnd = interval.end
+                            currentSessionDuration += interval.duration
+                        }
+                    }
+                    
+                    // Add the last session
+                    sessions.append(SleepSession(
+                        startDate: currentSessionStart,
+                        endDate: currentSessionEnd,
+                        durationMinutes: currentSessionDuration / 60.0
+                    ))
+                }
+                
+                let sorted = allSleepPhases.sorted(by: { $0.startDate < $1.startDate })
+                let bedTime = sorted.first!.startDate
+                let wakeTime = sorted.last!.endDate
+                
+                let summary = SleepDaySummary(
+                    date: date,
+                    bedTime: bedTime,
+                    wakeTime: wakeTime,
+                    totalDurationMinutes: totalDuration,
+                    awakeMinutes: awake,
+                    remMinutes: rem,
+                    coreMinutes: core,
+                    deepMinutes: deep,
+                    unspecifiedMinutes: unspecified,
+                    sessions: sessions
+                )
+                
+                continuation.resume(returning: summary)
+            }
+            healthStore.execute(query)
+        }
+    }
+    
+    func fetchSleepHistory(days: Int) async throws -> [SleepDaySummary] {
+        guard isAvailable else { throw HealthKitError.notAvailable }
+        
+        var history: [SleepDaySummary] = []
+        let calendar = Calendar.current
+        let today = Date()
+        
+        for i in 0..<days {
+            guard let date = calendar.date(byAdding: .day, value: -i, to: today) else { continue }
+            if let sleep = try? await fetchSleepData(for: date) {
+                history.append(sleep)
+            }
+        }
+        
+        return history
+    }
+    
+    func fetchHRV(for date: Date) async throws -> Double? {
+        guard isAvailable else { return nil }
+        guard let hrvType = HKObjectType.quantityType(forIdentifier: .heartRateVariabilitySDNN) else { return nil }
+        
+        let calendar = Calendar.current
+        let startOfDay = calendar.startOfDay(for: date)
+        let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay)!
+        
+        let predicate = HKQuery.predicateForSamples(withStart: startOfDay, end: endOfDay, options: .strictStartDate)
+        
+        return try await withCheckedThrowingContinuation { continuation in
+            let query = HKStatisticsQuery(quantityType: hrvType, quantitySamplePredicate: predicate, options: .discreteAverage) { _, result, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+                if let avg = result?.averageQuantity() {
+                    continuation.resume(returning: avg.doubleValue(for: HKUnit.secondUnit(with: .milli)))
+                } else {
+                    continuation.resume(returning: nil)
+                }
+            }
+            healthStore.execute(query)
+        }
+    }
+    
+    func fetchRestingHeartRate(for date: Date) async throws -> Double? {
+        guard isAvailable else { return nil }
+        guard let rhrType = HKObjectType.quantityType(forIdentifier: .restingHeartRate) else { return nil }
+        
+        let calendar = Calendar.current
+        let startOfDay = calendar.startOfDay(for: date)
+        let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay)!
+        
+        let predicate = HKQuery.predicateForSamples(withStart: startOfDay, end: endOfDay, options: .strictStartDate)
+        
+        return try await withCheckedThrowingContinuation { continuation in
+            let query = HKStatisticsQuery(quantityType: rhrType, quantitySamplePredicate: predicate, options: .discreteAverage) { _, result, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+                if let avg = result?.averageQuantity() {
+                    continuation.resume(returning: avg.doubleValue(for: HKUnit.count().unitDivided(by: HKUnit.minute())))
+                } else {
+                    continuation.resume(returning: nil)
+                }
+            }
+            healthStore.execute(query)
+        }
+    }
+    
+    func fetchHRVBaseline(days: Int = 7, upTo date: Date = Date()) async throws -> Double? {
+        guard isAvailable else { return nil }
+        guard let hrvType = HKObjectType.quantityType(forIdentifier: .heartRateVariabilitySDNN) else { return nil }
+        
+        let calendar = Calendar.current
+        let endDate = calendar.startOfDay(for: date) // Baseline = bis gestern
+        let startDate = calendar.date(byAdding: .day, value: -days, to: endDate)!
+        
+        let predicate = HKQuery.predicateForSamples(withStart: startDate, end: endDate, options: .strictStartDate)
+        
+        return try await withCheckedThrowingContinuation { continuation in
+            let query = HKStatisticsQuery(quantityType: hrvType, quantitySamplePredicate: predicate, options: .discreteAverage) { _, result, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+                if let avg = result?.averageQuantity() {
+                    continuation.resume(returning: avg.doubleValue(for: HKUnit.secondUnit(with: .milli)))
+                } else {
+                    continuation.resume(returning: nil)
+                }
+            }
+            healthStore.execute(query)
+        }
+    }
+    
+    func fetchRHRBaseline(days: Int = 7, upTo date: Date = Date()) async throws -> Double? {
+        guard isAvailable else { return nil }
+        guard let rhrType = HKObjectType.quantityType(forIdentifier: .restingHeartRate) else { return nil }
+        
+        let calendar = Calendar.current
+        let endDate = calendar.startOfDay(for: date)
+        let startDate = calendar.date(byAdding: .day, value: -days, to: endDate)!
+        
+        let predicate = HKQuery.predicateForSamples(withStart: startDate, end: endDate, options: .strictStartDate)
+        
+        return try await withCheckedThrowingContinuation { continuation in
+            let query = HKStatisticsQuery(quantityType: rhrType, quantitySamplePredicate: predicate, options: .discreteAverage) { _, result, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+                if let avg = result?.averageQuantity() {
+                    continuation.resume(returning: avg.doubleValue(for: HKUnit.count().unitDivided(by: HKUnit.minute())))
+                } else {
+                    continuation.resume(returning: nil)
+                }
             }
             healthStore.execute(query)
         }

@@ -1,10 +1,17 @@
 import SwiftUI
+import SwiftData
 
 struct AppRouter: View {
     @Environment(WorkoutManager.self) private var workoutManager
     @State private var showingWorkoutSession = false
     @AppStorage("mainSelectedTab") private var selectedTab = 0
     @AppStorage("appTheme") private var appTheme: AppTheme = .system
+    
+    @Environment(\.modelContext) private var modelContext
+    @Query(filter: #Predicate<WorkoutSession> { $0.endTime == nil }, sort: \.startTime, order: .reverse) private var unfinishedWorkouts: [WorkoutSession]
+    @State private var showingResumeWorkoutAlert = false
+    @State private var showingDiscardConfirmationAlert = false
+    @State private var sessionToResume: WorkoutSession?
     
     private var tabSelection: Binding<Int> {
         Binding(
@@ -73,6 +80,49 @@ struct AppRouter: View {
                 selectedTab = 1
                 NotificationCenter.default.post(name: NSNotification.Name("OpenWorkoutSelection"), object: nil)
             }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("OpenActiveWorkout"))) { _ in
+            if workoutManager.isWorkoutActive {
+                showingWorkoutSession = true
+            }
+        }
+        .onAppear {
+            if !workoutManager.isWorkoutActive {
+                if let session = unfinishedWorkouts.first {
+                    sessionToResume = session
+                    showingResumeWorkoutAlert = true
+                }
+            }
+        }
+        .alert("Abgebrochenes Workout", isPresented: $showingResumeWorkoutAlert) {
+            Button("Fortsetzen") {
+                if let session = sessionToResume {
+                    workoutManager.resumeUnfinishedWorkout(session: session)
+                }
+            }
+            Button("Verwerfen", role: .destructive) {
+                showingDiscardConfirmationAlert = true
+            }
+        } message: {
+            if let session = sessionToResume {
+                Text("Du hast ein Workout (\(session.plan?.name ?? "Freies Workout")) am \(session.startTime.formatted(.dateTime.day().month().hour().minute())) begonnen und nicht beendet. Möchtest du es fortsetzen?")
+            } else {
+                Text("Möchtest du das abgebrochene Workout fortsetzen?")
+            }
+        }
+        .alert("Wirklich verwerfen?", isPresented: $showingDiscardConfirmationAlert) {
+            Button("Zurück", role: .cancel) {
+                // Show the original alert again if they cancel
+                showingResumeWorkoutAlert = true
+            }
+            Button("Ja, endgültig verwerfen", role: .destructive) {
+                if let session = sessionToResume {
+                    modelContext.delete(session)
+                    sessionToResume = nil
+                }
+            }
+        } message: {
+            Text("Alle bisher eingetragenen Sätze und Fortschritte dieses Workouts gehen dauerhaft verloren.")
         }
     }
 }

@@ -1,0 +1,4 @@
+"NSCameraUsageDescription" = "FitTrackPro benötigt die Kamera zum Scannen von Lebensmittel-Barcodes.";
+"NSHealthShareUsageDescription" = "FitTrackPro liest Gesundheitsdaten für dein Fitness-Tracking.";
+"NSHealthUpdateUsageDescription" = "FitTrackPro schreibt Workout- und Gewichtsdaten in Apple Health.";
+"NSPhotoLibraryUsageDescription" = "Wähle Bilder und Videos für deine Übungen.";

@@ -1,0 +1,2345 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 http://docs.oasis-open.org/xliff/v1.2/os/xliff-core-1.2-strict.xsd">
+  <file original="FitTrackProWidget/InfoPlist.xcstrings" source-language="de" target-language="de" datatype="plaintext">
+    <header>
+      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="26.5" build-num="17F42"/>
+    </header>
+    <body>
+      <trans-unit id="CFBundleDisplayName" xml:space="preserve">
+        <source>FitTrackProWidget</source>
+        <target state="new">FitTrackProWidget</target>
+        <note>Bundle display name</note>
+      </trans-unit>
+      <trans-unit id="CFBundleName" xml:space="preserve">
+        <source>FitTrackProWidgetExtension</source>
+        <target state="new">FitTrackProWidgetExtension</target>
+        <note>Bundle name</note>
+      </trans-unit>
+      <trans-unit id="NSHumanReadableCopyright" xml:space="preserve">
+        <source/>
+        <target state="new"/>
+        <note>Copyright (human-readable)</note>
+      </trans-unit>
+    </body>
+  </file>
+  <file original="FitTrackProWidget/Localizable.xcstrings" source-language="de" target-language="de" datatype="plaintext">
+    <header>
+      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="26.5" build-num="17F42"/>
+    </header>
+    <body>
+      <trans-unit id="%@ / %@" xml:space="preserve">
+        <source>%1$@ / %2$@</source>
+        <target state="new">%1$@ / %2$@</target>
+        <note/>
+      </trans-unit>
+      <trans-unit id="%lld" xml:space="preserve">
+        <source>%lld</source>
+        <target state="new">%lld</target>
+        <note/>
+      </trans-unit>
+      <trans-unit id="/ %lld" xml:space="preserve">
+        <source>/ %lld</source>
+        <target state="new">/ %lld</target>
+        <note/>
+      </trans-unit>
+      <trans-unit id="A an example control that runs a timer." xml:space="preserve">
+        <source>A an example control that runs a timer.</source>
+        <target state="new">A an example control that runs a timer.</target>
+        <note/>
+      </trans-unit>
+      <trans-unit id="Bottom %@" xml:space="preserve">
+        <source>Bottom %@</source>
+        <target state="new">Bottom %@</target>
+        <note/>
+      </trans-unit>
+      <trans-unit id="Dein täglicher Fitness-Überblick." xml:space="preserve">
+        <source>Dein täglicher Fitness-Überblick.</source>
+        <target state="new">Dein täglicher Fitness-Überblick.</target>
+        <note/>
+      </trans-unit>
+      <trans-unit id="Hello %@" xml:space="preserve">
+        <source>Hello %@</source>
+        <target state="new">Hello %@</target>
+        <note/>
+      </trans-unit>
+      <trans-unit id="Kalorien" xml:space="preserve">
+        <source>Kalorien</source>
+        <target state="new">Kalorien</target>
+        <note/>
+      </trans-unit>
+      <trans-unit id="L" xml:space="preserve">
+        <source>L</source>
+        <target state="new">L</target>
+        <note/>
+      </trans-unit>
+      <trans-unit id="Leading" xml:space="preserve">
+        <source>Leading</source>
+        <target state="new">Leading</target>
+        <note/>
+      </trans-unit>
+      <trans-unit id="Letztes Workout" xml:space="preserve">
+        <source>Letztes Workout</source>
+        <target state="new">Letztes Workout</target>
+        <note/>
+      </trans-unit>
+      <trans-unit id="Mahlzeit" xml:space="preserve">
+        <source>Mahlzeit</source>
+        <target state="new">Mahlzeit</target>
+        <note/>
+      </trans-unit>
+      <trans-unit id="Makros" xml:space="preserve">
+        <source>Makros</source>
+        <target state="new">Makros</target>
+        <note/>
+      </trans-unit>
+      <trans-unit id="Off" xml:space="preserve">
+        <source>Off</source>
+        <target state="new">Off</target>
+        <note/>
+      </trans-unit>
+      <trans-unit id="On" xml:space="preserve">
+        <source>On</source>
+        <target state="new">On</target>
+        <note/>
+      </trans-unit>
+      <trans-unit id="Schritte" xml:space="preserve">
+        <source>Schritte</source>
+        <target state="new">Schritte</target>
+        <note/>
+      </trans-unit>
+      <trans-unit id="Start Timer" xml:space="preserve">
+        <source>Start Timer</source>
+        <target state="new">Start Timer</target>
+        <note/>
+      </trans-unit>
+      <trans-unit id="Start a timer" xml:space="preserve">
+        <source>Start a timer</source>
+        <target state="new">Start a timer</target>
+        <note/>
+      </trans-unit>
+      <trans-unit id="T %@" xml:space="preserve">
+        <source>T %@</source>
+        <target state="new">T %@</target>
+        <note/>
+      </trans-unit>
+      <trans-unit id="Timer" xml:space="preserve">
+        <source>Timer</source>
+        <target state="new">Timer</target>
+        <note/>
+      </trans-unit>
+      <trans-unit id="Timer is running" xml:space="preserve">
+        <source>Timer is running</source>
+        <target state="new">Timer is running</target>
+        <note/>
+      </trans-unit>
+      <trans-unit id="Trailing" xml:space="preserve">
+        <source>Trailing</source>
+        <target state="new">Trailing</target>
+        <note/>
+      </trans-unit>
+      <trans-unit id="Vigr" xml:space="preserve">
+        <source>Vigr</source>
+        <target state="new">Vigr</target>
+        <note/>
+      </trans-unit>
+      <trans-unit id="Workout" xml:space="preserve">
+        <source>Workout</source>
+        <target state="new">Workout</target>
+        <note/>
+      </trans-unit>
+    </body>
+  </file>
+  <file original="Resources/de.lproj/InfoPlist.strings" source-language="de" target-language="de" datatype="plaintext">
+    <header>
+      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="26.5" build-num="17F42"/>
+    </header>
+    <body>
+      <trans-unit id="CFBundleDisplayName" xml:space="preserve">
+        <source>Vigr</source>
+        <target>Vigr</target>
+        <note>Bundle display name</note>
+      </trans-unit>
+      <trans-unit id="CFBundleName" xml:space="preserve">
+        <source>Vigr</source>
+        <target>Vigr</target>
+        <note>Bundle name</note>
+      </trans-unit>
+      <trans-unit id="NSCameraUsageDescription" xml:space="preserve">
+        <source>FitTrackPro benötigt die Kamera zum Scannen von Lebensmittel-Barcodes.</source>
+        <target>FitTrackPro benötigt die Kamera zum Scannen von Lebensmittel-Barcodes.</target>
+        <note/>
+      </trans-unit>
+      <trans-unit id="NSHealthShareUsageDescription" xml:space="preserve">
+        <source>FitTrackPro liest Gesundheitsdaten für dein Fitness-Tracking.</source>
+        <target>FitTrackPro liest Gesundheitsdaten für dein Fitness-Tracking.</target>
+        <note>Privacy - Health Share Usage Description</note>
+      </trans-unit>
+      <trans-unit id="NSHealthUpdateUsageDescription" xml:space="preserve">
+        <source>FitTrackPro schreibt Workout- und Gewichtsdaten in Apple Health.</source>
+        <target>FitTrackPro schreibt Workout- und Gewichtsdaten in Apple Health.</target>
+        <note>Privacy - Health Update Usage Description</note>
+      </trans-unit>
+      <trans-unit id="NSPhotoLibraryUsageDescription" xml:space="preserve">
+        <source>Wähle Bilder und Videos für deine Übungen.</source>
+        <target>Wähle Bilder und Videos für deine Übungen.</target>
+        <note/>
+      </trans-unit>
+    </body>
+  </file>
+  <file original="Resources/de.lproj/Localizable.strings" source-language="de" target-language="de" datatype="plaintext">
+    <header>
+      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="26.5" build-num="17F42"/>
+    </header>
+    <body>
+      <trans-unit id=" kg" xml:space="preserve">
+        <source> kg</source>
+        <target> kg</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="%.0f cm" xml:space="preserve">
+        <source>%.0f cm</source>
+        <target>%.0f cm</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="%.0f g" xml:space="preserve">
+        <source>%.0f g</source>
+        <target>%.0f g</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="%.0f kcal" xml:space="preserve">
+        <source>%.0f kcal</source>
+        <target>%.0f kcal</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="%.0f kcal (%.0fg)" xml:space="preserve">
+        <source>%.0f kcal (%.0fg)</source>
+        <target>%.0f kcal (%.0fg)</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="%.0f kcal / 100g" xml:space="preserve">
+        <source>%.0f kcal / 100g</source>
+        <target>%.0f kcal / 100g</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="%.0f kcal pro 100g" xml:space="preserve">
+        <source>%.0f kcal pro 100g</source>
+        <target>%.0f kcal pro 100g</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="%.0f kcal | %.1f Portion(en)" xml:space="preserve">
+        <source>%.0f kcal | %.1f Portion(en)</source>
+        <target>%.0f kcal | %.1f Portion(en)</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="%.0fg" xml:space="preserve">
+        <source>%.0fg</source>
+        <target>%.0fg</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="%.1f %@" xml:space="preserve">
+        <source>%.1f %@</source>
+        <target>%.1f %@</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="%.1f g" xml:space="preserve">
+        <source>%.1f g</source>
+        <target>%.1f g</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="%.1f kg" xml:space="preserve">
+        <source>%.1f kg</source>
+        <target>%.1f kg</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="%.1f kg × %lld" xml:space="preserve">
+        <source>%.1f kg × %lld</source>
+        <target>%.1f kg × %lld</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="%@ %lldg" xml:space="preserve">
+        <source>%@ %lldg</source>
+        <target>%@ %lldg</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="%@ Historie" xml:space="preserve">
+        <source>%@ Historie</source>
+        <target>%@ Historie</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="%@ g" xml:space="preserve">
+        <source>%@ g</source>
+        <target>%@ g</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="%@ kg" xml:space="preserve">
+        <source>%@ kg</source>
+        <target>%@ kg</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="%@ wurde hinzugefügt." xml:space="preserve">
+        <source>%@ wurde hinzugefügt.</source>
+        <target>%@ wurde hinzugefügt.</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="%lld" xml:space="preserve">
+        <source>%lld</source>
+        <target>%lld</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="%lld / %lld g" xml:space="preserve">
+        <source>%lld / %lld g</source>
+        <target>%lld / %lld g</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="%lld Einheiten" xml:space="preserve">
+        <source>%lld Einheiten</source>
+        <target>%lld Einheiten</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="%lld Einträge" xml:space="preserve">
+        <source>%lld Einträge</source>
+        <target>%lld Einträge</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="%lld Pläne" xml:space="preserve">
+        <source>%lld Pläne</source>
+        <target>%lld Pläne</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="%lld Sätze" xml:space="preserve">
+        <source>%lld Sätze</source>
+        <target>%lld Sätze</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="%lld Schritte" xml:space="preserve">
+        <source>%lld Schritte</source>
+        <target>%lld Schritte</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="%lld Schritte verbleibend" xml:space="preserve">
+        <source>%lld Schritte verbleibend</source>
+        <target>%lld Schritte verbleibend</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="%lld Sek" xml:space="preserve">
+        <source>%lld Sek</source>
+        <target>%lld Sek</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="%lld Sekunden" xml:space="preserve">
+        <source>%lld Sekunden</source>
+        <target>%lld Sekunden</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="%lld Übungen" xml:space="preserve">
+        <source>%lld Übungen</source>
+        <target>%lld Übungen</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="%lld Wdh" xml:space="preserve">
+        <source>%lld Wdh</source>
+        <target>%lld Wdh</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="%lld Wdh. · %@" xml:space="preserve">
+        <source>%lld Wdh. · %@</source>
+        <target>%lld Wdh. · %@</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="%lld cm" xml:space="preserve">
+        <source>%lld cm</source>
+        <target>%lld cm</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="%lld g" xml:space="preserve">
+        <source>%lld g</source>
+        <target>%lld g</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="%lld kcal" xml:space="preserve">
+        <source>%lld kcal</source>
+        <target>%lld kcal</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="%lld kcal / 100g" xml:space="preserve">
+        <source>%lld kcal / 100g</source>
+        <target>%lld kcal / 100g</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="%lld kcal verbleibend" xml:space="preserve">
+        <source>%lld kcal verbleibend</source>
+        <target>%lld kcal verbleibend</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="%lld kcal | %lld Portion(en)" xml:space="preserve">
+        <source>%lld kcal | %lld Portion(en)</source>
+        <target>%lld kcal | %lld Portion(en)</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="%lld kg × %lld Wdh." xml:space="preserve">
+        <source>%lld kg × %lld Wdh.</source>
+        <target>%lld kg × %lld Wdh.</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="%lld manuell" xml:space="preserve">
+        <source>%lld manuell</source>
+        <target>%lld manuell</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="%lld s" xml:space="preserve">
+        <source>%lld s</source>
+        <target>%lld s</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="-" xml:space="preserve">
+        <source>-</source>
+        <target>-</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="-- kg" xml:space="preserve">
+        <source>-- kg</source>
+        <target>-- kg</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="/ %lld kcal" xml:space="preserve">
+        <source>/ %lld kcal</source>
+        <target>/ %lld kcal</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="0 kg" xml:space="preserve">
+        <source>0 kg</source>
+        <target>0 kg</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="0 kg als Körpergewicht werten" xml:space="preserve">
+        <source>0 kg als Körpergewicht werten</source>
+        <target>0 kg als Körpergewicht werten</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="0.0" xml:space="preserve">
+        <source>0.0</source>
+        <target>0.0</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="1" xml:space="preserve">
+        <source>1</source>
+        <target>1</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="1 = Sehr leicht • 5 = Maximum" xml:space="preserve">
+        <source>1 = Sehr leicht • 5 = Maximum</source>
+        <target>1 = Sehr leicht • 5 = Maximum</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="1.0" xml:space="preserve">
+        <source>1.0</source>
+        <target>1.0</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="1.2 L" xml:space="preserve">
+        <source>1.2 L</source>
+        <target>1.2 L</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="2" xml:space="preserve">
+        <source>2</source>
+        <target>2</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="3" xml:space="preserve">
+        <source>3</source>
+        <target>3</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="4" xml:space="preserve">
+        <source>4</source>
+        <target>4</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="5" xml:space="preserve">
+        <source>5</source>
+        <target>5</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="7h 15m" xml:space="preserve">
+        <source>7h 15m</source>
+        <target>7h 15m</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="85%" xml:space="preserve">
+        <source>85%</source>
+        <target>85%</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="ANGEHALTEN" xml:space="preserve">
+        <source>ANGEHALTEN</source>
+        <target>ANGEHALTEN</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Abbrechen" xml:space="preserve">
+        <source>Abbrechen</source>
+        <target>Abbrechen</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Absolviere Workouts mit dieser Übung, um Fortschritte zu sehen." xml:space="preserve">
+        <source>Absolviere Workouts mit dieser Übung, um Fortschritte zu sehen.</source>
+        <target>Absolviere Workouts mit dieser Übung, um Fortschritte zu sehen.</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Absolviere dein erstes Workout, um es hier zu sehen." xml:space="preserve">
+        <source>Absolviere dein erstes Workout, um es hier zu sehen.</source>
+        <target>Absolviere dein erstes Workout, um es hier zu sehen.</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Absolvierte Workouts: %lld" xml:space="preserve">
+        <source>Absolvierte Workouts: %lld</source>
+        <target>Absolvierte Workouts: %lld</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Akku / Recovery" xml:space="preserve">
+        <source>Akku / Recovery</source>
+        <target>Akku / Recovery</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Aktiv &amp; Verbunden" xml:space="preserve">
+        <source>Aktiv &amp; Verbunden</source>
+        <target>Aktiv &amp; Verbunden</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Aktives Workout beenden?" xml:space="preserve">
+        <source>Aktives Workout beenden?</source>
+        <target>Aktives Workout beenden?</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Aktuelles Gewicht" xml:space="preserve">
+        <source>Aktuelles Gewicht</source>
+        <target>Aktuelles Gewicht</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Alle" xml:space="preserve">
+        <source>Alle</source>
+        <target>Alle</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Alle bisherigen Daten wurden erfolgreich mit Apple Health synchronisiert." xml:space="preserve">
+        <source>Alle bisherigen Daten wurden erfolgreich mit Apple Health synchronisiert.</source>
+        <target>Alle bisherigen Daten wurden erfolgreich mit Apple Health synchronisiert.</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Alles bereit!" xml:space="preserve">
+        <source>Alles bereit!</source>
+        <target>Alles bereit!</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Allgemein" xml:space="preserve">
+        <source>Allgemein</source>
+        <target>Allgemein</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Als PDF exportieren" xml:space="preserve">
+        <source>Als PDF exportieren</source>
+        <target>Als PDF exportieren</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Ansicht" xml:space="preserve">
+        <source>Ansicht</source>
+        <target>Ansicht</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Anstehend" xml:space="preserve">
+        <source>Anstehend</source>
+        <target>Anstehend</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Anzahl Schritte" xml:space="preserve">
+        <source>Anzahl Schritte</source>
+        <target>Anzahl Schritte</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Apple Health" xml:space="preserve">
+        <source>Apple Health</source>
+        <target>Apple Health</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Apple Health ist auf diesem Gerät nicht verfügbar." xml:space="preserve">
+        <source>Apple Health ist auf diesem Gerät nicht verfügbar.</source>
+        <target>Apple Health ist auf diesem Gerät nicht verfügbar.</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Aus Datenbank scannen" xml:space="preserve">
+        <source>Aus Datenbank scannen</source>
+        <target>Aus Datenbank scannen</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Automatisch synchronisieren" xml:space="preserve">
+        <source>Automatisch synchronisieren</source>
+        <target>Automatisch synchronisieren</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Barcode (optional)" xml:space="preserve">
+        <source>Barcode (optional)</source>
+        <target>Barcode (optional)</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Barcode scannen" xml:space="preserve">
+        <source>Barcode scannen</source>
+        <target>Barcode scannen</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Base" xml:space="preserve">
+        <source>Base</source>
+        <target>Base</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Bearbeiten" xml:space="preserve">
+        <source>Bearbeiten</source>
+        <target>Bearbeiten</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Beenden" xml:space="preserve">
+        <source>Beenden</source>
+        <target>Beenden</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Beenden &amp; Neu starten" xml:space="preserve">
+        <source>Beenden &amp; Neu starten</source>
+        <target>Beenden &amp; Neu starten</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Benachrichtigungen" xml:space="preserve">
+        <source>Benachrichtigungen</source>
+        <target>Benachrichtigungen</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Berechnet (für %lldg/ml)" xml:space="preserve">
+        <source>Berechnet (für %lldg/ml)</source>
+        <target>Berechnet (für %lldg/ml)</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Bereinigen" xml:space="preserve">
+        <source>Bereinigen</source>
+        <target>Bereinigen</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Bereit für ein intensives Training heute!" xml:space="preserve">
+        <source>Bereit für ein intensives Training heute!</source>
+        <target>Bereit für ein intensives Training heute!</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Bilder" xml:space="preserve">
+        <source>Bilder</source>
+        <target>Bilder</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Bilder hinzufügen" xml:space="preserve">
+        <source>Bilder hinzufügen</source>
+        <target>Bilder hinzufügen</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Biologisches Geschlecht" xml:space="preserve">
+        <source>Biologisches Geschlecht</source>
+        <target>Biologisches Geschlecht</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Bist du sicher, dass du das Training abbrechen und verwerfen möchtest? Alle bisherigen Einträge gehen verloren." xml:space="preserve">
+        <source>Bist du sicher, dass du das Training abbrechen und verwerfen möchtest? Alle bisherigen Einträge gehen verloren.</source>
+        <target>Bist du sicher, dass du das Training abbrechen und verwerfen möchtest? Alle bisherigen Einträge gehen verloren.</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Bist du sicher, dass du das Training beenden möchtest?" xml:space="preserve">
+        <source>Bist du sicher, dass du das Training beenden möchtest?</source>
+        <target>Bist du sicher, dass du das Training beenden möchtest?</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Bist du sicher, dass du den Trainingsplan '%@' unwiderruflich löschen möchtest?" xml:space="preserve">
+        <source>Bist du sicher, dass du den Trainingsplan '%@' unwiderruflich löschen möchtest?</source>
+        <target>Bist du sicher, dass du den Trainingsplan '%@' unwiderruflich löschen möchtest?</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Bist du sicher, dass du diesen Gewichtseintrag löschen möchtest? Dies kann nicht rückgängig gemacht werden." xml:space="preserve">
+        <source>Bist du sicher, dass du diesen Gewichtseintrag löschen möchtest? Dies kann nicht rückgängig gemacht werden.</source>
+        <target>Bist du sicher, dass du diesen Gewichtseintrag löschen möchtest? Dies kann nicht rückgängig gemacht werden.</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Bist du sicher? Alle lokal und in der iCloud gespeicherten Einträge (Gewicht, Mahlzeiten, Workouts, etc.) werden unwiderruflich gelöscht. Diese Aktion kann nicht rückgängig gemacht werden." xml:space="preserve">
+        <source>Bist du sicher? Alle lokal und in der iCloud gespeicherten Einträge (Gewicht, Mahlzeiten, Workouts, etc.) werden unwiderruflich gelöscht. Diese Aktion kann nicht rückgängig gemacht werden.</source>
+        <target>Bist du sicher? Alle lokal und in der iCloud gespeicherten Einträge (Gewicht, Mahlzeiten, Workouts, etc.) werden unwiderruflich gelöscht. Diese Aktion kann nicht rückgängig gemacht werden.</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Bitte kurz warten" xml:space="preserve">
+        <source>Bitte kurz warten</source>
+        <target>Bitte kurz warten</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Bitte richte die Kamera auf den Barcode." xml:space="preserve">
+        <source>Bitte richte die Kamera auf den Barcode.</source>
+        <target>Bitte richte die Kamera auf den Barcode.</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Bitte wähle eine Mahlzeit aus (z.B. Frühstück)." xml:space="preserve">
+        <source>Bitte wähle eine Mahlzeit aus (z.B. Frühstück).</source>
+        <target>Bitte wähle eine Mahlzeit aus (z.B. Frühstück).</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Bitte wählen" xml:space="preserve">
+        <source>Bitte wählen</source>
+        <target>Bitte wählen</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Coming Soon" xml:space="preserve">
+        <source>Coming Soon</source>
+        <target>Coming Soon</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Cooldown fortsetzen" xml:space="preserve">
+        <source>Cooldown fortsetzen</source>
+        <target>Cooldown fortsetzen</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Darstellung" xml:space="preserve">
+        <source>Darstellung</source>
+        <target>Darstellung</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Daten übernehmen &amp; Starten" xml:space="preserve">
+        <source>Daten übernehmen &amp; Starten</source>
+        <target>Daten übernehmen &amp; Starten</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Datenbank löschen?" xml:space="preserve">
+        <source>Datenbank löschen?</source>
+        <target>Datenbank löschen?</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Datenbank vollständig zurücksetzen" xml:space="preserve">
+        <source>Datenbank vollständig zurücksetzen</source>
+        <target>Datenbank vollständig zurücksetzen</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Datenbank-Suche (OpenFoodFacts)" xml:space="preserve">
+        <source>Datenbank-Suche (OpenFoodFacts)</source>
+        <target>Datenbank-Suche (OpenFoodFacts)</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Datenschutzerklärung" xml:space="preserve">
+        <source>Datenschutzerklärung</source>
+        <target>Datenschutzerklärung</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Datum" xml:space="preserve">
+        <source>Datum</source>
+        <target>Datum</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Datum wählen" xml:space="preserve">
+        <source>Datum wählen</source>
+        <target>Datum wählen</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Datum: ____________________  Dauer: _________" xml:space="preserve">
+        <source>Datum: ____________________  Dauer: _________</source>
+        <target>Datum: ____________________  Dauer: _________</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Dein Name" xml:space="preserve">
+        <source>Dein Name</source>
+        <target>Dein Name</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Dein bisheriger Fortschritt in diesem Workout geht verloren." xml:space="preserve">
+        <source>Dein bisheriger Fortschritt in diesem Workout geht verloren.</source>
+        <target>Dein bisheriger Fortschritt in diesem Workout geht verloren.</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Dein persönlicher Fitness-&#10;Begleiter für jeden Tag." xml:space="preserve">
+        <source>Dein persönlicher Fitness-
+Begleiter für jeden Tag.</source>
+        <target>Dein persönlicher Fitness-
+Begleiter für jeden Tag.</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Dein persönliches Profil ist gespeichert.&#10;Lass uns deine Fitness tracken." xml:space="preserve">
+        <source>Dein persönliches Profil ist gespeichert.
+Lass uns deine Fitness tracken.</source>
+        <target>Dein persönliches Profil ist gespeichert.
+Lass uns deine Fitness tracken.</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Deine Daten werden automatisch und sicher über deinen iCloud-Account synchronisiert (sofern dein iPhone in iCloud angemeldet ist)." xml:space="preserve">
+        <source>Deine Daten werden automatisch und sicher über deinen iCloud-Account synchronisiert (sofern dein iPhone in iCloud angemeldet ist).</source>
+        <target>Deine Daten werden automatisch und sicher über deinen iCloud-Account synchronisiert (sofern dein iPhone in iCloud angemeldet ist).</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Design" xml:space="preserve">
+        <source>Design</source>
+        <target>Design</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Details" xml:space="preserve">
+        <source>Details</source>
+        <target>Details</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Dies sucht nach allen doppelten Einträgen (z.B. Gewicht) und behält nur einen. Die gelöschten Duplikate werden auch aus iCloud entfernt." xml:space="preserve">
+        <source>Dies sucht nach allen doppelten Einträgen (z.B. Gewicht) und behält nur einen. Die gelöschten Duplikate werden auch aus iCloud entfernt.</source>
+        <target>Dies sucht nach allen doppelten Einträgen (z.B. Gewicht) und behält nur einen. Die gelöschten Duplikate werden auch aus iCloud entfernt.</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Diese Aktion kann nicht rückgängig gemacht werden." xml:space="preserve">
+        <source>Diese Aktion kann nicht rückgängig gemacht werden.</source>
+        <target>Diese Aktion kann nicht rückgängig gemacht werden.</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Dieses Gewicht wird als erster Eintrag in deinem Gewichtstagebuch gespeichert." xml:space="preserve">
+        <source>Dieses Gewicht wird als erster Eintrag in deinem Gewichtstagebuch gespeichert.</source>
+        <target>Dieses Gewicht wird als erster Eintrag in deinem Gewichtstagebuch gespeichert.</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Divers" xml:space="preserve">
+        <source>Divers</source>
+        <target>Divers</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Du hast alle Übungen erfolgreich abgeschlossen. Möchtest du das Workout jetzt beenden oder weiterlaufen lassen (z.B. für Cooldown)?" xml:space="preserve">
+        <source>Du hast alle Übungen erfolgreich abgeschlossen. Möchtest du das Workout jetzt beenden oder weiterlaufen lassen (z.B. für Cooldown)?</source>
+        <target>Du hast alle Übungen erfolgreich abgeschlossen. Möchtest du das Workout jetzt beenden oder weiterlaufen lassen (z.B. für Cooldown)?</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Du hast bereits ein laufendes Workout. Möchtest du dieses beenden und das neue Workout starten?" xml:space="preserve">
+        <source>Du hast bereits ein laufendes Workout. Möchtest du dieses beenden und das neue Workout starten?</source>
+        <target>Du hast bereits ein laufendes Workout. Möchtest du dieses beenden und das neue Workout starten?</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Du hast diese Übung bisher noch nicht abgeschlossen." xml:space="preserve">
+        <source>Du hast diese Übung bisher noch nicht abgeschlossen.</source>
+        <target>Du hast diese Übung bisher noch nicht abgeschlossen.</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Du kannst Daten manuell über einen Button exportieren." xml:space="preserve">
+        <source>Du kannst Daten manuell über einen Button exportieren.</source>
+        <target>Du kannst Daten manuell über einen Button exportieren.</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Duplikate bereinigen" xml:space="preserve">
+        <source>Duplikate bereinigen</source>
+        <target>Duplikate bereinigen</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Duplikate löschen?" xml:space="preserve">
+        <source>Duplikate löschen?</source>
+        <target>Duplikate löschen?</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Duplizieren" xml:space="preserve">
+        <source>Duplizieren</source>
+        <target>Duplizieren</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Eigene Lebensmittel" xml:space="preserve">
+        <source>Eigene Lebensmittel</source>
+        <target>Eigene Lebensmittel</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Eigene Rezepte" xml:space="preserve">
+        <source>Eigene Rezepte</source>
+        <target>Eigene Rezepte</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Eigene Übung" xml:space="preserve">
+        <source>Eigene Übung</source>
+        <target>Eigene Übung</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Eigener Timer" xml:space="preserve">
+        <source>Eigener Timer</source>
+        <target>Eigener Timer</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Eingeschränkt" xml:space="preserve">
+        <source>Eingeschränkt</source>
+        <target>Eingeschränkt</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Einstellungen" xml:space="preserve">
+        <source>Einstellungen</source>
+        <target>Einstellungen</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Eintrag hinzufügen" xml:space="preserve">
+        <source>Eintrag hinzufügen</source>
+        <target>Eintrag hinzufügen</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Eintrag löschen" xml:space="preserve">
+        <source>Eintrag löschen</source>
+        <target>Eintrag löschen</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Eintrag löschen?" xml:space="preserve">
+        <source>Eintrag löschen?</source>
+        <target>Eintrag löschen?</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Einträge" xml:space="preserve">
+        <source>Einträge</source>
+        <target>Einträge</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Einzelne Übungen" xml:space="preserve">
+        <source>Einzelne Übungen</source>
+        <target>Einzelne Übungen</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Endgültig löschen" xml:space="preserve">
+        <source>Endgültig löschen</source>
+        <target>Endgültig löschen</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Erledigt" xml:space="preserve">
+        <source>Erledigt</source>
+        <target>Erledigt</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Ernährung" xml:space="preserve">
+        <source>Ernährung</source>
+        <target>Ernährung</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Ernährung heute" xml:space="preserve">
+        <source>Ernährung heute</source>
+        <target>Ernährung heute</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Erreicht am %@" xml:space="preserve">
+        <source>Erreicht am %@</source>
+        <target>Erreicht am %@</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Erscheinungsbild" xml:space="preserve">
+        <source>Erscheinungsbild</source>
+        <target>Erscheinungsbild</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Erstelle einen Trainingsplan im Training-Tab." xml:space="preserve">
+        <source>Erstelle einen Trainingsplan im Training-Tab.</source>
+        <target>Erstelle einen Trainingsplan im Training-Tab.</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Erstellen" xml:space="preserve">
+        <source>Erstellen</source>
+        <target>Erstellen</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Erster Eintrag" xml:space="preserve">
+        <source>Erster Eintrag</source>
+        <target>Erster Eintrag</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Es wurden keine Schrittdaten für diesen Zeitraum gefunden." xml:space="preserve">
+        <source>Es wurden keine Schrittdaten für diesen Zeitraum gefunden.</source>
+        <target>Es wurden keine Schrittdaten für diesen Zeitraum gefunden.</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Externer Video-Link (z.B. YouTube)" xml:space="preserve">
+        <source>Externer Video-Link (z.B. YouTube)</source>
+        <target>Externer Video-Link (z.B. YouTube)</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Farben &amp; Kategorien" xml:space="preserve">
+        <source>Farben &amp; Kategorien</source>
+        <target>Farben &amp; Kategorien</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Favorit 1: %lld Sek" xml:space="preserve">
+        <source>Favorit 1: %lld Sek</source>
+        <target>Favorit 1: %lld Sek</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Favorit 2: %lld Sek" xml:space="preserve">
+        <source>Favorit 2: %lld Sek</source>
+        <target>Favorit 2: %lld Sek</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Favorit 3: %lld Sek" xml:space="preserve">
+        <source>Favorit 3: %lld Sek</source>
+        <target>Favorit 3: %lld Sek</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Fehlende Angabe" xml:space="preserve">
+        <source>Fehlende Angabe</source>
+        <target>Fehlende Angabe</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Fertig" xml:space="preserve">
+        <source>Fertig</source>
+        <target>Fertig</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Fett" xml:space="preserve">
+        <source>Fett</source>
+        <target>Fett</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Fett (g)" xml:space="preserve">
+        <source>Fett (g)</source>
+        <target>Fett (g)</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Filter" xml:space="preserve">
+        <source>Filter</source>
+        <target>Filter</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Füge einen neuen Trainingsplan über das '+' unten rechts hinzu." xml:space="preserve">
+        <source>Füge einen neuen Trainingsplan über das '+' unten rechts hinzu.</source>
+        <target>Füge einen neuen Trainingsplan über das '+' unten rechts hinzu.</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Geburtsdatum" xml:space="preserve">
+        <source>Geburtsdatum</source>
+        <target>Geburtsdatum</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Geburtstag" xml:space="preserve">
+        <source>Geburtstag</source>
+        <target>Geburtstag</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Gefahrenzone" xml:space="preserve">
+        <source>Gefahrenzone</source>
+        <target>Gefahrenzone</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Gelöschte Übung" xml:space="preserve">
+        <source>Gelöschte Übung</source>
+        <target>Gelöschte Übung</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Gesamtkalorien" xml:space="preserve">
+        <source>Gesamtkalorien</source>
+        <target>Gesamtkalorien</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Gesamtnährwerte" xml:space="preserve">
+        <source>Gesamtnährwerte</source>
+        <target>Gesamtnährwerte</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Geschlecht" xml:space="preserve">
+        <source>Geschlecht</source>
+        <target>Geschlecht</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Gespeichert" xml:space="preserve">
+        <source>Gespeichert</source>
+        <target>Gespeichert</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Gewicht" xml:space="preserve">
+        <source>Gewicht</source>
+        <target>Gewicht</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Gewicht (kg)" xml:space="preserve">
+        <source>Gewicht (kg)</source>
+        <target>Gewicht (kg)</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Gewicht bearbeiten" xml:space="preserve">
+        <source>Gewicht bearbeiten</source>
+        <target>Gewicht bearbeiten</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Gewicht gesamt" xml:space="preserve">
+        <source>Gewicht gesamt</source>
+        <target>Gewicht gesamt</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Gib die gewünschte Pausenzeit in Sekunden ein." xml:space="preserve">
+        <source>Gib die gewünschte Pausenzeit in Sekunden ein.</source>
+        <target>Gib die gewünschte Pausenzeit in Sekunden ein.</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Glückwunsch!" xml:space="preserve">
+        <source>Glückwunsch!</source>
+        <target>Glückwunsch!</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Größe" xml:space="preserve">
+        <source>Größe</source>
+        <target>Größe</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Gruppe suchen" xml:space="preserve">
+        <source>Gruppe suchen</source>
+        <target>Gruppe suchen</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Gruppe umbenennen" xml:space="preserve">
+        <source>Gruppe umbenennen</source>
+        <target>Gruppe umbenennen</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Gruppe zuweisen" xml:space="preserve">
+        <source>Gruppe zuweisen</source>
+        <target>Gruppe zuweisen</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Gruppen" xml:space="preserve">
+        <source>Gruppen</source>
+        <target>Gruppen</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Gruppen verwalten" xml:space="preserve">
+        <source>Gruppen verwalten</source>
+        <target>Gruppen verwalten</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Gruppenname" xml:space="preserve">
+        <source>Gruppenname</source>
+        <target>Gruppenname</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Gute Qualität" xml:space="preserve">
+        <source>Gute Qualität</source>
+        <target>Gute Qualität</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Hallo %@ 👋" xml:space="preserve">
+        <source>Hallo %@ 👋</source>
+        <target>Hallo %@ 👋</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Heute" xml:space="preserve">
+        <source>Heute</source>
+        <target>Heute</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Hier kannst du eigene Farben für alle deine genutzten Muskelgruppen und Kategorien festlegen. Wenn du eine neue Kategorie erstellst, erscheint sie automatisch hier." xml:space="preserve">
+        <source>Hier kannst du eigene Farben für alle deine genutzten Muskelgruppen und Kategorien festlegen. Wenn du eine neue Kategorie erstellst, erscheint sie automatisch hier.</source>
+        <target>Hier kannst du eigene Farben für alle deine genutzten Muskelgruppen und Kategorien festlegen. Wenn du eine neue Kategorie erstellst, erscheint sie automatisch hier.</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Hinzufügen" xml:space="preserve">
+        <source>Hinzufügen</source>
+        <target>Hinzufügen</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Historie" xml:space="preserve">
+        <source>Historie</source>
+        <target>Historie</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Historie (%@)" xml:space="preserve">
+        <source>Historie (%@)</source>
+        <target>Historie (%@)</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Historie inkl. Daten" xml:space="preserve">
+        <source>Historie inkl. Daten</source>
+        <target>Historie inkl. Daten</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Historie: %@" xml:space="preserve">
+        <source>Historie: %@</source>
+        <target>Historie: %@</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Historischer Verlauf" xml:space="preserve">
+        <source>Historischer Verlauf</source>
+        <target>Historischer Verlauf</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Home" xml:space="preserve">
+        <source>Home</source>
+        <target>Home</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Ignorieren &amp; neu eingeben" xml:space="preserve">
+        <source>Ignorieren &amp; neu eingeben</source>
+        <target>Ignorieren &amp; neu eingeben</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="In Apple Health eintragen" xml:space="preserve">
+        <source>In Apple Health eintragen</source>
+        <target>In Apple Health eintragen</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Individuell..." xml:space="preserve">
+        <source>Individuell...</source>
+        <target>Individuell...</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Intensität" xml:space="preserve">
+        <source>Intensität</source>
+        <target>Intensität</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Ja, abbrechen" xml:space="preserve">
+        <source>Ja, abbrechen</source>
+        <target>Ja, abbrechen</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Ja, beenden" xml:space="preserve">
+        <source>Ja, beenden</source>
+        <target>Ja, beenden</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Ja, im Plan speichern" xml:space="preserve">
+        <source>Ja, im Plan speichern</source>
+        <target>Ja, im Plan speichern</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Ja, verwerfen" xml:space="preserve">
+        <source>Ja, verwerfen</source>
+        <target>Ja, verwerfen</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Jetzt loslegen" xml:space="preserve">
+        <source>Jetzt loslegen</source>
+        <target>Jetzt loslegen</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="K %.0fg • P %.0fg • F %.0fg" xml:space="preserve">
+        <source>K %.0fg • P %.0fg • F %.0fg</source>
+        <target>K %.0fg • P %.0fg • F %.0fg</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Kalorien" xml:space="preserve">
+        <source>Kalorien</source>
+        <target>Kalorien</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Kalorien (kcal)" xml:space="preserve">
+        <source>Kalorien (kcal)</source>
+        <target>Kalorien (kcal)</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Kategorie" xml:space="preserve">
+        <source>Kategorie</source>
+        <target>Kategorie</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Kategorien" xml:space="preserve">
+        <source>Kategorien</source>
+        <target>Kategorien</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Kein Supersatz" xml:space="preserve">
+        <source>Kein Supersatz</source>
+        <target>Kein Supersatz</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Keine Daten" xml:space="preserve">
+        <source>Keine Daten</source>
+        <target>Keine Daten</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Keine Ergebnisse gefunden." xml:space="preserve">
+        <source>Keine Ergebnisse gefunden.</source>
+        <target>Keine Ergebnisse gefunden.</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Keine Gruppen gefunden" xml:space="preserve">
+        <source>Keine Gruppen gefunden</source>
+        <target>Keine Gruppen gefunden</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Keine Historie" xml:space="preserve">
+        <source>Keine Historie</source>
+        <target>Keine Historie</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Keine Pläne in dieser Gruppe" xml:space="preserve">
+        <source>Keine Pläne in dieser Gruppe</source>
+        <target>Keine Pläne in dieser Gruppe</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Keine Trainingspläne" xml:space="preserve">
+        <source>Keine Trainingspläne</source>
+        <target>Keine Trainingspläne</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Keine Workouts im gewählten Zeitraum." xml:space="preserve">
+        <source>Keine Workouts im gewählten Zeitraum.</source>
+        <target>Keine Workouts im gewählten Zeitraum.</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Keine lokalen Treffer." xml:space="preserve">
+        <source>Keine lokalen Treffer.</source>
+        <target>Keine lokalen Treffer.</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Kohlenhydrate" xml:space="preserve">
+        <source>Kohlenhydrate</source>
+        <target>Kohlenhydrate</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Kohlenhydrate (g)" xml:space="preserve">
+        <source>Kohlenhydrate (g)</source>
+        <target>Kohlenhydrate (g)</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Körpergewicht" xml:space="preserve">
+        <source>Körpergewicht</source>
+        <target>Körpergewicht</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Körpergröße" xml:space="preserve">
+        <source>Körpergröße</source>
+        <target>Körpergröße</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Lebensmittel hinzufügen" xml:space="preserve">
+        <source>Lebensmittel hinzufügen</source>
+        <target>Lebensmittel hinzufügen</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Lebensmittel suchen..." xml:space="preserve">
+        <source>Lebensmittel suchen...</source>
+        <target>Lebensmittel suchen...</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Leerer Plan" xml:space="preserve">
+        <source>Leerer Plan</source>
+        <target>Leerer Plan</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Leerer Plan (Vorlage)" xml:space="preserve">
+        <source>Leerer Plan (Vorlage)</source>
+        <target>Leerer Plan (Vorlage)</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Lokale Treffer" xml:space="preserve">
+        <source>Lokale Treffer</source>
+        <target>Lokale Treffer</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Löschen" xml:space="preserve">
+        <source>Löschen</source>
+        <target>Löschen</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Mahlzeit" xml:space="preserve">
+        <source>Mahlzeit</source>
+        <target>Mahlzeit</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Makros" xml:space="preserve">
+        <source>Makros</source>
+        <target>Makros</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Manuell" xml:space="preserve">
+        <source>Manuell</source>
+        <target>Manuell</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Manuell eintragen (ohne Apple Health)" xml:space="preserve">
+        <source>Manuell eintragen (ohne Apple Health)</source>
+        <target>Manuell eintragen (ohne Apple Health)</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Manuell hinzufügen" xml:space="preserve">
+        <source>Manuell hinzufügen</source>
+        <target>Manuell hinzufügen</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Max" xml:space="preserve">
+        <source>Max</source>
+        <target>Max</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Max Gewicht &amp; Ø Gewicht" xml:space="preserve">
+        <source>Max Gewicht &amp; Ø Gewicht</source>
+        <target>Max Gewicht &amp; Ø Gewicht</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Männlich" xml:space="preserve">
+        <source>Männlich</source>
+        <target>Männlich</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Medien &amp; Video" xml:space="preserve">
+        <source>Medien &amp; Video</source>
+        <target>Medien &amp; Video</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Mehr" xml:space="preserve">
+        <source>Mehr</source>
+        <target>Mehr</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Mein Profil" xml:space="preserve">
+        <source>Mein Profil</source>
+        <target>Mein Profil</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Meine Rezepte" xml:space="preserve">
+        <source>Meine Rezepte</source>
+        <target>Meine Rezepte</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Menge" xml:space="preserve">
+        <source>Menge</source>
+        <target>Menge</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Menge (g/ml)" xml:space="preserve">
+        <source>Menge (g/ml)</source>
+        <target>Menge (g/ml)</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Menge eingeben (g/ml)" xml:space="preserve">
+        <source>Menge eingeben (g/ml)</source>
+        <target>Menge eingeben (g/ml)</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Metrik" xml:space="preserve">
+        <source>Metrik</source>
+        <target>Metrik</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Min" xml:space="preserve">
+        <source>Min</source>
+        <target>Min</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Mit Apple Health starten" xml:space="preserve">
+        <source>Mit Apple Health starten</source>
+        <target>Mit Apple Health starten</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Mit Apple Health verbinden" xml:space="preserve">
+        <source>Mit Apple Health verbinden</source>
+        <target>Mit Apple Health verbinden</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Monat" xml:space="preserve">
+        <source>Monat</source>
+        <target>Monat</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Möchtest du die Pause wirklich überspringen?" xml:space="preserve">
+        <source>Möchtest du die Pause wirklich überspringen?</source>
+        <target>Möchtest du die Pause wirklich überspringen?</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Möchtest du diese Übung dauerhaft zu '%@' hinzufügen?" xml:space="preserve">
+        <source>Möchtest du diese Übung dauerhaft zu '%@' hinzufügen?</source>
+        <target>Möchtest du diese Übung dauerhaft zu '%@' hinzufügen?</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Möchtest du diese Übung wirklich aus dem Plan entfernen?" xml:space="preserve">
+        <source>Möchtest du diese Übung wirklich aus dem Plan entfernen?</source>
+        <target>Möchtest du diese Übung wirklich aus dem Plan entfernen?</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Möchtest du diesen Trainingsplan wirklich löschen?" xml:space="preserve">
+        <source>Möchtest du diesen Trainingsplan wirklich löschen?</source>
+        <target>Möchtest du diesen Trainingsplan wirklich löschen?</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Möchtest du dieses Lebensmittel wirklich entfernen?" xml:space="preserve">
+        <source>Möchtest du dieses Lebensmittel wirklich entfernen?</source>
+        <target>Möchtest du dieses Lebensmittel wirklich entfernen?</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Name" xml:space="preserve">
+        <source>Name</source>
+        <target>Name</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Name (z.B. Protein-Pancakes)" xml:space="preserve">
+        <source>Name (z.B. Protein-Pancakes)</source>
+        <target>Name (z.B. Protein-Pancakes)</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Name (z.B. Vollkornbrot)" xml:space="preserve">
+        <source>Name (z.B. Vollkornbrot)</source>
+        <target>Name (z.B. Vollkornbrot)</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Name der Übung" xml:space="preserve">
+        <source>Name der Übung</source>
+        <target>Name der Übung</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Nährwerte" xml:space="preserve">
+        <source>Nährwerte</source>
+        <target>Nährwerte</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Nährwerte (pro 100g/ml)" xml:space="preserve">
+        <source>Nährwerte (pro 100g/ml)</source>
+        <target>Nährwerte (pro 100g/ml)</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Nährwerte pro 100g / Portion" xml:space="preserve">
+        <source>Nährwerte pro 100g / Portion</source>
+        <target>Nährwerte pro 100g / Portion</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Nein, nur heute" xml:space="preserve">
+        <source>Nein, nur heute</source>
+        <target>Nein, nur heute</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Neue Gruppe" xml:space="preserve">
+        <source>Neue Gruppe</source>
+        <target>Neue Gruppe</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Neue Gruppe erstellen" xml:space="preserve">
+        <source>Neue Gruppe erstellen</source>
+        <target>Neue Gruppe erstellen</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Neue Kategorie" xml:space="preserve">
+        <source>Neue Kategorie</source>
+        <target>Neue Kategorie</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Neue Kategorie..." xml:space="preserve">
+        <source>Neue Kategorie...</source>
+        <target>Neue Kategorie...</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Neue Übung" xml:space="preserve">
+        <source>Neue Übung</source>
+        <target>Neue Übung</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Neue Übung erstellen" xml:space="preserve">
+        <source>Neue Übung erstellen</source>
+        <target>Neue Übung erstellen</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Neuer Plan" xml:space="preserve">
+        <source>Neuer Plan</source>
+        <target>Neuer Plan</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Neuer Trainingsplan" xml:space="preserve">
+        <source>Neuer Trainingsplan</source>
+        <target>Neuer Trainingsplan</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Neues Gewicht" xml:space="preserve">
+        <source>Neues Gewicht</source>
+        <target>Neues Gewicht</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Neues Lebensmittel" xml:space="preserve">
+        <source>Neues Lebensmittel</source>
+        <target>Neues Lebensmittel</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Neues Rezept" xml:space="preserve">
+        <source>Neues Rezept</source>
+        <target>Neues Rezept</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Nicht angemeldet" xml:space="preserve">
+        <source>Nicht angemeldet</source>
+        <target>Nicht angemeldet</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Nicht mehr fragen" xml:space="preserve">
+        <source>Nicht mehr fragen</source>
+        <target>Nicht mehr fragen</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Nicht zugeordnet" xml:space="preserve">
+        <source>Nicht zugeordnet</source>
+        <target>Nicht zugeordnet</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Noch keine Daten" xml:space="preserve">
+        <source>Noch keine Daten</source>
+        <target>Noch keine Daten</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Noch keine Daten vorhanden." xml:space="preserve">
+        <source>Noch keine Daten vorhanden.</source>
+        <target>Noch keine Daten vorhanden.</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Noch keine Einträge für diese Mahlzeit." xml:space="preserve">
+        <source>Noch keine Einträge für diese Mahlzeit.</source>
+        <target>Noch keine Einträge für diese Mahlzeit.</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Noch keine Einträge vorhanden." xml:space="preserve">
+        <source>Noch keine Einträge vorhanden.</source>
+        <target>Noch keine Einträge vorhanden.</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Noch keine Einträge." xml:space="preserve">
+        <source>Noch keine Einträge.</source>
+        <target>Noch keine Einträge.</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Noch keine Trainings absolviert" xml:space="preserve">
+        <source>Noch keine Trainings absolviert</source>
+        <target>Noch keine Trainings absolviert</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Noch keine Zutaten hinzugefügt." xml:space="preserve">
+        <source>Noch keine Zutaten hinzugefügt.</source>
+        <target>Noch keine Zutaten hinzugefügt.</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Noch keine eigenen Lebensmittel gespeichert." xml:space="preserve">
+        <source>Noch keine eigenen Lebensmittel gespeichert.</source>
+        <target>Noch keine eigenen Lebensmittel gespeichert.</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Noch keine eigenen Rezepte erstellt." xml:space="preserve">
+        <source>Noch keine eigenen Rezepte erstellt.</source>
+        <target>Noch keine eigenen Rezepte erstellt.</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Notizen" xml:space="preserve">
+        <source>Notizen</source>
+        <target>Notizen</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Notizen bearbeiten" xml:space="preserve">
+        <source>Notizen bearbeiten</source>
+        <target>Notizen bearbeiten</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Notizen eingeben..." xml:space="preserve">
+        <source>Notizen eingeben...</source>
+        <target>Notizen eingeben...</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Notizen hinzufügen" xml:space="preserve">
+        <source>Notizen hinzufügen</source>
+        <target>Notizen hinzufügen</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="OK" xml:space="preserve">
+        <source>OK</source>
+        <target>OK</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="PDF erstellen..." xml:space="preserve">
+        <source>PDF erstellen...</source>
+        <target>PDF erstellen...</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Pause" xml:space="preserve">
+        <source>Pause</source>
+        <target>Pause</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Pause (sek)" xml:space="preserve">
+        <source>Pause (sek)</source>
+        <target>Pause (sek)</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Pause beenden?" xml:space="preserve">
+        <source>Pause beenden?</source>
+        <target>Pause beenden?</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Pause: %@" xml:space="preserve">
+        <source>Pause: %@</source>
+        <target>Pause: %@</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Pausen-Timer" xml:space="preserve">
+        <source>Pausen-Timer</source>
+        <target>Pausen-Timer</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Pausen-Timer Push" xml:space="preserve">
+        <source>Pausen-Timer Push</source>
+        <target>Pausen-Timer Push</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Persönlicher Rekord" xml:space="preserve">
+        <source>Persönlicher Rekord</source>
+        <target>Persönlicher Rekord</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Plan löschen" xml:space="preserve">
+        <source>Plan löschen</source>
+        <target>Plan löschen</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Plan umbenennen" xml:space="preserve">
+        <source>Plan umbenennen</source>
+        <target>Plan umbenennen</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Pläne" xml:space="preserve">
+        <source>Pläne</source>
+        <target>Pläne</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Portionen" xml:space="preserve">
+        <source>Portionen</source>
+        <target>Portionen</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Pro Portion" xml:space="preserve">
+        <source>Pro Portion</source>
+        <target>Pro Portion</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Protein" xml:space="preserve">
+        <source>Protein</source>
+        <target>Protein</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Protein (g)" xml:space="preserve">
+        <source>Protein (g)</source>
+        <target>Protein (g)</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Reihenfolge ändern" xml:space="preserve">
+        <source>Reihenfolge ändern</source>
+        <target>Reihenfolge ändern</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Reps" xml:space="preserve">
+        <source>Reps</source>
+        <target>Reps</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Rezept bearbeiten" xml:space="preserve">
+        <source>Rezept bearbeiten</source>
+        <target>Rezept bearbeiten</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Rezept-Details" xml:space="preserve">
+        <source>Rezept-Details</source>
+        <target>Rezept-Details</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Rezeptzutaten" xml:space="preserve">
+        <source>Rezeptzutaten</source>
+        <target>Rezeptzutaten</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="SATZPAUSE" xml:space="preserve">
+        <source>SATZPAUSE</source>
+        <target>SATZPAUSE</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Satz %lld" xml:space="preserve">
+        <source>Satz %lld</source>
+        <target>Satz %lld</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Satz hinzufügen" xml:space="preserve">
+        <source>Satz hinzufügen</source>
+        <target>Satz hinzufügen</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Satz löschen" xml:space="preserve">
+        <source>Satz löschen</source>
+        <target>Satz löschen</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Satzpause" xml:space="preserve">
+        <source>Satzpause</source>
+        <target>Satzpause</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Sätze" xml:space="preserve">
+        <source>Sätze</source>
+        <target>Sätze</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Schlaf" xml:space="preserve">
+        <source>Schlaf</source>
+        <target>Schlaf</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Schließen" xml:space="preserve">
+        <source>Schließen</source>
+        <target>Schließen</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Schritt-Historie" xml:space="preserve">
+        <source>Schritt-Historie</source>
+        <target>Schritt-Historie</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Schritte" xml:space="preserve">
+        <source>Schritte</source>
+        <target>Schritte</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Schritte / Tag" xml:space="preserve">
+        <source>Schritte / Tag</source>
+        <target>Schritte / Tag</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Schritte eintragen" xml:space="preserve">
+        <source>Schritte eintragen</source>
+        <target>Schritte eintragen</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Schritte erfassen" xml:space="preserve">
+        <source>Schritte erfassen</source>
+        <target>Schritte erfassen</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Schritte heute" xml:space="preserve">
+        <source>Schritte heute</source>
+        <target>Schritte heute</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Schrittziel" xml:space="preserve">
+        <source>Schrittziel</source>
+        <target>Schrittziel</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Seite %lld / %lld" xml:space="preserve">
+        <source>Seite %lld / %lld</source>
+        <target>Seite %lld / %lld</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Sekunden" xml:space="preserve">
+        <source>Sekunden</source>
+        <target>Sekunden</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Selected" xml:space="preserve">
+        <source>Selected</source>
+        <target>Selected</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Speichern" xml:space="preserve">
+        <source>Speichern</source>
+        <target>Speichern</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Standard-Pause" xml:space="preserve">
+        <source>Standard-Pause</source>
+        <target>Standard-Pause</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Standard-Pause (Sekunden)" xml:space="preserve">
+        <source>Standard-Pause (Sekunden)</source>
+        <target>Standard-Pause (Sekunden)</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Starten" xml:space="preserve">
+        <source>Starten</source>
+        <target>Starten</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Statistik" xml:space="preserve">
+        <source>Statistik</source>
+        <target>Statistik</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Status wird geprüft..." xml:space="preserve">
+        <source>Status wird geprüft...</source>
+        <target>Status wird geprüft...</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Stimmung" xml:space="preserve">
+        <source>Stimmung</source>
+        <target>Stimmung</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Suche Produkt..." xml:space="preserve">
+        <source>Suche Produkt...</source>
+        <target>Suche Produkt...</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Supersatz" xml:space="preserve">
+        <source>Supersatz</source>
+        <target>Supersatz</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Supersatz mit..." xml:space="preserve">
+        <source>Supersatz mit...</source>
+        <target>Supersatz mit...</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Supersatz: %@" xml:space="preserve">
+        <source>Supersatz: %@</source>
+        <target>Supersatz: %@</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Sync abgeschlossen" xml:space="preserve">
+        <source>Sync abgeschlossen</source>
+        <target>Sync abgeschlossen</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Synchronisation abgeschlossen" xml:space="preserve">
+        <source>Synchronisation abgeschlossen</source>
+        <target>Synchronisation abgeschlossen</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Tägliche Ziele" xml:space="preserve">
+        <source>Tägliche Ziele</source>
+        <target>Tägliche Ziele</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Tippen zum Starten" xml:space="preserve">
+        <source>Tippen zum Starten</source>
+        <target>Tippen zum Starten</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Trage hier Schritte ein, wenn du dein Handy nicht bei dir hattest oder sie manuell trackst." xml:space="preserve">
+        <source>Trage hier Schritte ein, wenn du dein Handy nicht bei dir hattest oder sie manuell trackst.</source>
+        <target>Trage hier Schritte ein, wenn du dein Handy nicht bei dir hattest oder sie manuell trackst.</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Training" xml:space="preserve">
+        <source>Training</source>
+        <target>Training</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Training beenden?" xml:space="preserve">
+        <source>Training beenden?</source>
+        <target>Training beenden?</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Training verwerfen?" xml:space="preserve">
+        <source>Training verwerfen?</source>
+        <target>Training verwerfen?</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Trainingsfrequenz" xml:space="preserve">
+        <source>Trainingsfrequenz</source>
+        <target>Trainingsfrequenz</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Trainingsplan" xml:space="preserve">
+        <source>Trainingsplan</source>
+        <target>Trainingsplan</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Um die Datenbank nicht zu überlasten, warte bitte ein paar Sekunden zwischen den Suchanfragen." xml:space="preserve">
+        <source>Um die Datenbank nicht zu überlasten, warte bitte ein paar Sekunden zwischen den Suchanfragen.</source>
+        <target>Um die Datenbank nicht zu überlasten, warte bitte ein paar Sekunden zwischen den Suchanfragen.</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Umbenennen" xml:space="preserve">
+        <source>Umbenennen</source>
+        <target>Umbenennen</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Überspringen" xml:space="preserve">
+        <source>Überspringen</source>
+        <target>Überspringen</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Übung auswählen" xml:space="preserve">
+        <source>Übung auswählen</source>
+        <target>Übung auswählen</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Übung bearbeiten" xml:space="preserve">
+        <source>Übung bearbeiten</source>
+        <target>Übung bearbeiten</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Übung hinzufügen" xml:space="preserve">
+        <source>Übung hinzufügen</source>
+        <target>Übung hinzufügen</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Übung löschen" xml:space="preserve">
+        <source>Übung löschen</source>
+        <target>Übung löschen</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Übung suchen..." xml:space="preserve">
+        <source>Übung suchen...</source>
+        <target>Übung suchen...</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Übung verschieben" xml:space="preserve">
+        <source>Übung verschieben</source>
+        <target>Übung verschieben</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Übungen" xml:space="preserve">
+        <source>Übungen</source>
+        <target>Übungen</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Übungs-Historie" xml:space="preserve">
+        <source>Übungs-Historie</source>
+        <target>Übungs-Historie</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Übungs-Historie: %@" xml:space="preserve">
+        <source>Übungs-Historie: %@</source>
+        <target>Übungs-Historie: %@</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Übungsdetails" xml:space="preserve">
+        <source>Übungsdetails</source>
+        <target>Übungsdetails</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Übungsdetails ansehen" xml:space="preserve">
+        <source>Übungsdetails ansehen</source>
+        <target>Übungsdetails ansehen</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Verlauf" xml:space="preserve">
+        <source>Verlauf</source>
+        <target>Verlauf</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Verlauf (%@)" xml:space="preserve">
+        <source>Verlauf (%@)</source>
+        <target>Verlauf (%@)</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Version %@ (%@)" xml:space="preserve">
+        <source>Version %@ (%@)</source>
+        <target>Version %@ (%@)</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Verwalten" xml:space="preserve">
+        <source>Verwalten</source>
+        <target>Verwalten</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Verwaltung" xml:space="preserve">
+        <source>Verwaltung</source>
+        <target>Verwaltung</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Video-Tutorial ansehen" xml:space="preserve">
+        <source>Video-Tutorial ansehen</source>
+        <target>Video-Tutorial ansehen</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Video-Tutorial hinzufügen" xml:space="preserve">
+        <source>Video-Tutorial hinzufügen</source>
+        <target>Video-Tutorial hinzufügen</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Vigr" xml:space="preserve">
+        <source>Vigr</source>
+        <target>Vigr</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Volumen" xml:space="preserve">
+        <source>Volumen</source>
+        <target>Volumen</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Volumen (kg)" xml:space="preserve">
+        <source>Volumen (kg)</source>
+        <target>Volumen (kg)</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Vorzeitiges Beenden bestätigen" xml:space="preserve">
+        <source>Vorzeitiges Beenden bestätigen</source>
+        <target>Vorzeitiges Beenden bestätigen</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="WORKOUT ANGEHALTEN" xml:space="preserve">
+        <source>WORKOUT ANGEHALTEN</source>
+        <target>WORKOUT ANGEHALTEN</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Was möchtest du mit der Satzpause machen?" xml:space="preserve">
+        <source>Was möchtest du mit der Satzpause machen?</source>
+        <target>Was möchtest du mit der Satzpause machen?</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Wasser" xml:space="preserve">
+        <source>Wasser</source>
+        <target>Wasser</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Wähle oben eine Übung, um deinen Fortschritt zu sehen." xml:space="preserve">
+        <source>Wähle oben eine Übung, um deinen Fortschritt zu sehen.</source>
+        <target>Wähle oben eine Übung, um deinen Fortschritt zu sehen.</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Wdh" xml:space="preserve">
+        <source>Wdh</source>
+        <target>Wdh</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Wdh." xml:space="preserve">
+        <source>Wdh.</source>
+        <target>Wdh.</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Weiblich" xml:space="preserve">
+        <source>Weiblich</source>
+        <target>Weiblich</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Weitere Ergebnisse online suchen..." xml:space="preserve">
+        <source>Weitere Ergebnisse online suchen...</source>
+        <target>Weitere Ergebnisse online suchen...</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Weitere laden..." xml:space="preserve">
+        <source>Weitere laden...</source>
+        <target>Weitere laden...</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Wenn aktiviert, werden beim Hinzufügen einer Übung zum Plan automatisch die Sätze, Wiederholungen und Gewichte aus dem letzten Training übernommen." xml:space="preserve">
+        <source>Wenn aktiviert, werden beim Hinzufügen einer Übung zum Plan automatisch die Sätze, Wiederholungen und Gewichte aus dem letzten Training übernommen.</source>
+        <target>Wenn aktiviert, werden beim Hinzufügen einer Übung zum Plan automatisch die Sätze, Wiederholungen und Gewichte aus dem letzten Training übernommen.</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Werte aus Historie übernehmen" xml:space="preserve">
+        <source>Werte aus Historie übernehmen</source>
+        <target>Werte aus Historie übernehmen</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Wie anstrengend war es? (RPE)" xml:space="preserve">
+        <source>Wie anstrengend war es? (RPE)</source>
+        <target>Wie anstrengend war es? (RPE)</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Wie fühlst du dich heute?" xml:space="preserve">
+        <source>Wie fühlst du dich heute?</source>
+        <target>Wie fühlst du dich heute?</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Wie fühlst du dich?" xml:space="preserve">
+        <source>Wie fühlst du dich?</source>
+        <target>Wie fühlst du dich?</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Wiederholungen" xml:space="preserve">
+        <source>Wiederholungen</source>
+        <target>Wiederholungen</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Willkommen zurück" xml:space="preserve">
+        <source>Willkommen zurück</source>
+        <target>Willkommen zurück</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Willkommen zurück," xml:space="preserve">
+        <source>Willkommen zurück,</source>
+        <target>Willkommen zurück,</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Woche" xml:space="preserve">
+        <source>Woche</source>
+        <target>Woche</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Workout" xml:space="preserve">
+        <source>Workout</source>
+        <target>Workout</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Workout Details" xml:space="preserve">
+        <source>Workout Details</source>
+        <target>Workout Details</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Workout Starten" xml:space="preserve">
+        <source>Workout Starten</source>
+        <target>Workout Starten</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Workout abbrechen?" xml:space="preserve">
+        <source>Workout abbrechen?</source>
+        <target>Workout abbrechen?</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Workout abgeschlossen!" xml:space="preserve">
+        <source>Workout abgeschlossen!</source>
+        <target>Workout abgeschlossen!</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Workout beenden" xml:space="preserve">
+        <source>Workout beenden</source>
+        <target>Workout beenden</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Workout fortsetzen" xml:space="preserve">
+        <source>Workout fortsetzen</source>
+        <target>Workout fortsetzen</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Workout löschen" xml:space="preserve">
+        <source>Workout löschen</source>
+        <target>Workout löschen</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Workout starten" xml:space="preserve">
+        <source>Workout starten</source>
+        <target>Workout starten</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Workout wirklich löschen?" xml:space="preserve">
+        <source>Workout wirklich löschen?</source>
+        <target>Workout wirklich löschen?</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Workouts" xml:space="preserve">
+        <source>Workouts</source>
+        <target>Workouts</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Workouts und Gewichtsdaten werden nach dem Speichern automatisch exportiert." xml:space="preserve">
+        <source>Workouts und Gewichtsdaten werden nach dem Speichern automatisch exportiert.</source>
+        <target>Workouts und Gewichtsdaten werden nach dem Speichern automatisch exportiert.</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Zeitraum" xml:space="preserve">
+        <source>Zeitraum</source>
+        <target>Zeitraum</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Ziel" xml:space="preserve">
+        <source>Ziel</source>
+        <target>Ziel</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Ziel: %lld" xml:space="preserve">
+        <source>Ziel: %lld</source>
+        <target>Ziel: %lld</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Zuletzt gegessen" xml:space="preserve">
+        <source>Zuletzt gegessen</source>
+        <target>Zuletzt gegessen</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Zuletzt: %.1f kg × %lld" xml:space="preserve">
+        <source>Zuletzt: %.1f kg × %lld</source>
+        <target>Zuletzt: %.1f kg × %lld</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Zum Plan hinzufügen?" xml:space="preserve">
+        <source>Zum Plan hinzufügen?</source>
+        <target>Zum Plan hinzufügen?</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Zurück" xml:space="preserve">
+        <source>Zurück</source>
+        <target>Zurück</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Zusammenfassung" xml:space="preserve">
+        <source>Zusammenfassung</source>
+        <target>Zusammenfassung</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Zutat hinzufügen" xml:space="preserve">
+        <source>Zutat hinzufügen</source>
+        <target>Zutat hinzufügen</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Zutaten" xml:space="preserve">
+        <source>Zutaten</source>
+        <target>Zutaten</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="cm" xml:space="preserve">
+        <source>cm</source>
+        <target>cm</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="g" xml:space="preserve">
+        <source>g</source>
+        <target>g</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="g/ml" xml:space="preserve">
+        <source>g/ml</source>
+        <target>g/ml</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="general.cancel" xml:space="preserve">
+        <source>Abbrechen</source>
+        <target>Abbrechen</target>
+        <note/>
+      </trans-unit>
+      <trans-unit id="general.delete" xml:space="preserve">
+        <source>Löschen</source>
+        <target>Löschen</target>
+        <note/>
+      </trans-unit>
+      <trans-unit id="general.save" xml:space="preserve">
+        <source>Speichern</source>
+        <target>Speichern</target>
+        <note/>
+      </trans-unit>
+      <trans-unit id="iCloud Sync" xml:space="preserve">
+        <source>iCloud Sync</source>
+        <target>iCloud Sync</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="kcal" xml:space="preserve">
+        <source>kcal</source>
+        <target>kcal</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="kg" xml:space="preserve">
+        <source>kg</source>
+        <target>kg</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="tab.dashboard" xml:space="preserve">
+        <source>Home</source>
+        <target>Home</target>
+        <note>Localizable.strings (German)</note>
+      </trans-unit>
+      <trans-unit id="tab.nutrition" xml:space="preserve">
+        <source>Ernährung</source>
+        <target>Ernährung</target>
+        <note/>
+      </trans-unit>
+      <trans-unit id="tab.settings" xml:space="preserve">
+        <source>Einstellungen</source>
+        <target>Einstellungen</target>
+        <note/>
+      </trans-unit>
+      <trans-unit id="tab.statistics" xml:space="preserve">
+        <source>Statistik</source>
+        <target>Statistik</target>
+        <note/>
+      </trans-unit>
+      <trans-unit id="tab.training" xml:space="preserve">
+        <source>Training</source>
+        <target>Training</target>
+        <note/>
+      </trans-unit>
+      <trans-unit id="von 2.5 L" xml:space="preserve">
+        <source>von 2.5 L</source>
+        <target>von 2.5 L</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="z.B. Max" xml:space="preserve">
+        <source>z.B. Max</source>
+        <target>z.B. Max</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="× %lld" xml:space="preserve">
+        <source>× %lld</source>
+        <target>× %lld</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Ø" xml:space="preserve">
+        <source>Ø</source>
+        <target>Ø</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="•" xml:space="preserve">
+        <source>•</source>
+        <target>•</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

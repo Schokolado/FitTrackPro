@@ -11,6 +11,7 @@ class WorkoutSessionViewModel {
     
     // Rest Timer State
     var restTimeRemaining: TimeInterval = 0
+    var restTargetTime: Date?
     var restTimerActive = false
     var restTimerPaused = false
     var totalRestDuration: TimeInterval = 0
@@ -20,6 +21,37 @@ class WorkoutSessionViewModel {
     
     private var timer: Timer?
     private var restTimer: Timer?
+    private var backgroundTask: UIBackgroundTaskIdentifier = .invalid
+    
+    private let restTargetTimeKey = "activeRestTargetTime"
+    private let restDurationKey = "activeRestDuration"
+    
+    init() {
+        if let targetTime = UserDefaults.standard.object(forKey: restTargetTimeKey) as? Date,
+           let duration = UserDefaults.standard.object(forKey: restDurationKey) as? TimeInterval {
+            if targetTime > Date() {
+                self.restTargetTime = targetTime
+                self.totalRestDuration = duration
+                self.restTimeRemaining = targetTime.timeIntervalSince(Date())
+                self.restTimerActive = true
+            } else {
+                UserDefaults.standard.removeObject(forKey: restTargetTimeKey)
+                UserDefaults.standard.removeObject(forKey: restDurationKey)
+            }
+        }
+        
+        NotificationCenter.default.addObserver(
+            forName: UIApplication.willEnterForegroundNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            self?.updateTimes()
+        }
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
     
     // Cached formatter – DateFormatter is expensive to create; reuse across timer ticks
     private static let timeFormatter: DateFormatter = {
@@ -34,6 +66,26 @@ class WorkoutSessionViewModel {
         }
         timerActive = true
         startTimers()
+        
+        if let session = WorkoutManager.shared.activeSession {
+            LiveActivityManager.shared.startWorkoutActivity(
+                workoutName: session.plan?.name ?? "Freies Training",
+                startDate: currentSegmentStartTime ?? Date(),
+                accumulatedTime: self.accumulatedTime,
+                isRestTimerActive: self.restTimerActive,
+                restTargetTime: self.restTargetTime
+            )
+        }
+    }
+    
+    private func updateLiveActivity() {
+        LiveActivityManager.shared.updateWorkoutActivity(
+            isPaused: !timerActive,
+            accumulatedTime: accumulatedTime,
+            lastStartTime: currentSegmentStartTime,
+            isRestTimerActive: restTimerActive,
+            restTargetTime: restTargetTime
+        )
     }
     
     func pauseWorkout() {
@@ -46,8 +98,11 @@ class WorkoutSessionViewModel {
         
         if restTimerActive && !restTimerPaused {
             restTimerPaused = true
+            restTargetTime = nil
             NotificationService.shared.cancelRestTimerNotification()
         }
+        
+        updateLiveActivity()
     }
     
     func resumeWorkout() {
@@ -57,13 +112,18 @@ class WorkoutSessionViewModel {
         
         if restTimerActive && restTimerPaused {
             restTimerPaused = false
+            restTargetTime = Date().addingTimeInterval(restTimeRemaining)
             NotificationService.shared.scheduleRestTimerNotification(duration: restTimeRemaining)
         }
+        
+        updateLiveActivity()
     }
     
     func finishWorkout() {
         stopTimers()
         cancelRestTimer()
+        
+        LiveActivityManager.shared.endWorkoutActivity()
     }
     
     // MARK: - Rest Timer
@@ -71,9 +131,24 @@ class WorkoutSessionViewModel {
         guard duration > 0 else { return }
         restTimeRemaining = duration
         totalRestDuration = duration
+        restTargetTime = Date().addingTimeInterval(duration)
         restTimerActive = true
         restTimerPaused = false
+        
+        UserDefaults.standard.set(restTargetTime, forKey: restTargetTimeKey)
+        UserDefaults.standard.set(totalRestDuration, forKey: restDurationKey)
+        
         NotificationService.shared.scheduleRestTimerNotification(duration: duration)
+        updateLiveActivity()
+        
+        if backgroundTask != .invalid {
+            UIApplication.shared.endBackgroundTask(backgroundTask)
+        }
+        backgroundTask = UIApplication.shared.beginBackgroundTask(withName: "RestTimer") { [weak self] in
+            guard let self = self else { return }
+            UIApplication.shared.endBackgroundTask(self.backgroundTask)
+            self.backgroundTask = .invalid
+        }
     }
     
 
@@ -81,7 +156,18 @@ class WorkoutSessionViewModel {
         restTimerActive = false
         restTimerPaused = false
         restTimeRemaining = 0
+        restTargetTime = nil
+        
+        UserDefaults.standard.removeObject(forKey: restTargetTimeKey)
+        UserDefaults.standard.removeObject(forKey: restDurationKey)
+        
         NotificationService.shared.cancelRestTimerNotification()
+        updateLiveActivity()
+        
+        if backgroundTask != .invalid {
+            UIApplication.shared.endBackgroundTask(backgroundTask)
+            backgroundTask = .invalid
+        }
     }
     
     func skipRestTimer() {
@@ -115,11 +201,19 @@ class WorkoutSessionViewModel {
         
         // Rest Timer
         if restTimerActive && !restTimerPaused {
-            if restTimeRemaining > 0 {
-                restTimeRemaining -= 1
-            } else {
-                restTimerActive = false
-                // Auto-cancel notification logic triggers anyway since time passed
+            if let target = restTargetTime {
+                let remaining = target.timeIntervalSince(Date())
+                if remaining > 0 {
+                    restTimeRemaining = remaining
+                } else {
+                    let wasActive = restTimerActive
+                    restTimerActive = false
+                    restTimeRemaining = 0
+                    
+                    if wasActive {
+                        updateLiveActivity()
+                    }
+                }
             }
         }
     }

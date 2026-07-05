@@ -55,9 +55,9 @@ struct PlanProgressView: View {
                             .padding(.horizontal)
 
                         let freqData = viewModel.weeklyFrequency(in: planSessions)
-                        Chart(freqData, id: \.weekLabel) { item in
+                        Chart(freqData, id: \.date) { item in
                             BarMark(
-                                x: .value("Woche", item.weekLabel),
+                                x: .value("Woche", item.date, unit: .weekOfYear),
                                 y: .value("Workouts", item.count)
                             )
                             .foregroundStyle(Color.brand.gradient)
@@ -66,7 +66,7 @@ struct PlanProgressView: View {
                         .frame(height: 160)
                         .chartXAxis {
                             AxisMarks { val in
-                                AxisValueLabel()
+                                AxisValueLabel(format: .dateTime.day().month())
                                     .foregroundStyle(Color.textSecondary)
                             }
                         }

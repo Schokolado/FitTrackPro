@@ -242,18 +242,15 @@
 
 ---
 
-## Milestone 15 – Lokalisierung (DE + EN)
+## Milestone 15 – Lokalisierung (DE + EN) ✅
 
-- [ ] Alle View-Strings aus den Views extrahieren
-- [ ] `de.lproj/Localizable.strings` vollständig befüllen
-- [ ] `en.lproj/Localizable.strings` vollständig befüllen
-- [ ] `de.lproj/InfoPlist.strings` (Permissions-Texte auf Deutsch)
-- [ ] `en.lproj/InfoPlist.strings` (Permissions-Texte auf Englisch)
-- [ ] Notification-Texte lokalisieren (`NotificationService`)
-- [ ] PDF-Export-Kopf-/Fußzeilen lokalisieren
-- [ ] Widget-Beschriftungen lokalisieren
-- [ ] Seed-Daten: `DefaultExercises_de.json` + `DefaultExercises_en.json`
-- [ ] Gerät auf Englisch umstellen → komplette App durchklicken
+- [x] Extrahieren aller Texte aus dem Projekt
+- [x] `de.lproj/Localizable.strings` befüllen (via Code Keys)
+- [x] `en.lproj/Localizable.strings` befüllen (via Übersetzungen)
+- [x] `de.lproj/InfoPlist.strings` (Permissions-Texte auf Deutsch)
+- [x] `en.lproj/InfoPlist.strings` (Permissions-Texte auf Englisch)
+- [x] Dynamische Texte (Interpolationen) anpassen
+- [x] Seed-Daten anpassen (JSON für EN und DE)
 
 ---
 

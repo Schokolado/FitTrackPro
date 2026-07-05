@@ -1,9 +1,9 @@
 import SwiftUI
+import SwiftData
 import AVFoundation
 
 struct BarcodeScannerRepresentable: UIViewControllerRepresentable {
-    @Binding var isFetching: Bool
-    var onProductFound: (OFFProduct?) -> Void
+    var onBarcodeScanned: (String, ScannerViewController) -> Void
     
     func makeUIViewController(context: Context) -> ScannerViewController {
         let vc = ScannerViewController()
@@ -25,24 +25,7 @@ struct BarcodeScannerRepresentable: UIViewControllerRepresentable {
         }
         
         func didFindBarcode(_ barcode: String, in vc: ScannerViewController) {
-            DispatchQueue.main.async {
-                self.parent.isFetching = true
-            }
-            Task {
-                let service = FoodAPIService()
-                do {
-                    let product = try await service.fetchProduct(barcode: barcode, retries: 1)
-                    DispatchQueue.main.async {
-                        self.parent.isFetching = false
-                        self.parent.onProductFound(product)
-                    }
-                } catch {
-                    DispatchQueue.main.async {
-                        self.parent.isFetching = false
-                        vc.isProcessing = false
-                    }
-                }
-            }
+            parent.onBarcodeScanned(barcode, vc)
         }
     }
 }
@@ -137,13 +120,20 @@ class ScannerViewController: UIViewController, AVCaptureMetadataOutputObjectsDel
 
 struct BarcodeScannerView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var modelContext
     var onProductFound: (OFFProduct?) -> Void
+    var onSavedFoodFound: ((SavedFood) -> Void)? = nil
     @State private var isFetching = false
+    @State private var scanError: String? = nil
+    @State private var scannerVC: ScannerViewController? = nil
     
     var body: some View {
         ZStack {
-            BarcodeScannerRepresentable(isFetching: $isFetching, onProductFound: onProductFound)
-                .edgesIgnoringSafeArea(.all)
+            BarcodeScannerRepresentable { barcode, vc in
+                self.scannerVC = vc
+                handleBarcodeScanned(barcode: barcode, vc: vc)
+            }
+            .edgesIgnoringSafeArea(.all)
             
             VStack {
                 HStack {
@@ -183,6 +173,69 @@ struct BarcodeScannerView: View {
                         .background(Color.black.opacity(0.7))
                         .cornerRadius(12)
                         .padding(.bottom, 60)
+                }
+            }
+        }
+        .alert(
+            "Fehler beim Scannen",
+            isPresented: Binding(
+                get: { scanError != nil },
+                set: { if !$0 { scanError = nil; scannerVC?.isProcessing = false } }
+            )
+        ) {
+            Button("OK", role: .cancel) {
+                scanError = nil
+                scannerVC?.isProcessing = false
+            }
+        } message: {
+            Text(scanError ?? "Unbekannter Fehler")
+        }
+    }
+    
+    private func handleBarcodeScanned(barcode: String, vc: ScannerViewController) {
+        // 1. Check local DB first
+        let descriptor = FetchDescriptor<SavedFood>()
+        if let savedFoods = try? modelContext.fetch(descriptor),
+           let localFood = savedFoods.first(where: { $0.barcode == barcode }) {
+            
+            let foundSavedFood = onSavedFoodFound
+            let foundProduct = onProductFound
+            
+            DispatchQueue.main.async {
+                if let foundSavedFood = foundSavedFood {
+                    foundSavedFood(localFood)
+                } else {
+                    let mockProduct = OFFProduct(
+                        code: barcode,
+                        productName: localFood.name,
+                        servingQuantity: 100.0,
+                        nutriments: OFFNutriments(
+                            energyKcal100g: localFood.caloriesPer100g,
+                            proteins100g: localFood.proteinPer100g,
+                            carbohydrates100g: localFood.carbsPer100g,
+                            fat100g: localFood.fatPer100g
+                        )
+                    )
+                    foundProduct(mockProduct)
+                }
+            }
+            return
+        }
+        
+        // 2. Fetch from API
+        isFetching = true
+        Task {
+            let service = FoodAPIService()
+            do {
+                let product = try await service.fetchProduct(barcode: barcode, retries: 1)
+                DispatchQueue.main.async {
+                    self.isFetching = false
+                    self.onProductFound(product)
+                }
+            } catch {
+                DispatchQueue.main.async {
+                    self.isFetching = false
+                    self.scanError = "Das Produkt wurde nicht in der Datenbank gefunden."
                 }
             }
         }

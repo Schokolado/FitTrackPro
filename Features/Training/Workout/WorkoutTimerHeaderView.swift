@@ -3,6 +3,7 @@ import SwiftUI
 struct WorkoutTimerHeaderView: View {
     @Bindable var viewModel: WorkoutSessionViewModel
     let planName: String?
+    var hasNotes: Bool = false
     
     // Timer setting bindings for the menu
     @AppStorage("timerFav1") private var timerFav1: Int = 60
@@ -12,6 +13,7 @@ struct WorkoutTimerHeaderView: View {
     // Actions
     var onShowCustomTimer: () -> Void
     var onSkipRestTimer: () -> Void
+    var onShowNotes: (() -> Void)? = nil
     var onMinimize: (() -> Void)? = nil
     
     private var cardHeight: CGFloat {
@@ -60,14 +62,42 @@ struct WorkoutTimerHeaderView: View {
                 
                 // Centered content
                 VStack(spacing: viewModel.restTimerActive ? 2 : 8) {
-                    Text(planName ?? "Freies Workout")
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.secondary)
-                        .textCase(.uppercase)
+                    if let onShowNotes = onShowNotes {
+                        Button(action: onShowNotes) {
+                            HStack(spacing: 6) {
+                                Text(planName ?? "Freies Workout")
+                                    .font(.subheadline)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.secondary)
+                                    .textCase(.uppercase)
+                                
+                                if hasNotes {
+                                    Image(systemName: "note.text")
+                                        .font(.caption)
+                                        .foregroundColor(.brand)
+                                }
+                            }
+                        }
+                    } else {
+                        HStack(spacing: 6) {
+                            Text(planName ?? "Freies Workout")
+                                .font(.subheadline)
+                                .fontWeight(.semibold)
+                                .foregroundColor(.secondary)
+                                .textCase(.uppercase)
+                            
+                            if hasNotes {
+                                Image(systemName: "note.text")
+                                    .font(.caption)
+                                    .foregroundColor(.brand)
+                            }
+                        }
+                    }
                     
                     Text(viewModel.formatTime(viewModel.elapsedTime))
                         .font(.system(size: viewModel.restTimerActive ? 32 : 76, weight: .heavy, design: .rounded).monospacedDigit())
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.5)
                         .foregroundColor(.primary)
                     
                     if !viewModel.timerActive {
@@ -82,6 +112,7 @@ struct WorkoutTimerHeaderView: View {
                     }
                 }
                 .frame(maxWidth: .infinity)
+                .padding(.horizontal, 65) // Prevents text from overlapping the buttons
             }
             .padding(.horizontal)
             .padding(.top, viewModel.restTimerActive ? 16 : 28)

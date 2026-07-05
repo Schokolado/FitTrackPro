@@ -194,7 +194,7 @@ final class StatisticsViewModel {
     }
 
     /// Trainingsfrequenz: Anzahl Workouts pro Woche in einem Zeitraum
-    func weeklyFrequency(in sessions: [WorkoutSession]) -> [(weekLabel: String, count: Int)] {
+    func weeklyFrequency(in sessions: [WorkoutSession]) -> [(date: Date, count: Int)] {
         guard !sessions.isEmpty else { return [] }
         let cal = Calendar.current
 
@@ -206,12 +206,9 @@ final class StatisticsViewModel {
             grouped[weekStart, default: 0] += 1
         }
 
-        let formatter = DateFormatter()
-        formatter.dateFormat = "dd.MM"
-
         return grouped
             .sorted { $0.key < $1.key }
-            .map { (weekLabel: formatter.string(from: $0.key), count: $0.value) }
+            .map { (date: $0.key, count: $0.value) }
     }
 
     /// Gesamtvolumen (kg) über alle Sessions in einem Zeitraum

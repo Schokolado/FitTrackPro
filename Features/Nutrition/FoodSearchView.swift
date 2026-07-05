@@ -6,6 +6,7 @@ struct FoodSearchView: View {
     @Environment(\.dismiss) private var dismiss
     
     let mealType: MealType?
+    var targetDate: Date = Date()
     var onSave: ((String) -> Void)? = nil
     var onIngredientSelected: ((String, Double, Double, Double, Double, Double) -> Void)? = nil
     
@@ -35,18 +36,20 @@ struct FoodSearchView: View {
     private var recentFoods: [FoodEntry] {
         var uniqueNames = Set<String>()
         var result = [FoodEntry]()
+        let isSearching = !searchText.isEmpty
         
         for entry in allFoodEntries {
+            if isSearching {
+                if !entry.name.localizedCaseInsensitiveContains(searchText) { continue }
+            } else if let targetType = mealType {
+                if entry.mealType != targetType { continue }
+            }
+            
             if !uniqueNames.contains(entry.name) {
                 uniqueNames.insert(entry.name)
                 result.append(entry)
             }
             if result.count >= 20 { break } // Limit to 20 recent items
-        }
-        
-        // If searching locally
-        if !searchText.isEmpty {
-            return result.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
         }
         
         return result
@@ -64,15 +67,20 @@ struct FoodSearchView: View {
                     searchBar
                     
                     List {
-                        manualAddSection
-                        
-                        if !searchText.isEmpty && hasSearchedOnline {
-                            onlineSearchSection
+                        if searchText.isEmpty {
+                            localSearchSection
+                            savedItemsSection
+                            manualAddSection
+                        } else {
+                            manualAddSection
+                            
+                            if hasSearchedOnline {
+                                onlineSearchSection
+                            }
+                            
+                            savedItemsSection
+                            localSearchSection
                         }
-                        
-                        savedItemsSection
-                        
-                        localSearchSection
                     }
                     .scrollContentBackground(.hidden)
                 }
@@ -80,6 +88,13 @@ struct FoodSearchView: View {
             .navigationTitle(mealType?.rawValue.appending(" hinzufügen") ?? "Mahlzeit hinzufügen")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button(action: {
+                        showingScanner = true
+                    }) {
+                        Image(systemName: "barcode.viewfinder")
+                    }
+                }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Fertig") {
                         dismiss()
@@ -113,82 +128,56 @@ struct FoodSearchView: View {
                 }
             }
             .navigationDestination(isPresented: $showForm) {
-                if let onIngredientSelected = onIngredientSelected {
-                    // For ingredients, we need to ask for the amount and then return
-                    FoodEntryFormView(mealType: .snack, prefilledProduct: selectedProduct, prefilledEntry: selectedEntry) { savedName in
-                        // We actually can't easily intercept the amount from FoodEntryFormView without changing it.
-                        // For simplicity, we just dismiss it and don't use it.
-                        // Wait, if it's for ingredients, we need a special view or we modify FoodEntryFormView.
-                        // To avoid changing too much, we will pass the callback to FoodEntryFormView.
+                if let entry = selectedEntry {
+                    FoodEntryFormView(mealType: mealType, prefilledEntry: entry, targetDate: targetDate) { savedName in
+                        onSave?(savedName)
+                        dismiss()
+                    }
+                } else if let product = selectedProduct {
+                    FoodEntryFormView(mealType: mealType, prefilledProduct: product, targetDate: targetDate) { savedName in
+                        onSave?(savedName)
+                        dismiss()
                     }
                 } else {
-                    FoodEntryFormView(mealType: mealType, prefilledProduct: selectedProduct, prefilledEntry: selectedEntry) { savedName in
+                    FoodEntryFormView(mealType: mealType, targetDate: targetDate) { savedName in
+                        onSave?(savedName)
+                        dismiss()
+                    }
+                }
+            }
+            .navigationDestination(isPresented: Binding(
+                get: { showForm && selectedProduct == nil && selectedEntry == nil },
+                set: { if !$0 { showForm = false } }
+            )) {
+                if let onIngredientSelected = onIngredientSelected {
+                    FoodEntryFormView(mealType: .snack, prefilledProduct: nil, prefilledEntry: nil) { savedName in }
+                } else {
+                    FoodEntryFormView(mealType: mealType, prefilledProduct: nil, prefilledEntry: nil) { savedName in
+                        showForm = false
                         dismiss()
                         onSave?(savedName)
                     }
                 }
             }
             .sheet(isPresented: $showingScanner) {
-                ZStack {
-                    BarcodeScannerView(onProductFound: { product in
+                BarcodeScannerView(
+                    onProductFound: { product in
                         showingScanner = false
-                        selectedProduct = product
-                        selectedEntry = nil
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                            if onIngredientSelected != nil {
-                                let name = product?.productName ?? "Unbekanntes Produkt"
-                                let cal = product?.nutriments?.energyKcal100g ?? 0
-                                let pro = product?.nutriments?.proteins100g ?? 0
-                                let carb = product?.nutriments?.carbohydrates100g ?? 0
-                                let fat = product?.nutriments?.fat100g ?? 0
-                                pendingIngredient = (name, cal, pro, carb, fat)
-                                ingredientAmount = 100.0
-                                showAmountAlert = true
-                            } else {
-                                showForm = true
-                            }
+                        if let product = product {
+                            selectedProduct = product
+                            showForm = true
                         }
-                    })
-                    
-                    #if targetEnvironment(simulator)
-                    VStack {
-                        Spacer()
-                        Button(action: {
-                            Task {
-                                let service = FoodAPIService()
-                                let product = try? await service.fetchProduct(barcode: "5449000000996")
-                                DispatchQueue.main.async {
-                                    showingScanner = false
-                                    selectedProduct = product
-                                    selectedEntry = nil
-                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                                        if onIngredientSelected != nil {
-                                            let name = product?.productName ?? "Unbekanntes Produkt"
-                                            let cal = product?.nutriments?.energyKcal100g ?? 0
-                                            let pro = product?.nutriments?.proteins100g ?? 0
-                                            let carb = product?.nutriments?.carbohydrates100g ?? 0
-                                            let fat = product?.nutriments?.fat100g ?? 0
-                                            pendingIngredient = (name, cal, pro, carb, fat)
-                                            ingredientAmount = 100.0
-                                            showAmountAlert = true
-                                        } else {
-                                            showForm = true
-                                        }
-                                    }
-                                }
-                            }
-                        }) {
-                            Text("Simulator Mock Scan")
-                                .font(.headline)
-                                .padding()
-                                .background(Color.brand)
-                                .foregroundColor(.white)
-                                .cornerRadius(10)
+                    },
+                    onSavedFoodFound: { localFood in
+                        showingScanner = false
+                        let tempEntry = FoodEntry(name: localFood.name, barcode: localFood.barcode, calories: localFood.caloriesPer100g, proteinGrams: localFood.proteinPer100g, carbsGrams: localFood.carbsPer100g, fatGrams: localFood.fatPer100g)
+                        tempEntry.amountGrams = 100
+                        selectedEntry = tempEntry
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                            showForm = true
                         }
-                        .padding(.bottom, 40)
                     }
-                    #endif
-                }
+                )
             }
         }
     }
@@ -230,18 +219,7 @@ struct FoodSearchView: View {
                 HStack {
                     Image(systemName: "plus.circle.fill")
                         .foregroundColor(.brand)
-                    Text("Manuell hinzufügen")
-                        .foregroundColor(.primary)
-                }
-            }
-            
-            Button(action: {
-                showingScanner = true
-            }) {
-                HStack {
-                    Image(systemName: "barcode.viewfinder")
-                        .foregroundColor(.brand)
-                    Text("Barcode scannen")
+                    Text("Eigene Mahlzeit/Lebensmittel erstellen")
                         .foregroundColor(.primary)
                 }
             }
@@ -325,7 +303,7 @@ struct FoodSearchView: View {
             
             if !filteredFoods.isEmpty {
                 Section(header: Text("Eigene Lebensmittel")) {
-                    ForEach(filteredFoods) { food in
+                    ForEach(filteredFoods.prefix(6)) { food in
                         Button(action: {
                             if onIngredientSelected != nil {
                                 pendingIngredient = (food.name, food.caloriesPer100g, food.proteinPer100g, food.carbsPer100g, food.fatPer100g)
@@ -350,6 +328,18 @@ struct FoodSearchView: View {
                             }
                         }
                         .foregroundColor(.primary)
+                    }
+                    
+                    if filteredFoods.count > 6 {
+                        NavigationLink(destination: SavedFoodListView(foods: filteredFoods, onIngredientSelected: onIngredientSelected, onFoodSelected: { tempEntry in
+                            selectedEntry = tempEntry
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                showForm = true
+                            }
+                        })) {
+                            Text("Alle \(filteredFoods.count) Ergebnisse anzeigen...")
+                                .foregroundColor(.brand)
+                        }
                     }
                 }
             }
@@ -400,7 +390,8 @@ struct FoodSearchView: View {
     }
     
     private var localSearchSection: some View {
-        Section(header: Text(searchText.isEmpty ? "Zuletzt gegessen" : "Lokale Treffer")) {
+        let headerText = searchText.isEmpty ? (mealType != nil ? "Zuletzt als \(mealType!.rawValue) gegessen" : "Zuletzt gegessen") : "Lokale Treffer"
+        return Section(header: Text(headerText)) {
             if recentFoods.isEmpty && searchText.isEmpty {
                 Text("Noch keine Einträge vorhanden.")
                     .foregroundColor(.secondary)
@@ -486,6 +477,59 @@ struct FoodSearchView: View {
         }
         if searchText == query {
             isSearching = false
+        }
+    }
+}
+
+struct SavedFoodListView: View {
+    var foods: [SavedFood]
+    var onIngredientSelected: ((String, Double, Double, Double, Double, Double) -> Void)?
+    var onFoodSelected: ((FoodEntry) -> Void)?
+    
+    @State private var showAmountAlert = false
+    @State private var ingredientAmount: Double = 100.0
+    @State private var pendingIngredient: (name: String, cal: Double, pro: Double, carb: Double, fat: Double)?
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        List {
+            ForEach(foods) { food in
+                Button(action: {
+                    if onIngredientSelected != nil {
+                        pendingIngredient = (food.name, food.caloriesPer100g, food.proteinPer100g, food.carbsPer100g, food.fatPer100g)
+                        ingredientAmount = 100.0
+                        showAmountAlert = true
+                    } else {
+                        let tempEntry = FoodEntry(name: food.name, barcode: food.barcode, calories: food.caloriesPer100g, proteinGrams: food.proteinPer100g, carbsGrams: food.carbsPer100g, fatGrams: food.fatPer100g)
+                        tempEntry.amountGrams = 100
+                        onFoodSelected?(tempEntry)
+                        dismiss()
+                    }
+                }) {
+                    VStack(alignment: .leading) {
+                        Text(food.name)
+                            .font(.headline)
+                        Text("\(food.caloriesPer100g, specifier: "%.0f") kcal / 100g")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                }
+                .foregroundColor(.primary)
+            }
+        }
+        .navigationTitle("Gespeicherte Lebensmittel")
+        .alert("Menge angeben", isPresented: $showAmountAlert) {
+            TextField("g/ml", value: $ingredientAmount, format: .number)
+                .keyboardType(.decimalPad)
+            Button("Abbrechen", role: .cancel) { }
+            Button("Hinzufügen") {
+                if let pending = pendingIngredient, let onSelected = onIngredientSelected {
+                    onSelected(pending.name, pending.cal, pending.pro, pending.carb, pending.fat, ingredientAmount)
+                    dismiss()
+                }
+            }
+        } message: {
+            Text("Wie viel \(pendingIngredient?.name ?? "davon") möchtest du verwenden?")
         }
     }
 }

@@ -1,8 +1,8 @@
 [
   { "name": "Bench Press (Barbell)", "category": "Chest", "defaultRestDuration": 90, "sortOrder": 1 },
-  { "name": "Incline Bench Press (Dumbbell)", "category": "Chest", "defaultRestDuration": 90, "sortOrder": 2 },
-  { "name": "Butterfly (Machine)", "category": "Chest", "defaultRestDuration": 90, "sortOrder": 3 },
-  { "name": "Cable Crossovers", "category": "Chest", "defaultRestDuration": 90, "sortOrder": 4 },
+  { "name": "Incline Bench Press (Dumbbells)", "category": "Chest", "defaultRestDuration": 90, "sortOrder": 2 },
+  { "name": "Pec Deck Machine", "category": "Chest", "defaultRestDuration": 90, "sortOrder": 3 },
+  { "name": "Cable Flys", "category": "Chest", "defaultRestDuration": 90, "sortOrder": 4 },
   { "name": "Push-ups", "category": "Chest", "defaultRestDuration": 60, "sortOrder": 5 },
   
   { "name": "Deadlift", "category": "Back", "defaultRestDuration": 120, "sortOrder": 10 },
@@ -11,23 +11,24 @@
   { "name": "Bent Over Row (Barbell)", "category": "Back", "defaultRestDuration": 90, "sortOrder": 13 },
   { "name": "Seated Cable Row", "category": "Back", "defaultRestDuration": 90, "sortOrder": 14 },
   
-  { "name": "Squat (Barbell)", "category": "Legs", "defaultRestDuration": 120, "sortOrder": 20 },
+  { "name": "Squats (Barbell)", "category": "Legs", "defaultRestDuration": 120, "sortOrder": 20 },
   { "name": "Leg Press", "category": "Legs", "defaultRestDuration": 120, "sortOrder": 21 },
   { "name": "Leg Curl (Machine)", "category": "Legs", "defaultRestDuration": 90, "sortOrder": 22 },
   { "name": "Leg Extension (Machine)", "category": "Legs", "defaultRestDuration": 90, "sortOrder": 23 },
   { "name": "Lunges", "category": "Legs", "defaultRestDuration": 90, "sortOrder": 24 },
   { "name": "Calf Raises", "category": "Legs", "defaultRestDuration": 60, "sortOrder": 25 },
   
-  { "name": "Shoulder Press (Dumbbell)", "category": "Shoulders", "defaultRestDuration": 90, "sortOrder": 30 },
+  { "name": "Shoulder Press (Dumbbells)", "category": "Shoulders", "defaultRestDuration": 90, "sortOrder": 30 },
   { "name": "Military Press (Barbell)", "category": "Shoulders", "defaultRestDuration": 90, "sortOrder": 31 },
-  { "name": "Lateral Raises (Dumbbell)", "category": "Shoulders", "defaultRestDuration": 60, "sortOrder": 32 },
+  { "name": "Lateral Raises (Dumbbells)", "category": "Shoulders", "defaultRestDuration": 60, "sortOrder": 32 },
+  { "name": "Lateral Raises (Seated)", "category": "Shoulders", "defaultRestDuration": 60, "sortOrder": 33 },
   { "name": "Face Pulls (Cable)", "category": "Shoulders", "defaultRestDuration": 60, "sortOrder": 33 },
   
-  { "name": "Bicep Curls (Dumbbell)", "category": "Arms", "defaultRestDuration": 60, "sortOrder": 40 },
+  { "name": "Bicep Curls (Dumbbells)", "category": "Arms", "defaultRestDuration": 60, "sortOrder": 40 },
   { "name": "Hammer Curls", "category": "Arms", "defaultRestDuration": 60, "sortOrder": 41 },
-  { "name": "Triceps Pushdown (Cable)", "category": "Arms", "defaultRestDuration": 60, "sortOrder": 42 },
+  { "name": "Tricep Pushdown (Cable)", "category": "Arms", "defaultRestDuration": 60, "sortOrder": 42 },
   { "name": "Dips", "category": "Arms", "defaultRestDuration": 90, "sortOrder": 43 },
-  { "name": "French Press (EZ Bar)", "category": "Arms", "defaultRestDuration": 60, "sortOrder": 44 },
+  { "name": "Skull Crushers (EZ Bar)", "category": "Arms", "defaultRestDuration": 60, "sortOrder": 44 },
   
   { "name": "Crunches", "category": "Abs / Core", "defaultRestDuration": 60, "sortOrder": 50 },
   { "name": "Hanging Leg Raises", "category": "Abs / Core", "defaultRestDuration": 60, "sortOrder": 51 },
@@ -39,5 +40,5 @@
   { "name": "Stationary Bike", "category": "Cardio", "defaultRestDuration": 0, "sortOrder": 62 },
   { "name": "Stairmaster", "category": "Cardio", "defaultRestDuration": 0, "sortOrder": 63 },
   
-  { "name": "Burpees", "category": "Uncategorized", "defaultRestDuration": 60, "sortOrder": 70 }
+  { "name": "Burpees", "category": "Unassigned", "defaultRestDuration": 60, "sortOrder": 70 }
 ]

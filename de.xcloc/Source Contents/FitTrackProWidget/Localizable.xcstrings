@@ -1,0 +1,85 @@
+{
+  "sourceLanguage" : "de",
+  "strings" : {
+    "/ %lld" : {
+
+    },
+    "%@ / %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ / %2$@"
+          }
+        }
+      }
+    },
+    "%lld" : {
+
+    },
+    "A an example control that runs a timer." : {
+
+    },
+    "Bottom %@" : {
+
+    },
+    "Dein täglicher Fitness-Überblick." : {
+
+    },
+    "Hello %@" : {
+
+    },
+    "Kalorien" : {
+
+    },
+    "L" : {
+
+    },
+    "Leading" : {
+
+    },
+    "Letztes Workout" : {
+
+    },
+    "Mahlzeit" : {
+
+    },
+    "Makros" : {
+
+    },
+    "Off" : {
+
+    },
+    "On" : {
+
+    },
+    "Schritte" : {
+
+    },
+    "Start a timer" : {
+
+    },
+    "Start Timer" : {
+
+    },
+    "T %@" : {
+
+    },
+    "Timer" : {
+
+    },
+    "Timer is running" : {
+
+    },
+    "Trailing" : {
+
+    },
+    "Vigr" : {
+
+    },
+    "Workout" : {
+
+    }
+  },
+  "version" : "1.2"
+}

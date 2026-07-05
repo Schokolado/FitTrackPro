@@ -242,12 +242,12 @@ struct WeightTrackerView: View {
                         )
                         .padding(.horizontal)
                     }
-                } else if entries.isEmpty {
+                } else {
                     VStack(spacing: 12) {
                         Image(systemName: "chart.line.uptrend.xyaxis")
                             .font(.system(size: 40))
                             .foregroundColor(.secondary)
-                        Text("Noch keine Daten vorhanden.")
+                        Text(entries.isEmpty ? "Noch keine Daten vorhanden." : "Keine Daten in diesem Zeitraum.")
                             .foregroundColor(.secondary)
                     }
                     .padding(.vertical, 40)

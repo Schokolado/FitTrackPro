@@ -20,12 +20,27 @@ struct OFFNutriments: Decodable {
     }
 }
 
-struct OFFProduct: Decodable, Identifiable {
+struct OFFProduct: Decodable, Identifiable, Hashable {
     let id = UUID()
     var code: String?
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+    
+    static func == (lhs: OFFProduct, rhs: OFFProduct) -> Bool {
+        return lhs.id == rhs.id
+    }
     var productName: String?
     var servingQuantity: Double?
-    let nutriments: OFFNutriments?
+    var nutriments: OFFNutriments?
+    
+    init(code: String? = nil, productName: String? = nil, servingQuantity: Double? = nil, nutriments: OFFNutriments? = nil) {
+        self.code = code
+        self.productName = productName
+        self.servingQuantity = servingQuantity
+        self.nutriments = nutriments
+    }
     
     enum CodingKeys: String, CodingKey {
         case code

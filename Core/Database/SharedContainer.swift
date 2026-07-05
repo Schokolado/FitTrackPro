@@ -16,7 +16,9 @@ struct SharedContainer {
             StepEntry.self,
             SavedFood.self,
             Recipe.self,
-            RecipeIngredient.self
+            RecipeIngredient.self,
+            WaterEntry.self,
+            SleepEntry.self
         ])
     }
     
