@@ -93,18 +93,31 @@ struct RecoveryFactorDetailView: View {
                         .foregroundColor(.secondary)
                     
                 case .bio:
-                    if let hrv = result.rawHRV, let baseHRV = result.rawHRVBaseline {
-                        Text("\(Int(hrv)) ms")
-                            .font(.system(size: 40, weight: .bold, design: .rounded))
-                        Text("Aktuelle HRV (Ø \(Int(baseHRV)) ms)")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                    } else if let rhr = result.rawRHR, let baseRHR = result.rawRHRBaseline {
-                        Text("\(Int(rhr)) bpm")
-                            .font(.system(size: 40, weight: .bold, design: .rounded))
-                        Text("Ruheherzfrequenz (Ø \(Int(baseRHR)) bpm)")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
+                    let hasHRV = result.rawHRV != nil && result.rawHRVBaseline != nil
+                    let hasRHR = result.rawRHR != nil && result.rawRHRBaseline != nil
+                    
+                    if hasHRV || hasRHR {
+                        HStack(spacing: 32) {
+                            if let hrv = result.rawHRV, let baseHRV = result.rawHRVBaseline {
+                                VStack(spacing: 8) {
+                                    Text("\(Int(hrv)) ms")
+                                        .font(.system(size: 32, weight: .bold, design: .rounded))
+                                    Text("HRV (Ø \(Int(baseHRV)))")
+                                        .font(.subheadline)
+                                        .foregroundColor(.secondary)
+                                }
+                            }
+                            
+                            if let rhr = result.rawRHR, let baseRHR = result.rawRHRBaseline {
+                                VStack(spacing: 8) {
+                                    Text("\(Int(rhr)) bpm")
+                                        .font(.system(size: 32, weight: .bold, design: .rounded))
+                                    Text("RHR (Ø \(Int(baseRHR)))")
+                                        .font(.subheadline)
+                                        .foregroundColor(.secondary)
+                                }
+                            }
+                        }
                     } else {
                         Text("--")
                             .font(.system(size: 48, weight: .bold, design: .rounded))
@@ -207,12 +220,16 @@ struct RecoveryFactorDetailView: View {
             .padding(.vertical, 8)
             
         case .bio:
-            if let hrv = result.rawHRV, let baseHRV = result.rawHRVBaseline {
-                let ratio = hrv / baseHRV
-                bioVisualizer(ratio: ratio, isGood: ratio >= 0.95, label: "HRV vs Baseline")
-            } else if let rhr = result.rawRHR, let baseRHR = result.rawRHRBaseline {
-                let ratio = baseRHR / rhr // Inverted: baseline 60, current 65 -> 60/65 = 0.92
-                bioVisualizer(ratio: ratio, isGood: ratio >= 1.0, label: "RHR vs Baseline")
+            VStack(spacing: 16) {
+                if let hrv = result.rawHRV, let baseHRV = result.rawHRVBaseline {
+                    let ratio = hrv / baseHRV
+                    bioVisualizer(ratio: ratio, isGood: ratio >= 0.95, label: "HRV vs Baseline")
+                }
+                
+                if let rhr = result.rawRHR, let baseRHR = result.rawRHRBaseline {
+                    let ratio = baseRHR / rhr // Inverted: baseline 60, current 65 -> 60/65 = 0.92
+                    bioVisualizer(ratio: ratio, isGood: ratio >= 1.0, label: "RHR vs Baseline")
+                }
             }
         }
     }
