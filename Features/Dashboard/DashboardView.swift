@@ -146,7 +146,7 @@ struct DashboardView: View {
                     Color.backgroundPrimary.ignoresSafeArea()
                         .onDrop(of: [UTType.plainText], delegate: DashboardResetDropDelegate(layoutManager: layoutManager))
                 )
-                .navigationTitle("")
+                .navigationTitle(layoutManager.draggedItem?.rawValue ?? "")
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     if isEditMode {
@@ -270,7 +270,7 @@ struct DashboardView: View {
                     return NSItemProvider(object: card.type.rawValue as NSString)
                 } preview: {
                     let screenWidth = UIScreen.main.bounds.width - 32
-                    renderCard(card)
+                    renderCardContent(card)
                         .frame(width: card.size == .large ? screenWidth : (screenWidth - 16) / 2)
                         .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
                         .environment(\.modelContext, modelContext)
