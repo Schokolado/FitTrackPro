@@ -133,7 +133,6 @@ struct DashboardView: View {
                             ForEach(layoutManager.cards, id: \.id) { card in
                                 renderCardWithEditOverlay(card)
                                     .dashboardCardSize(card.size)
-                                    .animation(.default, value: card.size) // Animate size changes
                             }
                         }
                         .padding(.horizontal)
@@ -159,7 +158,7 @@ struct DashboardView: View {
                         ToolbarItem(placement: .navigationBarTrailing) {
                             Menu {
                                 Button(action: {
-                                    withAnimation { isEditMode = true }
+                                    isEditMode.toggle()
                                 }) {
                                     Label("Dashboard anpassen", systemImage: "slider.horizontal.3")
                                 }
