@@ -11,25 +11,28 @@ struct JiggleModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .rotationEffect(.degrees(isEnabled && isAnimating ? 1.0 : (isEnabled ? -1.0 : 0)))
-            .animation(
-                isEnabled ? Animation.easeInOut(duration: 0.12).repeatForever(autoreverses: true) : .default,
-                value: isAnimating
-            )
             .onAppear {
                 if isEnabled {
-                    // Random slight delay so they don't all jiggle exactly in sync
-                    DispatchQueue.main.asyncAfter(deadline: .now() + Double.random(in: 0...0.1)) {
-                        isAnimating = true
-                    }
+                    startJiggle()
                 }
             }
             .onChange(of: isEnabled) { enabled in
                 if enabled {
-                    isAnimating = true
+                    startJiggle()
                 } else {
-                    isAnimating = false
+                    withAnimation(.default) {
+                        isAnimating = false
+                    }
                 }
             }
+    }
+    
+    private func startJiggle() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + Double.random(in: 0...0.1)) {
+            withAnimation(Animation.easeInOut(duration: 0.12).repeatForever(autoreverses: true)) {
+                isAnimating = true
+            }
+        }
     }
 }
 
@@ -160,7 +163,8 @@ struct DashboardGridLayout: Layout {
             }
             
             let itemSize = subview.sizeThatFits(ProposedViewSize(width: itemWidth, height: nil))
-            rowHeight = max(rowHeight, itemSize.height)
+            let safeHeight = min(itemSize.height, 1000)
+            rowHeight = max(rowHeight, safeHeight)
             
             currentX += itemWidth + spacing
         }
