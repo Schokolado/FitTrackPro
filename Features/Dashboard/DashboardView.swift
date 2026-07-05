@@ -9,6 +9,7 @@ struct DashboardView: View {
     @AppStorage("dailyCalorieGoal") private var dailyCalorieGoal: Double = 2500
     @AppStorage("daily_step_goal") private var dailyStepGoal: Int = 10000
     @AppStorage("userName") private var userName: String = ""
+    @State private var currentlyHoveredArea: String? = nil
     @AppStorage(AppStorageKeys.healthKitEnabled) private var healthKitEnabled = false
     @Environment(\.scenePhase) private var scenePhase
     
@@ -144,7 +145,7 @@ struct DashboardView: View {
                 }
                 .scrollContentBackground(.hidden)
                 .background(Color.backgroundPrimary.ignoresSafeArea())
-                .onDrop(of: [UTType.plainText], delegate: DashboardResetDropDelegate(currentDraggedItem: $currentDraggedItem))
+                .onDrop(of: [UTType.plainText], delegate: DashboardResetDropDelegate(currentDraggedItem: $currentDraggedItem, currentlyHoveredArea: $currentlyHoveredArea))
                 .navigationTitle("")
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
@@ -271,15 +272,8 @@ struct DashboardView: View {
                         .frame(width: card.size == .large ? screenWidth : (screenWidth - 16) / 2)
                         .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
                         .environment(\.modelContext, modelContext)
-                        .onDisappear {
-                            DispatchQueue.main.async {
-                                if self.currentDraggedItem == card.type {
-                                    self.currentDraggedItem = nil
-                                }
-                            }
-                        }
                 }
-                .onDrop(of: [UTType.plainText], delegate: DashboardDropDelegate(item: card.type, currentDraggedItem: $currentDraggedItem, layoutManager: layoutManager))
+                .onDrop(of: [UTType.plainText], delegate: DashboardDropDelegate(item: card.type, currentDraggedItem: $currentDraggedItem, currentlyHoveredArea: $currentlyHoveredArea, layoutManager: layoutManager))
         } else {
             content
         }

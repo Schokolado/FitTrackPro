@@ -44,11 +44,13 @@ extension View {
 struct DashboardDropDelegate: DropDelegate {
     let item: DashboardCardType
     @Binding var currentDraggedItem: DashboardCardType?
-    var layoutManager: DashboardLayoutManager
+    @Binding var currentlyHoveredArea: String?
+    let layoutManager: DashboardLayoutManager
     
     static var lastMoveTime: TimeInterval = 0
     
     func dropEntered(info: DropInfo) {
+        currentlyHoveredArea = item.rawValue
         if let current = currentDraggedItem, current != item {
             let now = Date().timeIntervalSince1970
             if now - DashboardDropDelegate.lastMoveTime < 0.3 { return }
@@ -64,6 +66,15 @@ struct DashboardDropDelegate: DropDelegate {
         return DropProposal(operation: .move)
     }
     
+    func dropExited(info: DropInfo) {
+        let area = item.rawValue
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            if self.currentlyHoveredArea == area {
+                self.currentDraggedItem = nil
+            }
+        }
+    }
+    
     func performDrop(info: DropInfo) -> Bool {
         DispatchQueue.main.async {
             self.currentDraggedItem = nil
@@ -76,6 +87,19 @@ struct DashboardDropDelegate: DropDelegate {
 // MARK: - Dashboard Reset Drop Delegate
 struct DashboardResetDropDelegate: DropDelegate {
     @Binding var currentDraggedItem: DashboardCardType?
+    @Binding var currentlyHoveredArea: String?
+    
+    func dropEntered(info: DropInfo) {
+        currentlyHoveredArea = "background"
+    }
+    
+    func dropExited(info: DropInfo) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            if self.currentlyHoveredArea == "background" {
+                self.currentDraggedItem = nil
+            }
+        }
+    }
     
     func performDrop(info: DropInfo) -> Bool {
         DispatchQueue.main.async {
