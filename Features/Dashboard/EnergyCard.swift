@@ -133,67 +133,56 @@ struct EnergyCardLarge: View {
     @State private var isLoading = true
     
     var body: some View {
-        VStack(spacing: 0) {
-            // Header
-            HStack(alignment: .center) {
-                HStack(spacing: 8) {
-                    Image(systemName: "bolt.batteryblock.fill")
-                        .foregroundColor(.yellow)
-                        .font(.title3)
-                    
-                    Text("Tagesenergie")
-                        .font(.headline)
-                        .foregroundColor(.primary)
-                }
-                Spacer()
-                Image(systemName: "chevron.right")
-                    .foregroundColor(.gray)
-            }
-            .padding(.horizontal, 16)
-            .padding(.top, 16)
-            .padding(.bottom, 12)
-            
-            // Content
+        HStack(spacing: 20) {
             if isLoading {
                 Spacer()
                 ProgressView()
                 Spacer()
             } else if let res = result {
-                HStack(spacing: 20) {
-                    // Ring
-                    ZStack {
-                        Circle()
-                            .stroke(Color.secondary.opacity(0.2), lineWidth: 8)
-                        
-                        Circle()
-                            .trim(from: 0, to: CGFloat(res.currentEnergy) / 100.0)
-                            .stroke(energyColor(res.currentEnergy), style: StrokeStyle(lineWidth: 8, lineCap: .round))
-                            .rotationEffect(.degrees(-90))
-                        
-                        Text("\(res.currentEnergy)%")
-                            .font(.system(size: 24, weight: .bold, design: .rounded))
+                // Circular Progress
+                ZStack {
+                    Circle()
+                        .stroke(Color.secondary.opacity(0.2), lineWidth: 10)
+                    
+                    Circle()
+                        .trim(from: 0, to: CGFloat(res.currentEnergy) / 100.0)
+                        .stroke(energyColor(res.currentEnergy), style: StrokeStyle(lineWidth: 10, lineCap: .round))
+                        .rotationEffect(.degrees(-90))
+                        .animation(.spring(response: 0.6, dampingFraction: 0.8), value: CGFloat(res.currentEnergy))
+                    
+                    VStack(spacing: 2) {
+                        Image(systemName: "bolt.batteryblock.fill")
                             .foregroundColor(energyColor(res.currentEnergy))
+                            .font(.caption)
+                        Text("\(res.currentEnergy)")
+                            .font(.system(size: 20, weight: .bold, design: .rounded))
                     }
-                    .frame(width: 80, height: 80)
-                    
-                    // Details
-                    VStack(alignment: .leading, spacing: 6) {
-                        detailRow(icon: "sunrise.fill", text: "Start: \(res.morningCapacity)%", color: .orange)
-                        if res.activeCaloriesBurned != nil {
-                            detailRow(icon: "flame.fill", text: "Aktiv: -\(res.stepsDrain)%", color: .red)
-                        } else {
-                            detailRow(icon: "figure.walk", text: "Schritte: -\(res.stepsDrain)%", color: .blue)
-                        }
-                        if res.workoutsCount > 0 {
-                            detailRow(icon: "figure.run", text: "Training: -\(res.workoutDrain)%", color: .green)
-                        }
-                        detailRow(icon: "clock.fill", text: "Zeit: -\(res.passiveDrain)%", color: .gray)
-                    }
-                    
-                    Spacer()
                 }
-                .padding(.horizontal, 16)
-                .padding(.bottom, 16)
+                .frame(width: 90, height: 90)
+                
+                // Texts
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Tagesenergie")
+                        .font(.headline)
+                        .foregroundColor(.primary)
+                    
+                    Text("Start: \(res.morningCapacity)%")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                        
+                    HStack(spacing: 12) {
+                        EnergyBadge(label: "A", value: res.stepsDrain, color: .red)
+                        if res.workoutsCount > 0 {
+                            EnergyBadge(label: "T", value: res.workoutDrain, color: .green)
+                        }
+                        EnergyBadge(label: "Z", value: res.passiveDrain, color: .gray)
+                    }
+                    .padding(.top, 4)
+                }
+                
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .foregroundColor(.gray)
             } else {
                 Spacer()
                 Text("Keine Daten")
@@ -201,24 +190,20 @@ struct EnergyCardLarge: View {
                 Spacer()
             }
         }
+        .padding(20)
         .frame(height: 130)
-        .background(Color.backgroundSecondary)
-        .cornerRadius(20)
+        .background(
+            RoundedRectangle(cornerRadius: 24, style: .continuous)
+                .fill(Color.backgroundSecondary)
+                .shadow(color: .black.opacity(0.05), radius: 15, y: 8)
+        )
         .onAppear {
             Task { await calculateEnergy() }
         }
     }
     
     private func detailRow(icon: String, text: String, color: Color) -> some View {
-        HStack(spacing: 6) {
-            Image(systemName: icon)
-                .foregroundColor(color)
-                .frame(width: 16)
-                .font(.caption2)
-            Text(text)
-                .font(.caption)
-                .foregroundColor(.secondary)
-        }
+        EmptyView() // Kept just in case, but no longer used
     }
     
     private func energyColor(_ val: Int) -> Color {
@@ -264,6 +249,23 @@ struct EnergyCardLarge: View {
         await MainActor.run {
             self.result = res
             self.isLoading = false
+        }
+    }
+}
+
+struct EnergyBadge: View {
+    let label: String
+    let value: Int
+    let color: Color
+    
+    var body: some View {
+        HStack(spacing: 4) {
+            Circle()
+                .fill(color)
+                .frame(width: 8, height: 8)
+            Text("\(label) \(value)%")
+                .font(.caption2.bold())
+                .foregroundColor(.secondary)
         }
     }
 }
