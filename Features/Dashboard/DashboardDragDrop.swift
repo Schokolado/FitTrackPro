@@ -65,9 +65,22 @@ struct DashboardDropDelegate: DropDelegate {
     }
     
     func performDrop(info: DropInfo) -> Bool {
-        // layoutManager.save() is now handled if needed, or DragStateMonitor will reset
-        currentDraggedItem = nil
+        DispatchQueue.main.async {
+            self.currentDraggedItem = nil
+        }
         layoutManager.save()
+        return true
+    }
+}
+
+// MARK: - Dashboard Reset Drop Delegate
+struct DashboardResetDropDelegate: DropDelegate {
+    @Binding var currentDraggedItem: DashboardCardType?
+    
+    func performDrop(info: DropInfo) -> Bool {
+        DispatchQueue.main.async {
+            self.currentDraggedItem = nil
+        }
         return true
     }
 }

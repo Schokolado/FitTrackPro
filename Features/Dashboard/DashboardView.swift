@@ -144,6 +144,7 @@ struct DashboardView: View {
                 }
                 .scrollContentBackground(.hidden)
                 .background(Color.backgroundPrimary.ignoresSafeArea())
+                .onDrop(of: [UTType.plainText], delegate: DashboardResetDropDelegate(currentDraggedItem: $currentDraggedItem))
                 .navigationTitle("")
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
@@ -270,12 +271,14 @@ struct DashboardView: View {
                     }
                     objc_setAssociatedObject(provider, "monitor", monitor, .OBJC_ASSOCIATION_RETAIN)
                     
-                    // Delay setting state so SwiftUI captures the opaque snapshot first
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-                        self.currentDraggedItem = card.type
-                    }
-                    
+                    self.currentDraggedItem = card.type
                     return provider
+                } preview: {
+                    let screenWidth = UIScreen.main.bounds.width - 32
+                    renderCard(card)
+                        .frame(width: card.size == .large ? screenWidth : (screenWidth - 16) / 2)
+                        .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+                        .environment(\.modelContext, modelContext)
                 }
                 .onDrop(of: [UTType.plainText], delegate: DashboardDropDelegate(item: card.type, currentDraggedItem: $currentDraggedItem, layoutManager: layoutManager))
         } else {
