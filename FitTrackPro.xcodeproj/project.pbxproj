@@ -57,6 +57,7 @@
 		A3268CA138CE40874E8F2CFF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6591C297DAF6F333CB811C09 /* LaunchScreen.storyboard */; };
 		A33F7966C8450171C53DFEE4 /* DashboardWidgetsSmall.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46670F6BD0AA10C07463B9CA /* DashboardWidgetsSmall.swift */; };
 		A61BB3ADC489DCE23A7794B0 /* TrainingPlan+Grouping.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE9B37B479CDA0811F3D0A4 /* TrainingPlan+Grouping.swift */; };
+		A817CA0827430735CAF2ABA3 /* DashboardDragDrop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B94034CE5279452BAD9317A /* DashboardDragDrop.swift */; };
 		B1C2D3E4F5A6B7C8D9E0F1A3 /* SupersetIconStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D3E4F5A6B7C8D9E0F1A2 /* SupersetIconStack.swift */; };
 		B2C3D4E5F6A7B8C9D0E1F2A4 /* WorkoutTimerHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C3D4E5F6A7B8C9D0E1F2A3 /* WorkoutTimerHeaderView.swift */; };
 		B96C34A88E74ADEA03037BD5 /* WaterTrackerCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = D852CA8C97C2C31A686297EE /* WaterTrackerCard.swift */; };
@@ -151,6 +152,7 @@
 
 /* Begin PBXFileReference section */
 		091FB85E0B15358EBE83C5A8 /* EnergyResult.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = EnergyResult.swift; sourceTree = "<group>"; };
+		0B94034CE5279452BAD9317A /* DashboardDragDrop.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DashboardDragDrop.swift; path = Features/Dashboard/DashboardDragDrop.swift; sourceTree = "<group>"; };
 		11192C42A9773F3ADA87A3EE /* StepEntryFormView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = StepEntryFormView.swift; sourceTree = "<group>"; };
 		13DDE9988564BE01DF60DAF6 /* RecoveryCard.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RecoveryCard.swift; sourceTree = "<group>"; };
 		14C4D49E2A6FED96E1D13A96 /* StepEntry.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = StepEntry.swift; sourceTree = "<group>"; };
@@ -322,6 +324,7 @@
 				7A2E402E06389C18191D018B /* Nutrition */,
 				89B010D575431A2000DAD682 /* Onboarding */,
 				F1205D4C3AA1053D26D572D5 /* Training */,
+				79F1DDCD18DE9F2CFAB0FE99 /* Dashboard */,
 			);
 			name = Features;
 			sourceTree = "<group>";
@@ -396,6 +399,14 @@
 				3C92A58CE14A4EB0289D654D /* PDFHistoricalPlanTemplate.swift */,
 			);
 			path = PDF;
+			sourceTree = "<group>";
+		};
+		79F1DDCD18DE9F2CFAB0FE99 /* Dashboard */ = {
+			isa = PBXGroup;
+			children = (
+				0B94034CE5279452BAD9317A /* DashboardDragDrop.swift */,
+			);
+			name = Dashboard;
 			sourceTree = "<group>";
 		};
 		7A2E402E06389C18191D018B /* Nutrition */ = {
@@ -989,6 +1000,7 @@
 				9E3113EA7F1FE08CABDAAF3A /* EnergyResult.swift in Sources */,
 				DC8736E80F4BF819FF6A8FAA /* EnergyDetailView.swift in Sources */,
 				25DDA0FAB4C5006D65DDFC31 /* EnergyCard.swift in Sources */,
+				A817CA0827430735CAF2ABA3 /* DashboardDragDrop.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

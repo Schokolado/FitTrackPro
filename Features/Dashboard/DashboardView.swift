@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import UniformTypeIdentifiers
 
 struct DashboardView: View {
     @Binding var selectedTab: Int
@@ -60,50 +61,13 @@ struct DashboardView: View {
     }
     @State private var navId = UUID()
     @StateObject private var layoutManager = DashboardLayoutManager()
+    @State private var currentDraggedItem: DashboardCardType?
     @State private var isEditMode = false
     
     var body: some View {
         NavigationStack {
-            if isEditMode {
-                List {
-                    ForEach(layoutManager.cards) { card in
-                        HStack {
-                            Image(systemName: card.type.icon)
-                                .foregroundColor(.brand)
-                                .frame(width: 30)
-                            Text(card.type.displayName)
-                            Spacer()
-                            Button(action: {
-                                layoutManager.toggleSize(for: card.type)
-                            }) {
-                                Text(card.size == .large ? "Large" : "Small")
-                                    .font(.caption)
-                                    .padding(.horizontal, 10)
-                                    .padding(.vertical, 5)
-                                    .background(Color.secondary.opacity(0.2))
-                                    .cornerRadius(8)
-                            }
-                            .buttonStyle(PlainButtonStyle())
-                        }
-                    }
-                    .onMove { indices, newOffset in
-                        layoutManager.move(from: indices, to: newOffset)
-                    }
-                }
-                .environment(\.editMode, .constant(.active))
-                .navigationTitle("Dashboard anpassen")
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Button("Fertig") {
-                            withAnimation { isEditMode = false }
-                        }
-                        .fontWeight(.bold)
-                    }
-                }
-            } else {
-                ScrollView {
-                    VStack(spacing: 24) {
+            ScrollView {
+                VStack(spacing: 24) {
                         // Header
                         HStack {
                             VStack(alignment: .leading, spacing: 4) {
@@ -170,14 +134,14 @@ struct DashboardView: View {
                             let row = rows[index]
                             if row[0].size == .large {
                                 // Large card
-                                renderCard(row[0])
+                                renderCardWithEditOverlay(row[0])
                                     .padding(.horizontal)
                             } else {
                                 // Small cards
                                 LazyVGrid(columns: [GridItem(.flexible(), spacing: 16), GridItem(.flexible(), spacing: 16)], spacing: 16) {
-                                    renderCard(row[0])
+                                    renderCardWithEditOverlay(row[0])
                                     if row.count > 1 {
-                                        renderCard(row[1])
+                                        renderCardWithEditOverlay(row[1])
                                     } else {
                                         Color.clear
                                     }
@@ -196,24 +160,32 @@ struct DashboardView: View {
                 .navigationTitle("")
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Menu {
-                            Button(action: {
-                                withAnimation { isEditMode = true }
-                            }) {
-                                Label("Dashboard anpassen", systemImage: "slider.horizontal.3")
+                    if isEditMode {
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            Button("Fertig") {
+                                withAnimation { isEditMode = false }
                             }
-                            
-                            NavigationLink(destination: LazyView(SettingsView())) {
-                                Label("Einstellungen", systemImage: "gearshape.fill")
+                            .fontWeight(.bold)
+                        }
+                    } else {
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            Menu {
+                                Button(action: {
+                                    withAnimation { isEditMode = true }
+                                }) {
+                                    Label("Dashboard anpassen", systemImage: "slider.horizontal.3")
+                                }
+                                
+                                NavigationLink(destination: LazyView(SettingsView())) {
+                                    Label("Einstellungen", systemImage: "gearshape.fill")
+                                }
+                            } label: {
+                                Image(systemName: "ellipsis.circle.fill")
+                                    .foregroundColor(.primary)
                             }
-                        } label: {
-                            Image(systemName: "ellipsis.circle.fill")
-                                .foregroundColor(.primary)
                         }
                     }
                 }
-            }
         }
         .id(navId)
         .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("TabReselected"))) { notification in
@@ -297,6 +269,35 @@ struct DashboardView: View {
             rows.append(currentRow)
         }
         return rows
+    }
+    
+    @ViewBuilder
+    private func renderCardWithEditOverlay(_ card: DashboardCardConfig) -> some View {
+        renderCard(card)
+            .allowsHitTesting(!isEditMode)
+            .jiggle(isEnabled: isEditMode)
+            .overlay(alignment: .topTrailing) {
+                if isEditMode {
+                    Button {
+                        withAnimation { layoutManager.toggleSize(for: card.type) }
+                    } label: {
+                        Image(systemName: card.size == .large ? "arrow.down.right.and.arrow.up.left.circle.fill" : "arrow.up.left.and.arrow.down.right.circle.fill")
+                            .font(.system(size: 28))
+                            .foregroundStyle(.white, .gray.opacity(0.8))
+                            .background(Circle().fill(Color.black.opacity(0.3)))
+                    }
+                    .padding(-8)
+                    .transition(.scale)
+                }
+            }
+            .onDrag {
+                if isEditMode {
+                    self.currentDraggedItem = card.type
+                    return NSItemProvider(object: card.type.rawValue as NSString)
+                }
+                return NSItemProvider()
+            }
+            .onDrop(of: [.text], delegate: DashboardDropDelegate(item: card.type, currentDraggedItem: $currentDraggedItem, layoutManager: layoutManager))
     }
     
     @ViewBuilder

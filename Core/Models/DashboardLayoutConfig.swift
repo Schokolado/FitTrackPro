@@ -92,6 +92,17 @@ class DashboardLayoutManager: ObservableObject {
         cards.move(fromOffsets: source, toOffset: destination)
     }
     
+    func moveCard(from sourceCard: DashboardCardType, to destinationCard: DashboardCardType) {
+        guard sourceCard != destinationCard else { return }
+        guard let sourceIndex = cards.firstIndex(where: { $0.type == sourceCard }),
+              let destIndex = cards.firstIndex(where: { $0.type == destinationCard }) else { return }
+        
+        let card = cards.remove(at: sourceIndex)
+        // If moving down, the destIndex shifted by 1.
+        let insertIndex = sourceIndex < destIndex ? destIndex : destIndex
+        cards.insert(card, at: insertIndex)
+    }
+    
     func toggleSize(for cardType: DashboardCardType) {
         if let index = cards.firstIndex(where: { $0.type == cardType }) {
             cards[index].size = cards[index].size == .large ? .small : .large
