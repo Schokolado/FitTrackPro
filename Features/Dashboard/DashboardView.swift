@@ -146,7 +146,7 @@ struct DashboardView: View {
                     Color.backgroundPrimary.ignoresSafeArea()
                         .onDrop(of: [UTType.plainText], delegate: DashboardResetDropDelegate(layoutManager: layoutManager))
                 )
-                .navigationTitle(layoutManager.draggedItem?.rawValue ?? "")
+                .navigationTitle("")
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     if isEditMode {
