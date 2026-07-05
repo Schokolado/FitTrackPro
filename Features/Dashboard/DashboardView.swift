@@ -237,15 +237,15 @@ struct DashboardView: View {
     
     @ViewBuilder
     private func renderCardWithEditOverlay(_ card: DashboardCardConfig) -> some View {
-        let content = ZStack {
-            renderCard(card)
-            if isEditMode {
-                Color.black.opacity(0.001) // Captures touches for drag & drop
-            }
-        }
-        .jiggle(isEnabled: isEditMode)
-            .overlay(alignment: .topTrailing) {
-                if isEditMode {
+        let baseContent = renderCard(card)
+            .contentShape(Rectangle())
+        
+        if isEditMode {
+            baseContent
+                .jiggle(isEnabled: true)
+                .contentShape(.dragPreview, RoundedRectangle(cornerRadius: 24, style: .continuous))
+                .opacity(currentDraggedItem == card.type ? 0.001 : 1.0)
+                .overlay(alignment: .topTrailing) {
                     Button {
                         withAnimation { layoutManager.toggleSize(for: card.type) }
                     } label: {
@@ -257,13 +257,8 @@ struct DashboardView: View {
                     .padding(-8)
                     .transition(.scale)
                 }
-            }
-            
-        if isEditMode {
-            content
-                .contentShape(.dragPreview, RoundedRectangle(cornerRadius: 24, style: .continuous))
-                .opacity(currentDraggedItem == card.type ? 0.001 : 1.0)
                 .onDrag {
+                    self.currentlyHoveredArea = card.type.rawValue
                     self.currentDraggedItem = card.type
                     return NSItemProvider(object: card.type.rawValue as NSString)
                 } preview: {
@@ -275,7 +270,7 @@ struct DashboardView: View {
                 }
                 .onDrop(of: [UTType.plainText], delegate: DashboardDropDelegate(item: card.type, currentDraggedItem: $currentDraggedItem, currentlyHoveredArea: $currentlyHoveredArea, layoutManager: layoutManager))
         } else {
-            content
+            baseContent
         }
     }
     
