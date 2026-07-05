@@ -273,7 +273,7 @@ struct DashboardView: View {
     
     @ViewBuilder
     private func renderCardWithEditOverlay(_ card: DashboardCardConfig) -> some View {
-        renderCard(card)
+        let content = renderCard(card)
             .allowsHitTesting(!isEditMode)
             .jiggle(isEnabled: isEditMode)
             .overlay(alignment: .topTrailing) {
@@ -290,14 +290,17 @@ struct DashboardView: View {
                     .transition(.scale)
                 }
             }
-            .onDrag {
-                if isEditMode {
+            
+        if isEditMode {
+            content
+                .onDrag {
                     self.currentDraggedItem = card.type
                     return NSItemProvider(object: card.type.rawValue as NSString)
                 }
-                return NSItemProvider()
-            }
-            .onDrop(of: [.text], delegate: DashboardDropDelegate(item: card.type, currentDraggedItem: $currentDraggedItem, layoutManager: layoutManager))
+                .onDrop(of: [UTType.plainText], delegate: DashboardDropDelegate(item: card.type, currentDraggedItem: $currentDraggedItem, layoutManager: layoutManager))
+        } else {
+            content
+        }
     }
     
     @ViewBuilder
