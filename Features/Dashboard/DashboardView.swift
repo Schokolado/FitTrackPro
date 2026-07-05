@@ -144,8 +144,15 @@ struct DashboardView: View {
                     await refreshSteps()
                 }
                 .scrollContentBackground(.hidden)
-                .background(Color.backgroundPrimary.ignoresSafeArea())
-                .onDrop(of: [UTType.plainText], delegate: DashboardResetDropDelegate(currentDraggedItem: $currentDraggedItem, currentlyHoveredArea: $currentlyHoveredArea))
+                .background(
+                    Color.backgroundPrimary.ignoresSafeArea()
+                        .onDrop(of: [UTType.plainText], delegate: DashboardResetDropDelegate(
+                            currentlyHoveredArea: $currentlyHoveredArea,
+                            onCleanup: {
+                                self.currentDraggedItem = nil
+                            }
+                        ))
+                )
                 .navigationTitle("")
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
@@ -245,10 +252,10 @@ struct DashboardView: View {
     private func renderCardWithEditOverlay(_ card: DashboardCardConfig) -> some View {
         let baseContent = renderCard(card)
             .contentShape(Rectangle())
+            .jiggle(isEnabled: isEditMode)
         
         if isEditMode {
             baseContent
-                .jiggle(isEnabled: true)
                 .contentShape(.dragPreview, RoundedRectangle(cornerRadius: 24, style: .continuous))
                 .opacity(currentDraggedItem == card.type ? 0.001 : 1.0)
                 .overlay(alignment: .topTrailing) {
@@ -274,7 +281,15 @@ struct DashboardView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
                         .environment(\.modelContext, modelContext)
                 }
-                .onDrop(of: [UTType.plainText], delegate: DashboardDropDelegate(item: card.type, currentDraggedItem: $currentDraggedItem, currentlyHoveredArea: $currentlyHoveredArea, layoutManager: layoutManager))
+                .onDrop(of: [UTType.plainText], delegate: DashboardDropDelegate(
+                    item: card.type,
+                    currentDraggedItem: $currentDraggedItem,
+                    currentlyHoveredArea: $currentlyHoveredArea,
+                    layoutManager: layoutManager,
+                    onCleanup: {
+                        self.currentDraggedItem = nil
+                    }
+                ))
         } else {
             baseContent
         }

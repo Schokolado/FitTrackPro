@@ -46,6 +46,7 @@ struct DashboardDropDelegate: DropDelegate {
     @Binding var currentDraggedItem: DashboardCardType?
     @Binding var currentlyHoveredArea: String?
     let layoutManager: DashboardLayoutManager
+    var onCleanup: () -> Void
     
     static var lastMoveTime: TimeInterval = 0
     
@@ -70,24 +71,24 @@ struct DashboardDropDelegate: DropDelegate {
         let area = item.rawValue
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             if self.currentlyHoveredArea == area {
-                self.currentDraggedItem = nil
+                self.onCleanup()
             }
         }
     }
     
     func performDrop(info: DropInfo) -> Bool {
-        DispatchQueue.main.async {
-            self.currentDraggedItem = nil
-        }
         layoutManager.save()
+        DispatchQueue.main.async {
+            self.onCleanup()
+        }
         return true
     }
 }
 
 // MARK: - Dashboard Reset Drop Delegate
 struct DashboardResetDropDelegate: DropDelegate {
-    @Binding var currentDraggedItem: DashboardCardType?
     @Binding var currentlyHoveredArea: String?
+    var onCleanup: () -> Void
     
     func dropEntered(info: DropInfo) {
         currentlyHoveredArea = "background"
@@ -96,14 +97,14 @@ struct DashboardResetDropDelegate: DropDelegate {
     func dropExited(info: DropInfo) {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             if self.currentlyHoveredArea == "background" {
-                self.currentDraggedItem = nil
+                self.onCleanup()
             }
         }
     }
     
     func performDrop(info: DropInfo) -> Bool {
         DispatchQueue.main.async {
-            self.currentDraggedItem = nil
+            self.onCleanup()
         }
         return true
     }
