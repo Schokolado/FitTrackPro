@@ -69,22 +69,27 @@ struct EnergyCalculator {
         // 15% pro Workout
         let workoutDrain = Double(workoutsToday) * 15.0
         
-        let totalDrain = passiveDrain + stepsDrain + workoutDrain
-        var currentEnergy = morningCapacity - totalDrain
+        let morningCapInt = Int(round(morningCapacity))
+        let passiveDrainInt = Int(round(passiveDrain))
+        let stepsDrainInt = Int(round(stepsDrain))
+        let workoutDrainInt = Int(round(workoutDrain))
+        
+        let totalDrainInt = passiveDrainInt + stepsDrainInt + workoutDrainInt
+        var currentEnergyInt = morningCapInt - totalDrainInt
         
         // Clamp
-        if currentEnergy < 0 { currentEnergy = 0 }
-        if currentEnergy > 100 { currentEnergy = 100 }
+        if currentEnergyInt < 0 { currentEnergyInt = 0 }
+        if currentEnergyInt > 100 { currentEnergyInt = 100 }
         
         return EnergyResult(
-            currentEnergy: Int(currentEnergy),
-            morningCapacity: Int(morningCapacity),
-            sleepPoints: Int(sleepPoints),
-            recoveryPoints: Int(recoveryScore ?? 100),
-            passiveDrain: Int(passiveDrain),
-            stepsDrain: Int(stepsDrain),
-            workoutDrain: Int(workoutDrain),
-            totalDrain: Int(totalDrain),
+            currentEnergy: currentEnergyInt,
+            morningCapacity: morningCapInt,
+            sleepPoints: Int(round(sleepPoints)),
+            recoveryPoints: Int(round(recoveryScore ?? 100)),
+            passiveDrain: passiveDrainInt,
+            stepsDrain: stepsDrainInt,
+            workoutDrain: workoutDrainInt,
+            totalDrain: totalDrainInt,
             activeCaloriesBurned: activeCaloriesToday,
             steps: stepsToday,
             workoutsCount: workoutsToday,
