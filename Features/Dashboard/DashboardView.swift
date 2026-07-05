@@ -129,26 +129,14 @@ struct DashboardView: View {
                         .padding(.horizontal)
                         
                         // Dynamic Cards
-                        let rows = groupCardsForRows(layoutManager.cards)
-                        ForEach(rows.indices, id: \.self) { index in
-                            let row = rows[index]
-                            if row[0].size == .large {
-                                // Large card
-                                renderCardWithEditOverlay(row[0])
-                                    .padding(.horizontal)
-                            } else {
-                                // Small cards
-                                LazyVGrid(columns: [GridItem(.flexible(), spacing: 16), GridItem(.flexible(), spacing: 16)], spacing: 16) {
-                                    renderCardWithEditOverlay(row[0])
-                                    if row.count > 1 {
-                                        renderCardWithEditOverlay(row[1])
-                                    } else {
-                                        Color.clear
-                                    }
-                                }
-                                .padding(.horizontal)
+                        DashboardGridLayout(spacing: 16) {
+                            ForEach(layoutManager.cards, id: \.id) { card in
+                                renderCardWithEditOverlay(card)
+                                    .dashboardCardSize(card.size)
+                                    .animation(.default, value: card.size) // Animate size changes
                             }
                         }
+                        .padding(.horizontal)
                     }
                     .padding(.bottom, 24)
                 }
@@ -245,31 +233,6 @@ struct DashboardView: View {
     }
     
     // MARK: - Dynamic Rendering
-    
-    private func groupCardsForRows(_ cards: [DashboardCardConfig]) -> [[DashboardCardConfig]] {
-        var rows: [[DashboardCardConfig]] = []
-        var currentRow: [DashboardCardConfig] = []
-        
-        for card in cards {
-            if card.size == .large {
-                if !currentRow.isEmpty {
-                    rows.append(currentRow)
-                    currentRow = []
-                }
-                rows.append([card])
-            } else {
-                currentRow.append(card)
-                if currentRow.count == 2 {
-                    rows.append(currentRow)
-                    currentRow = []
-                }
-            }
-        }
-        if !currentRow.isEmpty {
-            rows.append(currentRow)
-        }
-        return rows
-    }
     
     @ViewBuilder
     private func renderCardWithEditOverlay(_ card: DashboardCardConfig) -> some View {

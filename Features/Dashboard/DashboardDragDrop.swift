@@ -70,3 +70,75 @@ struct DashboardDropDelegate: DropDelegate {
         return true
     }
 }
+
+// MARK: - Dashboard Grid Layout
+
+struct DashboardCardSizeKey: LayoutValueKey {
+    static let defaultValue: DashboardCardSize = .small
+}
+
+extension View {
+    func dashboardCardSize(_ size: DashboardCardSize) -> some View {
+        self.layoutValue(key: DashboardCardSizeKey.self, value: size)
+    }
+}
+
+struct DashboardGridLayout: Layout {
+    var spacing: CGFloat = 16
+    
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        let boundsWidth = proposal.width ?? 350
+        let smallWidth = (boundsWidth - spacing) / 2
+        
+        var currentY: CGFloat = 0
+        var currentX: CGFloat = 0
+        var rowHeight: CGFloat = 0
+        
+        for subview in subviews {
+            let sizeType = subview[DashboardCardSizeKey.self]
+            let itemWidth = sizeType == .large ? boundsWidth : smallWidth
+            
+            // Wrap if it doesn't fit
+            if currentX + itemWidth > boundsWidth + 1 {
+                currentY += rowHeight + spacing
+                currentX = 0
+                rowHeight = 0
+            }
+            
+            let itemSize = subview.sizeThatFits(ProposedViewSize(width: itemWidth, height: nil))
+            rowHeight = max(rowHeight, itemSize.height)
+            
+            currentX += itemWidth + spacing
+        }
+        
+        return CGSize(width: boundsWidth, height: currentY + rowHeight)
+    }
+    
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        let boundsWidth = bounds.width
+        let smallWidth = (boundsWidth - spacing) / 2
+        
+        var currentY: CGFloat = bounds.minY
+        var currentX: CGFloat = bounds.minX
+        var rowHeight: CGFloat = 0
+        
+        for subview in subviews {
+            let sizeType = subview[DashboardCardSizeKey.self]
+            let itemWidth = sizeType == .large ? boundsWidth : smallWidth
+            
+            if currentX + itemWidth > bounds.maxX + 1 {
+                currentY += rowHeight + spacing
+                currentX = bounds.minX
+                rowHeight = 0
+            }
+            
+            let pSize = ProposedViewSize(width: itemWidth, height: nil)
+            let itemSize = subview.sizeThatFits(pSize)
+            
+            subview.place(at: CGPoint(x: currentX, y: currentY), anchor: .topLeading, proposal: pSize)
+            
+            rowHeight = max(rowHeight, itemSize.height)
+            currentX += itemWidth + spacing
+        }
+    }
+}
