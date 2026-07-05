@@ -391,12 +391,70 @@ struct DashboardView: View {
             }
         }
     }
+    
+    @ViewBuilder
+    private func renderCardContent(_ config: DashboardCardConfig) -> some View {
+        switch config.type {
+        case .nutrition:
+            if config.size == .large {
+                NutritionSummaryCard(consumed: consumedCalories, goal: dailyCalorieGoal, carbs: consumedCarbs, protein: consumedProtein, fat: consumedFat)
+            } else {
+                NutritionSummaryCardSmall(consumed: consumedCalories, goal: dailyCalorieGoal)
+            }
+        case .steps:
+            if config.size == .large {
+                StepSummaryCard(steps: totalTodaySteps, goal: dailyStepGoal)
+            } else {
+                StepSummaryCardSmall(steps: totalTodaySteps, goal: dailyStepGoal)
+            }
+        case .weight:
+            if config.size == .large {
+                WeightSummaryCardLarge(entries: weightEntries)
+            } else {
+                WeightSummaryCard(entries: weightEntries)
+            }
+        case .training:
+            if config.size == .large {
+                TrainingSummaryCardLarge(workouts: todayWorkouts, activeSession: workoutManager.activeSession, yesterdayWorkout: yesterdayWorkout)
+            } else {
+                TrainingSummaryCard(workouts: todayWorkouts, activeSession: workoutManager.activeSession, yesterdayWorkout: yesterdayWorkout)
+            }
+        case .recovery:
+            if config.size == .large {
+                RecoveryCard()
+            } else {
+                RecoveryCardSmall()
+            }
+        case .energy:
+            if config.size == .large {
+                EnergyCardLarge()
+            } else {
+                EnergyCardSmall()
+            }
+        case .water:
+            if config.size == .large {
+                WaterTrackerCardLarge(entries: waterEntries)
+            } else {
+                WaterTrackerCard(entries: waterEntries)
+            }
+        case .sleep:
+            if config.size == .large {
+                SleepTrackerCardLarge()
+            } else {
+                SleepTrackerCard()
+            }
+        case .mood:
+            if config.size == .large {
+                MoodSummaryCard()
+            } else {
+                MoodSummaryCardSmall()
+            }
+        }
+    }
 }
 
 #Preview {
     DashboardView(selectedTab: .constant(0))
+        .environment(\.modelContext, try! ModelContext(try! ModelContainer(for: WeightEntry.self, FoodEntry.self, WorkoutSession.self, StepEntry.self, WaterEntry.self)))
+        .environment(WorkoutManager.shared)
 }
-import SwiftUI
-import SwiftData
-
-
