@@ -63,10 +63,14 @@ struct EnergyCardSmall: View {
                 }
             }
         }
+        .padding(20)
+        .frame(maxWidth: .infinity, alignment: .leading)
         .frame(height: 160)
-        .padding(16)
-        .background(Color.backgroundSecondary)
-        .cornerRadius(20)
+        .background(
+            RoundedRectangle(cornerRadius: 24, style: .continuous)
+                .fill(Color.backgroundSecondary)
+                .shadow(color: .black.opacity(0.05), radius: 15, y: 8)
+        )
         .onAppear {
             Task { await calculateEnergy() }
         }
