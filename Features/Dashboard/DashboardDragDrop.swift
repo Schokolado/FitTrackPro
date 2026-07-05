@@ -80,8 +80,9 @@ class DragStateMonitor {
         self.onDeinit = onDeinit
     }
     deinit {
+        let action = self.onDeinit
         DispatchQueue.main.async {
-            self.onDeinit()
+            action()
         }
     }
 }
