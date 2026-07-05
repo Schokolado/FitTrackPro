@@ -171,11 +171,11 @@ struct EnergyCardLarge: View {
                         .foregroundColor(.secondary)
                         
                     HStack(spacing: 12) {
-                        EnergyBadge(label: "A", value: res.stepsDrain, color: .red)
+                        EnergyBadge(label: "Aktiv", value: res.stepsDrain, color: .red)
                         if res.workoutsCount > 0 {
-                            EnergyBadge(label: "T", value: res.workoutDrain, color: .green)
+                            EnergyBadge(label: "Training", value: res.workoutDrain, color: .green)
                         }
-                        EnergyBadge(label: "Z", value: res.passiveDrain, color: .gray)
+                        EnergyBadge(label: "Zeit", value: res.passiveDrain, color: .gray)
                     }
                     .padding(.top, 4)
                 }
@@ -263,7 +263,7 @@ struct EnergyBadge: View {
             Circle()
                 .fill(color)
                 .frame(width: 8, height: 8)
-            Text("\(label) \(value)%")
+            Text("\(label) -\(value)%")
                 .font(.caption2.bold())
                 .foregroundColor(.secondary)
         }
