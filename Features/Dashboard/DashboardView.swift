@@ -260,15 +260,11 @@ struct DashboardView: View {
             
         if isEditMode {
             content
-                .opacity(currentDraggedItem == card.type ? 0.001 : 1.0) // Hide original but keep hit-testing active if needed
+                .contentShape(.dragPreview, RoundedRectangle(cornerRadius: 24, style: .continuous))
+                .opacity(currentDraggedItem == card.type ? 0.001 : 1.0)
                 .onDrag {
                     self.currentDraggedItem = card.type
                     return NSItemProvider(object: card.type.rawValue as NSString)
-                } preview: {
-                    let screenWidth = UIScreen.main.bounds.width - 32
-                    renderCard(card)
-                        .frame(width: card.size == .large ? screenWidth : (screenWidth - 16) / 2)
-                        .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
                 }
                 .onDrop(of: [UTType.plainText], delegate: DashboardDropDelegate(item: card.type, currentDraggedItem: $currentDraggedItem, layoutManager: layoutManager))
         } else {
