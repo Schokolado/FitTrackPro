@@ -49,6 +49,9 @@ final class HealthKitService {
         if let rhrType = HKObjectType.quantityType(forIdentifier: .restingHeartRate) {
             types.insert(rhrType)
         }
+        if let activeEnergyType = HKObjectType.quantityType(forIdentifier: .activeEnergyBurned) {
+            types.insert(activeEnergyType)
+        }
         
         let sleepType = HKObjectType.categoryType(forIdentifier: .sleepAnalysis)!
         types.insert(sleepType)
@@ -707,6 +710,28 @@ final class HealthKitService {
                 } else {
                     continuation.resume(returning: nil)
                 }
+            }
+            healthStore.execute(query)
+        }
+    }
+    
+    /// Holt die verbrannten Aktivitätskalorien für einen Tag
+    func fetchActiveEnergyBurned(for date: Date) async throws -> Double {
+        guard isAvailable else { throw HealthKitError.notAvailable }
+        guard let type = HKObjectType.quantityType(forIdentifier: .activeEnergyBurned) else { throw HealthKitError.notAvailable }
+        
+        let start = Calendar.current.startOfDay(for: date)
+        let end = Calendar.current.date(byAdding: .day, value: 1, to: start)!
+        let predicate = HKQuery.predicateForSamples(withStart: start, end: end, options: .strictStartDate)
+        
+        return try await withCheckedThrowingContinuation { continuation in
+            let query = HKStatisticsQuery(quantityType: type, quantitySamplePredicate: predicate, options: .cumulativeSum) { _, result, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+                let sum = result?.sumQuantity()?.doubleValue(for: HKUnit.kilocalorie()) ?? 0.0
+                continuation.resume(returning: sum)
             }
             healthStore.execute(query)
         }

@@ -2,7 +2,7 @@ import SwiftUI
 import Combine
 
 enum DashboardCardType: String, Codable, CaseIterable, Identifiable {
-    case nutrition, steps, weight, training, recovery, water, sleep, mood
+    case nutrition, steps, weight, training, recovery, energy, water, sleep, mood
     var id: String { rawValue }
     
     var displayName: String {
@@ -12,6 +12,7 @@ enum DashboardCardType: String, Codable, CaseIterable, Identifiable {
         case .weight: return "Gewicht"
         case .training: return "Training"
         case .recovery: return "Recovery"
+        case .energy: return "Tagesenergie"
         case .water: return "Wasser"
         case .sleep: return "Schlaf"
         case .mood: return "Stimmung"
@@ -24,7 +25,8 @@ enum DashboardCardType: String, Codable, CaseIterable, Identifiable {
         case .steps: return "figure.walk"
         case .weight: return "scalemass"
         case .training: return "figure.run"
-        case .recovery: return "battery.100.bolt"
+        case .recovery: return "heart.text.square.fill"
+        case .energy: return "bolt.batteryblock.fill"
         case .water: return "drop.fill"
         case .sleep: return "moon.zzz.fill"
         case .mood: return "face.smiling.fill"
@@ -48,6 +50,7 @@ struct DashboardCardConfig: Codable, Identifiable, Equatable {
         DashboardCardConfig(type: .weight, size: .small),
         DashboardCardConfig(type: .training, size: .small),
         DashboardCardConfig(type: .recovery, size: .large),
+        DashboardCardConfig(type: .energy, size: .small),
         DashboardCardConfig(type: .water, size: .small),
         DashboardCardConfig(type: .sleep, size: .small),
         DashboardCardConfig(type: .mood, size: .large),

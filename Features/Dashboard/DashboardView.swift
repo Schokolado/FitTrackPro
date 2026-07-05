@@ -368,6 +368,16 @@ struct DashboardView: View {
             }
             .buttonStyle(PlainButtonStyle())
             
+        case .energy:
+            NavigationLink(destination: EnergyDetailView()) {
+                if config.size == .large {
+                    EnergyCardLarge()
+                } else {
+                    EnergyCardSmall()
+                }
+            }
+            .buttonStyle(PlainButtonStyle())
+            
         case .water:
             NavigationLink(destination: WaterTrackerView()) {
                 if config.size == .large {
