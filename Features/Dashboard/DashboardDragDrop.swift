@@ -65,9 +65,24 @@ struct DashboardDropDelegate: DropDelegate {
     }
     
     func performDrop(info: DropInfo) -> Bool {
+        // layoutManager.save() is now handled if needed, or DragStateMonitor will reset
         currentDraggedItem = nil
         layoutManager.save()
         return true
+    }
+}
+
+// MARK: - Drag State Monitor (Hack for missing onDragEnded)
+
+class DragStateMonitor {
+    var onDeinit: () -> Void
+    init(onDeinit: @escaping () -> Void) {
+        self.onDeinit = onDeinit
+    }
+    deinit {
+        DispatchQueue.main.async {
+            self.onDeinit()
+        }
     }
 }
 

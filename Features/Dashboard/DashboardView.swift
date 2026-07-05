@@ -263,8 +263,20 @@ struct DashboardView: View {
                 .contentShape(.dragPreview, RoundedRectangle(cornerRadius: 24, style: .continuous))
                 .opacity(currentDraggedItem == card.type ? 0.001 : 1.0)
                 .onDrag {
-                    self.currentDraggedItem = card.type
-                    return NSItemProvider(object: card.type.rawValue as NSString)
+                    let provider = NSItemProvider(object: card.type.rawValue as NSString)
+                    let monitor = DragStateMonitor {
+                        if self.currentDraggedItem == card.type {
+                            self.currentDraggedItem = nil
+                        }
+                    }
+                    objc_setAssociatedObject(provider, "monitor", monitor, .OBJC_ASSOCIATION_RETAIN)
+                    
+                    // Delay setting state so SwiftUI captures the opaque snapshot first
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                        self.currentDraggedItem = card.type
+                    }
+                    
+                    return provider
                 }
                 .onDrop(of: [UTType.plainText], delegate: DashboardDropDelegate(item: card.type, currentDraggedItem: $currentDraggedItem, layoutManager: layoutManager))
         } else {
