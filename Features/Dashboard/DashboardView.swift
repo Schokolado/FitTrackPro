@@ -263,22 +263,21 @@ struct DashboardView: View {
                 .contentShape(.dragPreview, RoundedRectangle(cornerRadius: 24, style: .continuous))
                 .opacity(currentDraggedItem == card.type ? 0.001 : 1.0)
                 .onDrag {
-                    let provider = NSItemProvider(object: card.type.rawValue as NSString)
-                    let monitor = DragStateMonitor {
-                        if self.currentDraggedItem == card.type {
-                            self.currentDraggedItem = nil
-                        }
-                    }
-                    objc_setAssociatedObject(provider, "monitor", monitor, .OBJC_ASSOCIATION_RETAIN)
-                    
                     self.currentDraggedItem = card.type
-                    return provider
+                    return NSItemProvider(object: card.type.rawValue as NSString)
                 } preview: {
                     let screenWidth = UIScreen.main.bounds.width - 32
                     renderCard(card)
                         .frame(width: card.size == .large ? screenWidth : (screenWidth - 16) / 2)
                         .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
                         .environment(\.modelContext, modelContext)
+                        .onDisappear {
+                            DispatchQueue.main.async {
+                                if self.currentDraggedItem == card.type {
+                                    self.currentDraggedItem = nil
+                                }
+                            }
+                        }
                 }
                 .onDrop(of: [UTType.plainText], delegate: DashboardDropDelegate(item: card.type, currentDraggedItem: $currentDraggedItem, layoutManager: layoutManager))
         } else {
