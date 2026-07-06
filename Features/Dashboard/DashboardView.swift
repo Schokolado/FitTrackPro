@@ -269,7 +269,10 @@ struct DashboardView: View {
                     if !isEditMode { return NSItemProvider() }
                     layoutManager.hoveredArea = card.type.rawValue
                     layoutManager.draggedItem = card.type
-                    return NSItemProvider(object: card.type.rawValue as NSString)
+                    return TrackingItemProvider(object: card.type.rawValue as NSString) {
+                        layoutManager.draggedItem = nil
+                        layoutManager.save()
+                    }
                 } preview: {
                     let screenWidth = UIScreen.main.bounds.width - 32
                     renderCardContent(card)

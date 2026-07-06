@@ -66,7 +66,6 @@ struct DashboardDropDelegate: DropDelegate {
     
     func performDrop(info: DropInfo) -> Bool {
         if info.hasItemsConforming(to: [UTType.plainText.identifier]) {
-            self.layoutManager.draggedItem = nil
             layoutManager.save()
             return true
         }
@@ -86,20 +85,18 @@ struct DashboardResetDropDelegate: DropDelegate {
     }
     
     func performDrop(info: DropInfo) -> Bool {
-        self.layoutManager.draggedItem = nil
         return true
     }
 }
 
-// MARK: - Drag State Monitor (Hack for missing onDragEnded)
-
-class DragStateMonitor {
-    var onDeinit: () -> Void
-    init(onDeinit: @escaping () -> Void) {
-        self.onDeinit = onDeinit
+class TrackingItemProvider: NSItemProvider {
+    var deinitAction: () -> Void
+    init(object: NSItemProviderWriting, deinitAction: @escaping () -> Void) {
+        self.deinitAction = deinitAction
+        super.init(object: object)
     }
     deinit {
-        let action = self.onDeinit
+        let action = self.deinitAction
         DispatchQueue.main.async {
             action()
         }
