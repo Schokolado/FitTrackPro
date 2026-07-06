@@ -90,15 +90,11 @@ struct DashboardResetDropDelegate: DropDelegate {
 }
 
 class TrackingItemProvider: NSItemProvider {
-    var deinitAction: () -> Void
-    init(object: NSItemProviderWriting, deinitAction: @escaping () -> Void) {
-        self.deinitAction = deinitAction
-        super.init(object: object)
-    }
+    var deinitAction: (() -> Void)?
     deinit {
         let action = self.deinitAction
         DispatchQueue.main.async {
-            action()
+            action?()
         }
     }
 }
