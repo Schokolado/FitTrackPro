@@ -65,14 +65,9 @@ struct DashboardDropDelegate: DropDelegate {
     }
     
     func performDrop(info: DropInfo) -> Bool {
-        layoutManager.isDropping = true
         if info.hasItemsConforming(to: [UTType.plainText.identifier]) {
             self.layoutManager.draggedItem = nil
             layoutManager.save()
-            
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                self.layoutManager.isDropping = false
-            }
             return true
         }
         return false
@@ -91,12 +86,7 @@ struct DashboardResetDropDelegate: DropDelegate {
     }
     
     func performDrop(info: DropInfo) -> Bool {
-        layoutManager.isDropping = true
         self.layoutManager.draggedItem = nil
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            self.layoutManager.isDropping = false
-        }
         return true
     }
 }
