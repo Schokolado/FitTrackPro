@@ -48,15 +48,9 @@ struct DashboardDropDelegate: DropDelegate {
     let item: DashboardCardType
     let layoutManager: DashboardLayoutManager
     
-    static var lastMoveTime: TimeInterval = 0
-    
     func dropEntered(info: DropInfo) {
         layoutManager.hoveredArea = item.rawValue
         if let current = layoutManager.draggedItem, current != item {
-            let now = Date().timeIntervalSince1970
-            if now - DashboardDropDelegate.lastMoveTime < 0.3 { return }
-            DashboardDropDelegate.lastMoveTime = now
-            
             withAnimation(.default) {
                 layoutManager.moveCard(from: current, to: item)
             }
