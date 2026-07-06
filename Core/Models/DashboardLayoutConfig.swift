@@ -58,7 +58,7 @@ struct DashboardCardConfig: Codable, Identifiable, Equatable {
 }
 
 class DashboardLayoutManager: ObservableObject {
-    @Published var cards: [DashboardCardConfig] {
+    @Published var cards: [DashboardCardConfig] = [] {
         didSet { save() }
     }
     
@@ -67,14 +67,43 @@ class DashboardLayoutManager: ObservableObject {
     @Published var isDropping: Bool = false
     
     private let storageKey = "dashboard_layout_config"
+    private var observer: Any?
     
     init() {
-        if let data = UserDefaults.standard.data(forKey: storageKey),
+        observer = NotificationCenter.default.addObserver(
+            forName: NSUbiquitousKeyValueStore.didChangeExternallyNotification,
+            object: NSUbiquitousKeyValueStore.default,
+            queue: .main
+        ) { [weak self] _ in
+            self?.load()
+        }
+        NSUbiquitousKeyValueStore.default.synchronize()
+        load()
+    }
+    
+    deinit {
+        if let observer = observer {
+            NotificationCenter.default.removeObserver(observer)
+        }
+    }
+    
+    private func load() {
+        var dataToDecode: Data? = nil
+        
+        if let data = NSUbiquitousKeyValueStore.default.data(forKey: storageKey) {
+            dataToDecode = data
+            UserDefaults.standard.set(data, forKey: storageKey)
+        } else if let data = UserDefaults.standard.data(forKey: storageKey) {
+            dataToDecode = data
+            NSUbiquitousKeyValueStore.default.set(data, forKey: storageKey)
+            NSUbiquitousKeyValueStore.default.synchronize()
+        }
+        
+        if let data = dataToDecode,
            let decoded = try? JSONDecoder().decode([DashboardCardConfig].self, from: data),
            !decoded.isEmpty {
             
             var loadedCards = decoded
-            // Ensure any new cards added to defaultLayout are included
             for defaultCard in DashboardCardConfig.defaultLayout {
                 if !loadedCards.contains(where: { $0.type == defaultCard.type }) {
                     loadedCards.append(defaultCard)
@@ -89,6 +118,8 @@ class DashboardLayoutManager: ObservableObject {
     func save() {
         if let data = try? JSONEncoder().encode(cards) {
             UserDefaults.standard.set(data, forKey: storageKey)
+            NSUbiquitousKeyValueStore.default.set(data, forKey: storageKey)
+            NSUbiquitousKeyValueStore.default.synchronize()
         }
     }
     
