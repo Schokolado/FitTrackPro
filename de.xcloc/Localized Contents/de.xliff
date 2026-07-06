@@ -165,18 +165,18 @@
         <note>Bundle name</note>
       </trans-unit>
       <trans-unit id="NSCameraUsageDescription" xml:space="preserve">
-        <source>FitTrackPro benötigt die Kamera zum Scannen von Lebensmittel-Barcodes.</source>
-        <target>FitTrackPro benötigt die Kamera zum Scannen von Lebensmittel-Barcodes.</target>
+        <source>Vantage benötigt die Kamera zum Scannen von Lebensmittel-Barcodes.</source>
+        <target>Vantage benötigt die Kamera zum Scannen von Lebensmittel-Barcodes.</target>
         <note/>
       </trans-unit>
       <trans-unit id="NSHealthShareUsageDescription" xml:space="preserve">
-        <source>FitTrackPro liest Gesundheitsdaten für dein Fitness-Tracking.</source>
-        <target>FitTrackPro liest Gesundheitsdaten für dein Fitness-Tracking.</target>
+        <source>Vantage liest Gesundheitsdaten für dein Fitness-Tracking.</source>
+        <target>Vantage liest Gesundheitsdaten für dein Fitness-Tracking.</target>
         <note>Privacy - Health Share Usage Description</note>
       </trans-unit>
       <trans-unit id="NSHealthUpdateUsageDescription" xml:space="preserve">
-        <source>FitTrackPro schreibt Workout- und Gewichtsdaten in Apple Health.</source>
-        <target>FitTrackPro schreibt Workout- und Gewichtsdaten in Apple Health.</target>
+        <source>Vantage schreibt Workout- und Gewichtsdaten in Apple Health.</source>
+        <target>Vantage schreibt Workout- und Gewichtsdaten in Apple Health.</target>
         <note>Privacy - Health Update Usage Description</note>
       </trans-unit>
       <trans-unit id="NSPhotoLibraryUsageDescription" xml:space="preserve">

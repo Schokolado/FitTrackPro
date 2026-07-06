@@ -8,6 +8,7 @@ struct WaterTrackerCard: View {
     @AppStorage(AppStorageKeys.waterQuickAddPreset2) private var preset2: Double = 500
     
     @Environment(\.modelContext) private var modelContext
+    @State private var splashTrigger: Int = 0
     
     var todayEntries: [WaterEntry] {
         let calendar = Calendar.current
@@ -29,6 +30,7 @@ struct WaterTrackerCard: View {
                     .foregroundColor(.cyan)
                     .font(.title2)
                     .frame(width: 28, height: 28)
+                    .symbolEffect(.bounce, options: .speed(1.2), value: splashTrigger)
                 Spacer()
                 Image(systemName: "chevron.right")
                     .foregroundColor(.gray)
@@ -85,6 +87,9 @@ struct WaterTrackerCard: View {
     }
     
     private func addWater(_ amount: Double) {
+        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+        splashTrigger += 1
+        
         let entry = WaterEntry(amountML: amount)
         modelContext.insert(entry)
         updateDailyLog(amount: amount)

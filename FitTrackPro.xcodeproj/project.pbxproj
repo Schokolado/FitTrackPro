@@ -12,6 +12,7 @@
 		0730E4F7D51B730CE3A5A89E /* MealDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1E8E706AC5DE77A2BF50419 /* MealDetailView.swift */; };
 		106ED8499BEEF97D6572CF25 /* WaterTrackerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F03F7FF2A96E0099C9CBCDB /* WaterTrackerView.swift */; };
 		177A1073CEB02209C676C53F /* RecoveryFactorDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 830BB571B479FBB51E2FF7D1 /* RecoveryFactorDetailView.swift */; };
+		189044CD38943233ACA0C4DA /* WorkoutLiveActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF409E7E4C6650A95AF7CDA /* WorkoutLiveActivityAttributes.swift */; };
 		1A75EFE54C66B138BD221AB8 /* EnergyCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7517FB5CB224449A15C396C /* EnergyCalculator.swift */; };
 		21C10E70757DE05AEDA3DC64 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD6744A2D4B3D0CF12153D62 /* SettingsView.swift */; };
 		25DDA0FAB4C5006D65DDFC31 /* EnergyCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 398AF5E67C9017CCBC21A58A /* EnergyCard.swift */; };
@@ -22,6 +23,7 @@
 		30C857921D56527B0F1E71AF /* NotificationNames.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBD770BA5BDC13445B2DF3A7 /* NotificationNames.swift */; };
 		320020B5059CEA25898255D1 /* SleepTrackerCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ECA52CA920C0329CF78E855 /* SleepTrackerCard.swift */; };
 		380089B701426AB15C964150 /* PDFEmptyPlanTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2821A135BC074705A9A9FA /* PDFEmptyPlanTemplate.swift */; };
+		3B43ACF7C61D067173AE9228 /* WorkoutLiveActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF409E7E4C6650A95AF7CDA /* WorkoutLiveActivityAttributes.swift */; };
 		40673D404A445CA10E57F22B /* FoodAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBAC85A08230019A83ADA120 /* FoodAPIService.swift */; };
 		40AF43ADC79F42BF4F4FED0E /* SavedFood.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F1E036C0773BC613277B244 /* SavedFood.swift */; };
 		4306C50BE04344262C514B4D /* VigrLaunchLogo_clean_v2.png in Resources */ = {isa = PBXBuildFile; fileRef = CE84A8B4990CB0DD19E92B42 /* VigrLaunchLogo_clean_v2.png */; };
@@ -62,6 +64,7 @@
 		B2C3D4E5F6A7B8C9D0E1F2A4 /* WorkoutTimerHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C3D4E5F6A7B8C9D0E1F2A3 /* WorkoutTimerHeaderView.swift */; };
 		B96C34A88E74ADEA03037BD5 /* WaterTrackerCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = D852CA8C97C2C31A686297EE /* WaterTrackerCard.swift */; };
 		BDC247244B80892759642F20 /* FoodManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F907E74067D3280BFDE23BEB /* FoodManagementView.swift */; };
+		C14CE8152046710974714929 /* FitTrackProWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 899EF8072421BD2DA04B5DE5 /* FitTrackProWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		C15C887F2F04AEAFCC42A9E9 /* ExerciseIconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D874C7BBAA626D0DBA57A291 /* ExerciseIconView.swift */; };
 		C166854380B2634C9C5DA1DF /* NutritionDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B27C48E182A0E7EF0578249 /* NutritionDashboardView.swift */; };
 		C3F3B4682FD7772000461A0C /* SharedContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3F3B4662FD7772000461A0C /* SharedContainer.swift */; };
@@ -138,12 +141,13 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		C3F3B4612FD774E800461A0C /* Embed Foundation Extensions */ = {
+		EEB12A0D634695390D348CFE /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				C14CE8152046710974714929 /* FitTrackProWidgetExtension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -152,6 +156,7 @@
 
 /* Begin PBXFileReference section */
 		091FB85E0B15358EBE83C5A8 /* EnergyResult.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = EnergyResult.swift; sourceTree = "<group>"; };
+		0AF409E7E4C6650A95AF7CDA /* WorkoutLiveActivityAttributes.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WorkoutLiveActivityAttributes.swift; path = Core/Models/WorkoutLiveActivityAttributes.swift; sourceTree = "<group>"; };
 		0B94034CE5279452BAD9317A /* DashboardDragDrop.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DashboardDragDrop.swift; path = Features/Dashboard/DashboardDragDrop.swift; sourceTree = "<group>"; };
 		11192C42A9773F3ADA87A3EE /* StepEntryFormView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = StepEntryFormView.swift; sourceTree = "<group>"; };
 		13DDE9988564BE01DF60DAF6 /* RecoveryCard.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RecoveryCard.swift; sourceTree = "<group>"; };
@@ -190,6 +195,7 @@
 		8419465B90755D5DA410C4EE /* OnboardingView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		84F05BF8D53602698DFD4650 /* SavedFoodFormView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SavedFoodFormView.swift; sourceTree = "<group>"; };
 		8731522474B83B7321837381 /* DashboardView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DashboardView.swift; path = Features/Dashboard/DashboardView.swift; sourceTree = "<group>"; };
+		899EF8072421BD2DA04B5DE5 /* FitTrackProWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = FitTrackProWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		89E73F9AD9D778043116C753 /* RecipeBuilderView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RecipeBuilderView.swift; sourceTree = "<group>"; };
 		8E7BD54E9C6ABBD3BA0DE353 /* StatisticsViewModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = StatisticsViewModel.swift; sourceTree = "<group>"; };
 		8E911E84FE3DD36A90CF8A68 /* StepTrackerView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = StepTrackerView.swift; sourceTree = "<group>"; };
@@ -452,8 +458,17 @@
 				FDD7E62335CED01D0A6D3E0C /* Services */,
 				23F8B1C3FFA6A0FA01B986EA /* Views */,
 				56AC3307DD980C2BD09C374D /* UI */,
+				987C4F32FD72D252E4022C17 /* Models */,
 			);
 			name = Core;
+			sourceTree = "<group>";
+		};
+		987C4F32FD72D252E4022C17 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				0AF409E7E4C6650A95AF7CDA /* WorkoutLiveActivityAttributes.swift */,
+			);
+			name = Models;
 			sourceTree = "<group>";
 		};
 		AACEB7D8A3F943C215930A77 /* Managers */ = {
@@ -502,6 +517,7 @@
 			isa = PBXGroup;
 			children = (
 				F4A435075AD4A147434FDAF1 /* FitTrackPro */,
+				899EF8072421BD2DA04B5DE5 /* FitTrackProWidgetExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -794,6 +810,7 @@
 			);
 			name = FitTrackProWidgetExtension;
 			productName = FitTrackProWidgetExtension;
+			productReference = 899EF8072421BD2DA04B5DE5 /* FitTrackProWidgetExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
 		C3FDADAD2FCAD62A00E8767F /* FitTrackPro */ = {
@@ -803,7 +820,7 @@
 				C3FDADAA2FCAD62A00E8767F /* Sources */,
 				C3FDADAB2FCAD62A00E8767F /* Frameworks */,
 				C3FDADAC2FCAD62A00E8767F /* Resources */,
-				C3F3B4612FD774E800461A0C /* Embed Foundation Extensions */,
+				EEB12A0D634695390D348CFE /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
@@ -897,6 +914,7 @@
 				C3F3B4742FD7779600461A0C /* WorkoutSession.swift in Sources */,
 				033E67791FF3FE854FA2153C /* WaterEntry.swift in Sources */,
 				78C0C57587AB0BBD5AB25DED /* SleepEntry.swift in Sources */,
+				3B43ACF7C61D067173AE9228 /* WorkoutLiveActivityAttributes.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1001,6 +1019,7 @@
 				DC8736E80F4BF819FF6A8FAA /* EnergyDetailView.swift in Sources */,
 				25DDA0FAB4C5006D65DDFC31 /* EnergyCard.swift in Sources */,
 				A817CA0827430735CAF2ABA3 /* DashboardDragDrop.swift in Sources */,
+				189044CD38943233ACA0C4DA /* WorkoutLiveActivityAttributes.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1044,7 +1063,7 @@
 				CODE_SIGN_ENTITLEMENTS = FitTrackProWidgetExtension.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = 2G888L5QQN;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = FitTrackProWidget/Info.plist;
@@ -1076,7 +1095,7 @@
 				CODE_SIGN_ENTITLEMENTS = FitTrackProWidgetExtension.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = 2G888L5QQN;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = FitTrackProWidget/Info.plist;
@@ -1236,8 +1255,8 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "FitTrackPro-Info.plist";
 				INFOPLIST_KEY_LSRequiresIPhoneOS = YES;
-				INFOPLIST_KEY_NSHealthShareUsageDescription = "FitTrackPro liest Gesundheitsdaten, um deinen Fortschritt zu tracken.";
-				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "FitTrackPro schreibt Workout- und Gewichtsdaten in Apple Health.";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "Vantage liest Gesundheitsdaten, um deinen Fortschritt zu tracken.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Vantage schreibt Workout- und Gewichtsdaten in Apple Health.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
@@ -1276,8 +1295,8 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "FitTrackPro-Info.plist";
 				INFOPLIST_KEY_LSRequiresIPhoneOS = YES;
-				INFOPLIST_KEY_NSHealthShareUsageDescription = "FitTrackPro liest Gesundheitsdaten, um deinen Fortschritt zu tracken.";
-				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "FitTrackPro schreibt Workout- und Gewichtsdaten in Apple Health.";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "Vantage liest Gesundheitsdaten, um deinen Fortschritt zu tracken.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Vantage schreibt Workout- und Gewichtsdaten in Apple Health.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;

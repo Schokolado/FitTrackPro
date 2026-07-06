@@ -391,6 +391,33 @@ final class HealthKitService {
         }
     }
     
+    func deleteWaterIntake(ml: Double, date: Date) async throws {
+        guard isAvailable else { return }
+        guard let waterType = HKQuantityType.quantityType(forIdentifier: .dietaryWater) else { return }
+        
+        let predicate = HKQuery.predicateForSamples(withStart: date, end: date, options: .strictStartDate)
+        
+        let samples = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<[HKSample], Error>) in
+            let query = HKSampleQuery(sampleType: waterType, predicate: predicate, limit: 10, sortDescriptors: nil) { _, samples, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume(returning: samples ?? [])
+                }
+            }
+            healthStore.execute(query)
+        }
+        
+        for sample in samples {
+            if let quantitySample = sample as? HKQuantitySample {
+                let sampleMl = quantitySample.quantity.doubleValue(for: .literUnit(with: .milli))
+                if abs(sampleMl - ml) < 0.1 {
+                    try await healthStore.delete(sample)
+                }
+            }
+        }
+    }
+    
     func saveSleep(bedTime: Date, wakeTime: Date) async throws {
         guard isAvailable else { throw HealthKitError.notAvailable }
         guard let sleepType = HKObjectType.categoryType(forIdentifier: .sleepAnalysis) else {

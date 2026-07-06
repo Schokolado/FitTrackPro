@@ -32,9 +32,9 @@
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>NSHealthShareUsageDescription</key>
-	<string>FitTrackPro liest Gesundheitsdaten, um deinen Fortschritt zu tracken.</string>
+	<string>Vantage liest Gesundheitsdaten, um deinen Fortschritt zu tracken.</string>
 	<key>NSHealthUpdateUsageDescription</key>
-	<string>FitTrackPro schreibt Workout- und Gewichtsdaten in Apple Health.</string>
+	<string>Vantage schreibt Workout- und Gewichtsdaten in Apple Health.</string>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

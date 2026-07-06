@@ -101,7 +101,7 @@ struct WeightSummaryCardLarge: View {
 struct TrainingSummaryCardLarge: View {
     let workouts: [WorkoutSession]
     var activeSession: WorkoutSession? = nil
-    var yesterdayWorkout: WorkoutSession? = nil
+    var lastWorkout: WorkoutSession? = nil
 
     var body: some View {
         HStack(spacing: 20) {
@@ -149,8 +149,8 @@ struct TrainingSummaryCardLarge: View {
                 } else {
                     Text("Anstehend")
                         .font(.system(size: 24, weight: .bold, design: .rounded))
-                    if let yesterday = yesterdayWorkout {
-                        Text("Gestern: \(yesterday.plan?.name ?? "Freies Workout")")
+                    if let last = lastWorkout {
+                        Text("\(formatLastWorkoutDate(last.startTime)): \(last.plan?.name ?? "Freies Workout")")
                             .font(.caption)
                             .foregroundColor(.secondary)
                             .lineLimit(1)
@@ -174,6 +174,17 @@ struct TrainingSummaryCardLarge: View {
                 .shadow(color: .black.opacity(0.05), radius: 15, y: 8)
         )
     }
+
+    private func formatLastWorkoutDate(_ date: Date) -> String {
+        let calendar = Calendar.current
+        if calendar.isDateInYesterday(date) {
+            return "Gestern"
+        } else {
+            let formatter = DateFormatter()
+            formatter.dateFormat = "dd.MM."
+            return formatter.string(from: date)
+        }
+    }
 }
 
 // MARK: - WaterTrackerCardLarge
@@ -183,8 +194,10 @@ struct WaterTrackerCardLarge: View {
     @AppStorage(AppStorageKeys.dailyWaterGoalML) private var goalML: Double = 2500
     @AppStorage(AppStorageKeys.waterQuickAddPreset1) private var preset1: Double = 250
     @AppStorage(AppStorageKeys.waterQuickAddPreset2) private var preset2: Double = 500
+    @AppStorage(AppStorageKeys.waterQuickAddPreset3) private var preset3: Double = 750
 
     @Environment(\.modelContext) private var modelContext
+    @State private var splashTrigger: Int = 0
 
     var todayEntries: [WaterEntry] {
         let calendar = Calendar.current
@@ -216,6 +229,7 @@ struct WaterTrackerCardLarge: View {
                     Image(systemName: "drop.fill")
                         .foregroundColor(.cyan)
                         .font(.caption)
+                        .symbolEffect(.bounce, options: .speed(1.2), value: splashTrigger)
                     Text("\(Int(todayAmount))")
                         .font(.system(size: 16, weight: .bold, design: .rounded))
                         .minimumScaleFactor(0.5)
@@ -238,6 +252,7 @@ struct WaterTrackerCardLarge: View {
                 HStack(spacing: 8) {
                     quickAddButton(amount: preset1)
                     quickAddButton(amount: preset2)
+                    quickAddButton(amount: preset3)
                 }
                 .padding(.top, 4)
             }
@@ -271,6 +286,9 @@ struct WaterTrackerCardLarge: View {
     }
 
     private func addWater(_ amount: Double) {
+        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+        splashTrigger += 1
+        
         let entry = WaterEntry(amountML: amount)
         modelContext.insert(entry)
         updateDailyLog(amount: amount)

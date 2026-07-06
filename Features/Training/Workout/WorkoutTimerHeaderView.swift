@@ -6,9 +6,9 @@ struct WorkoutTimerHeaderView: View {
     var hasNotes: Bool = false
     
     // Timer setting bindings for the menu
-    @AppStorage("timerFav1") private var timerFav1: Int = 60
-    @AppStorage("timerFav2") private var timerFav2: Int = 90
-    @AppStorage("timerFav3") private var timerFav3: Int = 120
+    @AppStorage("timerFav1") private var timerFav1: Int = 30
+    @AppStorage("timerFav2") private var timerFav2: Int = 60
+    @AppStorage("timerFav3") private var timerFav3: Int = 90
     
     // Actions
     var onShowCustomTimer: () -> Void

@@ -284,6 +284,7 @@ struct WaterTrackerView: View {
     }
     
     private func addWater(_ amount: Double) {
+        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
         let entry = WaterEntry(amountML: amount)
         modelContext.insert(entry)
         updateDailyLog(amount: amount)
@@ -294,9 +295,15 @@ struct WaterTrackerView: View {
     }
     
     private func deleteEntry(_ entry: WaterEntry) {
+        let amount = entry.amountML
+        let date = entry.timestamp
         // Adjust DailyLog
-        updateDailyLog(amount: -entry.amountML, for: entry.timestamp)
+        updateDailyLog(amount: -amount, for: date)
         modelContext.delete(entry)
+        
+        Task {
+            try? await HealthKitService.shared.deleteWaterIntake(ml: amount, date: date)
+        }
     }
     
     private func updateDailyLog(amount: Double, for date: Date = Date()) {

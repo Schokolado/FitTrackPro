@@ -32,9 +32,9 @@ struct DashboardView: View {
         workouts.filter { Calendar.current.isDateInToday($0.startTime) && $0.endTime != nil }
     }
     
-    var yesterdayWorkout: WorkoutSession? {
+    var lastWorkout: WorkoutSession? {
         let calendar = Calendar.current
-        return workouts.first { calendar.isDateInYesterday($0.startTime) && $0.endTime != nil }
+        return workouts.first { !calendar.isDateInToday($0.startTime) && $0.endTime != nil }
     }
     
     var totalTodaySteps: Int {
@@ -336,9 +336,9 @@ struct DashboardView: View {
                 }
             }) {
                 if config.size == .large {
-                    TrainingSummaryCardLarge(workouts: todayWorkouts, activeSession: workoutManager.activeSession, yesterdayWorkout: yesterdayWorkout)
+                    TrainingSummaryCardLarge(workouts: todayWorkouts, activeSession: workoutManager.activeSession, lastWorkout: lastWorkout)
                 } else {
-                    TrainingSummaryCard(workouts: todayWorkouts, activeSession: workoutManager.activeSession, yesterdayWorkout: yesterdayWorkout)
+                    TrainingSummaryCard(workouts: todayWorkouts, activeSession: workoutManager.activeSession, lastWorkout: lastWorkout)
                 }
             }
             .buttonStyle(PlainButtonStyle())
@@ -415,9 +415,9 @@ struct DashboardView: View {
             }
         case .training:
             if config.size == .large {
-                TrainingSummaryCardLarge(workouts: todayWorkouts, activeSession: workoutManager.activeSession, yesterdayWorkout: yesterdayWorkout)
+                TrainingSummaryCardLarge(workouts: todayWorkouts, activeSession: workoutManager.activeSession, lastWorkout: lastWorkout)
             } else {
-                TrainingSummaryCard(workouts: todayWorkouts, activeSession: workoutManager.activeSession, yesterdayWorkout: yesterdayWorkout)
+                TrainingSummaryCard(workouts: todayWorkouts, activeSession: workoutManager.activeSession, lastWorkout: lastWorkout)
             }
         case .recovery:
             if config.size == .large {

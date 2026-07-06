@@ -139,23 +139,16 @@ struct FoodSearchView: View {
                         dismiss()
                     }
                 } else {
-                    FoodEntryFormView(mealType: mealType, targetDate: targetDate) { savedName in
-                        onSave?(savedName)
-                        dismiss()
-                    }
-                }
-            }
-            .navigationDestination(isPresented: Binding(
-                get: { showForm && selectedProduct == nil && selectedEntry == nil },
-                set: { if !$0 { showForm = false } }
-            )) {
-                if let onIngredientSelected = onIngredientSelected {
-                    FoodEntryFormView(mealType: .snack, prefilledProduct: nil, prefilledEntry: nil) { savedName in }
-                } else {
-                    FoodEntryFormView(mealType: mealType, prefilledProduct: nil, prefilledEntry: nil) { savedName in
-                        showForm = false
-                        dismiss()
-                        onSave?(savedName)
+                    if onIngredientSelected != nil {
+                        FoodEntryFormView(mealType: .snack, prefilledProduct: nil, prefilledEntry: nil) { savedName in 
+                            showForm = false
+                        }
+                    } else {
+                        FoodEntryFormView(mealType: mealType, prefilledProduct: nil, prefilledEntry: nil, targetDate: targetDate) { savedName in
+                            showForm = false
+                            dismiss()
+                            onSave?(savedName)
+                        }
                     }
                 }
             }

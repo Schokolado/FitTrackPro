@@ -7,29 +7,7 @@ import ActivityKit
 import WidgetKit
 import SwiftUI
 
-public struct WorkoutLiveActivityAttributes: ActivityAttributes {
-    public struct ContentState: Codable, Hashable {
-        public var isPaused: Bool
-        public var accumulatedTime: TimeInterval
-        public var lastStartTime: Date?
-        public var isRestTimerActive: Bool
-        public var restTargetTime: Date?
-        
-        public init(isPaused: Bool, accumulatedTime: TimeInterval, lastStartTime: Date?, isRestTimerActive: Bool = false, restTargetTime: Date? = nil) {
-            self.isPaused = isPaused
-            self.accumulatedTime = accumulatedTime
-            self.lastStartTime = lastStartTime
-            self.isRestTimerActive = isRestTimerActive
-            self.restTargetTime = restTargetTime
-        }
-    }
 
-    public var workoutName: String
-    
-    public init(workoutName: String) {
-        self.workoutName = workoutName
-    }
-}
 
 extension Color {
     static let brand = Color.blue // Fallback brand color for widget
@@ -50,10 +28,10 @@ struct FitTrackProWidgetLiveActivity: Widget {
                 HStack {
                     Image(systemName: "figure.strengthtraining.traditional")
                         .font(.title3.weight(.bold))
-                        .foregroundColor(Color(UIColor.label))
+                        .foregroundColor(.white)
                     Text(context.attributes.workoutName)
                         .font(.headline.weight(.semibold))
-                        .foregroundColor(Color(UIColor.label))
+                        .foregroundColor(.white)
                     Spacer()
                     if context.state.isPaused {
                         HStack(spacing: 4) {
@@ -85,13 +63,13 @@ struct FitTrackProWidgetLiveActivity: Widget {
                         if context.state.isRestTimerActive, let startTime = context.state.lastStartTime {
                             Text("WORKOUT")
                                 .font(.caption2.weight(.bold))
-                                .foregroundColor(Color(UIColor.secondaryLabel))
+                                .foregroundColor(Color.secondary)
                                 .tracking(1.5)
                             let anchor = startTime.addingTimeInterval(-context.state.accumulatedTime).flooredToSecond
                             Text(timerInterval: anchor...anchor.addingTimeInterval(360000), countsDown: false)
                                 .font(.system(size: 32, weight: .bold, design: .rounded).monospacedDigit())
                                 .minimumScaleFactor(0.5)
-                                .foregroundColor(Color(UIColor.label))
+                                .foregroundColor(.white)
                         }
                     }
                     
@@ -100,13 +78,13 @@ struct FitTrackProWidgetLiveActivity: Widget {
                     VStack(alignment: .trailing, spacing: 0) {
                         Text(context.state.isRestTimerActive ? "SATZPAUSE" : "DAUER")
                             .font(.caption2.weight(.bold))
-                            .foregroundColor(Color(UIColor.secondaryLabel))
+                            .foregroundColor(Color.secondary)
                             .tracking(1.5)
                         
                         if context.state.isPaused {
                             Text(formattedTime(context.state.accumulatedTime))
                                 .font(.system(size: 68, weight: .black, design: .rounded))
-                                .foregroundColor(Color(UIColor.label))
+                                .foregroundColor(.white)
                                 .minimumScaleFactor(0.5)
                                 .lineLimit(1)
                                 .multilineTextAlignment(.trailing)
@@ -123,7 +101,7 @@ struct FitTrackProWidgetLiveActivity: Widget {
                             let anchor = startTime.addingTimeInterval(-context.state.accumulatedTime).flooredToSecond
                             Text(timerInterval: anchor...anchor.addingTimeInterval(360000), countsDown: false)
                                 .font(.system(size: 68, weight: .black, design: .rounded).monospacedDigit())
-                                .foregroundColor(Color(UIColor.label))
+                                .foregroundColor(.white)
                                 .minimumScaleFactor(0.5)
                                 .lineLimit(1)
                                 .multilineTextAlignment(.trailing)
@@ -135,8 +113,8 @@ struct FitTrackProWidgetLiveActivity: Widget {
             .padding(.vertical, 12)
             .padding(.horizontal, 16)
             // Using system background to adapt to light/dark automatically
-            .activityBackgroundTint(Color(UIColor.systemBackground))
-            .activitySystemActionForegroundColor(Color(UIColor.label))
+            .activityBackgroundTint(Color.black)
+            .activitySystemActionForegroundColor(.white)
 
         } dynamicIsland: { context in
             DynamicIsland {
@@ -144,7 +122,7 @@ struct FitTrackProWidgetLiveActivity: Widget {
                 DynamicIslandExpandedRegion(.leading) {
                     Label(context.attributes.workoutName, systemImage: "figure.strengthtraining.traditional")
                         .font(.headline)
-                        .foregroundColor(Color(UIColor.label))
+                        .foregroundColor(.white)
                         .padding(.top, 4)
                 }
                 DynamicIslandExpandedRegion(.trailing) {
@@ -161,7 +139,7 @@ struct FitTrackProWidgetLiveActivity: Widget {
                         if context.state.isPaused {
                             Text(formattedTime(context.state.accumulatedTime))
                                 .font(.system(size: 32, weight: .bold, design: .rounded))
-                                .foregroundColor(.primary)
+                                .foregroundColor(.white)
                         } else if context.state.isRestTimerActive, let restTargetTime = context.state.restTargetTime {
                             Text(timerInterval: Date()...restTargetTime, countsDown: true)
                                 .font(.system(size: 32, weight: .bold, design: .rounded))
@@ -171,7 +149,7 @@ struct FitTrackProWidgetLiveActivity: Widget {
                             Text(timerInterval: anchor...anchor.addingTimeInterval(360000), countsDown: false)
                                 .font(.system(size: 32, weight: .bold, design: .rounded).monospacedDigit())
                                 .minimumScaleFactor(0.5)
-                                .foregroundColor(Color(UIColor.label))
+                                .foregroundColor(.white)
                         }
                         Spacer()
                     }
@@ -179,7 +157,7 @@ struct FitTrackProWidgetLiveActivity: Widget {
                 }
             } compactLeading: {
                 Image(systemName: context.state.isRestTimerActive ? "timer" : "figure.strengthtraining.traditional")
-                    .foregroundColor(context.state.isRestTimerActive ? .green : Color(UIColor.label))
+                    .foregroundColor(context.state.isRestTimerActive ? .green : .white)
             } compactTrailing: {
                 if context.state.isPaused {
                     Text("Pause")
@@ -195,17 +173,17 @@ struct FitTrackProWidgetLiveActivity: Widget {
                 } else if let startTime = context.state.lastStartTime {
                     let anchor = startTime.addingTimeInterval(-context.state.accumulatedTime).flooredToSecond
                     Text(timerInterval: anchor...anchor.addingTimeInterval(360000), countsDown: false)
-                        .foregroundColor(Color(UIColor.label))
+                        .foregroundColor(.white)
                         .minimumScaleFactor(0.5)
                         .multilineTextAlignment(.trailing)
                         .frame(maxWidth: 55, alignment: .trailing)
                 }
             } minimal: {
                 Image(systemName: context.state.isRestTimerActive ? "timer" : "figure.strengthtraining.traditional")
-                    .foregroundColor(context.state.isRestTimerActive ? .green : Color(UIColor.label))
+                    .foregroundColor(context.state.isRestTimerActive ? .green : .white)
             }
             .widgetURL(URL(string: "fittrackpro://active-workout"))
-            .keylineTint(Color(UIColor.label))
+            .keylineTint(.white)
         }
     }
     

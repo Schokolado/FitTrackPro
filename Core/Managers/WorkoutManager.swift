@@ -42,29 +42,8 @@ class WorkoutManager {
 
 import ActivityKit
 
-public struct WorkoutLiveActivityAttributes: ActivityAttributes {
-    public struct ContentState: Codable, Hashable {
-        public var isPaused: Bool
-        public var accumulatedTime: TimeInterval
-        public var lastStartTime: Date?
-        public var isRestTimerActive: Bool
-        public var restTargetTime: Date?
-        
-        public init(isPaused: Bool, accumulatedTime: TimeInterval, lastStartTime: Date?, isRestTimerActive: Bool = false, restTargetTime: Date? = nil) {
-            self.isPaused = isPaused
-            self.accumulatedTime = accumulatedTime
-            self.lastStartTime = lastStartTime
-            self.isRestTimerActive = isRestTimerActive
-            self.restTargetTime = restTargetTime
-        }
-    }
 
-    public var workoutName: String
-    
-    public init(workoutName: String) {
-        self.workoutName = workoutName
-    }
-}
+
 
 class LiveActivityManager {
     static let shared = LiveActivityManager()
@@ -92,7 +71,9 @@ class LiveActivityManager {
             } else {
                 currentActivity = try Activity.request(attributes: attributes, contentState: initialContentState, pushType: nil)
             }
-        } catch {}
+        } catch {
+            print("LiveActivityManager start error: \(error)")
+        }
     }
     
     func updateWorkoutActivity(isPaused: Bool, accumulatedTime: TimeInterval, lastStartTime: Date?, isRestTimerActive: Bool, restTargetTime: Date?) {
