@@ -45,14 +45,14 @@ struct DashboardCardConfig: Codable, Identifiable, Equatable {
     var id: String { type.rawValue }
     
     static let defaultLayout: [DashboardCardConfig] = [
+        DashboardCardConfig(type: .recovery, size: .small),
+        DashboardCardConfig(type: .energy, size: .small),
         DashboardCardConfig(type: .nutrition, size: .large),
-        DashboardCardConfig(type: .steps, size: .large),
+        DashboardCardConfig(type: .steps, size: .small),
         DashboardCardConfig(type: .weight, size: .small),
         DashboardCardConfig(type: .training, size: .small),
-        DashboardCardConfig(type: .recovery, size: .large),
-        DashboardCardConfig(type: .energy, size: .small),
         DashboardCardConfig(type: .water, size: .small),
-        DashboardCardConfig(type: .sleep, size: .small),
+        DashboardCardConfig(type: .sleep, size: .large),
         DashboardCardConfig(type: .mood, size: .large),
     ]
 }
