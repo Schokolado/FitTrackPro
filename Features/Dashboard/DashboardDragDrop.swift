@@ -62,12 +62,6 @@ struct DashboardDropDelegate: DropDelegate {
     }
     
     func dropExited(info: DropInfo) {
-        let area = item.rawValue
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            if self.layoutManager.hoveredArea == area {
-                self.layoutManager.draggedItem = nil
-            }
-        }
     }
     
     func performDrop(info: DropInfo) -> Bool {
@@ -94,11 +88,6 @@ struct DashboardResetDropDelegate: DropDelegate {
     }
     
     func dropExited(info: DropInfo) {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            if self.layoutManager.hoveredArea == "background" {
-                self.layoutManager.draggedItem = nil
-            }
-        }
     }
     
     func performDrop(info: DropInfo) -> Bool {
