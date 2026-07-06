@@ -252,16 +252,18 @@ struct DashboardView: View {
                 .contentShape(.dragPreview, RoundedRectangle(cornerRadius: 24, style: .continuous))
                 .opacity(layoutManager.draggedItem == card.type ? 0.001 : 1.0)
                 .overlay(alignment: .topTrailing) {
-                    Button {
-                        withAnimation { layoutManager.toggleSize(for: card.type) }
-                    } label: {
-                        Image(systemName: card.size == .large ? "arrow.down.right.and.arrow.up.left.circle.fill" : "arrow.up.left.and.arrow.down.right.circle.fill")
-                            .font(.system(size: 28))
-                            .foregroundStyle(.white, .gray.opacity(0.8))
-                            .background(Circle().fill(Color.black.opacity(0.3)))
+                    if layoutManager.draggedItem == nil {
+                        Button {
+                            withAnimation { layoutManager.toggleSize(for: card.type) }
+                        } label: {
+                            Image(systemName: card.size == .large ? "arrow.down.right.and.arrow.up.left.circle.fill" : "arrow.up.left.and.arrow.down.right.circle.fill")
+                                .font(.system(size: 28))
+                                .foregroundStyle(.white, .gray.opacity(0.8))
+                                .background(Circle().fill(Color.black.opacity(0.3)))
+                        }
+                        .padding(-8)
+                        .transition(.scale.combined(with: .opacity))
                     }
-                    .padding(-8)
-                    .transition(.scale)
                 }
                 .onDrag {
                     if !isEditMode || layoutManager.isDropping { return NSItemProvider() }
