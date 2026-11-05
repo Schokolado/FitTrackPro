@@ -126,7 +126,7 @@ struct FitTrackProWidgetLiveActivity: Widget {
             let restStillActive = context.state.isRestTimerActive
                 && (context.state.restTargetTime.map { $0 > Date() } ?? false)
 
-            DynamicIsland {
+            return DynamicIsland {
                 // Expanded UI
                 DynamicIslandExpandedRegion(.leading) {
                     Label(context.attributes.workoutName, systemImage: "figure.strengthtraining.traditional")
