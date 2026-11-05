@@ -12,6 +12,7 @@
 	<array>
 		<string>remote-notification</string>
 		<string>fetch</string>
+		<string>workout-processing</string>
 	</array>
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>

@@ -147,7 +147,7 @@ struct WorkoutSessionView: View {
             .alert("Workout abbrechen?", isPresented: $showingCancelAlert) {
                 Button("Ja, abbrechen", role: .destructive) {
                     modelContext.delete(session)
-                    workoutManager.endWorkout()
+                    workoutManager.discardWorkout()
                     dismiss()
                 }
                 Button("Zurück", role: .cancel) {}
@@ -288,7 +288,7 @@ struct WorkoutSessionView: View {
                 dismiss()
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    workoutManager.endWorkout()
+                    workoutManager.discardWorkout()
                 }
             }
             .onReceive(NotificationCenter.default.publisher(for: UITextField.textDidBeginEditingNotification)) { obj in

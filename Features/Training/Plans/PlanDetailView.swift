@@ -322,7 +322,7 @@ struct PlanDetailView: View {
                 if let activeSession = workoutManager.activeSession {
                     modelContext.delete(activeSession)
                 }
-                workoutManager.endWorkout()
+                workoutManager.discardWorkout()
                 executeStartWorkout()
             }
             Button("Abbrechen", role: .cancel) { }

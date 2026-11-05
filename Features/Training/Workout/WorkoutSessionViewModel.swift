@@ -102,6 +102,9 @@ class WorkoutSessionViewModel {
             NotificationService.shared.cancelRestTimerNotification()
         }
         
+        // HKWorkoutSession pausieren
+        HealthKitService.shared.pauseLiveWorkoutSession()
+        
         updateLiveActivity()
     }
     
@@ -115,6 +118,9 @@ class WorkoutSessionViewModel {
             restTargetTime = Date().addingTimeInterval(restTimeRemaining)
             NotificationService.shared.scheduleRestTimerNotification(duration: restTimeRemaining)
         }
+        
+        // HKWorkoutSession fortsetzen
+        HealthKitService.shared.resumeLiveWorkoutSession()
         
         updateLiveActivity()
     }

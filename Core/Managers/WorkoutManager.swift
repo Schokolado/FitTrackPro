@@ -19,11 +19,34 @@ class WorkoutManager {
         let vm = WorkoutSessionViewModel()
         vm.startWorkout()
         self.activeViewModel = vm
+
+        // HKWorkoutSession starten → App bleibt dauerhaft im Hintergrund am Leben
+        HealthKitService.shared.startLiveWorkoutSession(startDate: session.startTime)
     }
     
     func endWorkout() {
+        let sessionId = activeSession?.id.uuidString ?? UUID().uuidString
+        let planName = activeSession?.plan?.name ?? "Freies Training"
+
         self.activeViewModel?.pauseWorkout()
         LiveActivityManager.shared.endWorkoutActivity()
+
+        // HKWorkoutSession beenden und automatisch in Apple Health speichern
+        HealthKitService.shared.endLiveWorkoutSession(
+            endDate: Date(),
+            sessionId: sessionId,
+            planName: planName
+        )
+
+        self.activeSession = nil
+        self.activeViewModel = nil
+    }
+
+    /// Workout verwerfen ohne in Health zu speichern
+    func discardWorkout() {
+        self.activeViewModel?.pauseWorkout()
+        LiveActivityManager.shared.endWorkoutActivity()
+        HealthKitService.shared.discardLiveWorkoutSession()
         self.activeSession = nil
         self.activeViewModel = nil
     }
@@ -37,6 +60,9 @@ class WorkoutManager {
         
         vm.startWorkout()
         self.activeViewModel = vm
+
+        // HKWorkoutSession fortsetzen (neue Session mit dem ursprünglichen Startdatum)
+        HealthKitService.shared.startLiveWorkoutSession(startDate: session.startTime)
     }
 }
 

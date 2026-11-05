@@ -111,6 +111,78 @@ final class HealthKitService {
         }
     }
     
+    // MARK: - Live Workout Session (HKWorkoutSession für Background-Survival)
+
+    private var workoutSession: HKWorkoutSession?
+    private var workoutBuilder: HKLiveWorkoutBuilder?
+
+    /// Startet eine HKWorkoutSession. Hält die App dauerhaft im Hintergrund am Leben.
+    func startLiveWorkoutSession(startDate: Date) {
+        guard isAvailable else { return }
+
+        let configuration = HKWorkoutConfiguration()
+        configuration.activityType = .traditionalStrengthTraining
+        configuration.locationType = .indoor
+
+        do {
+            let session = try HKWorkoutSession(healthStore: healthStore, configuration: configuration)
+            let builder = session.associatedWorkoutBuilder()
+            builder.dataSource = HKLiveWorkoutDataSource(healthStore: healthStore, workoutConfiguration: configuration)
+            self.workoutSession = session
+            self.workoutBuilder = builder
+
+            session.startActivity(with: startDate)
+            builder.beginCollection(withStart: startDate) { _, error in
+                if let error = error {
+                    print("HKLiveWorkoutBuilder beginCollection error: \(error)")
+                }
+            }
+        } catch {
+            print("HKWorkoutSession start error: \(error)")
+        }
+    }
+
+    /// Pausiert die HKWorkoutSession (z.B. wenn der Nutzer das Workout pausiert).
+    func pauseLiveWorkoutSession() {
+        workoutSession?.pause()
+    }
+
+    /// Setzt die HKWorkoutSession fort.
+    func resumeLiveWorkoutSession() {
+        workoutSession?.resume()
+    }
+
+    /// Beendet die HKWorkoutSession und speichert das Workout in Apple Health.
+    func endLiveWorkoutSession(endDate: Date, sessionId: String, planName: String) {
+        guard let session = workoutSession, let builder = workoutBuilder else { return }
+
+        session.end()
+
+        builder.endCollection(withEnd: endDate) { [weak self] _, error in
+            if let error = error {
+                print("HKLiveWorkoutBuilder endCollection error: \(error)")
+                return
+            }
+
+            builder.finishWorkout { workout, error in
+                if let error = error {
+                    print("HKLiveWorkoutBuilder finishWorkout error: \(error)")
+                }
+                // Workout ist jetzt automatisch in Apple Health gespeichert
+                self?.workoutSession = nil
+                self?.workoutBuilder = nil
+            }
+        }
+    }
+
+    /// Bricht eine laufende Session ersatzlos ab (z.B. wenn Workout verworfen wird).
+    func discardLiveWorkoutSession() {
+        workoutBuilder?.discardWorkout()
+        workoutSession?.end()
+        workoutSession = nil
+        workoutBuilder = nil
+    }
+
     /// Exportiert einen Gewichtseintrag
     func exportWeight(entry: WeightEntry) async throws {
         guard isAvailable else { throw HealthKitError.notAvailable }
