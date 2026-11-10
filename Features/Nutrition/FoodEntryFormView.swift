@@ -28,6 +28,21 @@ struct FoodEntryFormView: View {
     @State private var carbsPer100g: Double? = nil
     @State private var fatPer100g: Double? = nil
     
+    init(
+        mealType: MealType? = nil,
+        prefilledProduct: OFFProduct? = nil,
+        prefilledEntry: FoodEntry? = nil,
+        targetDate: Date = Date(),
+        onSave: ((String) -> Void)? = nil
+    ) {
+        self._mealType = State(initialValue: mealType)
+        self.prefilledProduct = prefilledProduct
+        self.prefilledEntry = prefilledEntry
+        self.targetDate = targetDate
+        self.onSave = onSave
+        self._selectedDate = State(initialValue: targetDate)
+    }
+    
     var body: some View {
         NavigationStack {
             Form {

@@ -3,6 +3,7 @@ import SwiftData
 
 struct MealDetailView: View {
     @Environment(\.modelContext) private var modelContext
+    @AppStorage(AppStorageKeys.healthKitEnabled) private var healthKitEnabled = false
     
     let mealType: MealType
     let dateString: String
@@ -20,6 +21,7 @@ struct MealDetailView: View {
     
     @State private var showingRecentEntryForm = false
     @State private var selectedRecentEntry: FoodEntry? = nil
+    @State private var selectedEntryToEdit: FoodEntry? = nil
     
     private var todayLog: DailyLog? {
         allDailyLogs.first { $0.dateString == dateString }
@@ -122,6 +124,14 @@ struct MealDetailView: View {
                             }
                             .padding(.vertical, 4)
                         }
+                        .swipeActions(edge: .leading) {
+                            Button {
+                                selectedEntryToEdit = entry
+                            } label: {
+                                Label("Bearbeiten", systemImage: "pencil")
+                            }
+                            .tint(.blue)
+                        }
                         .swipeActions(edge: .trailing) {
                             Button(role: .destructive) {
                                 deleteEntry(entry)
@@ -195,7 +205,7 @@ struct MealDetailView: View {
         .navigationTitle(mealType.rawValue)
         .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $showingFoodSearch) {
-            FoodSearchView(mealType: mealType) { savedName in
+            FoodSearchView(mealType: mealType, targetDate: parsedDate) { savedName in
                 showingFoodSearch = false
                 savedFoodName = savedName
                 showingSavedAlert = true
@@ -256,6 +266,9 @@ struct MealDetailView: View {
             }
             .presentationDetents([.large])
         }
+        .sheet(item: $selectedEntryToEdit) { entry in
+            FoodEntryEditView(entry: entry)
+        }
         .alert("Gespeichert", isPresented: $showingSavedAlert) {
             Button("OK", role: .cancel) { }
         } message: {
@@ -264,6 +277,11 @@ struct MealDetailView: View {
     }
     
     private func deleteEntry(_ entry: FoodEntry) {
+        if healthKitEnabled {
+            Task {
+                try? await HealthKitService.shared.deleteNutrition(entry: entry)
+            }
+        }
         modelContext.delete(entry)
     }
 }

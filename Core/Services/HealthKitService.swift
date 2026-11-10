@@ -261,6 +261,49 @@ final class HealthKitService {
         }
     }
     
+    /// Löscht die zu einem FoodEntry gehörigen HealthKit-Einträge
+    func deleteNutrition(entry: FoodEntry) async throws {
+        guard isAvailable else { return }
+        
+        let baseUUID = entry.id.uuidString
+        let uuids = [
+            "\(baseUUID)-energy",
+            "\(baseUUID)-carbs",
+            "\(baseUUID)-protein",
+            "\(baseUUID)-fat"
+        ]
+        
+        let types: [HKQuantityType] = [
+            HKObjectType.quantityType(forIdentifier: .dietaryEnergyConsumed),
+            HKObjectType.quantityType(forIdentifier: .dietaryCarbohydrates),
+            HKObjectType.quantityType(forIdentifier: .dietaryProtein),
+            HKObjectType.quantityType(forIdentifier: .dietaryFatTotal)
+        ].compactMap { $0 }
+        
+        for type in types {
+            let predicate = HKQuery.predicateForObjects(withMetadataKey: HKMetadataKeyExternalUUID, allowedValues: uuids)
+            let samples = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<[HKSample], Error>) in
+                let query = HKSampleQuery(sampleType: type, predicate: predicate, limit: HKObjectQueryNoLimit, sortDescriptors: nil) { _, samples, error in
+                    if let error = error {
+                        continuation.resume(throwing: error)
+                    } else {
+                        continuation.resume(returning: samples ?? [])
+                    }
+                }
+                healthStore.execute(query)
+            }
+            if !samples.isEmpty {
+                try await healthStore.delete(samples)
+            }
+        }
+    }
+    
+    /// Aktualisiert einen Ernährungseintrag in HealthKit
+    func updateNutrition(entry: FoodEntry) async throws {
+        try await deleteNutrition(entry: entry)
+        try await exportNutrition(entry: entry)
+    }
+    
     // Hilfsmethoden für Metadaten
     private func calculateTotalReps(for session: WorkoutSession) -> Int {
         let completedSets = (session.sets ?? []).filter { $0.isCompleted }

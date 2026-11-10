@@ -34,6 +34,7 @@
 		620B08C35A23A7D3D80D25F8 /* BarcodeScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31B8F76A071FF82963F58CB1 /* BarcodeScannerView.swift */; };
 		64261F875325D055589257F0 /* StatisticsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E7BD54E9C6ABBD3BA0DE353 /* StatisticsViewModel.swift */; };
 		6878E9929B88B7B40D4254EA /* FoodEntryDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD22A5EC738385F901017E44 /* FoodEntryDetailView.swift */; };
+		6878E9939B88B7B40D4254EB /* FoodEntryEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD22A5ED738385F901017E45 /* FoodEntryEditView.swift */; };
 		6FB78C2F14023A25FB036E7C /* RecoveryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB4B171FAF0CE862A7770D60 /* RecoveryView.swift */; };
 		72045EB5E7F437C519DD8609 /* PDFHistoricalPlanTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C92A58CE14A4EB0289D654D /* PDFHistoricalPlanTemplate.swift */; };
 		76B55E2E29C4912E33E0EBF6 /* StatisticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FCB2AFC6611A944CF53EA52 /* StatisticsView.swift */; };
@@ -249,6 +250,7 @@
 		C8078C8FF9F0DB706D95F1BC /* Recipe.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Recipe.swift; sourceTree = "<group>"; };
 		C9941A700145BCF946FB8E80 /* DashboardWidgets.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DashboardWidgets.swift; sourceTree = "<group>"; };
 		CD22A5EC738385F901017E44 /* FoodEntryDetailView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = FoodEntryDetailView.swift; path = Features/Nutrition/FoodEntryDetailView.swift; sourceTree = "<group>"; };
+		CD22A5ED738385F901017E45 /* FoodEntryEditView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = FoodEntryEditView.swift; path = Features/Nutrition/FoodEntryEditView.swift; sourceTree = "<group>"; };
 		CE84A8B4990CB0DD19E92B42 /* VigrLaunchLogo_clean_v2.png */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = image.png; path = VigrLaunchLogo_clean_v2.png; sourceTree = "<group>"; };
 		CFED6926A8A26CC69B4ABA71 /* PlanProgressView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PlanProgressView.swift; sourceTree = "<group>"; };
 		D852CA8C97C2C31A686297EE /* WaterTrackerCard.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WaterTrackerCard.swift; sourceTree = "<group>"; };
@@ -421,6 +423,7 @@
 				7768BF38EA403DA6D3786DE7 /* FoodSearchView.swift */,
 				B1E8E706AC5DE77A2BF50419 /* MealDetailView.swift */,
 				CD22A5EC738385F901017E44 /* FoodEntryDetailView.swift */,
+				CD22A5ED738385F901017E45 /* FoodEntryEditView.swift */,
 			);
 			name = Nutrition;
 			sourceTree = "<group>";
@@ -970,6 +973,7 @@
 				812EF5ED4BB3C57C65D4A4CF /* FoodSearchView.swift in Sources */,
 				0730E4F7D51B730CE3A5A89E /* MealDetailView.swift in Sources */,
 				6878E9929B88B7B40D4254EA /* FoodEntryDetailView.swift in Sources */,
+				6878E9939B88B7B40D4254EB /* FoodEntryEditView.swift in Sources */,
 				D41652995A51F1EE5E2CEC6A /* DashboardView.swift in Sources */,
 				E4D8520B764D043C948E1905 /* WeightTrackerView.swift in Sources */,
 				2B934108FF060CCF528CC462 /* WeightEntryFormView.swift in Sources */,
