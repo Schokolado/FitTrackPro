@@ -21,6 +21,7 @@ struct ExerciseDetailView: View {
         case "bauch": return "figure.pilates"
         case "cardio": return "heart.fill"
         case "ganzkörper": return "figure.highintensity.intervaltraining"
+        case "mobilität", "mobility": return "figure.flexibility"
         default: return "dumbbell.fill"
         }
     }
@@ -289,7 +290,9 @@ struct ExerciseHistoryPreview: View {
                             .font(.subheadline)
                         Spacer()
                         let isCardio = exercise.category.lowercased() == "cardio"
-                        Text(isCardio ? "Lvl \(Int(set.actualWeight)) • \(set.actualReps) Min" : "\(set.actualWeight, specifier: "%.1f") kg × \(set.actualReps)")
+                        let isTimeBased = exercise.isTimeBased || isCardio
+                        let durationUnit = (exercise.timeUnit.isEmpty == false ? exercise.timeUnit : nil) ?? (isCardio ? "Min" : "Sek")
+                        Text(isCardio ? "Lvl \(Int(set.actualWeight)) • \(set.actualReps) Min" : (isTimeBased ? "\(set.actualReps) \(durationUnit)" : "\(set.actualWeight, specifier: "%.1f") kg × \(set.actualReps)"))
                             .font(.subheadline.bold())
                             .foregroundColor(.primary)
                     }

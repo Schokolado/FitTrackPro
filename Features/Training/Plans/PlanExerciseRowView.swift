@@ -166,12 +166,14 @@ struct PlanExerciseRowView: View {
                         }
                         
                         let isCardio = planExercise.exercise?.category.lowercased() == "cardio"
+                        let isTimeBased = planExercise.exercise?.isTimeBased == true || isCardio
+                        let durationUnit = (planExercise.exercise?.timeUnit.isEmpty == false ? planExercise.exercise?.timeUnit : nil) ?? (isCardio ? "Min" : "Sek")
                         
                         VStack(alignment: .leading) {
-                            Text(isCardio ? "Zeit (Min)" : "Wdh.")
+                            Text(isTimeBased ? "Zeit (\(durationUnit))" : "Wdh.")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
-                            TextField(isCardio ? "Min" : "Wdh.", value: $planExercise.targetReps, format: .number)
+                            TextField(isTimeBased ? durationUnit : "Wdh.", value: $planExercise.targetReps, format: .number)
                                 .keyboardType(.numberPad)
                                 .textFieldStyle(.roundedBorder)
                         }
@@ -290,7 +292,9 @@ struct PlanExerciseHistoryButton: View {
         Button(action: { showingHistory = true }) {
             if let lastSet = pastSets.first {
                 let isCardio = exercise.category.lowercased() == "cardio"
-                Text(isCardio ? "Zuletzt: Lvl \(Int(lastSet.actualWeight)) • \(lastSet.actualReps) Min" : "Zuletzt: \(lastSet.actualWeight, specifier: "%.1f") kg × \(lastSet.actualReps)")
+                let isTimeBased = exercise.isTimeBased || isCardio
+                let durationUnit = (exercise.timeUnit.isEmpty == false ? exercise.timeUnit : nil) ?? (isCardio ? "Min" : "Sek")
+                Text(isCardio ? "Zuletzt: Lvl \(Int(lastSet.actualWeight)) • \(lastSet.actualReps) Min" : (isTimeBased ? "Zuletzt: \(lastSet.actualReps) \(durationUnit)" : "Zuletzt: \(lastSet.actualWeight, specifier: "%.1f") kg × \(lastSet.actualReps)"))
                     .font(.caption)
                     .foregroundColor(.brand)
                     .padding(.horizontal, 8)

@@ -6,6 +6,8 @@ enum ExerciseCategory: String, Codable, CaseIterable {
     case freeWeight     = "Freie Gewichte"
     case cable          = "Kabelzug"
     case bodyweight     = "Eigengewicht"
+    case mobility       = "Mobilität"
+    case cardio         = "Cardio"
 }
 
 @Model
@@ -21,6 +23,8 @@ final class Exercise {
     var isArchived: Bool = false
     var sortOrder: Int = 0
     var createdAt: Date = Date()
+    var isTimeBased: Bool = false
+    var timeUnit: String = "Min"
 
     @Relationship(deleteRule: .nullify, inverse: \PlanExercise.exercise)
     var planExercises: [PlanExercise]?
@@ -28,7 +32,7 @@ final class Exercise {
     @Relationship(deleteRule: .nullify, inverse: \WorkoutSet.exercise)
     var workoutSets: [WorkoutSet]?
 
-    init(id: UUID = UUID(), name: String = "", category: String = "Freie Gewichte", notes: String = "", externalVideoURL: URL? = nil, localMediaPaths: [String] = [], defaultRestDuration: TimeInterval = 90.0, isCustom: Bool = false, isArchived: Bool = false, sortOrder: Int = 0, createdAt: Date = Date()) {
+    init(id: UUID = UUID(), name: String = "", category: String = "Freie Gewichte", notes: String = "", externalVideoURL: URL? = nil, localMediaPaths: [String] = [], defaultRestDuration: TimeInterval = 90.0, isCustom: Bool = false, isArchived: Bool = false, sortOrder: Int = 0, createdAt: Date = Date(), isTimeBased: Bool = false, timeUnit: String = "Min") {
         self.id = id
         self.name = name
         self.category = category
@@ -40,6 +44,8 @@ final class Exercise {
         self.isArchived = isArchived
         self.sortOrder = sortOrder
         self.createdAt = createdAt
+        self.isTimeBased = isTimeBased
+        self.timeUnit = timeUnit
     }
 
     /// Deletes the exercise, cascades to PlanExercises, and resolves superset relationships.
@@ -77,6 +83,7 @@ extension Exercise {
         case "bauch / core", "abs / core", "bauch": return .green
         case "cardio": return .red
         case "ganzkörper", "full body": return .mint
+        case "mobilität", "mobility": return .teal
         default: return .gray
         }
     }
@@ -84,6 +91,7 @@ extension Exercise {
     var themeIcon: String {
         switch category.lowercased() {
         case "cardio": return "figure.run"
+        case "mobilität", "mobility": return "figure.flexibility"
         case "beine", "legs": return "figure.walk" // Fallback since no custom icon
         case "ganzkörper", "full body": return "figure.mixed.cardio" // Fallback since no custom icon
         default: return "dumbbell.fill"

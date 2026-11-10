@@ -27,7 +27,7 @@ class ThemeManager: ObservableObject {
     }
     
     let standardCategories = [
-        "Brust", "Rücken", "Beine", "Schultern", "Arme", "Bauch / Core", "Cardio", "Ganzkörper"
+        "Brust", "Rücken", "Beine", "Schultern", "Arme", "Bauch / Core", "Cardio", "Ganzkörper", "Mobilität"
     ]
     
     private let defaultColors: [String: Color] = [
@@ -38,7 +38,8 @@ class ThemeManager: ObservableObject {
         "arme": .cyan, "arms": .cyan,
         "bauch / core": .green, "abs / core": .green,
         "cardio": .red,
-        "ganzkörper": .mint, "full body": .mint
+        "ganzkörper": .mint, "full body": .mint,
+        "mobilität": .teal, "mobility": .teal
     ]
     
     init() {

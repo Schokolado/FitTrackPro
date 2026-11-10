@@ -608,6 +608,8 @@ struct ExerciseHistoryBlock: View {
                         Spacer()
                         
                         let isCardio = exercise.category.lowercased() == "cardio"
+                        let isTimeBased = exercise.isTimeBased || isCardio
+                        let durationUnit = (exercise.timeUnit.isEmpty == false ? exercise.timeUnit : nil) ?? (isCardio ? "Min" : "Sek")
                         
                         HStack(spacing: 6) {
                             Image(systemName: isCardio ? "speedometer" : "dumbbell.fill")
@@ -621,10 +623,10 @@ struct ExerciseHistoryBlock: View {
                         Spacer()
                         
                         HStack(spacing: 6) {
-                            Image(systemName: isCardio ? "clock.fill" : "arrow.triangle.2.circlepath")
+                            Image(systemName: isTimeBased ? "clock.fill" : "arrow.triangle.2.circlepath")
                                 .font(.caption2)
                                 .foregroundColor(.secondary)
-                            Text("\(set.actualReps) \(isCardio ? "Min" : "Wdh")")
+                            Text("\(set.actualReps) \(isTimeBased ? durationUnit : "Wdh")")
                                 .font(.subheadline.bold())
                         }
                         .frame(minWidth: 70, alignment: .leading)

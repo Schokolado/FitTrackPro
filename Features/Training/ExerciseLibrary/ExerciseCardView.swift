@@ -19,6 +19,7 @@ struct ExerciseCardView: View {
         case "bauch": return "figure.pilates"
         case "cardio": return "heart.fill"
         case "ganzkörper": return "figure.highintensity.intervaltraining"
+        case "mobilität", "mobility": return "figure.flexibility"
         default: return "dumbbell.fill"
         }
     }

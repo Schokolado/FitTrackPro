@@ -61,14 +61,16 @@ struct ExerciseHistoryView: View {
                                 Spacer()
                                 
                                 let isCardio = exercise.category.lowercased() == "cardio"
+                                let isTimeBased = exercise.isTimeBased || isCardio
+                                let durationUnit = (exercise.timeUnit.isEmpty == false ? exercise.timeUnit : nil) ?? (isCardio ? "Min" : "Sek")
                                 
                                 Text(isCardio ? "Level \(Int(set.actualWeight))" : "\(set.actualWeight, specifier: "%.1f") kg")
                                     .font(.headline)
                                     .frame(width: 80, alignment: .trailing)
                                 
-                                Text(isCardio ? "\(set.actualReps) Min" : "× \(set.actualReps)")
+                                Text(isCardio ? "\(set.actualReps) Min" : (isTimeBased ? "\(set.actualReps) \(durationUnit)" : "× \(set.actualReps)"))
                                     .font(.headline)
-                                    .frame(width: 60, alignment: .trailing)
+                                    .frame(width: 80, alignment: .trailing)
                             }
                         }
                     }

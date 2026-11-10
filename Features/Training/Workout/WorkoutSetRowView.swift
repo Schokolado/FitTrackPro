@@ -7,6 +7,8 @@ struct WorkoutSetRowView: View {
     
     var body: some View {
         let isCardio = workoutSet.exercise?.category.lowercased() == "cardio"
+        let isTimeBased = workoutSet.exercise?.isTimeBased == true || isCardio
+        let durationUnit = (workoutSet.exercise?.timeUnit.isEmpty == false ? workoutSet.exercise?.timeUnit : nil) ?? (isCardio ? "Min" : "Sek")
         
         HStack {
             // Set Number
@@ -43,7 +45,7 @@ struct WorkoutSetRowView: View {
                     .padding(8)
                     .background(Color.backgroundSecondary)
                     .cornerRadius(8)
-                Text(isCardio ? "Min" : "Wdh")
+                Text(isTimeBased ? durationUnit : "Wdh")
                     .font(.caption)
                     .foregroundColor(.secondary)
             }

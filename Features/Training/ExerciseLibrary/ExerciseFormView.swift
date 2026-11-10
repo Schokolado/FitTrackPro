@@ -12,13 +12,19 @@ struct ExerciseFormView: View {
     @Query private var allExercises: [Exercise]
     
     private var availableCategories: [String] {
-        Array(Set(allExercises.map { $0.category })).sorted()
+        let standard = [
+            "Brust", "Rücken", "Beine", "Schultern", "Arme", "Bauch / Core", "Cardio", "Ganzkörper", "Mobilität"
+        ]
+        let existing = allExercises.map { $0.category }
+        return Array(Set(standard + existing)).sorted()
     }
     
     @State private var name: String = ""
     @State private var category: String = "Freie Gewichte"
     @State private var isCustomCategory: Bool = false
     @State private var customCategoryName: String = ""
+    @State private var isTimeBased: Bool = false
+    @State private var timeUnit: String = "Min"
     @State private var defaultRestDuration: Double = 90
     @State private var notes: String = ""
     @State private var externalVideoURLString: String = ""
@@ -31,6 +37,8 @@ struct ExerciseFormView: View {
         if let exercise = exerciseToEdit {
             _name = State(initialValue: exercise.name)
             _category = State(initialValue: exercise.category)
+            _isTimeBased = State(initialValue: exercise.isTimeBased)
+            _timeUnit = State(initialValue: exercise.timeUnit)
             _defaultRestDuration = State(initialValue: exercise.defaultRestDuration)
             _notes = State(initialValue: exercise.notes)
             _externalVideoURLString = State(initialValue: exercise.externalVideoURL?.absoluteString ?? "")
@@ -69,6 +77,21 @@ struct ExerciseFormView: View {
                             Image(systemName: "xmark.circle.fill")
                                 .foregroundColor(.secondary)
                         }
+                    }
+                }
+            }
+            
+            Section(header: Text("Erfassung & Ausführung")) {
+                Picker("Art der Erfassung", selection: $isTimeBased) {
+                    Text("Wiederholungen (Wdh.)").tag(false)
+                    Text("Dauer (Zeit)").tag(true)
+                }
+                .pickerStyle(.segmented)
+                
+                if isTimeBased {
+                    Picker("Zeiteinheit", selection: $timeUnit) {
+                        Text("Minuten (Min)").tag("Min")
+                        Text("Sekunden (Sek)").tag("Sek")
                     }
                 }
             }
@@ -161,6 +184,8 @@ struct ExerciseFormView: View {
         if let exercise = exerciseToEdit {
             exercise.name = name
             exercise.category = finalCategory
+            exercise.isTimeBased = isTimeBased
+            exercise.timeUnit = timeUnit
             exercise.defaultRestDuration = defaultRestDuration
             exercise.notes = notes
             exercise.externalVideoURL = videoURL
@@ -174,7 +199,9 @@ struct ExerciseFormView: View {
                 externalVideoURL: videoURL,
                 localMediaPaths: localMediaPaths,
                 defaultRestDuration: defaultRestDuration,
-                isCustom: true
+                isCustom: true,
+                isTimeBased: isTimeBased,
+                timeUnit: timeUnit
             )
             modelContext.insert(newExercise)
             onSave?(newExercise)
