@@ -103,8 +103,8 @@ struct ExerciseFormView: View {
             }
             
             Section(header: Text("Notizen")) {
-                TextEditor(text: $notes)
-                    .frame(minHeight: 100)
+                RichNotesEditor(text: $notes, minHeight: 160, placeholder: "Notizen / Ausführung eingeben...")
+                    .padding(.vertical, 4)
             }
             
             Section(header: Text("Medien & Video")) {

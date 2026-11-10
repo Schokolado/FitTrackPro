@@ -105,33 +105,33 @@ class SeedDataService {
         let specs: [PlanSeedSpec] = [
             PlanSeedSpec(
                 name: "Mobility A: Unterkörper, ISG & Hüfte",
-                notes: "Fokus: Hüftbeuger entlasten, Piriformis dehnen, ISG mobilisieren & Triggerpunkte lösen.\nDauer: ca. 15 Minuten.\nIdeal im Wechsel mit Tag B für eine gesunde Hüfte und einen entspannten unteren Rücken.",
+                notes: "## Fokus\nHüftbeuger entlasten, Piriformis dehnen, ISG mobilisieren & Triggerpunkte lösen.\n\n**Dauer:** ca. 15 Minuten\nIdeal im Wechsel mit Tag B für eine gesunde Hüfte und einen entspannten unteren Rücken.",
                 exercises: [
-                    ("Couch Stretch", 2, 2, 15, "2 Min. pro Seite (4 Min. gesamt)"),
-                    ("Taube / Pigeon Pose", 2, 2, 15, "1,5–2 Min. pro Seite (3–4 Min. gesamt)"),
-                    ("90/90 Hüftrotation", 1, 2, 15, "1,5–2 Min. dynamisch"),
-                    ("Triggerpunkt-Behandlung", 1, 3, 15, "2–3 Min. mit Lacrosse-/Tennisball (30–60s pro Punkt)"),
-                    ("Plank mit Beckenkippung", 2, 45, 30, "2 Sätze á 45 Sek.")
+                    ("Couch Stretch", 2, 2, 15, "**2 Min. pro Seite** (4 Min. gesamt)"),
+                    ("Taube / Pigeon Pose", 2, 2, 15, "**1,5–2 Min. pro Seite** (3–4 Min. gesamt)"),
+                    ("90/90 Hüftrotation", 1, 2, 15, "**1,5–2 Min.** dynamisch"),
+                    ("Triggerpunkt-Behandlung", 1, 3, 15, "**2–3 Min.** mit Lacrosse-/Tennisball (30–60s pro Punkt)"),
+                    ("Plank mit Beckenkippung", 2, 45, 30, "**2 Sätze á 45 Sek.**")
                 ]
             ),
             PlanSeedSpec(
                 name: "Mobility B: Oberkörper, BWS & Haltung",
-                notes: "Fokus: Brustwirbelsäule aufrichten, Brustmuskulatur dehnen, Nacken entlasten & Trapez aktivieren.\nDauer: ca. 15 Minuten.\nIdeal im Wechsel mit Tag A gegen Rundrücken und Nackenverspannungen.",
+                notes: "## Fokus\nBrustwirbelsäule aufrichten, Brustmuskulatur dehnen, Nacken entlasten & Trapez aktivieren.\n\n**Dauer:** ca. 15 Minuten\nIdeal im Wechsel mit Tag A gegen Rundrücken und Nackenverspannungen.",
                 exercises: [
-                    ("BWS-Extension", 1, 12, 15, "2 Min. (10–12 Wdh.)"),
-                    ("Thorax-Rotation", 2, 10, 15, "10 Wdh. pro Seite (ca. 2–3 Min.)"),
-                    ("Doorway Chest Stretch", 2, 2, 15, "1–1,5 Min. pro Seite (3 Min. gesamt)"),
-                    ("Chin Tucks & Wall Slides", 2, 12, 30, "2 Sätze á 12 Wdh. (ca. 3 Min.)"),
-                    ("Faszienbehandlung (Oberer Rücken)", 1, 3, 15, "3 Min. mit Duoball (Dornfortsätze aussparen)")
+                    ("BWS-Extension", 1, 12, 15, "**2 Min.** (10–12 Wdh.)"),
+                    ("Thorax-Rotation", 2, 10, 15, "**10 Wdh. pro Seite** (ca. 2–3 Min.)"),
+                    ("Doorway Chest Stretch", 2, 2, 15, "**1–1,5 Min. pro Seite** (3 Min. gesamt)"),
+                    ("Chin Tucks & Wall Slides", 2, 12, 30, "**2 Sätze á 12 Wdh.** (ca. 3 Min.)"),
+                    ("Faszienbehandlung (Oberer Rücken)", 1, 3, 15, "**3 Min.** mit Duoball (Dornfortsätze aussparen)")
                 ]
             ),
             PlanSeedSpec(
                 name: "Mobility C: Gym-Warm-up & Rumpf-Aktivierung",
-                notes: "Fokus: Gezielte Vorbereitung der Gelenke und Rumpfmuskulatur direkt vor dem Krafttraining.\nDauer: ca. 10–15 Minuten (vor dem Workout).\nOptimal vor Kniebeugen, Kreuzheben und schweren Verbundübungen.",
+                notes: "## Fokus\nGezielte Vorbereitung der Gelenke und Rumpfmuskulatur direkt vor dem Krafttraining.\n\n**Dauer:** ca. 10–15 Minuten (vor dem Workout)\nOptimal vor Kniebeugen, Kreuzheben und schweren Verbundübungen.",
                 exercises: [
-                    ("Katze-Kuh & Threading the Needle", 1, 10, 15, "10 Wdh. – Mobilisierung von BWS & LWS"),
-                    ("Glute Bridge mit Miniband", 2, 15, 30, "2 Sätze á 15 Wdh. – Gesäß-Aktivierung"),
-                    ("Pallof Press / Deadbugs", 2, 12, 30, "2 Sätze á 10–12 Wdh. – Rumpfstabilität"),
+                    ("Katze-Kuh & Threading the Needle", 1, 10, 15, "**10 Wdh.** – Mobilisierung von BWS & LWS"),
+                    ("Glute Bridge mit Miniband", 2, 15, 30, "**2 Sätze á 15 Wdh.** – Gesäß-Aktivierung"),
+                    ("Pallof Press / Deadbugs", 2, 12, 30, "**2 Sätze á 10–12 Wdh.** – Rumpfstabilität"),
                     ("Dynamische Hüftkreise & Beinschwünge", 2, 10, 15, "Ergänzend für volle Range of Motion")
                 ]
             )

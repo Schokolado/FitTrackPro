@@ -51,6 +51,7 @@
 		8A152A99B69842E60A5D2118 /* DashboardWidgetsLarge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A73E019B516854433164C9 /* DashboardWidgetsLarge.swift */; };
 		91DC3E9E046A131BFD3F0A4B /* OnboardingPages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E98D3DF243C997C39782B23 /* OnboardingPages.swift */; };
 		930A83FC2209564F95B960AE /* ZoomableImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E63AA023B39CEE387F13D43F /* ZoomableImageView.swift */; };
+		930A83FD2209564F95B960AF /* RichNotesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E63AA024B39CEE387F13D440 /* RichNotesView.swift */; };
 		93E5B549071D1D2F18CB0FAE /* ThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8047FC412A6662A3D5CFC08E /* ThemeManager.swift */; };
 		96DA7B033B60C03ABA5C53E3 /* Logger+App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E60A4D4AD221410CA99DE81 /* Logger+App.swift */; };
 		97CCF1255DFE94D66E8FFE88 /* SleepEntryFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A3D09F3A4FAA8BD143F3C3C /* SleepEntryFormView.swift */; };
@@ -262,6 +263,7 @@
 		DFE9B37B479CDA0811F3D0A4 /* TrainingPlan+Grouping.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "TrainingPlan+Grouping.swift"; sourceTree = "<group>"; };
 		E1C788BD557D9D46689CC4E4 /* SleepDaySummary.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SleepDaySummary.swift; sourceTree = "<group>"; };
 		E63AA023B39CEE387F13D43F /* ZoomableImageView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ZoomableImageView.swift; path = Core/Views/ZoomableImageView.swift; sourceTree = "<group>"; };
+		E63AA024B39CEE387F13D440 /* RichNotesView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RichNotesView.swift; path = Core/Views/RichNotesView.swift; sourceTree = "<group>"; };
 		E7517FB5CB224449A15C396C /* EnergyCalculator.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = EnergyCalculator.swift; sourceTree = "<group>"; };
 		EBD12BE3CE3A98C9265F535D /* EnergyDetailView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = EnergyDetailView.swift; sourceTree = "<group>"; };
 		EBD770BA5BDC13445B2DF3A7 /* NotificationNames.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NotificationNames.swift; sourceTree = "<group>"; };
@@ -326,6 +328,7 @@
 			isa = PBXGroup;
 			children = (
 				E63AA023B39CEE387F13D43F /* ZoomableImageView.swift */,
+				E63AA024B39CEE387F13D440 /* RichNotesView.swift */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -974,6 +977,7 @@
 				5D85FC800B43DA2130CD7736 /* WorkoutManager.swift in Sources */,
 				7BE1477690BC9D513707F251 /* WorkoutMiniPlayerView.swift in Sources */,
 				930A83FC2209564F95B960AE /* ZoomableImageView.swift in Sources */,
+				930A83FD2209564F95B960AF /* RichNotesView.swift in Sources */,
 				40673D404A445CA10E57F22B /* FoodAPIService.swift in Sources */,
 				C166854380B2634C9C5DA1DF /* NutritionDashboardView.swift in Sources */,
 				EF5C5D14436FFEC5911CF909 /* FoodEntryFormView.swift in Sources */,

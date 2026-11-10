@@ -89,8 +89,7 @@ struct ExerciseDetailView: View {
                     VStack(alignment: .leading, spacing: Spacing.sm) {
                         Text("Notizen")
                             .font(.headline)
-                        Text(exercise.notes)
-                            .foregroundColor(.secondary)
+                        RichNotesView(text: exercise.notes, baseFont: .body, textColor: .secondary)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .cardStyle()

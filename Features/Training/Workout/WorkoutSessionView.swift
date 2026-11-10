@@ -190,9 +190,8 @@ struct WorkoutSessionView: View {
                     Form {
                         Section(header: Text("Plan-Notizen")) {
                             if let planNotes = session.plan?.notes, !planNotes.isEmpty {
-                                Text(planNotes)
-                                    .font(.body)
-                                    .foregroundColor(.primary)
+                                RichNotesView(text: planNotes)
+                                    .padding(.vertical, 4)
                             } else {
                                 Text("Keine Notizen für diesen Plan.")
                                     .foregroundColor(.secondary)
@@ -644,8 +643,7 @@ struct WorkoutExerciseInnerView: View {
                 NavigationStack {
                     ScrollView {
                         let combinedNotes = [planExercise?.planSpecificNotes, exercise.notes].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: "\n\n")
-                        Text(combinedNotes)
-                            .frame(maxWidth: .infinity, alignment: .leading)
+                        RichNotesView(text: combinedNotes)
                             .padding()
                     }
                     .navigationTitle("Übungs-Notizen")

@@ -327,16 +327,20 @@ struct PlanExerciseNotesSheet: View {
         NavigationStack {
             VStack {
                 if isEditing {
-                    TextEditor(text: $draftNotes)
-                        .padding(8)
-                        .background(Color(.systemGray6))
-                        .cornerRadius(8)
+                    RichNotesEditor(text: $draftNotes, minHeight: 240, placeholder: "Notizen zur Übung eingeben...")
                         .padding()
+                    Spacer()
                 } else {
                     ScrollView {
-                        Text(planExercise.planSpecificNotes.isEmpty ? "Keine Notizen vorhanden." : planExercise.planSpecificNotes)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding()
+                        if planExercise.planSpecificNotes.isEmpty {
+                            Text("Keine Notizen vorhanden.")
+                                .foregroundColor(.secondary)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding()
+                        } else {
+                            RichNotesView(text: planExercise.planSpecificNotes)
+                                .padding()
+                        }
                     }
                 }
             }

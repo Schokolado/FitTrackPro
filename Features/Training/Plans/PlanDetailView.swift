@@ -72,13 +72,14 @@ struct PlanDetailView: View {
                         
                     if !plan.notes.isEmpty {
                         VStack(alignment: .leading, spacing: 4) {
-                            Text(plan.notes)
+                            Text(RichNotesParser.parseCompactPreview(plan.notes))
                                 .font(.subheadline)
                                 .foregroundColor(.secondary)
                                 .lineLimit(2)
+                                .tint(.brand)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                             
-                            if plan.notes.count > 100 || plan.notes.filter({ $0 == "\n" }).count > 1 {
+                            if plan.notes.count > 100 || plan.notes.filter({ $0 == "\n" }).count > 1 || plan.notes.contains("#") || plan.notes.contains("**") || plan.notes.contains("<u>") {
                                 Button(action: {
                                     startNotesEditing = false
                                     showingNotesSheet = true
@@ -715,16 +716,20 @@ struct PlanNotesSheetView: View {
         NavigationStack {
             VStack {
                 if isEditingNotes {
-                    TextEditor(text: $editNotes)
-                        .padding(8)
-                        .background(Color(.systemGray6))
-                        .cornerRadius(8)
+                    RichNotesEditor(text: $editNotes, minHeight: 240, placeholder: "Plan-Notizen eingeben...")
                         .padding()
+                    Spacer()
                 } else {
                     ScrollView {
-                        Text(plan.notes.isEmpty ? "Keine Notizen vorhanden." : plan.notes)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding()
+                        if plan.notes.isEmpty {
+                            Text("Keine Notizen vorhanden.")
+                                .foregroundColor(.secondary)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding()
+                        } else {
+                            RichNotesView(text: plan.notes)
+                                .padding()
+                        }
                     }
                 }
             }
