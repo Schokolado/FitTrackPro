@@ -57,6 +57,7 @@ struct FitTrackProApp: App {
                                 await MainActor.run {
                                     let context = container.mainContext
                                     SeedDataService.shared.seedExercisesIfNeeded(context: context)
+                                    HealthKitService.shared.startStepBackgroundObserver()
                                 }
                                 
                                 // Give the splash screen a minimum of 2 seconds to show off the cool animation

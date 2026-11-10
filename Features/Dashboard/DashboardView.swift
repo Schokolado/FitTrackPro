@@ -213,6 +213,7 @@ struct DashboardView: View {
         }
         .onChange(of: healthKitEnabled) { _, newValue in
             if newValue {
+                HealthKitService.shared.startStepBackgroundObserver()
                 Task {
                     await refreshSteps()
                 }

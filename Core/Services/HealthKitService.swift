@@ -1,5 +1,6 @@
 import Foundation
 import HealthKit
+import WidgetKit
 
 enum HealthKitError: Error {
     case notAvailable
@@ -370,6 +371,50 @@ final class HealthKitService {
     }
     
     /// Liest die Schritte für einen bestimmten Tag aus
+    private var stepObserverQuery: HKObserverQuery?
+
+    /// Aktiviert automatische Hintergrund-Updates für Schritte (für das iOS Home-Screen Widget)
+    func startStepBackgroundObserver() {
+        guard isAvailable, stepObserverQuery == nil else { return }
+        guard UserDefaults.standard.bool(forKey: AppStorageKeys.healthKitEnabled) else { return }
+        guard let stepType = HKQuantityType.quantityType(forIdentifier: .stepCount) else { return }
+
+        healthStore.enableBackgroundDelivery(for: stepType, frequency: .immediate) { _, error in
+            if let error = error {
+                print("HealthKit step background delivery error: \(error)")
+            }
+        }
+
+        let query = HKObserverQuery(sampleType: stepType, predicate: nil) { [weak self] _, completionHandler, error in
+            guard let self = self, error == nil else {
+                completionHandler()
+                return
+            }
+
+            Task {
+                defer { completionHandler() }
+                guard let steps = try? await self.fetchSteps() else { return }
+                let todayStr = Date().iso8601String()
+                let standard = UserDefaults.standard
+                standard.set(steps, forKey: "cached_today_steps")
+                standard.set(todayStr, forKey: "cached_today_steps_date")
+
+                if let shared = UserDefaults(suiteName: "group.com.riccardopfeiler.FitTrackPro") {
+                    shared.set(steps, forKey: "cached_today_steps")
+                    shared.set(todayStr, forKey: "cached_today_steps_date")
+                }
+
+                await MainActor.run {
+                    WidgetCenter.shared.reloadTimelines(ofKind: "StepsWidget")
+                    WidgetCenter.shared.reloadTimelines(ofKind: "FitTrackProWidget")
+                }
+            }
+        }
+
+        self.stepObserverQuery = query
+        healthStore.execute(query)
+    }
+
     func fetchSteps(for date: Date = Date()) async throws -> Int {
         guard isAvailable else { throw HealthKitError.notAvailable }
         guard let stepType = HKQuantityType.quantityType(forIdentifier: .stepCount) else {
