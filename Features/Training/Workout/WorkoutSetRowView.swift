@@ -6,9 +6,10 @@ struct WorkoutSetRowView: View {
     let onComplete: () -> Void
     
     var body: some View {
-        let isCardio = workoutSet.exercise?.category.lowercased() == "cardio"
-        let isTimeBased = workoutSet.exercise?.isTimeBased == true || isCardio
-        let durationUnit = (workoutSet.exercise?.timeUnit.isEmpty == false ? workoutSet.exercise?.timeUnit : nil) ?? (isCardio ? "Min" : "Sek")
+        let isCardio = workoutSet.exercise?.usesLevelInput == true
+        let isTimeBased = workoutSet.exercise?.usesTimeInput == true
+        let durationUnit = workoutSet.exercise?.effectiveTimeUnit ?? "Sek"
+        let showsSecondaryInput = workoutSet.exercise?.showsSecondaryInput ?? true
         
         HStack {
             // Set Number
@@ -17,26 +18,28 @@ struct WorkoutSetRowView: View {
                 .frame(width: 30)
                 .foregroundColor(workoutSet.isCompleted ? .secondary : .primary)
             
-            Spacer()
-            
-            // Weight Input
-            HStack(spacing: 4) {
-                TextField("-", value: $workoutSet.actualWeight, format: .number)
-                    .keyboardType(.decimalPad)
-                    .multilineTextAlignment(.center)
-                    .frame(width: 60)
-                    .padding(8)
-                    .background(Color.backgroundSecondary)
-                    .cornerRadius(8)
-                Text(isCardio ? "Lvl" : "kg")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+            if showsSecondaryInput {
+                Spacer()
+                
+                // Weight or Level Input
+                HStack(spacing: 4) {
+                    TextField("-", value: $workoutSet.actualWeight, format: .number)
+                        .keyboardType(.decimalPad)
+                        .multilineTextAlignment(.center)
+                        .frame(width: 60)
+                        .padding(8)
+                        .background(Color.backgroundSecondary)
+                        .cornerRadius(8)
+                    Text(isCardio ? "Lvl" : "kg")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                .disabled(workoutSet.isCompleted)
             }
-            .disabled(workoutSet.isCompleted)
             
             Spacer()
             
-            // Reps Input
+            // Reps / Duration Input
             HStack(spacing: 4) {
                 TextField("-", value: $workoutSet.actualReps, format: .number)
                     .keyboardType(.numberPad)

@@ -60,15 +60,19 @@ struct ExerciseHistoryView: View {
                                 
                                 Spacer()
                                 
-                                let isCardio = exercise.category.lowercased() == "cardio"
-                                let isTimeBased = exercise.isTimeBased || isCardio
-                                let durationUnit = (exercise.timeUnit.isEmpty == false ? exercise.timeUnit : nil) ?? (isCardio ? "Min" : "Sek")
+                                let durationUnit = exercise.effectiveTimeUnit
                                 
-                                Text(isCardio ? "Level \(Int(set.actualWeight))" : "\(set.actualWeight, specifier: "%.1f") kg")
-                                    .font(.headline)
-                                    .frame(width: 80, alignment: .trailing)
+                                if exercise.usesLevelInput {
+                                    Text("Level \(Int(set.actualWeight))")
+                                        .font(.headline)
+                                        .frame(width: 80, alignment: .trailing)
+                                } else if exercise.usesWeightInput || set.actualWeight > 0 {
+                                    Text("\(set.actualWeight, specifier: "%.1f") kg")
+                                        .font(.headline)
+                                        .frame(width: 80, alignment: .trailing)
+                                }
                                 
-                                Text(isCardio ? "\(set.actualReps) Min" : (isTimeBased ? "\(set.actualReps) \(durationUnit)" : "× \(set.actualReps)"))
+                                Text(exercise.usesTimeInput ? "\(set.actualReps) \(durationUnit)" : "× \(set.actualReps)")
                                     .font(.headline)
                                     .frame(width: 80, alignment: .trailing)
                             }

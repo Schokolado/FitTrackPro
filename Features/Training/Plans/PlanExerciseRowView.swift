@@ -165,9 +165,8 @@ struct PlanExerciseRowView: View {
                                 .textFieldStyle(.roundedBorder)
                         }
                         
-                        let isCardio = planExercise.exercise?.category.lowercased() == "cardio"
-                        let isTimeBased = planExercise.exercise?.isTimeBased == true || isCardio
-                        let durationUnit = (planExercise.exercise?.timeUnit.isEmpty == false ? planExercise.exercise?.timeUnit : nil) ?? (isCardio ? "Min" : "Sek")
+                        let isTimeBased = planExercise.exercise?.usesTimeInput == true
+                        let durationUnit = planExercise.exercise?.effectiveTimeUnit ?? "Sek"
                         
                         VStack(alignment: .leading) {
                             Text(isTimeBased ? "Zeit (\(durationUnit))" : "Wdh.")
@@ -180,14 +179,24 @@ struct PlanExerciseRowView: View {
                     }
                     
                     HStack(spacing: 16) {
-                        let isCardio = planExercise.exercise?.category.lowercased() == "cardio"
-                        VStack(alignment: .leading) {
-                            Text(isCardio ? "Level" : "Gewicht (kg)")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                            TextField(isCardio ? "Level" : "Gewicht", value: $planExercise.targetWeight, format: .number)
-                                .keyboardType(.decimalPad)
-                                .textFieldStyle(.roundedBorder)
+                        if let exercise = planExercise.exercise, exercise.showsSecondaryInput {
+                            VStack(alignment: .leading) {
+                                Text(exercise.usesLevelInput ? "Level" : "Gewicht (kg)")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                                TextField(exercise.usesLevelInput ? "Level" : "Gewicht", value: $planExercise.targetWeight, format: .number)
+                                    .keyboardType(.decimalPad)
+                                    .textFieldStyle(.roundedBorder)
+                            }
+                        } else if planExercise.exercise == nil {
+                            VStack(alignment: .leading) {
+                                Text("Gewicht (kg)")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                                TextField("Gewicht", value: $planExercise.targetWeight, format: .number)
+                                    .keyboardType(.decimalPad)
+                                    .textFieldStyle(.roundedBorder)
+                            }
                         }
                         
                         VStack(alignment: .leading) {
@@ -296,11 +305,21 @@ struct PlanExerciseHistoryButton: View {
     var body: some View {
         Button(action: { showingHistory = true }) {
             if let refSet = pastSets.preferredReferenceSet(for: exercise.id, source: prefillSource) {
-                let isCardio = exercise.category.lowercased() == "cardio"
-                let isTimeBased = exercise.isTimeBased || isCardio
-                let durationUnit = (exercise.timeUnit.isEmpty == false ? exercise.timeUnit : nil) ?? (isCardio ? "Min" : "Sek")
+                let durationUnit = exercise.effectiveTimeUnit
                 let prefix = prefillSource == .highest ? "Bestwert" : "Zuletzt"
-                Text(isCardio ? "\(prefix): Lvl \(Int(refSet.actualWeight)) • \(refSet.actualReps) Min" : (isTimeBased ? "\(prefix): \(refSet.actualReps) \(durationUnit)" : "\(prefix): \(refSet.actualWeight, specifier: "%.1f") kg × \(refSet.actualReps)"))
+                let previewText: String = {
+                    if exercise.usesLevelInput {
+                        return "\(prefix): Lvl \(Int(refSet.actualWeight)) • \(refSet.actualReps) \(durationUnit)"
+                    } else if exercise.usesTimeInput {
+                        if exercise.usesWeightInput && refSet.actualWeight > 0 {
+                            return String(format: "%@: %.1f kg • %d %@", prefix, refSet.actualWeight, refSet.actualReps, durationUnit)
+                        }
+                        return "\(prefix): \(refSet.actualReps) \(durationUnit)"
+                    } else {
+                        return String(format: "%@: %.1f kg × %d", prefix, refSet.actualWeight, refSet.actualReps)
+                    }
+                }()
+                Text(previewText)
                     .font(.caption)
                     .foregroundColor(.brand)
                     .padding(.horizontal, 8)

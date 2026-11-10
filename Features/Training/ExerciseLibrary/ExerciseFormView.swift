@@ -25,6 +25,7 @@ struct ExerciseFormView: View {
     @State private var customCategoryName: String = ""
     @State private var isTimeBased: Bool = false
     @State private var timeUnit: String = "Min"
+    @State private var tracksWeightForTimeBased: Bool = false
     @State private var defaultRestDuration: Double = 90
     @State private var notes: String = ""
     @State private var showingResetNotesAlert = false
@@ -40,6 +41,7 @@ struct ExerciseFormView: View {
             _category = State(initialValue: exercise.category)
             _isTimeBased = State(initialValue: exercise.isTimeBased)
             _timeUnit = State(initialValue: exercise.timeUnit)
+            _tracksWeightForTimeBased = State(initialValue: exercise.tracksWeightForTimeBased)
             _defaultRestDuration = State(initialValue: exercise.defaultRestDuration)
             _notes = State(initialValue: exercise.notes)
             _externalVideoURLString = State(initialValue: exercise.externalVideoURL?.absoluteString ?? "")
@@ -93,6 +95,13 @@ struct ExerciseFormView: View {
                     Picker("Zeiteinheit", selection: $timeUnit) {
                         Text("Minuten (Min)").tag("Min")
                         Text("Sekunden (Sek)").tag("Sek")
+                    }
+
+                    if category.lowercased() != "cardio" {
+                        Toggle("Zusatzgewicht erfassen", isOn: $tracksWeightForTimeBased)
+                        Text("Wenn deaktiviert, wird bei dieser Zeit-Übung kein kg-Feld angezeigt.")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
                     }
                 }
             }
@@ -201,11 +210,14 @@ struct ExerciseFormView: View {
         
         let videoURL = URL(string: externalVideoURLString.trimmingCharacters(in: .whitespaces))
         
+        let effectiveTracksWeight = isTimeBased ? tracksWeightForTimeBased : false
+
         if let exercise = exerciseToEdit {
             exercise.name = name
             exercise.category = finalCategory
             exercise.isTimeBased = isTimeBased
             exercise.timeUnit = timeUnit
+            exercise.tracksWeightForTimeBased = effectiveTracksWeight
             exercise.defaultRestDuration = defaultRestDuration
             exercise.notes = notes
             exercise.externalVideoURL = videoURL
@@ -221,7 +233,8 @@ struct ExerciseFormView: View {
                 defaultRestDuration: defaultRestDuration,
                 isCustom: true,
                 isTimeBased: isTimeBased,
-                timeUnit: timeUnit
+                timeUnit: timeUnit,
+                tracksWeightForTimeBased: effectiveTracksWeight
             )
             modelContext.insert(newExercise)
             onSave?(newExercise)

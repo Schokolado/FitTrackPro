@@ -25,6 +25,7 @@ final class Exercise {
     var createdAt: Date = Date()
     var isTimeBased: Bool = false
     var timeUnit: String = "Min"
+    var tracksWeightForTimeBased: Bool = false
 
     @Relationship(deleteRule: .nullify, inverse: \PlanExercise.exercise)
     var planExercises: [PlanExercise]?
@@ -32,7 +33,7 @@ final class Exercise {
     @Relationship(deleteRule: .nullify, inverse: \WorkoutSet.exercise)
     var workoutSets: [WorkoutSet]?
 
-    init(id: UUID = UUID(), name: String = "", category: String = "Freie Gewichte", notes: String = "", externalVideoURL: URL? = nil, localMediaPaths: [String] = [], defaultRestDuration: TimeInterval = 90.0, isCustom: Bool = false, isArchived: Bool = false, sortOrder: Int = 0, createdAt: Date = Date(), isTimeBased: Bool = false, timeUnit: String = "Min") {
+    init(id: UUID = UUID(), name: String = "", category: String = "Freie Gewichte", notes: String = "", externalVideoURL: URL? = nil, localMediaPaths: [String] = [], defaultRestDuration: TimeInterval = 90.0, isCustom: Bool = false, isArchived: Bool = false, sortOrder: Int = 0, createdAt: Date = Date(), isTimeBased: Bool = false, timeUnit: String = "Min", tracksWeightForTimeBased: Bool = false) {
         self.id = id
         self.name = name
         self.category = category
@@ -46,6 +47,7 @@ final class Exercise {
         self.createdAt = createdAt
         self.isTimeBased = isTimeBased
         self.timeUnit = timeUnit
+        self.tracksWeightForTimeBased = tracksWeightForTimeBased
     }
 
     /// Deletes the exercise, cascades to PlanExercises, and resolves superset relationships.
@@ -73,6 +75,33 @@ final class Exercise {
 import SwiftUI
 
 extension Exercise {
+    var isCardioExercise: Bool {
+        category.lowercased() == "cardio"
+    }
+
+    var usesTimeInput: Bool {
+        isTimeBased || isCardioExercise
+    }
+
+    var effectiveTimeUnit: String {
+        if !timeUnit.isEmpty && timeUnit != "Wdh" {
+            return timeUnit
+        }
+        return isCardioExercise ? "Min" : "Sek"
+    }
+
+    var usesLevelInput: Bool {
+        isCardioExercise
+    }
+
+    var usesWeightInput: Bool {
+        !isCardioExercise && (!isTimeBased || tracksWeightForTimeBased)
+    }
+
+    var showsSecondaryInput: Bool {
+        usesLevelInput || usesWeightInput
+    }
+
     var themeColor: Color {
         switch category.lowercased() {
         case "brust", "chest": return .blue

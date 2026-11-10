@@ -38,9 +38,21 @@ struct PDFEmptyPlanPageView: View {
                     case .exercise(let planEx, let isSuperset):
                         HStack(spacing: 1) {
                             let prefix = isSuperset ? "  ↳ " : ""
-                            tableCell(prefix + (planEx.exercise?.name ?? "Unbekannt"), width: 180)
-                            tableCell("\(planEx.targetSets) x \(planEx.targetReps)", width: 100)
-                            tableCell("_______ kg", width: 100)
+                            let exercise = planEx.exercise
+                            let repsOrDuration = (exercise?.usesTimeInput == true)
+                                ? "\(planEx.targetSets) x \(planEx.targetReps) \(exercise?.effectiveTimeUnit ?? "Min")"
+                                : "\(planEx.targetSets) x \(planEx.targetReps)"
+                            let weightColumn: String = {
+                                if exercise?.usesLevelInput == true {
+                                    return "Lvl ____"
+                                } else if exercise?.showsSecondaryInput == false {
+                                    return "—"
+                                }
+                                return "_______ kg"
+                            }()
+                            tableCell(prefix + (exercise?.name ?? "Unbekannt"), width: 180)
+                            tableCell(repsOrDuration, width: 100)
+                            tableCell(weightColumn, width: 100)
                             tableCell("")
                         }
                     }

@@ -291,6 +291,8 @@ struct WorkoutHistoryDetailView: View {
     let activeSessionId: UUID?
     @State private var showingDeleteAlert = false
     @State private var isNotesExpanded = false
+    @State private var isBalanceExpanded = false
+    @State private var isExercisesExpanded = false
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     @State private var showDeleteConfirm = false
@@ -448,29 +450,92 @@ struct WorkoutHistoryDetailView: View {
                         .fill(Color.backgroundSecondary)
                 )
 
-                // Muskelgruppen-Balance
+                // Muskelgruppen-Balance (einklappbar)
                 let sessionBalanceStats = StatisticsViewModel.muscleGroupBreakdown(in: session)
                 if !sessionBalanceStats.isEmpty {
-                    MuscleBalanceCard(
-                        title: "Muskelgruppen-Balance",
-                        stats: sessionBalanceStats,
-                        availableMetrics: [.sets, .volume, .exercises],
-                        showInsight: true,
-                        configuredFocus: session.plan?.focus ?? .auto,
-                        planName: session.plan?.name
-                    )
+                    if isBalanceExpanded {
+                        MuscleBalanceCard(
+                            title: "Muskelgruppen-Balance",
+                            stats: sessionBalanceStats,
+                            availableMetrics: [.sets, .volume, .exercises],
+                            showInsight: true,
+                            configuredFocus: session.plan?.focus ?? .auto,
+                            planName: session.plan?.name,
+                            onCollapse: {
+                                withAnimation(.easeInOut(duration: 0.25)) {
+                                    isBalanceExpanded = false
+                                }
+                            }
+                        )
+                    } else {
+                        Button {
+                            withAnimation(.easeInOut(duration: 0.25)) {
+                                isBalanceExpanded = true
+                            }
+                        } label: {
+                            MuscleBalanceCompactBar(
+                                title: "Muskelgruppen-Balance",
+                                stats: sessionBalanceStats,
+                                configuredFocus: session.plan?.focus ?? .auto,
+                                planName: session.plan?.name,
+                                trailingIcon: "chevron.down"
+                            )
+                        }
+                        .buttonStyle(.plain)
+                    }
                 }
 
-                // Exercise breakdown
+                // Exercise breakdown (einklappbar)
                 if !exerciseGroups.isEmpty {
                     VStack(alignment: .leading, spacing: 12) {
-                        Text("Erledigte Übungen")
-                            .font(.headline)
-                            .padding(.horizontal, 4)
+                        Button {
+                            withAnimation(.easeInOut(duration: 0.25)) {
+                                isExercisesExpanded.toggle()
+                            }
+                        } label: {
+                            HStack(spacing: 12) {
+                                Image(systemName: "dumbbell.fill")
+                                    .foregroundColor(.blue)
+                                    .font(.subheadline)
+                                    .frame(width: 24)
 
-                        ForEach(exerciseGroups, id: \.0.id) { exercise, sets in
-                            let totalPlanned = (session.sets ?? []).filter { $0.exercise?.id == exercise.id }.count
-                            ExerciseHistoryBlock(exercise: exercise, sets: sets, totalPlannedSets: totalPlanned)
+                                VStack(alignment: .leading, spacing: 3) {
+                                    HStack(spacing: 6) {
+                                        Text("Erledigte Übungen")
+                                            .font(.subheadline.bold())
+                                            .foregroundColor(.primary)
+                                        Text("\(exerciseGroups.count) Übungen • \(completedSets.count) Sätze")
+                                            .font(.caption)
+                                            .foregroundColor(.secondary)
+                                    }
+
+                                    if !isExercisesExpanded {
+                                        Text(exerciseGroups.map { $0.0.name }.joined(separator: " · "))
+                                            .font(.caption2)
+                                            .foregroundColor(.secondary)
+                                            .lineLimit(1)
+                                    }
+                                }
+
+                                Spacer()
+
+                                Image(systemName: isExercisesExpanded ? "chevron.up" : "chevron.down")
+                                    .font(.caption.bold())
+                                    .foregroundColor(.secondary)
+                            }
+                            .padding(14)
+                            .background(
+                                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                    .fill(Color.backgroundSecondary)
+                            )
+                        }
+                        .buttonStyle(.plain)
+
+                        if isExercisesExpanded {
+                            ForEach(exerciseGroups, id: \.0.id) { exercise, sets in
+                                let totalPlanned = (session.sets ?? []).filter { $0.exercise?.id == exercise.id }.count
+                                ExerciseHistoryBlock(exercise: exercise, sets: sets, totalPlannedSets: totalPlanned)
+                            }
                         }
                     }
                 }
@@ -625,29 +690,30 @@ struct ExerciseHistoryBlock: View {
                         
                         Spacer()
                         
-                        let isCardio = exercise.category.lowercased() == "cardio"
-                        let isTimeBased = exercise.isTimeBased || isCardio
-                        let durationUnit = (exercise.timeUnit.isEmpty == false ? exercise.timeUnit : nil) ?? (isCardio ? "Min" : "Sek")
+                        let durationUnit = exercise.effectiveTimeUnit
+                        let showSecondary = exercise.usesLevelInput || exercise.usesWeightInput || set.actualWeight > 0
                         
-                        HStack(spacing: 6) {
-                            Image(systemName: isCardio ? "speedometer" : "dumbbell.fill")
-                                .font(.caption2)
-                                .foregroundColor(.secondary)
-                            Text(isCardio ? "Level \(Int(set.actualWeight))" : (set.actualWeight > 0 ? "\(set.actualWeight, specifier: "%.1f") kg" : (zeroWeightIsBodyweight ? "Körpergewicht" : "0 kg")))
-                                .font(.subheadline.bold())
-                                .fixedSize()
+                        if showSecondary {
+                            HStack(spacing: 6) {
+                                Image(systemName: exercise.usesLevelInput ? "speedometer" : "dumbbell.fill")
+                                    .font(.caption2)
+                                    .foregroundColor(.secondary)
+                                Text(exercise.usesLevelInput ? "Level \(Int(set.actualWeight))" : (set.actualWeight > 0 ? "\(set.actualWeight, specifier: "%.1f") kg" : (zeroWeightIsBodyweight ? "Körpergewicht" : "0 kg")))
+                                    .font(.subheadline.bold())
+                                    .fixedSize()
+                            }
+                            
+                            Spacer()
                         }
                         
-                        Spacer()
-                        
                         HStack(spacing: 6) {
-                            Image(systemName: isTimeBased ? "clock.fill" : "arrow.triangle.2.circlepath")
+                            Image(systemName: exercise.usesTimeInput ? "clock.fill" : "arrow.triangle.2.circlepath")
                                 .font(.caption2)
                                 .foregroundColor(.secondary)
-                            Text("\(set.actualReps) \(isTimeBased ? durationUnit : "Wdh")")
+                            Text("\(set.actualReps) \(exercise.usesTimeInput ? durationUnit : "Wdh")")
                                 .font(.subheadline.bold())
                         }
-                        .frame(minWidth: 70, alignment: .leading)
+                        .frame(minWidth: 70, alignment: showSecondary ? .leading : .trailing)
                     }
                     .padding(.vertical, 10)
                     .padding(.horizontal, 12)

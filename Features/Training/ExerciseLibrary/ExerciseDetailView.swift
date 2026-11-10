@@ -323,10 +323,20 @@ struct ExerciseHistoryPreview: View {
                         Text(set.timestamp, format: .dateTime.day().month().year())
                             .font(.subheadline)
                         Spacer()
-                        let isCardio = exercise.category.lowercased() == "cardio"
-                        let isTimeBased = exercise.isTimeBased || isCardio
-                        let durationUnit = (exercise.timeUnit.isEmpty == false ? exercise.timeUnit : nil) ?? (isCardio ? "Min" : "Sek")
-                        Text(isCardio ? "Lvl \(Int(set.actualWeight)) • \(set.actualReps) Min" : (isTimeBased ? "\(set.actualReps) \(durationUnit)" : "\(set.actualWeight, specifier: "%.1f") kg × \(set.actualReps)"))
+                        let durationUnit = exercise.effectiveTimeUnit
+                        let detailText: String = {
+                            if exercise.usesLevelInput {
+                                return "Lvl \(Int(set.actualWeight)) • \(set.actualReps) \(durationUnit)"
+                            } else if exercise.usesTimeInput {
+                                if (exercise.usesWeightInput || set.actualWeight > 0) && set.actualWeight > 0 {
+                                    return String(format: "%.1f kg • %d %@", set.actualWeight, set.actualReps, durationUnit)
+                                }
+                                return "\(set.actualReps) \(durationUnit)"
+                            } else {
+                                return String(format: "%.1f kg × %d", set.actualWeight, set.actualReps)
+                            }
+                        }()
+                        Text(detailText)
                             .font(.subheadline.bold())
                             .foregroundColor(.primary)
                     }

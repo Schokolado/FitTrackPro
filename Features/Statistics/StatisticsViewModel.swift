@@ -143,8 +143,36 @@ final class StatisticsViewModel {
         }
     }
 
-    /// Personal Record: Maximales Gewicht, das jemals mit dieser Übung gehoben wurde
+    /// Personal Record: Maximales Gewicht (oder längste Dauer bei Zeit-/Cardio-Übungen)
     func personalRecord(for exercise: Exercise, in allSessions: [WorkoutSession]) -> PersonalRecord? {
+        if !exercise.usesWeightInput {
+            var bestDuration = 0
+            var bestLevel: Double = 0
+            var bestDate: Date = Date.distantPast
+
+            for session in allSessions {
+                guard let endTime = session.endTime else { continue }
+                let sets = (session.sets ?? []).filter {
+                    $0.exercise?.id == exercise.id && $0.isCompleted && $0.actualReps > 0
+                }
+                for set in sets {
+                    if set.actualReps > bestDuration || (set.actualReps == bestDuration && set.actualWeight > bestLevel) {
+                        bestDuration = set.actualReps
+                        bestLevel = set.actualWeight
+                        bestDate = endTime
+                    }
+                }
+            }
+
+            guard bestDuration > 0 else { return nil }
+            return PersonalRecord(
+                exercise: exercise,
+                weightKg: bestLevel,
+                achievedAt: bestDate,
+                totalReps: bestDuration
+            )
+        }
+
         var bestWeight: Double = 0
         var bestDate: Date = Date.distantPast
         var bestReps: Int = 0

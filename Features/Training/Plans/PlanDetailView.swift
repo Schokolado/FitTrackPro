@@ -33,6 +33,7 @@ struct PlanDetailView: View {
     @State private var showingShareSheet = false
     @State private var generatedPDFUrl: URL?
     @State private var isGeneratingPDF = false
+    @State private var showingBalanceSheet = false
     
     private var planSessions: [WorkoutSession] {
         allSessions.filter { $0.plan?.id == plan.id }
@@ -107,24 +108,28 @@ struct PlanDetailView: View {
                         startWorkoutButton
                     }
                     
+                    let planBalanceStats = StatisticsViewModel.muscleGroupBreakdown(for: plan)
+                    if !planBalanceStats.isEmpty {
+                        Button {
+                            showingBalanceSheet = true
+                        } label: {
+                            MuscleBalanceCompactBar(
+                                title: "Muskelgruppen-Balance",
+                                stats: planBalanceStats,
+                                configuredFocus: plan.focus,
+                                planName: plan.name,
+                                trailingIcon: "chevron.right"
+                            )
+                        }
+                        .buttonStyle(.plain)
+                        .padding(.horizontal)
+                    }
+                    
                     ForEach(groupedExercises) { group in
                         exerciseGroupView(for: group)
                     }
                     
                     addExerciseButton
-                    
-                    let planBalanceStats = StatisticsViewModel.muscleGroupBreakdown(for: plan)
-                    if !planBalanceStats.isEmpty {
-                        let hasVolume = planBalanceStats.contains { $0.volumeKg > 0 }
-                        MuscleBalanceCard(
-                            title: "Muskelgruppen-Balance",
-                            stats: planBalanceStats,
-                            availableMetrics: hasVolume ? [.sets, .exercises, .volume] : [.sets, .exercises],
-                            focusBinding: $plan.focus,
-                            planName: plan.name
-                        )
-                        .padding(.horizontal)
-                    }
                 }
                 .padding(.vertical)
                 .onChange(of: newlyAddedExerciseIds) { oldValue, newValue in
@@ -342,6 +347,35 @@ struct PlanDetailView: View {
             .onDisappear {
                 startNotesEditing = false
             }
+        }
+        .sheet(isPresented: $showingBalanceSheet) {
+            NavigationStack {
+                ScrollView {
+                    let planBalanceStats = StatisticsViewModel.muscleGroupBreakdown(for: plan)
+                    let hasVolume = planBalanceStats.contains { $0.volumeKg > 0 }
+                    MuscleBalanceCard(
+                        title: "Muskelgruppen-Balance",
+                        stats: planBalanceStats,
+                        availableMetrics: hasVolume ? [.sets, .exercises, .volume] : [.sets, .exercises],
+                        focusBinding: $plan.focus,
+                        planName: plan.name
+                    )
+                    .padding()
+                }
+                .background(Color.backgroundPrimary)
+                .navigationTitle(plan.name)
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Fertig") {
+                            showingBalanceSheet = false
+                        }
+                        .bold()
+                    }
+                }
+            }
+            .presentationDetents([.medium, .large])
+            .presentationDragIndicator(.visible)
         }
         .alert("Plan löschen", isPresented: $showingDeleteAlert) {
             Button("Löschen", role: .destructive) {

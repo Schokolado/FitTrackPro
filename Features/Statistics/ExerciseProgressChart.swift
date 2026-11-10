@@ -5,6 +5,7 @@ struct ExerciseProgressChart: View {
     let dataPoints: [VolumeDataPoint]
     let metric: StatisticsMetric
     let accentColor: Color
+    var repsUnit: String? = nil
 
     // Optional: Highlight-Marker für den letzten Datenpunkt
     private var lastPoint: VolumeDataPoint? { dataPoints.last }
@@ -106,6 +107,9 @@ struct ExerciseProgressChart: View {
         case .volume, .maxWeight, .avgWeight:
             return "\(Int(value)) kg"
         case .reps:
+            if let repsUnit, !repsUnit.isEmpty {
+                return "\(Int(value)) \(repsUnit)"
+            }
             return "\(Int(value))"
         }
     }

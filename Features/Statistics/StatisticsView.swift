@@ -111,6 +111,9 @@ struct StatisticsView: View {
         }
         .onChange(of: viewModel.selectedExercise) { _, newValue in
             savedExerciseId = newValue?.id.uuidString ?? ""
+            if let ex = newValue, !ex.usesWeightInput {
+                viewModel.selectedMetric = .reps
+            }
         }
         .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("TabReselected"))) { notification in
             if let tab = notification.object as? Int, tab == 3 {
@@ -162,16 +165,18 @@ struct StatisticsView: View {
                     // Exercise title + selector
                     exerciseChartHeader
 
+                    let activeMetric: StatisticsMetric = exercise.usesWeightInput ? viewModel.selectedMetric : .reps
                     let data = viewModel.chartData(
                         for: exercise,
                         in: filteredSessions,
-                        metric: viewModel.selectedMetric
+                        metric: activeMetric
                     )
 
                     ExerciseProgressChart(
                         dataPoints: data,
-                        metric: viewModel.selectedMetric,
-                        accentColor: .brand
+                        metric: activeMetric,
+                        accentColor: .brand,
+                        repsUnit: exercise.usesTimeInput ? exercise.effectiveTimeUnit : nil
                     )
 
                     if !data.isEmpty {
@@ -183,14 +188,16 @@ struct StatisticsView: View {
                 .cornerRadius(16)
                 .padding(.horizontal)
 
-                // Metrik-Auswahl
-                Picker("Metrik", selection: $viewModel.selectedMetric) {
-                    ForEach(StatisticsMetric.allCases) { metric in
-                        Text(metric.rawValue).tag(metric)
+                // Metrik-Auswahl (bei reinen Zeit-Übungen ohne Gewicht nicht nötig)
+                if exercise.usesWeightInput {
+                    Picker("Metrik", selection: $viewModel.selectedMetric) {
+                        ForEach(StatisticsMetric.allCases) { metric in
+                            Text(metric.rawValue).tag(metric)
+                        }
                     }
+                    .pickerStyle(.segmented)
+                    .padding(.horizontal)
                 }
-                .pickerStyle(.segmented)
-                .padding(.horizontal)
             } else if usedExercises.isEmpty {
                 Text("Keine Workouts im gewählten Zeitraum.")
                     .font(.caption)
@@ -235,8 +242,17 @@ struct StatisticsView: View {
                         .imageScale(.small)
                     Spacer()
                 }
-                if viewModel.selectedExercise != nil {
-                    Text(viewModel.selectedMetric == .reps ? "Wiederholungen" : viewModel.selectedMetric.rawValue)
+                if let ex = viewModel.selectedExercise {
+                    let metricSubtitle: String = {
+                        if !ex.usesWeightInput && ex.usesTimeInput {
+                            return "Gesamtdauer (\(ex.effectiveTimeUnit))"
+                        }
+                        if viewModel.selectedMetric == .reps {
+                            return ex.usesTimeInput ? "Dauer (\(ex.effectiveTimeUnit))" : "Wiederholungen"
+                        }
+                        return viewModel.selectedMetric.rawValue
+                    }()
+                    Text(metricSubtitle)
                         .font(.caption)
                         .foregroundStyle(Color.textSecondary)
                 }
@@ -281,9 +297,15 @@ struct StatisticsView: View {
     }
 
     private func formatValue(_ v: Double) -> String {
-        switch viewModel.selectedMetric {
-        case .reps:      return "\(Int(v))"
-        default:         return "\(Int(v)) kg"
+        let effectiveMetric = (viewModel.selectedExercise?.usesWeightInput == false) ? .reps : viewModel.selectedMetric
+        switch effectiveMetric {
+        case .reps:
+            if let ex = viewModel.selectedExercise, ex.usesTimeInput {
+                return "\(Int(v)) \(ex.effectiveTimeUnit)"
+            }
+            return "\(Int(v))"
+        default:
+            return "\(Int(v)) kg"
         }
     }
 
@@ -570,7 +592,23 @@ struct PersonalRecordCard: View {
                 Text("Persönlicher Rekord")
                     .font(.caption)
                     .foregroundStyle(Color.warning)
-                Text("\(Int(record.weightKg)) kg × \(record.totalReps) Wdh.")
+                let prText: String = {
+                    let ex = record.exercise
+                    let unit = ex.effectiveTimeUnit
+                    if ex.usesLevelInput {
+                        return record.weightKg > 0
+                            ? "Level \(Int(record.weightKg)) • \(record.totalReps) \(unit)"
+                            : "\(record.totalReps) \(unit)"
+                    } else if ex.usesTimeInput {
+                        if ex.usesWeightInput && record.weightKg > 0 {
+                            return "\(Int(record.weightKg)) kg • \(record.totalReps) \(unit)"
+                        }
+                        return "\(record.totalReps) \(unit)"
+                    } else {
+                        return "\(Int(record.weightKg)) kg × \(record.totalReps) Wdh."
+                    }
+                }()
+                Text(prText)
                     .font(.title3.bold())
                     .foregroundStyle(Color.textPrimary)
                 Text("Erreicht am \(dateString)")
@@ -672,6 +710,7 @@ struct MuscleBalanceCard: View {
     let configuredFocus: PlanFocus
     let focusBinding: Binding<PlanFocus>?
     let planName: String?
+    let onCollapse: (() -> Void)?
 
     @State private var selectedMetric: MuscleBalanceMetric
     @State private var selectedCategory: String?
@@ -683,7 +722,8 @@ struct MuscleBalanceCard: View {
         showInsight: Bool = true,
         configuredFocus: PlanFocus = .auto,
         focusBinding: Binding<PlanFocus>? = nil,
-        planName: String? = nil
+        planName: String? = nil,
+        onCollapse: (() -> Void)? = nil
     ) {
         self.title = title
         self.stats = stats
@@ -693,6 +733,7 @@ struct MuscleBalanceCard: View {
         self.configuredFocus = configuredFocus
         self.focusBinding = focusBinding
         self.planName = planName
+        self.onCollapse = onCollapse
 
         // Erste Metrik mit Werten > 0 automatisch bevorzugen (z. B. .exercises, falls Soll-Sätze 0 sind)
         let firstWithData = resolvedMetrics.first { metric in
@@ -736,6 +777,17 @@ struct MuscleBalanceCard: View {
                     focusBadge(text: "Auto: \(effectiveFocus.shortLabel)")
                 } else if activeConfiguredFocus != .fullBody {
                     focusBadge(text: activeConfiguredFocus.shortLabel)
+                }
+                if let onCollapse {
+                    Button(action: onCollapse) {
+                        Image(systemName: "chevron.up")
+                            .font(.caption.bold())
+                            .foregroundStyle(Color.textSecondary)
+                            .padding(6)
+                            .background(Color.secondary.opacity(0.12))
+                            .clipShape(Circle())
+                    }
+                    .buttonStyle(.plain)
                 }
             }
 
@@ -1025,5 +1077,101 @@ struct MuscleBalanceCard: View {
         case .volume:
             return "\(Int(val)) kg"
         }
+    }
+}
+
+// MARK: - Kompakte Balance-Leiste (für Plan-Übersicht & einklappbare Detailansicht)
+
+struct MuscleBalanceCompactBar: View {
+    @EnvironmentObject var themeManager: ThemeManager
+
+    let title: String
+    let stats: [MuscleGroupStat]
+    let configuredFocus: PlanFocus
+    let planName: String?
+    var trailingIcon: String = "chevron.right"
+
+    private var effectiveFocus: PlanFocus {
+        StatisticsViewModel.resolvedPlanFocus(for: configuredFocus, planName: planName, stats: stats)
+    }
+
+    private func unitValue(for item: MuscleGroupStat) -> Double {
+        Double(item.setCount > 0 ? item.setCount : item.exerciseCount)
+    }
+
+    private var visibleStats: [MuscleGroupStat] {
+        stats.filter { unitValue(for: $0) > 0 }
+    }
+
+    private var totalUnits: Double {
+        visibleStats.reduce(0.0) { $0 + unitValue(for: $1) }
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 8) {
+                Image(systemName: "chart.pie.fill")
+                    .foregroundStyle(Color.brand)
+                    .font(.subheadline)
+
+                Text(title)
+                    .font(.subheadline.bold())
+                    .foregroundStyle(Color.textPrimary)
+
+                Spacer()
+
+                if !stats.isEmpty {
+                    Text(configuredFocus == .auto ? "Auto: \(effectiveFocus.shortLabel)" : configuredFocus.shortLabel)
+                        .font(.caption2.weight(.semibold))
+                        .foregroundStyle(Color.brand)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 3)
+                        .background(Color.brand.opacity(0.12))
+                        .clipShape(Capsule())
+                }
+
+                Image(systemName: trailingIcon)
+                    .font(.caption.bold())
+                    .foregroundStyle(Color.textSecondary)
+            }
+
+            // Gestapelter proportionaler Farbbalken
+            if totalUnits > 0 {
+                GeometryReader { geo in
+                    let totalGap = CGFloat(max(0, visibleStats.count - 1)) * 2
+                    let usableWidth = max(0, geo.size.width - totalGap)
+
+                    HStack(spacing: 2) {
+                        ForEach(visibleStats) { item in
+                            let share = unitValue(for: item) / totalUnits
+                            RoundedRectangle(cornerRadius: 4, style: .continuous)
+                                .fill(themeManager.color(for: item.category))
+                                .frame(width: max(4, usableWidth * share), height: 10)
+                        }
+                    }
+                }
+                .frame(height: 10)
+
+                // Kompakte horizontale Legende
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 12) {
+                        ForEach(visibleStats) { item in
+                            let pct = Int(round((unitValue(for: item) / totalUnits) * 100))
+                            HStack(spacing: 5) {
+                                Circle()
+                                    .fill(themeManager.color(for: item.category))
+                                    .frame(width: 8, height: 8)
+                                Text("\(item.category) \(pct)%")
+                                    .font(.caption2.weight(.medium))
+                                    .foregroundStyle(Color.textSecondary)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        .padding(14)
+        .background(Color.backgroundCard)
+        .cornerRadius(16)
     }
 }
