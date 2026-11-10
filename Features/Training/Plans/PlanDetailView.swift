@@ -103,6 +103,8 @@ struct PlanDetailView: View {
                             title: "Plan-Notizen",
                             text: plan.notes,
                             maxCollapsedHeight: 140,
+                            isCollapsible: true,
+                            initiallyCollapsed: true,
                             onEdit: {
                                 startNotesEditing = true
                                 showingNotesSheet = true
@@ -116,48 +118,67 @@ struct PlanDetailView: View {
                         let totalSets = sortedPlanExercises.reduce(0) { $0 + $1.targetSets }
                         let previewNames = sortedPlanExercises.compactMap { $0.exercise?.name }.joined(separator: " · ")
 
-                        Button {
-                            withAnimation(.easeInOut(duration: 0.25)) {
-                                isExercisesExpanded.toggle()
-                            }
-                        } label: {
-                            HStack(spacing: 12) {
-                                Image(systemName: "dumbbell.fill")
-                                    .foregroundColor(.blue)
-                                    .font(.subheadline)
-                                    .frame(width: 24)
-
-                                VStack(alignment: .leading, spacing: 3) {
-                                    HStack(spacing: 6) {
-                                        Text("Übungen")
-                                            .font(.subheadline.bold())
-                                            .foregroundColor(.primary)
-                                        Text("\(sortedPlanExercises.count) Übungen • \(totalSets) Sätze")
-                                            .font(.caption)
-                                            .foregroundColor(.secondary)
-                                    }
-
-                                    if !isExercisesExpanded && !previewNames.isEmpty {
-                                        Text(previewNames)
-                                            .font(.caption2)
-                                            .foregroundColor(.secondary)
-                                            .lineLimit(1)
-                                    }
+                        HStack(spacing: 12) {
+                            Button {
+                                withAnimation(.easeInOut(duration: 0.25)) {
+                                    isExercisesExpanded.toggle()
                                 }
+                            } label: {
+                                HStack(spacing: 12) {
+                                    Image(systemName: "dumbbell.fill")
+                                        .foregroundColor(.blue)
+                                        .font(.subheadline)
+                                        .frame(width: 24)
 
-                                Spacer()
+                                    VStack(alignment: .leading, spacing: 3) {
+                                        HStack(spacing: 6) {
+                                            Text("Übungen")
+                                                .font(.subheadline.bold())
+                                                .foregroundColor(.primary)
+                                            Text("\(sortedPlanExercises.count) Übungen • \(totalSets) Sätze")
+                                                .font(.caption)
+                                                .foregroundColor(.secondary)
+                                        }
 
+                                        if !isExercisesExpanded && !previewNames.isEmpty {
+                                            Text(previewNames)
+                                                .font(.caption2)
+                                                .foregroundColor(.secondary)
+                                                .lineLimit(1)
+                                        }
+                                    }
+
+                                    Spacer()
+                                }
+                                .contentShape(Rectangle())
+                            }
+                            .buttonStyle(.plain)
+
+                            Button {
+                                showingExerciseSelection = true
+                            } label: {
+                                Image(systemName: "plus.circle.fill")
+                                    .font(.title3)
+                                    .foregroundColor(.brand)
+                            }
+                            .buttonStyle(.plain)
+
+                            Button {
+                                withAnimation(.easeInOut(duration: 0.25)) {
+                                    isExercisesExpanded.toggle()
+                                }
+                            } label: {
                                 Image(systemName: isExercisesExpanded ? "chevron.up" : "chevron.down")
                                     .font(.caption.bold())
                                     .foregroundColor(.secondary)
                             }
-                            .padding(14)
-                            .background(
-                                RoundedRectangle(cornerRadius: 16, style: .continuous)
-                                    .fill(Color.backgroundSecondary)
-                            )
+                            .buttonStyle(.plain)
                         }
-                        .buttonStyle(.plain)
+                        .padding(14)
+                        .background(
+                            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                .fill(Color.backgroundSecondary)
+                        )
                         .padding(.horizontal)
 
                         if isExercisesExpanded {
@@ -167,7 +188,9 @@ struct PlanDetailView: View {
                         }
                     }
                     
-                    addExerciseButton
+                    if groupedExercises.isEmpty || isExercisesExpanded {
+                        addExerciseButton
+                    }
                 }
                 .padding(.vertical)
                 .onChange(of: newlyAddedExerciseIds) { oldValue, newValue in

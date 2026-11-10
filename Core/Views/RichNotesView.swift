@@ -443,12 +443,30 @@ struct RichNotesEditor: View {
 // MARK: - Rich Notes Card & Edit Sheet
 
 struct RichNotesCard: View {
-    var title: String = "Notizen"
+    let title: String
     let text: String
-    var maxCollapsedHeight: CGFloat = 165
-    var onEdit: (() -> Void)? = nil
+    let maxCollapsedHeight: CGFloat
+    let isCollapsible: Bool
+    let onEdit: (() -> Void)?
 
     @State private var isExpanded = false
+    @State private var isCardCollapsed: Bool
+
+    init(
+        title: String = "Notizen",
+        text: String,
+        maxCollapsedHeight: CGFloat = 165,
+        isCollapsible: Bool = false,
+        initiallyCollapsed: Bool = false,
+        onEdit: (() -> Void)? = nil
+    ) {
+        self.title = title
+        self.text = text
+        self.maxCollapsedHeight = maxCollapsedHeight
+        self.isCollapsible = isCollapsible
+        self.onEdit = onEdit
+        self._isCardCollapsed = State(initialValue: isCollapsible && initiallyCollapsed)
+    }
 
     private var needsCollapse: Bool {
         let lines = text.components(separatedBy: .newlines)
@@ -456,80 +474,144 @@ struct RichNotesCard: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack(spacing: 8) {
-                Image(systemName: "note.text")
-                    .font(.subheadline)
-                    .foregroundColor(.brand)
-
-                Text(title)
-                    .font(.headline)
-                    .foregroundColor(.primary)
-
-                Spacer()
-
-                if let onEdit {
-                    Button(action: onEdit) {
-                        HStack(spacing: 4) {
-                            Image(systemName: "pencil")
-                                .font(.caption2.bold())
-                            Text("Bearbeiten")
-                                .font(.caption.weight(.semibold))
-                        }
-                        .foregroundColor(.brand)
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 5)
-                        .background(Color.brand.opacity(0.12))
-                        .clipShape(Capsule())
-                    }
-                    .buttonStyle(.plain)
+        if isCollapsible && isCardCollapsed {
+            Button {
+                withAnimation(.easeInOut(duration: 0.25)) {
+                    isCardCollapsed = false
                 }
+            } label: {
+                HStack(spacing: 12) {
+                    Image(systemName: "note.text")
+                        .font(.subheadline)
+                        .foregroundColor(.brand)
+                        .frame(width: 24)
+
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text(title)
+                            .font(.subheadline.bold())
+                            .foregroundColor(.primary)
+
+                        Text(RichNotesParser.parseCompactPreview(text))
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+                            .lineLimit(1)
+                    }
+
+                    Spacer()
+
+                    Image(systemName: "chevron.down")
+                        .font(.caption.bold())
+                        .foregroundColor(.secondary)
+                }
+                .padding(14)
+                .background(
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .fill(Color.backgroundSecondary)
+                )
             }
+            .buttonStyle(.plain)
+        } else {
+            VStack(alignment: .leading, spacing: 12) {
+                HStack(spacing: 8) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "note.text")
+                            .font(.subheadline)
+                            .foregroundColor(.brand)
 
-            HStack(alignment: .top, spacing: 12) {
-                RoundedRectangle(cornerRadius: 2, style: .continuous)
-                    .fill(Color.brand.opacity(0.75))
-                    .frame(width: 3)
+                        Text(title)
+                            .font(.headline)
+                            .foregroundColor(.primary)
+                    }
 
-                VStack(alignment: .leading, spacing: 8) {
-                    RichNotesView(text: text, baseFont: .subheadline, textColor: .primary)
-                        .frame(maxHeight: (needsCollapse && !isExpanded) ? maxCollapsedHeight : nil, alignment: .top)
-                        .clipped()
-                        .overlay(alignment: .bottom) {
-                            if needsCollapse && !isExpanded {
-                                LinearGradient(
-                                    colors: [Color.backgroundSecondary.opacity(0), Color.backgroundSecondary],
-                                    startPoint: .top,
-                                    endPoint: .bottom
-                                )
-                                .frame(height: 36)
+                    Spacer()
+
+                    if let onEdit {
+                        Button(action: onEdit) {
+                            HStack(spacing: 4) {
+                                Image(systemName: "pencil")
+                                    .font(.caption2.bold())
+                                Text("Bearbeiten")
+                                    .font(.caption.weight(.semibold))
                             }
+                            .foregroundColor(.brand)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 5)
+                            .background(Color.brand.opacity(0.12))
+                            .clipShape(Capsule())
                         }
+                        .buttonStyle(.plain)
+                    }
 
-                    if needsCollapse {
+                    if isCollapsible {
                         Button {
-                            withAnimation(.easeInOut(duration: 0.22)) {
-                                isExpanded.toggle()
+                            withAnimation(.easeInOut(duration: 0.25)) {
+                                isCardCollapsed = true
                             }
                         } label: {
-                            HStack(spacing: 4) {
-                                Text(isExpanded ? "Weniger anzeigen" : "Vollständig anzeigen")
-                                Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
-                                    .font(.caption2.bold())
-                            }
-                            .font(.caption.bold())
-                            .foregroundColor(.brand)
+                            Image(systemName: "chevron.up")
+                                .font(.caption.bold())
+                                .foregroundColor(.secondary)
+                                .padding(6)
+                                .background(Color.secondary.opacity(0.12))
+                                .clipShape(Circle())
                         }
                         .buttonStyle(.plain)
                     }
                 }
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    if isCollapsible {
+                        withAnimation(.easeInOut(duration: 0.25)) {
+                            isCardCollapsed = true
+                        }
+                    }
+                }
+
+                HStack(alignment: .top, spacing: 12) {
+                    RoundedRectangle(cornerRadius: 2, style: .continuous)
+                        .fill(Color.brand.opacity(0.75))
+                        .frame(width: 3)
+
+                    VStack(alignment: .leading, spacing: 8) {
+                        RichNotesView(text: text, baseFont: .subheadline, textColor: .primary)
+                            .frame(maxHeight: (needsCollapse && !isExpanded) ? maxCollapsedHeight : nil, alignment: .top)
+                            .clipped()
+                            .overlay(alignment: .bottom) {
+                                if needsCollapse && !isExpanded {
+                                    LinearGradient(
+                                        colors: [Color.backgroundSecondary.opacity(0), Color.backgroundSecondary],
+                                        startPoint: .top,
+                                        endPoint: .bottom
+                                    )
+                                    .frame(height: 36)
+                                }
+                            }
+
+                        if needsCollapse {
+                            Button {
+                                withAnimation(.easeInOut(duration: 0.22)) {
+                                    isExpanded.toggle()
+                                }
+                            } label: {
+                                HStack(spacing: 4) {
+                                    Text(isExpanded ? "Weniger anzeigen" : "Vollständig anzeigen")
+                                    Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
+                                        .font(.caption2.bold())
+                                }
+                                .font(.caption.bold())
+                                .foregroundColor(.brand)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                }
             }
+            .padding(16)
+            .background(
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .fill(Color.backgroundSecondary)
+            )
         }
-        .padding(16)
-        .background(
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .fill(Color.backgroundSecondary)
-        )
     }
 }
 
