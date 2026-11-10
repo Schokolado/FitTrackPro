@@ -7,6 +7,11 @@ struct PlanDetailView: View {
     @Environment(WorkoutManager.self) private var workoutManager
     @Query(sort: \PlanGroup.sortOrder) private var groups: [PlanGroup]
     @Bindable var plan: TrainingPlan
+    @AppStorage(AppStorageKeys.workoutPrefillSource) private var workoutPrefillSourceRaw: String = WorkoutPrefillSource.last.rawValue
+    
+    private var prefillSource: WorkoutPrefillSource {
+        WorkoutPrefillSource(rawValue: workoutPrefillSourceRaw) ?? .last
+    }
     
     @State private var showingExerciseSelection = false
     @State private var showingEditNameAlert = false
@@ -123,24 +128,28 @@ struct PlanDetailView: View {
         .onAppear {
             autoFillPlanFromHistory()
         }
+        .onChange(of: workoutPrefillSourceRaw) { _, _ in
+            autoFillPlanFromHistory()
+        }
     }
     
     private func autoFillPlanFromHistory() {
         let sortedExercises = (plan.planExercises ?? []).filter { $0.exercise != nil }
+        let source = prefillSource
         var changed = false
         
         for planEx in sortedExercises {
             if let exerciseId = planEx.exercise?.id {
-                var descriptor = FetchDescriptor<WorkoutSet>(
+                let descriptor = FetchDescriptor<WorkoutSet>(
                     predicate: #Predicate<WorkoutSet> { $0.exercise?.id == exerciseId && $0.isCompleted == true },
                     sortBy: [SortDescriptor(\.timestamp, order: .reverse)]
                 )
-                descriptor.fetchLimit = 1
                 
-                if let lastSet = try? modelContext.fetch(descriptor).first {
-                    if planEx.targetWeight != lastSet.actualWeight || planEx.targetReps != lastSet.actualReps {
-                        planEx.targetWeight = lastSet.actualWeight
-                        planEx.targetReps = lastSet.actualReps
+                if let fetchedSets = try? modelContext.fetch(descriptor),
+                   let refSet = fetchedSets.preferredReferenceSet(for: exerciseId, source: source) {
+                    if planEx.targetWeight != refSet.actualWeight || planEx.targetReps != refSet.actualReps {
+                        planEx.targetWeight = refSet.actualWeight
+                        planEx.targetReps = refSet.actualReps
                         changed = true
                     }
                 }
@@ -450,26 +459,22 @@ struct PlanDetailView: View {
             .sorted { $0.sortOrder < $1.sortOrder }
         
         for planEx in sortedExercises {
-            var lastWeight: Double? = nil
-            var lastReps: Int? = nil
+            var refWeight: Double? = nil
+            var refReps: Int? = nil
             
             if let exerciseId = planEx.exercise?.id {
-                let recentSets = allSessions.lazy
-                    .flatMap { $0.sets ?? [] }
-                    .filter { $0.exercise?.id == exerciseId && $0.isCompleted }
-                    .sorted { $0.timestamp > $1.timestamp }
-                
-                if let lastSet = recentSets.first {
-                    lastWeight = lastSet.actualWeight
-                    lastReps = lastSet.actualReps
+                let completedSets = allSessions.lazy.flatMap { $0.sets ?? [] }
+                if let refSet = completedSets.preferredReferenceSet(for: exerciseId, source: prefillSource) {
+                    refWeight = refSet.actualWeight
+                    refReps = refSet.actualReps
                 }
             }
             
             for setIndex in 0..<planEx.targetSets {
                 let workoutSet = WorkoutSet(
                     setNumber: setIndex + 1,
-                    actualWeight: lastWeight ?? planEx.targetWeight ?? 0.0,
-                    actualReps: lastReps ?? planEx.targetReps
+                    actualWeight: refWeight ?? planEx.targetWeight ?? 0.0,
+                    actualReps: refReps ?? planEx.targetReps
                 )
                 modelContext.insert(workoutSet)
                 // Fix SwiftData relationship dropping by assigning after insertion

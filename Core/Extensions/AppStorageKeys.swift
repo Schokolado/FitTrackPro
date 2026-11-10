@@ -7,6 +7,7 @@ enum AppStorageKeys {
     static let weightUnit               = "weight_unit"                  // String: "kg" | "lbs", default: "kg"
     static let notificationsEnabled     = "notifications_enabled"        // Bool, default: true
     static let prefillExerciseHistory   = "prefillExerciseHistory"       // Bool, default: true
+    static let workoutPrefillSource     = "workout_prefill_source"       // String: "last" | "highest", default: "last"
     static let targetCalories           = "target_calories"              // Double
     static let targetProtein            = "target_protein"               // Double
     static let targetCarbs              = "target_carbs"                 // Double
@@ -48,7 +49,8 @@ class CloudProfileService {
     // The keys we want to sync
     private let stringKeys = [
         AppStorageKeys.userName,
-        AppStorageKeys.userBiologicalSex
+        AppStorageKeys.userBiologicalSex,
+        AppStorageKeys.workoutPrefillSource
     ]
     
     private let doubleKeys = [

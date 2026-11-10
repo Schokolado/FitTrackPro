@@ -273,8 +273,13 @@ struct PlanExerciseRowView: View {
 struct PlanExerciseHistoryButton: View {
     let exercise: Exercise
     
+    @AppStorage(AppStorageKeys.workoutPrefillSource) private var workoutPrefillSourceRaw: String = WorkoutPrefillSource.last.rawValue
     @Query private var pastSets: [WorkoutSet]
     @State private var showingHistory = false
+    
+    private var prefillSource: WorkoutPrefillSource {
+        WorkoutPrefillSource(rawValue: workoutPrefillSourceRaw) ?? .last
+    }
     
     init(exercise: Exercise) {
         self.exercise = exercise
@@ -290,11 +295,12 @@ struct PlanExerciseHistoryButton: View {
     
     var body: some View {
         Button(action: { showingHistory = true }) {
-            if let lastSet = pastSets.first {
+            if let refSet = pastSets.preferredReferenceSet(for: exercise.id, source: prefillSource) {
                 let isCardio = exercise.category.lowercased() == "cardio"
                 let isTimeBased = exercise.isTimeBased || isCardio
                 let durationUnit = (exercise.timeUnit.isEmpty == false ? exercise.timeUnit : nil) ?? (isCardio ? "Min" : "Sek")
-                Text(isCardio ? "Zuletzt: Lvl \(Int(lastSet.actualWeight)) • \(lastSet.actualReps) Min" : (isTimeBased ? "Zuletzt: \(lastSet.actualReps) \(durationUnit)" : "Zuletzt: \(lastSet.actualWeight, specifier: "%.1f") kg × \(lastSet.actualReps)"))
+                let prefix = prefillSource == .highest ? "Bestwert" : "Zuletzt"
+                Text(isCardio ? "\(prefix): Lvl \(Int(refSet.actualWeight)) • \(refSet.actualReps) Min" : (isTimeBased ? "\(prefix): \(refSet.actualReps) \(durationUnit)" : "\(prefix): \(refSet.actualWeight, specifier: "%.1f") kg × \(refSet.actualReps)"))
                     .font(.caption)
                     .foregroundColor(.brand)
                     .padding(.horizontal, 8)

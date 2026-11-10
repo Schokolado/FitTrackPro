@@ -18,6 +18,7 @@ class SeedDataService {
     
     private let hasSeededMobilityPlansKey = "hasSeededMobilityPlansV2"
     private let hasUpgradedMobilityNotesKey = "hasUpgradedMobilityNotesV3"
+    private let hasSeededDefaultFoodsKey = "hasSeededDefaultFoodsV1"
     
     func seedExercisesIfNeeded(context: ModelContext) {
         let lang = Locale.current.language.languageCode?.identifier == "de" ? "de" : "en"
@@ -67,6 +68,7 @@ class SeedDataService {
         
         seedMobilityPlansIfNeeded(context: context)
         upgradeMobilityNotesIfNeeded(context: context)
+        seedDefaultFoodsIfNeeded(context: context)
     }
     
     func seedMobilityPlansIfNeeded(context: ModelContext) {
@@ -564,5 +566,100 @@ class SeedDataService {
             isTimeBased: false,
             timeUnit: "Wdh"
         )
+    ]
+    
+    // MARK: - Default Staple Foods
+    
+    struct SeedFood {
+        let name: String
+        let calories: Double
+        let protein: Double
+        let carbs: Double
+        let fat: Double
+    }
+    
+    func seedDefaultFoodsIfNeeded(context: ModelContext) {
+        guard !UserDefaults.standard.bool(forKey: hasSeededDefaultFoodsKey) else { return }
+        
+        let descriptor = FetchDescriptor<SavedFood>()
+        let existingFoods = (try? context.fetch(descriptor)) ?? []
+        let existingNames = Set(existingFoods.map { $0.name.lowercased() })
+        
+        for (idx, item) in Self.defaultStapleFoods.enumerated() {
+            if !existingNames.contains(item.name.lowercased()) {
+                let food = SavedFood(
+                    name: item.name,
+                    caloriesPer100g: item.calories,
+                    proteinPer100g: item.protein,
+                    carbsPer100g: item.carbs,
+                    fatPer100g: item.fat
+                )
+                // Place seeded staple foods chronologically behind user-created items
+                food.createdAt = Date(timeIntervalSince1970: 1_700_000_000 + Double(idx))
+                context.insert(food)
+            }
+        }
+        
+        do {
+            try context.save()
+            UserDefaults.standard.set(true, forKey: hasSeededDefaultFoodsKey)
+        } catch {
+            print("Failed to save default foods: \(error)")
+        }
+    }
+    
+    static let defaultStapleFoods: [SeedFood] = [
+        // Fleisch, Fisch & Eier
+        SeedFood(name: "Hähnchenbrustfilet (roh)", calories: 110, protein: 23.0, carbs: 0.0, fat: 1.5),
+        SeedFood(name: "Putenbrustfilet (roh)", calories: 106, protein: 24.0, carbs: 0.0, fat: 1.0),
+        SeedFood(name: "Rinderhackfleisch (mager, 5% Fett)", calories: 137, protein: 21.0, carbs: 0.0, fat: 5.0),
+        SeedFood(name: "Lachsfilet (frisch)", calories: 208, protein: 20.0, carbs: 0.0, fat: 13.0),
+        SeedFood(name: "Thunfisch (im eigenen Saft)", calories: 111, protein: 25.5, carbs: 0.0, fat: 1.0),
+        SeedFood(name: "Hühnerei (ganz)", calories: 155, protein: 13.0, carbs: 1.1, fat: 11.0),
+        SeedFood(name: "Eiklar / Eiweiß (flüssig)", calories: 48, protein: 11.0, carbs: 0.7, fat: 0.1),
+        
+        // Milchprodukte & Protein
+        SeedFood(name: "Magerquark", calories: 67, protein: 12.0, carbs: 4.1, fat: 0.2),
+        SeedFood(name: "Skyr (Natur)", calories: 63, protein: 11.0, carbs: 4.0, fat: 0.2),
+        SeedFood(name: "Griechischer Joghurt (0,2% Fett)", calories: 57, protein: 10.0, carbs: 3.6, fat: 0.2),
+        SeedFood(name: "Naturjoghurt (1,5% Fett)", calories: 48, protein: 3.8, carbs: 4.7, fat: 1.5),
+        SeedFood(name: "Körniger Frischkäse (fettarm)", calories: 98, protein: 12.5, carbs: 3.3, fat: 4.0),
+        SeedFood(name: "Mozzarella Light", calories: 157, protein: 20.0, carbs: 2.0, fat: 8.5),
+        SeedFood(name: "Milch (1,5% Fett)", calories: 47, protein: 3.4, carbs: 4.8, fat: 1.5),
+        SeedFood(name: "Haferdrink (ungesüßt)", calories: 43, protein: 0.8, carbs: 6.5, fat: 1.5),
+        SeedFood(name: "Whey Protein Pulver (Standard)", calories: 375, protein: 80.0, carbs: 5.0, fat: 3.0),
+        
+        // Getreide, Beilagen & Brot
+        SeedFood(name: "Haferflocken (zart)", calories: 372, protein: 13.5, carbs: 58.7, fat: 7.0),
+        SeedFood(name: "Basmatireis (trocken)", calories: 350, protein: 7.5, carbs: 77.5, fat: 0.7),
+        SeedFood(name: "Basmatireis (gekocht)", calories: 121, protein: 2.7, carbs: 26.0, fat: 0.3),
+        SeedFood(name: "Nudeln / Pasta (trocken)", calories: 355, protein: 12.0, carbs: 71.0, fat: 1.5),
+        SeedFood(name: "Nudeln / Pasta (gekocht)", calories: 150, protein: 5.0, carbs: 30.0, fat: 0.7),
+        SeedFood(name: "Kartoffeln (roh)", calories: 73, protein: 2.0, carbs: 15.0, fat: 0.1),
+        SeedFood(name: "Süßkartoffel (roh)", calories: 86, protein: 1.6, carbs: 20.0, fat: 0.1),
+        SeedFood(name: "Vollkornbrot", calories: 215, protein: 7.5, carbs: 41.0, fat: 1.5),
+        SeedFood(name: "Reiswaffeln (ungesalzen)", calories: 387, protein: 8.0, carbs: 81.5, fat: 2.8),
+        
+        // Obst & Gemüse
+        SeedFood(name: "Banane", calories: 89, protein: 1.1, carbs: 22.8, fat: 0.3),
+        SeedFood(name: "Apfel", calories: 52, protein: 0.3, carbs: 13.8, fat: 0.2),
+        SeedFood(name: "Heidelbeeren / Blaubeeren", calories: 57, protein: 0.7, carbs: 14.5, fat: 0.3),
+        SeedFood(name: "Erdbeeren", calories: 32, protein: 0.7, carbs: 7.7, fat: 0.3),
+        SeedFood(name: "Brokkoli", calories: 34, protein: 2.8, carbs: 6.6, fat: 0.4),
+        SeedFood(name: "Spinat (frisch)", calories: 23, protein: 2.9, carbs: 3.6, fat: 0.4),
+        SeedFood(name: "Tomate", calories: 18, protein: 0.9, carbs: 3.9, fat: 0.2),
+        SeedFood(name: "Gurke", calories: 15, protein: 0.7, carbs: 3.6, fat: 0.1),
+        SeedFood(name: "Paprika (rot)", calories: 31, protein: 1.0, carbs: 6.0, fat: 0.3),
+        SeedFood(name: "Karotte / Möhre", calories: 41, protein: 0.9, carbs: 9.6, fat: 0.2),
+        
+        // Fette, Nüsse & Hülsenfrüchte
+        SeedFood(name: "Avocado", calories: 160, protein: 2.0, carbs: 8.5, fat: 14.7),
+        SeedFood(name: "Olivenöl", calories: 884, protein: 0.0, carbs: 0.0, fat: 100.0),
+        SeedFood(name: "Butter", calories: 741, protein: 0.7, carbs: 0.6, fat: 82.0),
+        SeedFood(name: "Erdnussbutter (100% Natur)", calories: 588, protein: 25.0, carbs: 12.0, fat: 50.0),
+        SeedFood(name: "Mandeln", calories: 579, protein: 21.2, carbs: 9.5, fat: 49.9),
+        SeedFood(name: "Walnüsse", calories: 654, protein: 15.2, carbs: 7.0, fat: 65.2),
+        SeedFood(name: "Kichererbsen (gekocht)", calories: 164, protein: 8.9, carbs: 27.4, fat: 2.6),
+        SeedFood(name: "Tofu (Natur)", calories: 125, protein: 13.0, carbs: 1.9, fat: 7.0)
     ]
 }

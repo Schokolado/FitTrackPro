@@ -26,3 +26,31 @@ final class WorkoutSet {
         self.planExercise = planExercise
     }
 }
+
+enum WorkoutPrefillSource: String, CaseIterable {
+    case last = "last"
+    case highest = "highest"
+}
+
+extension Sequence where Element == WorkoutSet {
+    /// Selects a reference completed set for `exerciseId` based on the configured prefill mode:
+    /// - `.last`: most recent completed set
+    /// - `.highest`: highest measured weight (tie-broken by reps, then recency)
+    func preferredReferenceSet(for exerciseId: UUID, source: WorkoutPrefillSource) -> WorkoutSet? {
+        let completed = self.filter { $0.exercise?.id == exerciseId && $0.isCompleted }
+        switch source {
+        case .last:
+            return completed.max(by: { $0.timestamp < $1.timestamp })
+        case .highest:
+            return completed.max(by: { a, b in
+                if a.actualWeight != b.actualWeight {
+                    return a.actualWeight < b.actualWeight
+                }
+                if a.actualReps != b.actualReps {
+                    return a.actualReps < b.actualReps
+                }
+                return a.timestamp < b.timestamp
+            })
+        }
+    }
+}

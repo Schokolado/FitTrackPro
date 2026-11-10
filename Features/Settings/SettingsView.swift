@@ -5,6 +5,7 @@ import CloudKit
 struct SettingsView: View {
     @Environment(\.modelContext) private var modelContext
     @AppStorage(AppStorageKeys.prefillExerciseHistory) private var prefillExerciseHistory = true
+    @AppStorage(AppStorageKeys.workoutPrefillSource) private var workoutPrefillSource: String = WorkoutPrefillSource.last.rawValue
     @AppStorage("zeroWeightIsBodyweight") private var zeroWeightIsBodyweight = true
     @AppStorage("appTheme") private var appTheme: AppTheme = .system
     @AppStorage("notificationsEnabled") private var notificationsEnabled = true
@@ -195,8 +196,13 @@ struct SettingsView: View {
                     
                     Toggle("0 kg als Körpergewicht werten", isOn: $zeroWeightIsBodyweight)
                     
+                    Picker("Übernommene Werte", selection: $workoutPrefillSource) {
+                        Text("Letzte Einheit").tag(WorkoutPrefillSource.last.rawValue)
+                        Text("Höchster Wert").tag(WorkoutPrefillSource.highest.rawValue)
+                    }
+                    
                     Toggle("Werte aus Historie übernehmen", isOn: $prefillExerciseHistory)
-                    Text("Wenn aktiviert, werden beim Hinzufügen einer Übung zum Plan automatisch die Sätze, Wiederholungen und Gewichte aus dem letzten Training übernommen.")
+                    Text("Bestimmt, ob beim Öffnen/Starten eines Workouts sowie beim Hinzufügen einer Übung die Werte der letzten Trainingseinheit oder der bisher höchste gemessene Satz (Bestwert) übernommen werden.")
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
@@ -388,7 +394,10 @@ struct SettingsView: View {
             try modelContext.delete(model: TrainingPlan.self)
             try modelContext.delete(model: Exercise.self)
             
-            // Re-seed standard exercises
+            // Re-seed standard exercises and foods
+            UserDefaults.standard.removeObject(forKey: "hasSeededDefaultFoodsV1")
+            UserDefaults.standard.removeObject(forKey: "hasSeededMobilityPlansV2")
+            UserDefaults.standard.removeObject(forKey: "hasUpgradedMobilityNotesV3")
             SeedDataService.shared.seedExercisesIfNeeded(context: modelContext)
             
             healthKitEnabled = false

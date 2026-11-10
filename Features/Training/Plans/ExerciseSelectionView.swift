@@ -14,6 +14,7 @@ struct ExerciseSelectionView: View {
     @State private var showingAddExercise = false
     
     @AppStorage("prefillExerciseHistory") private var prefillExerciseHistory = true
+    @AppStorage(AppStorageKeys.workoutPrefillSource) private var workoutPrefillSourceRaw: String = WorkoutPrefillSource.last.rawValue
     
     var filteredExercises: [Exercise] {
         if searchText.isEmpty {
@@ -96,11 +97,14 @@ struct ExerciseSelectionView: View {
                 )
                 
                 if let pastSets = try? modelContext.fetch(descriptor), !pastSets.isEmpty {
-                    if let lastSessionId = pastSets.first?.session?.id {
-                        let setsFromLastSession = pastSets.filter { $0.session?.id == lastSessionId }
-                        targetSets = max(1, setsFromLastSession.count)
-                        targetReps = pastSets.first?.actualReps ?? 10
-                        targetWeight = pastSets.first?.actualWeight
+                    let source = WorkoutPrefillSource(rawValue: workoutPrefillSourceRaw) ?? .last
+                    if let refSet = pastSets.preferredReferenceSet(for: exerciseId, source: source) {
+                        if let refSessionId = refSet.session?.id {
+                            let setsFromSession = pastSets.filter { $0.session?.id == refSessionId }
+                            targetSets = max(1, setsFromSession.count)
+                        }
+                        targetReps = refSet.actualReps
+                        targetWeight = refSet.actualWeight
                     }
                 }
             }
