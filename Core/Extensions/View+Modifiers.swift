@@ -19,19 +19,21 @@ extension View {
 
 // MARK: - Primary Button Style
 struct PrimaryButtonModifier: ViewModifier {
+    var backgroundColor: Color = .brand
+
     func body(content: Content) -> some View {
         content
             .font(.headline)
             .foregroundColor(.white)
             .frame(maxWidth: .infinity)
             .padding()
-            .background(Color.brand)
+            .background(backgroundColor)
             .cornerRadius(8)
     }
 }
 
 extension View {
-    func primaryButtonStyle() -> some View {
-        self.modifier(PrimaryButtonModifier())
+    func primaryButtonStyle(backgroundColor: Color = .brand) -> some View {
+        self.modifier(PrimaryButtonModifier(backgroundColor: backgroundColor))
     }
 }

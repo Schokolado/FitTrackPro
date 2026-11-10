@@ -304,9 +304,10 @@ struct PlanExerciseHistoryButton: View {
     
     var body: some View {
         Button(action: { showingHistory = true }) {
-            if let refSet = pastSets.preferredReferenceSet(for: exercise.id, source: prefillSource) {
+            let badgeSource: WorkoutPrefillSource = prefillSource == .highest ? .highest : .last
+            if let refSet = pastSets.preferredReferenceSet(for: exercise.id, source: badgeSource) {
                 let durationUnit = exercise.effectiveTimeUnit
-                let prefix = prefillSource == .highest ? "Bestwert" : "Zuletzt"
+                let prefix = badgeSource == .highest ? "Bestwert" : "Zuletzt"
                 let previewText: String = {
                     if exercise.usesLevelInput {
                         return "\(prefix): Lvl \(Int(refSet.actualWeight)) • \(refSet.actualReps) \(durationUnit)"

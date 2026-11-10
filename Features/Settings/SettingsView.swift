@@ -4,7 +4,6 @@ import CloudKit
 
 struct SettingsView: View {
     @Environment(\.modelContext) private var modelContext
-    @AppStorage(AppStorageKeys.prefillExerciseHistory) private var prefillExerciseHistory = true
     @AppStorage(AppStorageKeys.workoutPrefillSource) private var workoutPrefillSource: String = WorkoutPrefillSource.last.rawValue
     @AppStorage("zeroWeightIsBodyweight") private var zeroWeightIsBodyweight = true
     @AppStorage("appTheme") private var appTheme: AppTheme = .system
@@ -202,16 +201,37 @@ struct SettingsView: View {
                     Toggle("Bildschirm während Workout anlassen", isOn: $keepScreenOnDuringWorkout)
                     
                     Toggle("0 kg als Körpergewicht werten", isOn: $zeroWeightIsBodyweight)
-                    
-                    Picker("Übernommene Werte", selection: $workoutPrefillSource) {
-                        Text("Letzte Einheit").tag(WorkoutPrefillSource.last.rawValue)
-                        Text("Höchster Wert").tag(WorkoutPrefillSource.highest.rawValue)
+                }
+
+                Section(header: Text("Vorgabewerte für Übungen & Pläne")) {
+                    ForEach(WorkoutPrefillSource.allCases) { option in
+                        let isSelected = (WorkoutPrefillSource(rawValue: workoutPrefillSource) ?? .last) == option
+                        Button {
+                            workoutPrefillSource = option.rawValue
+                        } label: {
+                            HStack(alignment: .top, spacing: 12) {
+                                Image(systemName: isSelected ? "largecircle.fill.circle" : "circle")
+                                    .font(.title3)
+                                    .foregroundColor(isSelected ? .brand : .secondary)
+                                    .padding(.top, 1)
+
+                                VStack(alignment: .leading, spacing: 3) {
+                                    Text(option.title)
+                                        .font(.subheadline.weight(isSelected ? .semibold : .regular))
+                                        .foregroundColor(.primary)
+                                    Text(option.descriptionText)
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                        .fixedSize(horizontal: false, vertical: true)
+                                }
+
+                                Spacer()
+                            }
+                            .padding(.vertical, 4)
+                            .contentShape(Rectangle())
+                        }
+                        .buttonStyle(.plain)
                     }
-                    
-                    Toggle("Werte aus Historie übernehmen", isOn: $prefillExerciseHistory)
-                    Text("Bestimmt, ob beim Öffnen/Starten eines Workouts sowie beim Hinzufügen einer Übung die Werte der letzten Trainingseinheit oder der bisher höchste gemessene Satz (Bestwert) übernommen werden.")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
                 }
                 
                 Section {

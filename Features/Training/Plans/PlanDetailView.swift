@@ -137,8 +137,9 @@ struct PlanDetailView: View {
     }
     
     private func autoFillPlanFromHistory() {
-        let sortedExercises = (plan.planExercises ?? []).filter { $0.exercise != nil }
         let source = prefillSource
+        guard source != .exerciseDefault else { return }
+        let sortedExercises = (plan.planExercises ?? []).filter { $0.exercise != nil }
         var changed = false
         
         for planEx in sortedExercises {
@@ -175,7 +176,7 @@ struct PlanDetailView: View {
             Label("Workout Starten", systemImage: "play.fill")
                 .frame(maxWidth: .infinity)
         }
-        .primaryButtonStyle()
+        .primaryButtonStyle(backgroundColor: .green)
         .padding(.horizontal)
     }
 

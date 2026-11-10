@@ -13,7 +13,6 @@ struct ExerciseSelectionView: View {
     @State private var searchText: String = ""
     @State private var showingAddExercise = false
     
-    @AppStorage("prefillExerciseHistory") private var prefillExerciseHistory = true
     @AppStorage(AppStorageKeys.workoutPrefillSource) private var workoutPrefillSourceRaw: String = WorkoutPrefillSource.last.rawValue
     
     var filteredExercises: [Exercise] {
@@ -89,23 +88,22 @@ struct ExerciseSelectionView: View {
             var targetReps = 10
             var targetWeight: Double? = nil
             
-            if prefillExerciseHistory {
+            let source = WorkoutPrefillSource(rawValue: workoutPrefillSourceRaw) ?? .last
+            if source != .exerciseDefault {
                 let exerciseId = exercise.id
                 let descriptor = FetchDescriptor<WorkoutSet>(
                     predicate: #Predicate { $0.exercise?.id == exerciseId && $0.isCompleted == true },
                     sortBy: [SortDescriptor(\.timestamp, order: .reverse)]
                 )
                 
-                if let pastSets = try? modelContext.fetch(descriptor), !pastSets.isEmpty {
-                    let source = WorkoutPrefillSource(rawValue: workoutPrefillSourceRaw) ?? .last
-                    if let refSet = pastSets.preferredReferenceSet(for: exerciseId, source: source) {
-                        if let refSessionId = refSet.session?.id {
-                            let setsFromSession = pastSets.filter { $0.session?.id == refSessionId }
-                            targetSets = max(1, setsFromSession.count)
-                        }
-                        targetReps = refSet.actualReps
-                        targetWeight = refSet.actualWeight
+                if let pastSets = try? modelContext.fetch(descriptor), !pastSets.isEmpty,
+                   let refSet = pastSets.preferredReferenceSet(for: exerciseId, source: source) {
+                    if let refSessionId = refSet.session?.id {
+                        let setsFromSession = pastSets.filter { $0.session?.id == refSessionId }
+                        targetSets = max(1, setsFromSession.count)
                     }
+                    targetReps = refSet.actualReps
+                    targetWeight = refSet.actualWeight
                 }
             }
             

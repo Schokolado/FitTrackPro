@@ -27,16 +27,40 @@ final class WorkoutSet {
     }
 }
 
-enum WorkoutPrefillSource: String, CaseIterable {
+enum WorkoutPrefillSource: String, CaseIterable, Identifiable {
     case last = "last"
     case highest = "highest"
+    case exerciseDefault = "exerciseDefault"
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .last:            return "Werte aus letzter Einheit"
+        case .highest:         return "Höchster gemessener Wert"
+        case .exerciseDefault: return "Standard der Übung (Manuell)"
+        }
+    }
+
+    var descriptionText: String {
+        switch self {
+        case .last:
+            return "Übernimmt Gewicht und Wiederholungen/Dauer aus deinem zuletzt abgeschlossenen Satz."
+        case .highest:
+            return "Übernimmt deinen bisher höchsten gemessenen Satz (Bestwert) als Zielwert."
+        case .exerciseDefault:
+            return "Übernimmt keine Historien-Werte – nutzt Standardwerte (3×10) bzw. deine manuell im Plan eingetragenen Ziele."
+        }
+    }
 }
 
 extension Sequence where Element == WorkoutSet {
     /// Selects a reference completed set for `exerciseId` based on the configured prefill mode:
     /// - `.last`: most recent completed set
     /// - `.highest`: highest measured weight (tie-broken by reps, then recency)
+    /// - `.exerciseDefault`: returns `nil` so manual/default exercise values stay untouched
     func preferredReferenceSet(for exerciseId: UUID, source: WorkoutPrefillSource) -> WorkoutSet? {
+        guard source != .exerciseDefault else { return nil }
         let completed = self.filter { $0.exercise?.id == exerciseId && $0.isCompleted }
         switch source {
         case .last:
@@ -51,6 +75,8 @@ extension Sequence where Element == WorkoutSet {
                 }
                 return a.timestamp < b.timestamp
             })
+        case .exerciseDefault:
+            return nil
         }
     }
 }
