@@ -77,7 +77,9 @@ struct WorkoutSummaryView: View {
                             title: "Muskelgruppen-Balance",
                             stats: sessionBalanceStats,
                             availableMetrics: [.sets, .volume, .exercises],
-                            showInsight: false
+                            showInsight: true,
+                            configuredFocus: session.plan?.focus ?? .auto,
+                            planName: session.plan?.name
                         )
                     }
                     

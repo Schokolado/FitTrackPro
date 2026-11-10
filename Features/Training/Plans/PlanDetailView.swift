@@ -119,7 +119,9 @@ struct PlanDetailView: View {
                         MuscleBalanceCard(
                             title: "Muskelgruppen-Balance",
                             stats: planBalanceStats,
-                            availableMetrics: hasVolume ? [.sets, .exercises, .volume] : [.sets, .exercises]
+                            availableMetrics: hasVolume ? [.sets, .exercises, .volume] : [.sets, .exercises],
+                            focusBinding: $plan.focus,
+                            planName: plan.name
                         )
                         .padding(.horizontal)
                     }
@@ -252,6 +254,23 @@ struct PlanDetailView: View {
                         showingReorderSheet = true
                     } label: {
                         Label("Reihenfolge ändern", systemImage: "arrow.up.arrow.down")
+                    }
+
+                    Menu {
+                        ForEach(PlanFocus.allCases) { focusOption in
+                            Button {
+                                plan.focus = focusOption
+                            } label: {
+                                HStack {
+                                    Text(focusOption.rawValue)
+                                    if plan.focus == focusOption {
+                                        Image(systemName: "checkmark")
+                                    }
+                                }
+                            }
+                        }
+                    } label: {
+                        Label("Plan-Fokus (\(plan.focus.shortLabel))", systemImage: "scope")
                     }
                     
                     Divider()

@@ -223,7 +223,12 @@ struct TrainingPlansView: View {
     }
     
     private func duplicate(plan: TrainingPlan) {
-        let newPlan = TrainingPlan(name: "\(plan.name) (Kopie)", sortOrder: plans.count, group: plan.group)
+        let newPlan = TrainingPlan(
+            name: "\(plan.name) (Kopie)",
+            sortOrder: plans.count,
+            focusRawValue: plan.focusRawValue,
+            group: plan.group
+        )
         modelContext.insert(newPlan)
         // Copy exercises
         if let exercises = plan.planExercises {

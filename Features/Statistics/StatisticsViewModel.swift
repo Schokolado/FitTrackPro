@@ -48,6 +48,13 @@ struct MuscleGroupStat: Identifiable {
     let workoutCount: Int
 }
 
+struct MuscleBalanceInsight {
+    let title: String
+    let message: String
+    let isBalanced: Bool
+    let effectiveFocus: PlanFocus
+}
+
 struct VolumeDataPoint: Identifiable {
     let id = UUID()
     let date: Date
@@ -275,8 +282,12 @@ final class StatisticsViewModel {
     }
 
     /// Analysiert Push/Pull & Ober-/Unterkörper-Balance
-    func muscleBalanceInsight(from stats: [MuscleGroupStat]) -> (title: String, message: String, isBalanced: Bool)? {
-        Self.muscleBalanceInsight(from: stats)
+    func muscleBalanceInsight(
+        from stats: [MuscleGroupStat],
+        configuredFocus: PlanFocus = .auto,
+        planName: String? = nil
+    ) -> MuscleBalanceInsight? {
+        Self.muscleBalanceInsight(from: stats, configuredFocus: configuredFocus, planName: planName)
     }
 
     // MARK: - Wiederverwendbare Balance-Berechnung (Statistik, Plan, Workout-Auswertung)
@@ -356,49 +367,292 @@ final class StatisticsViewModel {
         }
     }
 
-    /// Analysiert Push/Pull & Ober-/Unterkörper-Balance
-    static func muscleBalanceInsight(from stats: [MuscleGroupStat]) -> (title: String, message: String, isBalanced: Bool)? {
+    /// Ermittelt den effektiven Trainingsfokus (explizit gesetzt oder automatisch aus Planname & Muskelgruppen erkannt)
+    static func resolvedPlanFocus(
+        for configuredFocus: PlanFocus,
+        planName: String? = nil,
+        stats: [MuscleGroupStat]
+    ) -> PlanFocus {
+        if configuredFocus != .auto {
+            return configuredFocus
+        }
+
+        if let detectedByName = detectFocusFromName(planName) {
+            return detectedByName
+        }
+
+        let units: ([String]) -> Int = { keywords in
+            stats
+                .filter { keywords.contains($0.category.lowercased()) }
+                .reduce(0) { $0 + ($1.setCount > 0 ? $1.setCount : $1.exerciseCount) }
+        }
+
+        let totalUnits = stats.reduce(0) { $0 + ($1.setCount > 0 ? $1.setCount : $1.exerciseCount) }
+        let mobilityUnits = units(["mobilität", "mobility"])
+        let pushUnits = units(["brust", "schultern", "chest", "shoulders"])
+        let pullUnits = units(["rücken", "back"])
+        let legUnits = units(["beine", "legs"])
+        let armCoreUnits = units(["arme", "bauch / core", "arms", "abs / core"])
+
+        if mobilityUnits > 0 && totalUnits > 0 && Double(mobilityUnits) >= Double(totalUnits) * 0.6 {
+            return .mobility
+        }
+
+        if legUnits > 0 && pushUnits == 0 && pullUnits == 0 {
+            return .lowerBody
+        }
+
+        if legUnits == 0 {
+            if pushUnits > 0 && pullUnits == 0 {
+                return .push
+            }
+            if pullUnits > 0 && pushUnits == 0 {
+                return .pull
+            }
+            if pushUnits > 0 || pullUnits > 0 || armCoreUnits > 0 {
+                return .upperBody
+            }
+        }
+
+        return .fullBody
+    }
+
+    private static func detectFocusFromName(_ planName: String?) -> PlanFocus? {
+        guard let raw = planName?.trimmingCharacters(in: .whitespacesAndNewlines).lowercased(),
+              !raw.isEmpty else {
+            return nil
+        }
+        let tokens = raw.components(separatedBy: CharacterSet.alphanumerics.inverted).filter { !$0.isEmpty }
+
+        if raw.contains("mobilität") || raw.contains("mobility") || raw.contains("stretch") || raw.contains("dehn") {
+            return .mobility
+        }
+        if raw.contains("ganzkörper") || raw.contains("full body") || raw.contains("fullbody") || tokens.contains("gk") {
+            return .fullBody
+        }
+        if raw.contains("oberkörper") || raw.contains("upper") || tokens.contains("ok") {
+            return .upperBody
+        }
+        if raw.contains("unterkörper") || raw.contains("lower") || raw.contains("beine") || raw.contains("legs") || tokens.contains("uk") {
+            return .lowerBody
+        }
+        if tokens.contains("push") || raw.contains("push") {
+            return .push
+        }
+        if tokens.contains("pull") || raw.contains("pull") {
+            return .pull
+        }
+        return nil
+    }
+
+    /// Kontextabhängige Analyse von Push/Pull, Ober-/Unterkörper & Mobilität anhand des Fokus
+    static func muscleBalanceInsight(
+        from stats: [MuscleGroupStat],
+        configuredFocus: PlanFocus = .auto,
+        planName: String? = nil
+    ) -> MuscleBalanceInsight? {
+        guard !stats.isEmpty else { return nil }
+        let focus = resolvedPlanFocus(for: configuredFocus, planName: planName, stats: stats)
+
+        let unitCount: ([String]) -> Int = { categories in
+            stats
+                .filter { categories.contains($0.category.lowercased()) }
+                .reduce(0) { $0 + ($1.setCount > 0 ? $1.setCount : $1.exerciseCount) }
+        }
+
         let strengthCategories = Set(["brust", "rücken", "beine", "schultern", "arme", "bauch / core", "chest", "back", "legs", "shoulders", "arms", "abs / core"])
-        let strengthStats = stats.filter { strengthCategories.contains($0.category.lowercased()) }
-        let totalStrengthSets = strengthStats.reduce(0) { $0 + $1.setCount }
-        guard totalStrengthSets >= 6 else { return nil }
+        let totalAllUnits = stats.reduce(0) { $0 + ($1.setCount > 0 ? $1.setCount : $1.exerciseCount) }
+        let totalStrengthUnits = stats
+            .filter { strengthCategories.contains($0.category.lowercased()) }
+            .reduce(0) { $0 + ($1.setCount > 0 ? $1.setCount : $1.exerciseCount) }
 
-        let pushSets = stats
-            .filter { ["brust", "schultern", "chest", "shoulders"].contains($0.category.lowercased()) }
-            .reduce(0) { $0 + $1.setCount }
-        let pullSets = stats
-            .filter { ["rücken", "back"].contains($0.category.lowercased()) }
-            .reduce(0) { $0 + $1.setCount }
-        let legSets = stats
-            .filter { ["beine", "legs"].contains($0.category.lowercased()) }
-            .reduce(0) { $0 + $1.setCount }
+        let mobilityUnits = unitCount(["mobilität", "mobility"])
+        let chestUnits = unitCount(["brust", "chest"])
+        let shoulderUnits = unitCount(["schultern", "shoulders"])
+        let pushUnits = chestUnits + shoulderUnits
+        let pullUnits = unitCount(["rücken", "back"])
+        let legUnits = unitCount(["beine", "legs"])
+        let usesSets = stats.contains { $0.setCount > 0 }
+        let unitWord = usesSets ? "Sätze" : "Übungen"
 
-        if pullSets > 0 && Double(pushSets) > Double(pullSets) * 2.0 {
-            return (
-                "Push-Dominanz erkannt",
-                "Du trainierst deutlich mehr Druck- (\(pushSets) Sätze) als Zug-Übungen für den Rücken (\(pullSets) Sätze). Etwas mehr Rücken-Volumen schützt die Schultergesundheit.",
-                false
+        if focus == .mobility {
+            guard totalAllUnits >= 1 else { return nil }
+            let pct = Int(round((Double(mobilityUnits) / Double(max(totalAllUnits, 1))) * 100))
+            if mobilityUnits == 0 {
+                return MuscleBalanceInsight(
+                    title: "Kein Mobilitätsanteil",
+                    message: "Dieser Plan hat den Fokus Mobilität, enthält aber aktuell keine Mobilitätsübungen.",
+                    isBalanced: false,
+                    effectiveFocus: focus
+                )
+            }
+            if pct < 60 {
+                return MuscleBalanceInsight(
+                    title: "Mobilitätsanteil ausbaufähig",
+                    message: "Aktuell entfallen \(pct)% der \(unitWord) (\(mobilityUnits) von \(totalAllUnits)) auf Mobilität.",
+                    isBalanced: false,
+                    effectiveFocus: focus
+                )
+            }
+            return MuscleBalanceInsight(
+                title: "Fokus: Mobilität",
+                message: "\(mobilityUnits) von \(totalAllUnits) \(unitWord) (\(pct)%) decken gezielt Mobilität und Beweglichkeit ab.",
+                isBalanced: true,
+                effectiveFocus: focus
             )
         }
-        if pushSets > 0 && Double(pullSets) > Double(pushSets) * 2.2 {
-            return (
-                "Zug-Dominanz erkannt",
-                "Sehr starker Fokus auf Rücken (\(pullSets) Sätze) im Vergleich zu Brust/Schultern (\(pushSets) Sätze).",
-                false
-            )
-        }
-        if Double(legSets) < Double(totalStrengthSets) * 0.15 && totalStrengthSets >= 12 {
-            return (
-                "Beintraining ausbaufähig",
-                "Nur \(Int((Double(legSets) / Double(totalStrengthSets)) * 100))% deiner Kraft-Sätze entfallen auf die Beine (\(legSets) von \(totalStrengthSets) Sätzen).",
-                false
-            )
-        }
 
-        return (
-            "Ausgewogene Balance",
-            "Deine Muskelgruppen sind gut aufeinander abgestimmt verteilt.",
-            true
-        )
+        guard totalStrengthUnits >= 4 else { return nil }
+
+        switch focus {
+        case .upperBody:
+            if pushUnits > 0 && pullUnits == 0 && totalStrengthUnits >= 6 {
+                return MuscleBalanceInsight(
+                    title: "Rücken-Ausgleich fehlt",
+                    message: "Für eine ausgewogene Oberkörper-Einheit empfiehlt sich mindestens eine Zugübung für den Rücken als Ausgleich zu Brust/Schultern.",
+                    isBalanced: false,
+                    effectiveFocus: focus
+                )
+            }
+            if pullUnits > 0 && pushUnits == 0 && totalStrengthUnits >= 6 {
+                return MuscleBalanceInsight(
+                    title: "Push-Ausgleich fehlt",
+                    message: "Im Oberkörper-Fokus ergänzt mindestens eine Druckübung (Brust/Schultern) dein Rückentraining sinnvoll.",
+                    isBalanced: false,
+                    effectiveFocus: focus
+                )
+            }
+            if pullUnits > 0 && Double(pushUnits) > Double(pullUnits) * 2.0 {
+                return MuscleBalanceInsight(
+                    title: "Push-Dominanz im Oberkörper",
+                    message: "Deutlich mehr Druck- (\(pushUnits) \(unitWord)) als Zug-Übungen für den Rücken (\(pullUnits) \(unitWord)).",
+                    isBalanced: false,
+                    effectiveFocus: focus
+                )
+            }
+            if pushUnits > 0 && Double(pullUnits) > Double(pushUnits) * 2.2 {
+                return MuscleBalanceInsight(
+                    title: "Zug-Dominanz im Oberkörper",
+                    message: "Starker Fokus auf Rücken (\(pullUnits) \(unitWord)) gegenüber Brust/Schultern (\(pushUnits) \(unitWord)).",
+                    isBalanced: false,
+                    effectiveFocus: focus
+                )
+            }
+            return MuscleBalanceInsight(
+                title: "Ausgewogener Oberkörper-Fokus",
+                message: "Druck- (\(pushUnits) \(unitWord)) und Zugmuskulatur (\(pullUnits) \(unitWord)) im Oberkörper sind gut ausbalanciert.",
+                isBalanced: true,
+                effectiveFocus: focus
+            )
+
+        case .push:
+            if pushUnits == 0 {
+                return MuscleBalanceInsight(
+                    title: "Keine Push-Übung enthalten",
+                    message: "Fokus ist Push, aktuell sind aber keine Brust- oder Schulterübungen enthalten.",
+                    isBalanced: false,
+                    effectiveFocus: focus
+                )
+            }
+            if pullUnits > pushUnits {
+                return MuscleBalanceInsight(
+                    title: "Abweichung vom Push-Fokus",
+                    message: "Der Rücken-Anteil (\(pullUnits) \(unitWord)) überwiegt den Push-Anteil (\(pushUnits) \(unitWord)).",
+                    isBalanced: false,
+                    effectiveFocus: focus
+                )
+            }
+            return MuscleBalanceInsight(
+                title: "Fokus: Push-Einheit",
+                message: "Brust (\(chestUnits) \(unitWord)) und Schultern (\(shoulderUnits) \(unitWord)) decken deinen Push-Schwerpunkt gezielt ab.",
+                isBalanced: true,
+                effectiveFocus: focus
+            )
+
+        case .pull:
+            if pullUnits == 0 {
+                return MuscleBalanceInsight(
+                    title: "Keine Rückenübung enthalten",
+                    message: "Fokus ist Pull, aktuell enthält die Einheit aber keine Rückenübungen.",
+                    isBalanced: false,
+                    effectiveFocus: focus
+                )
+            }
+            if pushUnits > pullUnits {
+                return MuscleBalanceInsight(
+                    title: "Abweichung vom Pull-Fokus",
+                    message: "Brust/Schultern (\(pushUnits) \(unitWord)) überwiegen aktuell das Rückentraining (\(pullUnits) \(unitWord)).",
+                    isBalanced: false,
+                    effectiveFocus: focus
+                )
+            }
+            return MuscleBalanceInsight(
+                title: "Fokus: Pull-Einheit",
+                message: "\(pullUnits) Rücken-\(unitWord) bilden den klaren Schwerpunkt deiner Zug-Einheit.",
+                isBalanced: true,
+                effectiveFocus: focus
+            )
+
+        case .lowerBody:
+            if legUnits == 0 {
+                return MuscleBalanceInsight(
+                    title: "Keine Beinübung enthalten",
+                    message: "Fokus ist Unterkörper / Beine, aktuell sind aber keine Beinübungen enthalten.",
+                    isBalanced: false,
+                    effectiveFocus: focus
+                )
+            }
+            let legPct = Int(round((Double(legUnits) / Double(max(totalStrengthUnits, 1))) * 100))
+            if legPct < 50 && totalStrengthUnits >= 6 {
+                return MuscleBalanceInsight(
+                    title: "Bein-Anteil gering",
+                    message: "Für einen Bein-Fokus entfallen aktuell nur \(legPct)% (\(legUnits) von \(totalStrengthUnits) \(unitWord)) auf die Beine.",
+                    isBalanced: false,
+                    effectiveFocus: focus
+                )
+            }
+            return MuscleBalanceInsight(
+                title: "Fokus: Unterkörper / Beine",
+                message: "\(legUnits) von \(totalStrengthUnits) \(unitWord) (\(legPct)%) zielen gezielt auf deine Beinmuskulatur.",
+                isBalanced: true,
+                effectiveFocus: focus
+            )
+
+        case .fullBody, .auto:
+            if Double(legUnits) < Double(totalStrengthUnits) * 0.15 && totalStrengthUnits >= 8 {
+                let legPct = Int((Double(legUnits) / Double(totalStrengthUnits)) * 100)
+                return MuscleBalanceInsight(
+                    title: "Beintraining ausbaufähig",
+                    message: "Nur \(legPct)% deiner Kraft-\(unitWord) entfallen auf die Beine (\(legUnits) von \(totalStrengthUnits) \(unitWord)).",
+                    isBalanced: false,
+                    effectiveFocus: .fullBody
+                )
+            }
+            if pullUnits > 0 && Double(pushUnits) > Double(pullUnits) * 2.0 {
+                return MuscleBalanceInsight(
+                    title: "Push-Dominanz erkannt",
+                    message: "Deutlich mehr Druck- (\(pushUnits) \(unitWord)) als Zug-Übungen für den Rücken (\(pullUnits) \(unitWord)).",
+                    isBalanced: false,
+                    effectiveFocus: .fullBody
+                )
+            }
+            if pushUnits > 0 && Double(pullUnits) > Double(pushUnits) * 2.2 {
+                return MuscleBalanceInsight(
+                    title: "Zug-Dominanz erkannt",
+                    message: "Starker Fokus auf Rücken (\(pullUnits) \(unitWord)) im Vergleich zu Brust/Schultern (\(pushUnits) \(unitWord)).",
+                    isBalanced: false,
+                    effectiveFocus: .fullBody
+                )
+            }
+            return MuscleBalanceInsight(
+                title: "Ausgewogene Ganzkörper-Balance",
+                message: "Ober- und Unterkörper sowie Druck- und Zugübungen sind gut aufeinander abgestimmt.",
+                isBalanced: true,
+                effectiveFocus: .fullBody
+            )
+
+        case .mobility:
+            return nil
+        }
     }
 }

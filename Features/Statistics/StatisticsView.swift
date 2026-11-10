@@ -448,7 +448,8 @@ struct StatisticsView: View {
                 if !breakdown.isEmpty {
                     MuscleBalanceCard(
                         stats: breakdown,
-                        availableMetrics: [.sets, .volume, .workouts]
+                        availableMetrics: [.sets, .volume, .workouts],
+                        configuredFocus: .fullBody
                     )
                     .padding(.horizontal)
                 }
@@ -668,6 +669,9 @@ struct MuscleBalanceCard: View {
     let stats: [MuscleGroupStat]
     let availableMetrics: [MuscleBalanceMetric]
     let showInsight: Bool
+    let configuredFocus: PlanFocus
+    let focusBinding: Binding<PlanFocus>?
+    let planName: String?
 
     @State private var selectedMetric: MuscleBalanceMetric
     @State private var selectedCategory: String?
@@ -676,19 +680,33 @@ struct MuscleBalanceCard: View {
         title: String = "Muskelgruppen-Balance",
         stats: [MuscleGroupStat],
         availableMetrics: [MuscleBalanceMetric] = [.sets, .volume],
-        showInsight: Bool = true
+        showInsight: Bool = true,
+        configuredFocus: PlanFocus = .auto,
+        focusBinding: Binding<PlanFocus>? = nil,
+        planName: String? = nil
     ) {
         self.title = title
         self.stats = stats
         let resolvedMetrics = availableMetrics.isEmpty ? [.sets] : availableMetrics
         self.availableMetrics = resolvedMetrics
         self.showInsight = showInsight
+        self.configuredFocus = configuredFocus
+        self.focusBinding = focusBinding
+        self.planName = planName
 
         // Erste Metrik mit Werten > 0 automatisch bevorzugen (z. B. .exercises, falls Soll-Sätze 0 sind)
         let firstWithData = resolvedMetrics.first { metric in
             stats.contains { Self.metricValue(for: $0, metric: metric) > 0 }
         }
         _selectedMetric = State(initialValue: firstWithData ?? resolvedMetrics[0])
+    }
+
+    private var activeConfiguredFocus: PlanFocus {
+        focusBinding?.wrappedValue ?? configuredFocus
+    }
+
+    private var effectiveFocus: PlanFocus {
+        StatisticsViewModel.resolvedPlanFocus(for: activeConfiguredFocus, planName: planName, stats: stats)
     }
 
     private var visibleStats: [MuscleGroupStat] {
@@ -712,10 +730,12 @@ struct MuscleBalanceCard: View {
                 Text(title)
                     .font(.headline)
                 Spacer()
-                if selectedCategory != nil {
-                    Text("Tippen zum Zurücksetzen")
-                        .font(.caption2)
-                        .foregroundStyle(Color.textSecondary)
+                if let focusBinding {
+                    focusPickerMenu(binding: focusBinding)
+                } else if activeConfiguredFocus == .auto && !stats.isEmpty {
+                    focusBadge(text: "Auto: \(effectiveFocus.shortLabel)")
+                } else if activeConfiguredFocus != .fullBody {
+                    focusBadge(text: activeConfiguredFocus.shortLabel)
                 }
             }
 
@@ -780,7 +800,11 @@ struct MuscleBalanceCard: View {
                 }
             }
 
-            if showInsight, let insight = StatisticsViewModel.muscleBalanceInsight(from: stats) {
+            if showInsight, let insight = StatisticsViewModel.muscleBalanceInsight(
+                from: stats,
+                configuredFocus: activeConfiguredFocus,
+                planName: planName
+            ) {
                 HStack(alignment: .top, spacing: 10) {
                     Image(systemName: insight.isBalanced ? "checkmark.seal.fill" : "exclamationmark.triangle.fill")
                         .foregroundStyle(insight.isBalanced ? Color.green : Color.orange)
@@ -810,6 +834,50 @@ struct MuscleBalanceCard: View {
                 }
             }
         }
+    }
+
+    @ViewBuilder
+    private func focusPickerMenu(binding: Binding<PlanFocus>) -> some View {
+        let labelText = binding.wrappedValue == .auto
+            ? "Auto: \(effectiveFocus.shortLabel)"
+            : binding.wrappedValue.shortLabel
+
+        Menu {
+            ForEach(PlanFocus.allCases) { option in
+                Button {
+                    binding.wrappedValue = option
+                } label: {
+                    HStack {
+                        Text(option.rawValue)
+                        if binding.wrappedValue == option {
+                            Image(systemName: "checkmark")
+                        }
+                    }
+                }
+            }
+        } label: {
+            HStack(spacing: 4) {
+                Text(labelText)
+                Image(systemName: "chevron.up.chevron.down")
+                    .font(.system(size: 9, weight: .bold))
+            }
+            .font(.caption.weight(.semibold))
+            .foregroundStyle(Color.brand)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 5)
+            .background(Color.brand.opacity(0.12))
+            .clipShape(Capsule())
+        }
+    }
+
+    private func focusBadge(text: String) -> some View {
+        Text(text)
+            .font(.caption.weight(.medium))
+            .foregroundStyle(Color.textSecondary)
+            .padding(.horizontal, 9)
+            .padding(.vertical, 4)
+            .background(Color.secondary.opacity(0.12))
+            .clipShape(Capsule())
     }
 
     @ViewBuilder
