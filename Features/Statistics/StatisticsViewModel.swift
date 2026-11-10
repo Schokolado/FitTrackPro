@@ -30,6 +30,22 @@ enum StatisticsMetric: String, CaseIterable, Identifiable {
     var id: String { rawValue }
 }
 
+enum MuscleBalanceMetric: String, CaseIterable, Identifiable {
+    case sets     = "Sätze"
+    case volume   = "Volumen (kg)"
+    case workouts = "Workouts"
+
+    var id: String { rawValue }
+}
+
+struct MuscleGroupStat: Identifiable {
+    var id: String { category }
+    let category: String
+    let setCount: Int
+    let volumeKg: Double
+    let workoutCount: Int
+}
+
 struct VolumeDataPoint: Identifiable {
     let id = UUID()
     let date: Date
@@ -234,5 +250,98 @@ final class StatisticsViewModel {
             return acc + end.timeIntervalSince(s.startTime)
         }
         return total / Double(completed.count)
+    }
+
+    /// Gesamte Trainingsdauer in Sekunden
+    func totalWorkoutDuration(in sessions: [WorkoutSession]) -> TimeInterval {
+        sessions.filter { $0.endTime != nil }.reduce(0.0) { acc, s in
+            guard let end = s.endTime else { return acc }
+            return acc + max(0, end.timeIntervalSince(s.startTime))
+        }
+    }
+
+    /// Gesamtanzahl abgeschlossener Sätze
+    func totalSets(in sessions: [WorkoutSession]) -> Int {
+        sessions.reduce(0) { acc, session in
+            acc + (session.sets ?? []).filter { $0.isCompleted }.count
+        }
+    }
+
+    /// Aufschlüsselung nach Muskelgruppe / Übungs-Kategorie
+    func muscleGroupBreakdown(in sessions: [WorkoutSession]) -> [MuscleGroupStat] {
+        var setCounts: [String: Int] = [:]
+        var volumes: [String: Double] = [:]
+        var sessionIdsByCategory: [String: Set<UUID>] = [:]
+
+        for session in sessions {
+            for set in (session.sets ?? []) where set.isCompleted {
+                guard let exercise = set.exercise else { continue }
+                let category = exercise.category.isEmpty ? "Sonstiges" : exercise.category
+                setCounts[category, default: 0] += 1
+                volumes[category, default: 0] += Double(set.actualReps) * set.actualWeight
+                sessionIdsByCategory[category, default: []].insert(session.id)
+            }
+        }
+
+        return setCounts.keys.map { category in
+            MuscleGroupStat(
+                category: category,
+                setCount: setCounts[category, default: 0],
+                volumeKg: volumes[category, default: 0],
+                workoutCount: sessionIdsByCategory[category]?.count ?? 0
+            )
+        }
+        .sorted {
+            if $0.setCount != $1.setCount {
+                return $0.setCount > $1.setCount
+            }
+            return $0.volumeKg > $1.volumeKg
+        }
+    }
+
+    /// Analysiert Push/Pull & Ober-/Unterkörper-Balance
+    func muscleBalanceInsight(from stats: [MuscleGroupStat]) -> (title: String, message: String, isBalanced: Bool)? {
+        let strengthCategories = Set(["brust", "rücken", "beine", "schultern", "arme", "bauch / core", "chest", "back", "legs", "shoulders", "arms", "abs / core"])
+        let strengthStats = stats.filter { strengthCategories.contains($0.category.lowercased()) }
+        let totalStrengthSets = strengthStats.reduce(0) { $0 + $1.setCount }
+        guard totalStrengthSets >= 6 else { return nil }
+
+        let pushSets = stats
+            .filter { ["brust", "schultern", "chest", "shoulders"].contains($0.category.lowercased()) }
+            .reduce(0) { $0 + $1.setCount }
+        let pullSets = stats
+            .filter { ["rücken", "back"].contains($0.category.lowercased()) }
+            .reduce(0) { $0 + $1.setCount }
+        let legSets = stats
+            .filter { ["beine", "legs"].contains($0.category.lowercased()) }
+            .reduce(0) { $0 + $1.setCount }
+
+        if pullSets > 0 && Double(pushSets) > Double(pullSets) * 2.0 {
+            return (
+                "Push-Dominanz erkannt",
+                "Du trainierst deutlich mehr Druck- (\(pushSets) Sätze) als Zug-Übungen für den Rücken (\(pullSets) Sätze). Etwas mehr Rücken-Volumen schützt die Schultergesundheit.",
+                false
+            )
+        }
+        if pushSets > 0 && Double(pullSets) > Double(pushSets) * 2.2 {
+            return (
+                "Zug-Dominanz erkannt",
+                "Sehr starker Fokus auf Rücken (\(pullSets) Sätze) im Vergleich zu Brust/Schultern (\(pushSets) Sätze).",
+                false
+            )
+        }
+        if Double(legSets) < Double(totalStrengthSets) * 0.15 && totalStrengthSets >= 12 {
+            return (
+                "Beintraining ausbaufähig",
+                "Nur \(Int((Double(legSets) / Double(totalStrengthSets)) * 100))% deiner Kraft-Sätze entfallen auf die Beine (\(legSets) von \(totalStrengthSets) Sätzen).",
+                false
+            )
+        }
+
+        return (
+            "Ausgewogene Balance",
+            "Deine Muskelgruppen sind in diesem Zeitraum gut aufeinander abgestimmt verteilt.",
+            true
+        )
     }
 }

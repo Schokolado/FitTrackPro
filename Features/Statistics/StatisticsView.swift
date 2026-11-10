@@ -4,6 +4,7 @@ import Charts
 
 struct StatisticsView: View {
     @Environment(\.modelContext) private var modelContext
+    @EnvironmentObject var themeManager: ThemeManager
 
     // SwiftData Queries
     @Query(sort: \WorkoutSession.startTime, order: .reverse)
@@ -19,7 +20,8 @@ struct StatisticsView: View {
     @State private var viewModel = StatisticsViewModel()
 
     // Navigation State
-    @State private var selectedSegment: Int = 0  // 0 = Übungen, 1 = Pläne
+    @State private var selectedSegment: Int = 0  // 0 = Übungen, 1 = Pläne, 2 = Balance
+    @State private var balanceMetric: MuscleBalanceMetric = .sets
     @State private var navId = UUID()
     @AppStorage("stats_selectedExerciseId") private var savedExerciseId: String = ""
 
@@ -35,12 +37,13 @@ struct StatisticsView: View {
                     Picker("Ansicht", selection: $selectedSegment) {
                         Text("Übungen").tag(0)
                         Text("Pläne").tag(1)
+                        Text("Balance").tag(2)
                     }
                     .pickerStyle(.segmented)
                     .padding(.horizontal)
 
-                    // ─── Zeitraum-Filter (nur für Übungen & Pläne) ────
-                    if selectedSegment == 0 {
+                    // ─── Zeitraum-Filter (für Übungen & Balance) ────
+                    if selectedSegment == 0 || selectedSegment == 2 {
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack(spacing: 8) {
                                 ForEach(TimeRange.allCases) { range in
@@ -63,6 +66,8 @@ struct StatisticsView: View {
                         exerciseStatisticsSection
                     } else if selectedSegment == 1 {
                         planStatisticsSection
+                    } else {
+                        balanceStatisticsSection
                     }
                 }
                 .padding(.bottom, 120)
@@ -361,6 +366,243 @@ struct StatisticsView: View {
         }
         .frame(maxWidth: .infinity)
         .frame(height: 250)
+    }
+
+    // MARK: - Balance & Aktivitätszusammenfassung
+
+    private var balanceStatisticsSection: some View {
+        let sessions = filteredSessions
+        let breakdown = viewModel.muscleGroupBreakdown(in: sessions)
+        let workoutCount = viewModel.completedWorkoutCount(in: sessions)
+        let totalVol = viewModel.totalVolume(in: sessions)
+        let totalSets = viewModel.totalSets(in: sessions)
+        let totalDur = viewModel.totalWorkoutDuration(in: sessions)
+        let avgDur = viewModel.averageWorkoutDuration(in: sessions)
+
+        return VStack(spacing: 16) {
+            if sessions.isEmpty {
+                VStack(spacing: 16) {
+                    Image(systemName: "chart.pie.fill")
+                        .font(.system(size: 44))
+                        .foregroundStyle(Color.brand.opacity(0.6))
+                    Text("Noch keine abgeschlossenen Workouts")
+                        .font(.headline)
+                    Text("Absolviere ein Workout im gewählten Zeitraum, um deine Muskelgruppen-Balance und Aktivitätszusammenfassung zu sehen.")
+                        .font(.subheadline)
+                        .foregroundStyle(Color.textSecondary)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 32)
+                }
+                .frame(maxWidth: .infinity)
+                .frame(height: 250)
+            } else {
+                // 1. Aktivitätszusammenfassung Card
+                VStack(alignment: .leading, spacing: 14) {
+                    HStack {
+                        Image(systemName: "flame.fill")
+                            .foregroundStyle(Color.orange)
+                        Text("Aktivitätszusammenfassung")
+                            .font(.headline)
+                        Spacer()
+                        Text(viewModel.selectedTimeRange.rawValue)
+                            .font(.caption)
+                            .foregroundStyle(Color.textSecondary)
+                    }
+
+                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                        activityMetricTile(
+                            title: "Workouts",
+                            value: "\(workoutCount)",
+                            subtitle: avgDur > 0 ? "Ø \(formatDurationShort(avgDur))" : "Abgeschlossen",
+                            icon: "figure.strengthtraining.traditional",
+                            color: .brand
+                        )
+                        activityMetricTile(
+                            title: "Trainingszeit",
+                            value: formatDurationShort(totalDur),
+                            subtitle: "Gesamtdauer",
+                            icon: "clock.fill",
+                            color: .blue
+                        )
+                        activityMetricTile(
+                            title: "Gesamtvolumen",
+                            value: "\(Int(totalVol)) kg",
+                            subtitle: "Bewegtes Gewicht",
+                            icon: "scalemass.fill",
+                            color: .purple
+                        )
+                        activityMetricTile(
+                            title: "Sätze",
+                            value: "\(totalSets)",
+                            subtitle: "Abgeschlossen",
+                            icon: "checkmark.circle.fill",
+                            color: .green
+                        )
+                    }
+                }
+                .padding()
+                .background(Color.backgroundCard)
+                .cornerRadius(16)
+                .padding(.horizontal)
+
+                // 2. Muskelgruppen-Balance Card
+                if !breakdown.isEmpty {
+                    VStack(alignment: .leading, spacing: 16) {
+                        HStack {
+                            Image(systemName: "chart.pie.fill")
+                                .foregroundStyle(Color.brand)
+                            Text("Muskelgruppen-Balance")
+                                .font(.headline)
+                            Spacer()
+                        }
+
+                        Picker("Balance-Metrik", selection: $balanceMetric) {
+                            ForEach(MuscleBalanceMetric.allCases) { m in
+                                Text(m.rawValue).tag(m)
+                            }
+                        }
+                        .pickerStyle(.segmented)
+
+                        let totalMetricValue = breakdown.reduce(0.0) { $0 + metricValue(for: $1) }
+
+                        // Donut Chart
+                        Chart(breakdown) { item in
+                            let val = metricValue(for: item)
+                            if val > 0 {
+                                SectorMark(
+                                    angle: .value(balanceMetric.rawValue, val),
+                                    innerRadius: .ratio(0.58),
+                                    angularInset: 2
+                                )
+                                .cornerRadius(4)
+                                .foregroundStyle(themeManager.color(for: item.category))
+                            }
+                        }
+                        .frame(height: 210)
+                        .chartBackground { _ in
+                            VStack(spacing: 2) {
+                                Text(formatTotalMetric(totalMetricValue))
+                                    .font(.title3.bold())
+                                    .foregroundStyle(Color.textPrimary)
+                                Text(balanceMetric.rawValue)
+                                    .font(.caption2)
+                                    .foregroundStyle(Color.textSecondary)
+                            }
+                        }
+
+                        // Breakdown List
+                        VStack(spacing: 10) {
+                            ForEach(breakdown) { item in
+                                let val = metricValue(for: item)
+                                let pct = totalMetricValue > 0 ? Int(round((val / totalMetricValue) * 100)) : 0
+                                let catColor = themeManager.color(for: item.category)
+
+                                HStack(spacing: 10) {
+                                    Circle()
+                                        .fill(catColor)
+                                        .frame(width: 10, height: 10)
+
+                                    Text(item.category)
+                                        .font(.subheadline.weight(.medium))
+                                        .foregroundStyle(Color.textPrimary)
+
+                                    Spacer()
+
+                                    Text("\(item.setCount) Sätze")
+                                        .font(.caption)
+                                        .foregroundStyle(Color.textSecondary)
+
+                                    if item.volumeKg > 0 {
+                                        Text("• \(Int(item.volumeKg)) kg")
+                                            .font(.caption)
+                                            .foregroundStyle(Color.textSecondary)
+                                    }
+
+                                    Text("\(pct)%")
+                                        .font(.caption.bold())
+                                        .foregroundStyle(catColor)
+                                        .frame(minWidth: 36, alignment: .trailing)
+                                }
+                                .padding(.vertical, 2)
+                            }
+                        }
+
+                        if let insight = viewModel.muscleBalanceInsight(from: breakdown) {
+                            HStack(alignment: .top, spacing: 10) {
+                                Image(systemName: insight.isBalanced ? "checkmark.seal.fill" : "exclamationmark.triangle.fill")
+                                    .foregroundStyle(insight.isBalanced ? Color.green : Color.orange)
+                                    .font(.title3)
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(insight.title)
+                                        .font(.subheadline.bold())
+                                    Text(insight.message)
+                                        .font(.caption)
+                                        .foregroundStyle(Color.textSecondary)
+                                }
+                            }
+                            .padding(12)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .background((insight.isBalanced ? Color.green : Color.orange).opacity(0.1))
+                            .cornerRadius(12)
+                        }
+                    }
+                    .padding()
+                    .background(Color.backgroundCard)
+                    .cornerRadius(16)
+                    .padding(.horizontal)
+                }
+            }
+        }
+    }
+
+    private func metricValue(for item: MuscleGroupStat) -> Double {
+        switch balanceMetric {
+        case .sets:     return Double(item.setCount)
+        case .volume:   return item.volumeKg
+        case .workouts: return Double(item.workoutCount)
+        }
+    }
+
+    private func formatTotalMetric(_ val: Double) -> String {
+        switch balanceMetric {
+        case .sets, .workouts: return "\(Int(val))"
+        case .volume:          return "\(Int(val)) kg"
+        }
+    }
+
+    private func formatDurationShort(_ duration: TimeInterval) -> String {
+        let mins = Int(duration) / 60
+        let h = mins / 60
+        let m = mins % 60
+        if h > 0 {
+            return "\(h)h \(m)m"
+        }
+        return "\(m) Min"
+    }
+
+    private func activityMetricTile(title: String, value: String, subtitle: String, icon: String, color: Color) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(spacing: 6) {
+                Image(systemName: icon)
+                    .font(.caption)
+                    .foregroundStyle(color)
+                Text(title)
+                    .font(.caption)
+                    .foregroundStyle(Color.textSecondary)
+            }
+            Text(value)
+                .font(.title3.bold())
+                .foregroundStyle(Color.textPrimary)
+                .minimumScaleFactor(0.75)
+                .lineLimit(1)
+            Text(subtitle)
+                .font(.caption2)
+                .foregroundStyle(Color.textSecondary)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(12)
+        .background(Color.backgroundSecondary)
+        .cornerRadius(12)
     }
 
 

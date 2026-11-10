@@ -7,6 +7,7 @@ struct RecoveryView: View {
     @Query(sort: \SleepEntry.wakeTime, order: .reverse) private var manualSleeps: [SleepEntry]
     
     @AppStorage(AppStorageKeys.dailySleepGoalHours) private var sleepGoalHours: Double = 8.0
+    @AppStorage(AppStorageKeys.dailyStepGoal) private var dailyStepGoal: Int = 10000
     
     @State private var recoveryResult: RecoveryResult?
     @State private var isLoading = true
@@ -17,6 +18,11 @@ struct RecoveryView: View {
     @State private var rhrScore: Double?
     @State private var rhrBaseline: Double?
     @State private var hkLastNightSleep: Double?
+    @State private var todaySteps: Int = 0
+    @State private var todayActiveKcal: Double = 0
+    @State private var weekWorkoutsCount: Int = 0
+    @State private var weekDurationMinutes: Int = 0
+    @State private var weekTotalVolumeKg: Double = 0
     
     var colorForScore: Color {
         guard let score = recoveryResult?.score else { return .teal }
@@ -70,6 +76,12 @@ struct RecoveryView: View {
                         .foregroundColor(.secondary)
                         .padding(.top, 8)
                     }
+                    
+                    // Belastung / Erholung / Schlaf (3 Kreise)
+                    vitalRingsSection(for: result)
+                    
+                    // Kompakte Aktivitätszusammenfassung (Heute & 7 Tage)
+                    activitySummarySection
                     
                     // Breakdown
                     VStack(alignment: .leading, spacing: 16) {
@@ -241,6 +253,147 @@ struct RecoveryView: View {
         )
     }
     
+    private func vitalRingsSection(for result: RecoveryResult) -> some View {
+        let strainPercent = computeStrainPercent(for: result)
+        let sleepPercent = computeSleepPercent(for: result)
+        
+        return VStack(alignment: .leading, spacing: 12) {
+            Text("Belastung • Erholung • Schlaf")
+                .font(.headline)
+                .padding(.horizontal)
+            
+            HStack(spacing: 12) {
+                vitalRingItem(
+                    title: "Belastung",
+                    percent: strainPercent,
+                    subtitle: "\(Int(todayActiveKcal)) kcal",
+                    color: .orange
+                )
+                vitalRingItem(
+                    title: "Erholung",
+                    percent: result.score,
+                    subtitle: result.level.rawValue,
+                    color: colorForScore
+                )
+                vitalRingItem(
+                    title: "Schlaf",
+                    percent: sleepPercent,
+                    subtitle: formattedSleepDuration(result.rawLastNightSleepHours),
+                    color: .indigo
+                )
+            }
+            .padding(16)
+            .background(
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .fill(Color.backgroundSecondary)
+            )
+            .padding(.horizontal)
+        }
+    }
+    
+    private func vitalRingItem(title: String, percent: Int, subtitle: String, color: Color) -> some View {
+        let clamped = min(max(percent, 0), 100)
+        return VStack(spacing: 8) {
+            ZStack {
+                Circle()
+                    .stroke(color.opacity(0.2), lineWidth: 9)
+                Circle()
+                    .trim(from: 0, to: Double(clamped) / 100.0)
+                    .stroke(color, style: StrokeStyle(lineWidth: 9, lineCap: .round))
+                    .rotationEffect(.degrees(-90))
+                    .animation(.spring(response: 0.6, dampingFraction: 0.8), value: clamped)
+                Text("\(clamped)%")
+                    .font(.system(.subheadline, design: .rounded).bold())
+                    .foregroundColor(color)
+            }
+            .frame(width: 72, height: 72)
+            
+            Text(title)
+                .font(.caption.bold())
+                .foregroundColor(.primary)
+            
+            Text(subtitle)
+                .font(.caption2)
+                .foregroundColor(.secondary)
+                .lineLimit(1)
+        }
+        .frame(maxWidth: .infinity)
+    }
+    
+    private var activitySummarySection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Aktivitätszusammenfassung")
+                .font(.headline)
+                .padding(.horizontal)
+            
+            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                dataCard(
+                    icon: "figure.walk",
+                    color: .green,
+                    title: "Schritte heute",
+                    value: todaySteps.formatted(),
+                    subtitle: "Ziel: \(dailyStepGoal.formatted())"
+                )
+                dataCard(
+                    icon: "flame.fill",
+                    color: .orange,
+                    title: "Aktive Kalorien",
+                    value: "\(Int(todayActiveKcal)) kcal",
+                    subtitle: "Heute verbrannt"
+                )
+                dataCard(
+                    icon: "dumbbell.fill",
+                    color: .blue,
+                    title: "Workouts (7 Tage)",
+                    value: "\(weekWorkoutsCount)",
+                    subtitle: "\(weekDurationMinutes) Min. gesamt"
+                )
+                dataCard(
+                    icon: "scalemass.fill",
+                    color: .purple,
+                    title: "Volumen (7 Tage)",
+                    value: formattedVolume(weekTotalVolumeKg),
+                    subtitle: "Abgeschlossene Sätze"
+                )
+            }
+            .padding(.horizontal)
+        }
+    }
+    
+    private func computeStrainPercent(for result: RecoveryResult) -> Int {
+        let sessionLoad = min(1.0, Double(result.rawWorkoutSessionsLast3Days) / 3.0)
+        if todayActiveKcal > 0 || todaySteps > 0 {
+            let calorieLoad = min(1.0, todayActiveKcal / 600.0)
+            let stepLoad = min(1.0, Double(todaySteps) / Double(max(dailyStepGoal, 1)))
+            let blended = (0.4 * sessionLoad) + (0.35 * calorieLoad) + (0.25 * stepLoad)
+            return Int((min(1.0, max(0.0, blended)) * 100.0).rounded())
+        }
+        return Int((sessionLoad * 100.0).rounded())
+    }
+    
+    private func computeSleepPercent(for result: RecoveryResult) -> Int {
+        if let sleepHours = result.rawLastNightSleepHours {
+            let ratio = min(1.0, max(0.0, sleepHours / max(result.rawSleepGoalHours, 1.0)))
+            return Int((ratio * 100.0).rounded())
+        }
+        let fallback = Double(result.sleepScore) / Double(max(result.sleepMax, 1))
+        return Int((min(1.0, max(0.0, fallback)) * 100.0).rounded())
+    }
+    
+    private func formattedSleepDuration(_ hours: Double?) -> String {
+        guard let hours else { return "Keine Daten" }
+        let h = Int(hours)
+        let m = Int((hours - Double(h)) * 60)
+        return "\(h)h \(m)m"
+    }
+    
+    private func formattedVolume(_ kg: Double) -> String {
+        if kg >= 1000 {
+            return String(format: "%.1f t", kg / 1000.0)
+        }
+        return "\(Int(kg)) kg"
+    }
+    
     private func calculateRecovery() async {
         isLoading = true
         defer { isLoading = false }
@@ -283,12 +436,30 @@ struct RecoveryView: View {
             rhrBaseline = try? await HealthKitService.shared.fetchRHRBaseline(days: 7, upTo: today)
         }
         
+        // Today's Activity (Steps & Active Calories)
+        todaySteps = (try? await HealthKitService.shared.fetchSteps(for: today)) ?? 0
+        todayActiveKcal = (try? await HealthKitService.shared.fetchActiveEnergyBurned(for: today)) ?? 0
+        
         // 2. Fetch DB Data (Workouts)
         let calendar = Calendar.current
         let threeDaysAgo = calendar.date(byAdding: .day, value: -3, to: today)!
+        let sevenDaysAgo = calendar.date(byAdding: .day, value: -7, to: today)!
         
         let completedWorkouts = workouts.filter { $0.endTime != nil }
         let recentWorkouts = completedWorkouts.filter { $0.startTime >= threeDaysAgo }
+        let weeklyWorkouts = completedWorkouts.filter { $0.startTime >= sevenDaysAgo }
+        
+        weekWorkoutsCount = weeklyWorkouts.count
+        weekDurationMinutes = weeklyWorkouts.reduce(0) { sum, session in
+            guard let end = session.endTime else { return sum }
+            return sum + max(0, Int(end.timeIntervalSince(session.startTime) / 60))
+        }
+        weekTotalVolumeKg = weeklyWorkouts.reduce(0.0) { sum, session in
+            let sessionVol = (session.sets ?? [])
+                .filter { $0.isCompleted }
+                .reduce(0.0) { $0 + ($1.actualWeight * Double($1.actualReps)) }
+            return sum + sessionVol
+        }
         
         var daysSinceLastWorkout = 3 // default max
         if let last = completedWorkouts.max(by: { $0.startTime < $1.startTime }) {
