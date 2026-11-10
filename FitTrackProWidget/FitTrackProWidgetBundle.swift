@@ -12,6 +12,7 @@ import SwiftUI
 struct FitTrackProWidgetBundle: WidgetBundle {
     var body: some Widget {
         FitTrackProWidget()
+        StepsWidget()
         FitTrackProWidgetControl()
         FitTrackProWidgetLiveActivity()
     }

@@ -43,6 +43,7 @@ struct StepEntryFormView: View {
         modelContext.insert(newEntry)
         
         try? modelContext.save()
+        WidgetDataSync.sync()
         dismiss()
     }
 }

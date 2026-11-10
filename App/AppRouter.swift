@@ -79,6 +79,11 @@ struct AppRouter: View {
             } else if url.host == "start-workout" {
                 selectedTab = 1
                 NotificationCenter.default.post(name: NSNotification.Name("OpenWorkoutSelection"), object: nil)
+            } else if url.host == "steps" {
+                selectedTab = 0
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    NotificationCenter.default.post(name: NSNotification.Name("OpenStepTracker"), object: nil)
+                }
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("OpenActiveWorkout"))) { _ in

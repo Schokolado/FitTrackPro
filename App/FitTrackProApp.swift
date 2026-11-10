@@ -138,7 +138,10 @@ struct WidgetDataSync {
             "nutritionGoalCarbs", 
             "nutritionGoalFat", 
             "daily_step_goal", 
-            "dailyStepGoal"
+            "dailyStepGoal",
+            "cached_today_steps",
+            "cached_today_steps_date",
+            "weekly_healthkit_steps_cache"
         ]
         
         for key in keys {

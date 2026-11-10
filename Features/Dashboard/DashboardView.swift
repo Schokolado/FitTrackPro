@@ -16,6 +16,7 @@ struct DashboardView: View {
     @AppStorage("cached_today_steps_date") private var cachedTodayStepsDate: String = ""
     
     @State private var todaySteps: Int = 0
+    @State private var showingStepTrackerFromWidget = false
     
     @Query(sort: \WeightEntry.timestamp, order: .reverse) private var weightEntries: [WeightEntry]
     @Query private var allFoodEntries: [FoodEntry]
@@ -181,8 +182,14 @@ struct DashboardView: View {
                         }
                     }
                 }
+                .navigationDestination(isPresented: $showingStepTrackerFromWidget) {
+                    StepTrackerView()
+                }
         }
         .id(navId)
+        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("OpenStepTracker"))) { _ in
+            showingStepTrackerFromWidget = true
+        }
         .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("TabReselected"))) { notification in
             if let tab = notification.object as? Int, tab == 0 {
                 navId = UUID()
@@ -226,6 +233,27 @@ struct DashboardView: View {
                     self.cachedTodaySteps = steps
                     self.cachedTodayStepsDate = Date().iso8601String()
                 }
+            }
+            
+            let calendar = Calendar.current
+            let endDate = Date()
+            if let startDate = calendar.date(byAdding: .day, value: -6, to: endDate),
+               let history = try? await HealthKitService.shared.fetchStepsHistory(startDate: startDate, endDate: endDate) {
+                var cacheDict: [String: Int] = [:]
+                for item in history {
+                    cacheDict[item.date.iso8601String()] = item.steps
+                }
+                if let encoded = try? JSONEncoder().encode(cacheDict) {
+                    await MainActor.run {
+                        UserDefaults.standard.set(encoded, forKey: "weekly_healthkit_steps_cache")
+                        WidgetDataSync.sync()
+                    }
+                    return
+                }
+            }
+            
+            await MainActor.run {
+                WidgetDataSync.sync()
             }
         }
     }

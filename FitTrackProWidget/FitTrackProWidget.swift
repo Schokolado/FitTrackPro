@@ -52,11 +52,14 @@ struct Provider: TimelineProvider {
                 }
             }
             
-            // 2. Steps
+            // 2. Steps (HealthKit cache + manual SwiftData entries)
             let stepsDescriptor = FetchDescriptor<StepEntry>()
             let stepsLogs = try context.fetch(stepsDescriptor)
-            let todayStepsEntry = stepsLogs.first(where: { $0.dateString == todayString })
-            let steps = todayStepsEntry?.steps ?? 0
+            let manualSteps = stepsLogs.filter { $0.dateString == todayString }.reduce(0) { $0 + $1.steps }
+            let userDefaults = UserDefaults(suiteName: "group.com.riccardopfeiler.FitTrackPro") ?? .standard
+            let cachedStepsDate = userDefaults.string(forKey: "cached_today_steps_date") ?? ""
+            let hkSteps = (cachedStepsDate == todayString) ? userDefaults.integer(forKey: "cached_today_steps") : 0
+            let steps = hkSteps + manualSteps
             
             // 3. Workouts
             var lastWorkoutName = "Keine"
@@ -75,7 +78,6 @@ struct Provider: TimelineProvider {
             }
             
             // 5. Goals
-            let userDefaults = UserDefaults(suiteName: "group.com.riccardopfeiler.FitTrackPro") ?? .standard
             
             let calGoal = userDefaults.double(forKey: "dailyCalorieGoal")
             let pGoal = userDefaults.double(forKey: "nutritionGoalProtein")
