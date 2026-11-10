@@ -34,7 +34,7 @@ struct PlanDetailView: View {
     @State private var generatedPDFUrl: URL?
     @State private var isGeneratingPDF = false
     @State private var showingBalanceSheet = false
-    @State private var isExercisesExpanded = true
+    @State private var isExercisesExpanded = false
     
     private var planSessions: [WorkoutSession] {
         allSessions.filter { $0.plan?.id == plan.id }
