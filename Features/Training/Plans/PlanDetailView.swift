@@ -112,6 +112,17 @@ struct PlanDetailView: View {
                     }
                     
                     addExerciseButton
+                    
+                    let planBalanceStats = StatisticsViewModel.muscleGroupBreakdown(for: plan)
+                    if !planBalanceStats.isEmpty {
+                        let hasVolume = planBalanceStats.contains { $0.volumeKg > 0 }
+                        MuscleBalanceCard(
+                            title: "Muskelgruppen-Balance",
+                            stats: planBalanceStats,
+                            availableMetrics: hasVolume ? [.sets, .exercises, .volume] : [.sets, .exercises]
+                        )
+                        .padding(.horizontal)
+                    }
                 }
                 .padding(.vertical)
                 .onChange(of: newlyAddedExerciseIds) { oldValue, newValue in

@@ -31,9 +31,10 @@ enum StatisticsMetric: String, CaseIterable, Identifiable {
 }
 
 enum MuscleBalanceMetric: String, CaseIterable, Identifiable {
-    case sets     = "Sätze"
-    case volume   = "Volumen (kg)"
-    case workouts = "Workouts"
+    case sets      = "Sätze"
+    case volume    = "Volumen (kg)"
+    case exercises = "Übungen"
+    case workouts  = "Workouts"
 
     var id: String { rawValue }
 }
@@ -43,6 +44,7 @@ struct MuscleGroupStat: Identifiable {
     let category: String
     let setCount: Int
     let volumeKg: Double
+    let exerciseCount: Int
     let workoutCount: Int
 }
 
@@ -267,10 +269,23 @@ final class StatisticsViewModel {
         }
     }
 
-    /// Aufschlüsselung nach Muskelgruppe / Übungs-Kategorie
+    /// Aufschlüsselung nach Muskelgruppe / Übungs-Kategorie für mehrere Sessions
     func muscleGroupBreakdown(in sessions: [WorkoutSession]) -> [MuscleGroupStat] {
+        Self.muscleGroupBreakdown(in: sessions)
+    }
+
+    /// Analysiert Push/Pull & Ober-/Unterkörper-Balance
+    func muscleBalanceInsight(from stats: [MuscleGroupStat]) -> (title: String, message: String, isBalanced: Bool)? {
+        Self.muscleBalanceInsight(from: stats)
+    }
+
+    // MARK: - Wiederverwendbare Balance-Berechnung (Statistik, Plan, Workout-Auswertung)
+
+    /// Aufschlüsselung nach Muskelgruppe für beliebig viele Workout-Sessions
+    static func muscleGroupBreakdown(in sessions: [WorkoutSession]) -> [MuscleGroupStat] {
         var setCounts: [String: Int] = [:]
         var volumes: [String: Double] = [:]
+        var exerciseIdsByCategory: [String: Set<UUID>] = [:]
         var sessionIdsByCategory: [String: Set<UUID>] = [:]
 
         for session in sessions {
@@ -279,28 +294,70 @@ final class StatisticsViewModel {
                 let category = exercise.category.isEmpty ? "Sonstiges" : exercise.category
                 setCounts[category, default: 0] += 1
                 volumes[category, default: 0] += Double(set.actualReps) * set.actualWeight
+                exerciseIdsByCategory[category, default: []].insert(exercise.id)
                 sessionIdsByCategory[category, default: []].insert(session.id)
             }
         }
 
-        return setCounts.keys.map { category in
+        return sortStats(setCounts.keys.map { category in
             MuscleGroupStat(
                 category: category,
                 setCount: setCounts[category, default: 0],
                 volumeKg: volumes[category, default: 0],
+                exerciseCount: exerciseIdsByCategory[category]?.count ?? 0,
                 workoutCount: sessionIdsByCategory[category]?.count ?? 0
             )
+        })
+    }
+
+    /// Aufschlüsselung nach Muskelgruppe für eine einzelne Workout-Session
+    static func muscleGroupBreakdown(in session: WorkoutSession) -> [MuscleGroupStat] {
+        muscleGroupBreakdown(in: [session])
+    }
+
+    /// Aufschlüsselung nach Muskelgruppe für einen Trainingsplan (Soll-Sätze, Übungen & Soll-Volumen)
+    static func muscleGroupBreakdown(for plan: TrainingPlan) -> [MuscleGroupStat] {
+        var setCounts: [String: Int] = [:]
+        var volumes: [String: Double] = [:]
+        var exerciseIdsByCategory: [String: Set<UUID>] = [:]
+
+        for planEx in (plan.planExercises ?? []) {
+            guard let exercise = planEx.exercise else { continue }
+            let category = exercise.category.isEmpty ? "Sonstiges" : exercise.category
+            let sets = max(0, planEx.targetSets)
+            let reps = max(0, planEx.targetReps)
+            let weight = planEx.targetWeight ?? 0
+
+            setCounts[category, default: 0] += sets
+            volumes[category, default: 0] += Double(sets * reps) * weight
+            exerciseIdsByCategory[category, default: []].insert(exercise.id)
         }
-        .sorted {
+
+        return sortStats(exerciseIdsByCategory.keys.map { category in
+            MuscleGroupStat(
+                category: category,
+                setCount: setCounts[category, default: 0],
+                volumeKg: volumes[category, default: 0],
+                exerciseCount: exerciseIdsByCategory[category]?.count ?? 0,
+                workoutCount: 1
+            )
+        })
+    }
+
+    private static func sortStats(_ stats: [MuscleGroupStat]) -> [MuscleGroupStat] {
+        stats.sorted {
             if $0.setCount != $1.setCount {
                 return $0.setCount > $1.setCount
+            }
+            if $0.exerciseCount != $1.exerciseCount {
+                return $0.exerciseCount > $1.exerciseCount
             }
             return $0.volumeKg > $1.volumeKg
         }
     }
 
     /// Analysiert Push/Pull & Ober-/Unterkörper-Balance
-    func muscleBalanceInsight(from stats: [MuscleGroupStat]) -> (title: String, message: String, isBalanced: Bool)? {
+    static func muscleBalanceInsight(from stats: [MuscleGroupStat]) -> (title: String, message: String, isBalanced: Bool)? {
         let strengthCategories = Set(["brust", "rücken", "beine", "schultern", "arme", "bauch / core", "chest", "back", "legs", "shoulders", "arms", "abs / core"])
         let strengthStats = stats.filter { strengthCategories.contains($0.category.lowercased()) }
         let totalStrengthSets = strengthStats.reduce(0) { $0 + $1.setCount }
@@ -340,7 +397,7 @@ final class StatisticsViewModel {
 
         return (
             "Ausgewogene Balance",
-            "Deine Muskelgruppen sind in diesem Zeitraum gut aufeinander abgestimmt verteilt.",
+            "Deine Muskelgruppen sind gut aufeinander abgestimmt verteilt.",
             true
         )
     }

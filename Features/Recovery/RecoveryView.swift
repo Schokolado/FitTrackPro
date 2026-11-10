@@ -18,6 +18,7 @@ struct RecoveryView: View {
     @State private var rhrScore: Double?
     @State private var rhrBaseline: Double?
     @State private var hkLastNightSleep: Double?
+    @State private var sleepSourceLabel: String?
     @State private var todaySteps: Int = 0
     @State private var todayActiveKcal: Double = 0
     @State private var weekWorkoutsCount: Int = 0
@@ -254,33 +255,49 @@ struct RecoveryView: View {
     }
     
     private func vitalRingsSection(for result: RecoveryResult) -> some View {
-        let strainPercent = computeStrainPercent(for: result)
-        let sleepPercent = computeSleepPercent(for: result)
-        
+        let snapshot = currentVitalSnapshot(for: result)
+
         return VStack(alignment: .leading, spacing: 12) {
-            Text("Belastung • Erholung • Schlaf")
-                .font(.headline)
-                .padding(.horizontal)
-            
+            HStack {
+                Text("Belastung • Erholung • Schlaf")
+                    .font(.headline)
+                Spacer()
+                Text("Details ›")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+            .padding(.horizontal)
+
             HStack(spacing: 12) {
-                vitalRingItem(
-                    title: "Belastung",
-                    percent: strainPercent,
-                    subtitle: "\(Int(todayActiveKcal)) kcal",
-                    color: .orange
-                )
-                vitalRingItem(
-                    title: "Erholung",
-                    percent: result.score,
-                    subtitle: result.level.rawValue,
-                    color: colorForScore
-                )
-                vitalRingItem(
-                    title: "Schlaf",
-                    percent: sleepPercent,
-                    subtitle: formattedSleepDuration(result.rawLastNightSleepHours),
-                    color: .indigo
-                )
+                NavigationLink(destination: VitalRingDetailView(metric: .strain, snapshot: snapshot, accentColor: .orange)) {
+                    vitalRingItem(
+                        title: "Belastung",
+                        percent: snapshot.strainPercent,
+                        subtitle: "\(Int(todayActiveKcal)) kcal",
+                        color: .orange
+                    )
+                }
+                .buttonStyle(.plain)
+
+                NavigationLink(destination: VitalRingDetailView(metric: .recovery, snapshot: snapshot, accentColor: colorForScore)) {
+                    vitalRingItem(
+                        title: "Erholung",
+                        percent: result.score,
+                        subtitle: result.level.rawValue,
+                        color: colorForScore
+                    )
+                }
+                .buttonStyle(.plain)
+
+                NavigationLink(destination: VitalRingDetailView(metric: .sleep, snapshot: snapshot, accentColor: .indigo)) {
+                    vitalRingItem(
+                        title: "Schlaf",
+                        percent: snapshot.sleepPercent,
+                        subtitle: VitalMetricsSnapshot.formattedHoursMinutes(result.rawLastNightSleepHours),
+                        color: .indigo
+                    )
+                }
+                .buttonStyle(.plain)
             }
             .padding(16)
             .background(
@@ -290,7 +307,7 @@ struct RecoveryView: View {
             .padding(.horizontal)
         }
     }
-    
+
     private func vitalRingItem(title: String, percent: Int, subtitle: String, color: Color) -> some View {
         let clamped = min(max(percent, 0), 100)
         return VStack(spacing: 8) {
@@ -307,17 +324,23 @@ struct RecoveryView: View {
                     .foregroundColor(color)
             }
             .frame(width: 72, height: 72)
-            
-            Text(title)
-                .font(.caption.bold())
-                .foregroundColor(.primary)
-            
+
+            HStack(spacing: 3) {
+                Text(title)
+                    .font(.caption.bold())
+                    .foregroundColor(.primary)
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 8, weight: .bold))
+                    .foregroundColor(.secondary)
+            }
+
             Text(subtitle)
                 .font(.caption2)
                 .foregroundColor(.secondary)
                 .lineLimit(1)
         }
         .frame(maxWidth: .infinity)
+        .contentShape(Rectangle())
     }
     
     private var activitySummarySection: some View {
@@ -360,33 +383,16 @@ struct RecoveryView: View {
         }
     }
     
-    private func computeStrainPercent(for result: RecoveryResult) -> Int {
-        let sessionLoad = min(1.0, Double(result.rawWorkoutSessionsLast3Days) / 3.0)
-        if todayActiveKcal > 0 || todaySteps > 0 {
-            let calorieLoad = min(1.0, todayActiveKcal / 600.0)
-            let stepLoad = min(1.0, Double(todaySteps) / Double(max(dailyStepGoal, 1)))
-            let blended = (0.4 * sessionLoad) + (0.35 * calorieLoad) + (0.25 * stepLoad)
-            return Int((min(1.0, max(0.0, blended)) * 100.0).rounded())
-        }
-        return Int((sessionLoad * 100.0).rounded())
+    private func currentVitalSnapshot(for result: RecoveryResult) -> VitalMetricsSnapshot {
+        VitalMetricsSnapshot(
+            result: result,
+            todaySteps: todaySteps,
+            dailyStepGoal: dailyStepGoal,
+            todayActiveKcal: todayActiveKcal,
+            sleepSourceLabel: sleepSourceLabel
+        )
     }
-    
-    private func computeSleepPercent(for result: RecoveryResult) -> Int {
-        if let sleepHours = result.rawLastNightSleepHours {
-            let ratio = min(1.0, max(0.0, sleepHours / max(result.rawSleepGoalHours, 1.0)))
-            return Int((ratio * 100.0).rounded())
-        }
-        let fallback = Double(result.sleepScore) / Double(max(result.sleepMax, 1))
-        return Int((min(1.0, max(0.0, fallback)) * 100.0).rounded())
-    }
-    
-    private func formattedSleepDuration(_ hours: Double?) -> String {
-        guard let hours else { return "Keine Daten" }
-        let h = Int(hours)
-        let m = Int((hours - Double(h)) * 60)
-        return "\(h)h \(m)m"
-    }
-    
+
     private func formattedVolume(_ kg: Double) -> String {
         if kg >= 1000 {
             return String(format: "%.1f t", kg / 1000.0)
@@ -470,8 +476,12 @@ struct RecoveryView: View {
         var sleepHours: Double?
         if let hk = hkLastNightSleep {
             sleepHours = hk
+            sleepSourceLabel = "Apple Health"
         } else if let manual = manualSleeps.first, calendar.isDateInToday(manual.wakeTime) || calendar.isDateInYesterday(manual.wakeTime) {
             sleepHours = manual.durationMinutes / 60.0
+            sleepSourceLabel = "Manueller Eintrag"
+        } else {
+            sleepSourceLabel = nil
         }
         
         // 3. Calculate

@@ -448,6 +448,17 @@ struct WorkoutHistoryDetailView: View {
                         .fill(Color.backgroundSecondary)
                 )
 
+                // Muskelgruppen-Balance
+                let sessionBalanceStats = StatisticsViewModel.muscleGroupBreakdown(in: session)
+                if !sessionBalanceStats.isEmpty {
+                    MuscleBalanceCard(
+                        title: "Muskelgruppen-Balance",
+                        stats: sessionBalanceStats,
+                        availableMetrics: [.sets, .volume, .exercises],
+                        showInsight: false
+                    )
+                }
+
                 // Exercise breakdown
                 if !exerciseGroups.isEmpty {
                     VStack(alignment: .leading, spacing: 12) {

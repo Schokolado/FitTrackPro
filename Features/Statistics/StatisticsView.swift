@@ -21,7 +21,6 @@ struct StatisticsView: View {
 
     // Navigation State
     @State private var selectedSegment: Int = 0  // 0 = Übungen, 1 = Pläne, 2 = Balance
-    @State private var balanceMetric: MuscleBalanceMetric = .sets
     @State private var navId = UUID()
     @AppStorage("stats_selectedExerciseId") private var savedExerciseId: String = ""
 
@@ -447,126 +446,13 @@ struct StatisticsView: View {
 
                 // 2. Muskelgruppen-Balance Card
                 if !breakdown.isEmpty {
-                    VStack(alignment: .leading, spacing: 16) {
-                        HStack {
-                            Image(systemName: "chart.pie.fill")
-                                .foregroundStyle(Color.brand)
-                            Text("Muskelgruppen-Balance")
-                                .font(.headline)
-                            Spacer()
-                        }
-
-                        Picker("Balance-Metrik", selection: $balanceMetric) {
-                            ForEach(MuscleBalanceMetric.allCases) { m in
-                                Text(m.rawValue).tag(m)
-                            }
-                        }
-                        .pickerStyle(.segmented)
-
-                        let totalMetricValue = breakdown.reduce(0.0) { $0 + metricValue(for: $1) }
-
-                        // Donut Chart
-                        Chart(breakdown) { item in
-                            let val = metricValue(for: item)
-                            if val > 0 {
-                                SectorMark(
-                                    angle: .value(balanceMetric.rawValue, val),
-                                    innerRadius: .ratio(0.58),
-                                    angularInset: 2
-                                )
-                                .cornerRadius(4)
-                                .foregroundStyle(themeManager.color(for: item.category))
-                            }
-                        }
-                        .frame(height: 210)
-                        .chartBackground { _ in
-                            VStack(spacing: 2) {
-                                Text(formatTotalMetric(totalMetricValue))
-                                    .font(.title3.bold())
-                                    .foregroundStyle(Color.textPrimary)
-                                Text(balanceMetric.rawValue)
-                                    .font(.caption2)
-                                    .foregroundStyle(Color.textSecondary)
-                            }
-                        }
-
-                        // Breakdown List
-                        VStack(spacing: 10) {
-                            ForEach(breakdown) { item in
-                                let val = metricValue(for: item)
-                                let pct = totalMetricValue > 0 ? Int(round((val / totalMetricValue) * 100)) : 0
-                                let catColor = themeManager.color(for: item.category)
-
-                                HStack(spacing: 10) {
-                                    Circle()
-                                        .fill(catColor)
-                                        .frame(width: 10, height: 10)
-
-                                    Text(item.category)
-                                        .font(.subheadline.weight(.medium))
-                                        .foregroundStyle(Color.textPrimary)
-
-                                    Spacer()
-
-                                    Text("\(item.setCount) Sätze")
-                                        .font(.caption)
-                                        .foregroundStyle(Color.textSecondary)
-
-                                    if item.volumeKg > 0 {
-                                        Text("• \(Int(item.volumeKg)) kg")
-                                            .font(.caption)
-                                            .foregroundStyle(Color.textSecondary)
-                                    }
-
-                                    Text("\(pct)%")
-                                        .font(.caption.bold())
-                                        .foregroundStyle(catColor)
-                                        .frame(minWidth: 36, alignment: .trailing)
-                                }
-                                .padding(.vertical, 2)
-                            }
-                        }
-
-                        if let insight = viewModel.muscleBalanceInsight(from: breakdown) {
-                            HStack(alignment: .top, spacing: 10) {
-                                Image(systemName: insight.isBalanced ? "checkmark.seal.fill" : "exclamationmark.triangle.fill")
-                                    .foregroundStyle(insight.isBalanced ? Color.green : Color.orange)
-                                    .font(.title3)
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text(insight.title)
-                                        .font(.subheadline.bold())
-                                    Text(insight.message)
-                                        .font(.caption)
-                                        .foregroundStyle(Color.textSecondary)
-                                }
-                            }
-                            .padding(12)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .background((insight.isBalanced ? Color.green : Color.orange).opacity(0.1))
-                            .cornerRadius(12)
-                        }
-                    }
-                    .padding()
-                    .background(Color.backgroundCard)
-                    .cornerRadius(16)
+                    MuscleBalanceCard(
+                        stats: breakdown,
+                        availableMetrics: [.sets, .volume, .workouts]
+                    )
                     .padding(.horizontal)
                 }
             }
-        }
-    }
-
-    private func metricValue(for item: MuscleGroupStat) -> Double {
-        switch balanceMetric {
-        case .sets:     return Double(item.setCount)
-        case .volume:   return item.volumeKg
-        case .workouts: return Double(item.workoutCount)
-        }
-    }
-
-    private func formatTotalMetric(_ val: Double) -> String {
-        switch balanceMetric {
-        case .sets, .workouts: return "\(Int(val))"
-        case .volume:          return "\(Int(val)) kg"
         }
     }
 
@@ -770,5 +656,306 @@ struct PlanSummaryCard: View {
         .padding()
         .background(Color.backgroundCard)
         .cornerRadius(16)
+    }
+}
+
+// MARK: - Wiederverwendbare interaktive Muskelgruppen-Balance-Card
+
+struct MuscleBalanceCard: View {
+    @EnvironmentObject var themeManager: ThemeManager
+
+    let title: String
+    let stats: [MuscleGroupStat]
+    let availableMetrics: [MuscleBalanceMetric]
+    let showInsight: Bool
+
+    @State private var selectedMetric: MuscleBalanceMetric
+    @State private var selectedCategory: String?
+
+    init(
+        title: String = "Muskelgruppen-Balance",
+        stats: [MuscleGroupStat],
+        availableMetrics: [MuscleBalanceMetric] = [.sets, .volume],
+        showInsight: Bool = true
+    ) {
+        self.title = title
+        self.stats = stats
+        let resolvedMetrics = availableMetrics.isEmpty ? [.sets] : availableMetrics
+        self.availableMetrics = resolvedMetrics
+        self.showInsight = showInsight
+
+        // Erste Metrik mit Werten > 0 automatisch bevorzugen (z. B. .exercises, falls Soll-Sätze 0 sind)
+        let firstWithData = resolvedMetrics.first { metric in
+            stats.contains { Self.metricValue(for: $0, metric: metric) > 0 }
+        }
+        _selectedMetric = State(initialValue: firstWithData ?? resolvedMetrics[0])
+    }
+
+    private var visibleStats: [MuscleGroupStat] {
+        stats.filter { Self.metricValue(for: $0, metric: selectedMetric) > 0 }
+    }
+
+    private var totalMetricValue: Double {
+        visibleStats.reduce(0.0) { $0 + Self.metricValue(for: $1, metric: selectedMetric) }
+    }
+
+    private var selectedItem: MuscleGroupStat? {
+        guard let selectedCategory else { return nil }
+        return visibleStats.first { $0.category == selectedCategory }
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            HStack {
+                Image(systemName: "chart.pie.fill")
+                    .foregroundStyle(Color.brand)
+                Text(title)
+                    .font(.headline)
+                Spacer()
+                if selectedCategory != nil {
+                    Text("Tippen zum Zurücksetzen")
+                        .font(.caption2)
+                        .foregroundStyle(Color.textSecondary)
+                }
+            }
+
+            if availableMetrics.count > 1 {
+                Picker("Balance-Metrik", selection: $selectedMetric) {
+                    ForEach(availableMetrics) { metric in
+                        Text(metric.rawValue).tag(metric)
+                    }
+                }
+                .pickerStyle(.segmented)
+                .onChange(of: selectedMetric) { _, newMetric in
+                    if let current = selectedCategory,
+                       !stats.contains(where: { $0.category == current && Self.metricValue(for: $0, metric: newMetric) > 0 }) {
+                        selectedCategory = nil
+                    }
+                }
+            }
+
+            if visibleStats.isEmpty {
+                Text("Für die gewählte Metrik liegen noch keine Werte vor.")
+                    .font(.caption)
+                    .foregroundStyle(Color.textSecondary)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .padding(.vertical, 24)
+            } else {
+                // Interaktiver Donut Chart
+                Chart(visibleStats) { item in
+                    let val = Self.metricValue(for: item, metric: selectedMetric)
+                    let isSelected = selectedCategory == item.category
+                    let isDimmed = selectedCategory != nil && !isSelected
+                    let catColor = themeManager.color(for: item.category)
+
+                    SectorMark(
+                        angle: .value(selectedMetric.rawValue, val),
+                        innerRadius: .ratio(0.58),
+                        outerRadius: isSelected ? .ratio(1.0) : (selectedCategory == nil ? .ratio(0.94) : .ratio(0.86)),
+                        angularInset: 2
+                    )
+                    .cornerRadius(4)
+                    .foregroundStyle(catColor.opacity(isDimmed ? 0.28 : 1.0))
+                }
+                .frame(height: 210)
+                .animation(.easeInOut(duration: 0.2), value: selectedCategory)
+                .chartBackground { _ in
+                    centerLabelView
+                }
+                .chartOverlay { _ in
+                    GeometryReader { geo in
+                        Color.clear
+                            .contentShape(Rectangle())
+                            .onTapGesture { location in
+                                handleDonutTap(at: location, in: geo.size)
+                            }
+                    }
+                }
+
+                // Breakdown Liste (ebenfalls antippbar zum Hervorheben / Abwählen)
+                VStack(spacing: 6) {
+                    ForEach(visibleStats) { item in
+                        breakdownRow(for: item)
+                    }
+                }
+            }
+
+            if showInsight, let insight = StatisticsViewModel.muscleBalanceInsight(from: stats) {
+                HStack(alignment: .top, spacing: 10) {
+                    Image(systemName: insight.isBalanced ? "checkmark.seal.fill" : "exclamationmark.triangle.fill")
+                        .foregroundStyle(insight.isBalanced ? Color.green : Color.orange)
+                        .font(.title3)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(insight.title)
+                            .font(.subheadline.bold())
+                        Text(insight.message)
+                            .font(.caption)
+                            .foregroundStyle(Color.textSecondary)
+                    }
+                }
+                .padding(12)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background((insight.isBalanced ? Color.green : Color.orange).opacity(0.1))
+                .cornerRadius(12)
+            }
+        }
+        .padding()
+        .background(Color.backgroundCard)
+        .cornerRadius(16)
+        .contentShape(Rectangle())
+        .onTapGesture {
+            if selectedCategory != nil {
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    selectedCategory = nil
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var centerLabelView: some View {
+        if let item = selectedItem {
+            let val = Self.metricValue(for: item, metric: selectedMetric)
+            let pct = totalMetricValue > 0 ? Int(round((val / totalMetricValue) * 100)) : 0
+            let catColor = themeManager.color(for: item.category)
+
+            VStack(spacing: 2) {
+                Text(Self.formatMetricValue(val, metric: selectedMetric))
+                    .font(.title3.bold())
+                    .foregroundStyle(Color.textPrimary)
+                Text(item.category)
+                    .font(.caption.bold())
+                    .foregroundStyle(catColor)
+                    .lineLimit(1)
+                Text("\(pct)%")
+                    .font(.caption2)
+                    .foregroundStyle(Color.textSecondary)
+            }
+            .padding(.horizontal, 8)
+        } else {
+            VStack(spacing: 2) {
+                Text(Self.formatMetricValue(totalMetricValue, metric: selectedMetric))
+                    .font(.title3.bold())
+                    .foregroundStyle(Color.textPrimary)
+                Text(selectedMetric.rawValue)
+                    .font(.caption2)
+                    .foregroundStyle(Color.textSecondary)
+            }
+        }
+    }
+
+    private func breakdownRow(for item: MuscleGroupStat) -> some View {
+        let val = Self.metricValue(for: item, metric: selectedMetric)
+        let pct = totalMetricValue > 0 ? Int(round((val / totalMetricValue) * 100)) : 0
+        let catColor = themeManager.color(for: item.category)
+        let isSelected = selectedCategory == item.category
+        let isDimmed = selectedCategory != nil && !isSelected
+
+        return HStack(spacing: 10) {
+            Circle()
+                .fill(catColor)
+                .frame(width: 10, height: 10)
+
+            Text(item.category)
+                .font(.subheadline.weight(isSelected ? .bold : .medium))
+                .foregroundStyle(Color.textPrimary)
+
+            Spacer()
+
+            if item.setCount > 0 {
+                Text("\(item.setCount) Sätze")
+                    .font(.caption)
+                    .foregroundStyle(Color.textSecondary)
+            } else {
+                Text("\(item.exerciseCount) Üb.")
+                    .font(.caption)
+                    .foregroundStyle(Color.textSecondary)
+            }
+
+            if item.volumeKg > 0 {
+                Text("• \(Int(item.volumeKg)) kg")
+                    .font(.caption)
+                    .foregroundStyle(Color.textSecondary)
+            }
+
+            Text("\(pct)%")
+                .font(.caption.bold())
+                .foregroundStyle(catColor)
+                .frame(minWidth: 36, alignment: .trailing)
+        }
+        .padding(.horizontal, isSelected ? 8 : 0)
+        .padding(.vertical, 5)
+        .background(
+            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                .fill(isSelected ? catColor.opacity(0.14) : Color.clear)
+        )
+        .opacity(isDimmed ? 0.42 : 1.0)
+        .contentShape(Rectangle())
+        .onTapGesture {
+            toggleCategory(item.category)
+        }
+    }
+
+    private func handleDonutTap(at location: CGPoint, in size: CGSize) {
+        guard totalMetricValue > 0, !visibleStats.isEmpty else { return }
+        let center = CGPoint(x: size.width / 2, y: size.height / 2)
+        let outerRadius = min(size.width, size.height) / 2
+        let dx = location.x - center.x
+        let dy = location.y - center.y
+        let distance = hypot(dx, dy)
+
+        // Klick in die Donut-Mitte oder außerhalb des Rings wählt die Auswahl ab
+        guard distance >= outerRadius * 0.54, distance <= outerRadius else {
+            if selectedCategory != nil {
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    selectedCategory = nil
+                }
+            }
+            return
+        }
+
+        // Winkel ab 12 Uhr im Uhrzeigersinn [0, 2π)
+        var angle = atan2(dx, -dy)
+        if angle < 0 {
+            angle += 2 * .pi
+        }
+
+        let targetValue = (angle / (2 * .pi)) * totalMetricValue
+        var cumulative: Double = 0
+        for item in visibleStats {
+            cumulative += Self.metricValue(for: item, metric: selectedMetric)
+            if targetValue <= cumulative {
+                toggleCategory(item.category)
+                return
+            }
+        }
+    }
+
+    private func toggleCategory(_ category: String) {
+        withAnimation(.easeInOut(duration: 0.2)) {
+            if selectedCategory == category {
+                selectedCategory = nil
+            } else {
+                selectedCategory = category
+            }
+        }
+    }
+
+    private static func metricValue(for item: MuscleGroupStat, metric: MuscleBalanceMetric) -> Double {
+        switch metric {
+        case .sets:      return Double(item.setCount)
+        case .volume:    return item.volumeKg
+        case .exercises: return Double(item.exerciseCount)
+        case .workouts:  return Double(item.workoutCount)
+        }
+    }
+
+    private static func formatMetricValue(_ val: Double, metric: MuscleBalanceMetric) -> String {
+        switch metric {
+        case .sets, .exercises, .workouts:
+            return "\(Int(val))"
+        case .volume:
+            return "\(Int(val)) kg"
+        }
     }
 }

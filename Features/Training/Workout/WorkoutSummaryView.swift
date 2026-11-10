@@ -70,6 +70,17 @@ struct WorkoutSummaryView: View {
                     .cornerRadius(16)
                     .shadow(color: .black.opacity(0.05), radius: 5, y: 2)
                     
+                    // Muskelgruppen-Balance
+                    let sessionBalanceStats = StatisticsViewModel.muscleGroupBreakdown(in: session)
+                    if !sessionBalanceStats.isEmpty {
+                        MuscleBalanceCard(
+                            title: "Muskelgruppen-Balance",
+                            stats: sessionBalanceStats,
+                            availableMetrics: [.sets, .volume, .exercises],
+                            showInsight: false
+                        )
+                    }
+                    
                     // Ratings
                     VStack(alignment: .leading, spacing: 16) {
                         Text("Wie fühlst du dich?")
@@ -131,6 +142,7 @@ struct WorkoutSummaryView: View {
                 }
                 .padding()
             }
+            .background(Color.backgroundPrimary)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
