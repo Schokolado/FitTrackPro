@@ -150,27 +150,33 @@ struct StepsSmallWidgetView: View {
     let entry: StepsEntry
     
     var body: some View {
-        VStack(spacing: 8) {
-            HStack {
+        VStack(spacing: 6) {
+            HStack(spacing: 4) {
                 Image(systemName: "figure.walk")
-                    .font(.caption.bold())
+                    .font(.caption2.bold())
                     .foregroundColor(.green)
                 Text("Schritte")
                     .font(.caption.bold())
                     .foregroundColor(.secondary)
-                Spacer()
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+                    .layoutPriority(1)
+                Spacer(minLength: 4)
                 Text("\(Int(entry.progress * 100))%")
                     .font(.caption2.bold())
                     .foregroundColor(entry.steps >= entry.stepGoal ? .green : .secondary)
+                    .fixedSize()
             }
+            
+            Spacer(minLength: 0)
             
             ZStack {
                 Circle()
-                    .stroke(Color.green.opacity(0.2), lineWidth: 9)
+                    .stroke(Color.green.opacity(0.2), lineWidth: 8)
                 
                 Circle()
                     .trim(from: 0, to: entry.progress)
-                    .stroke(Color.green, style: StrokeStyle(lineWidth: 9, lineCap: .round))
+                    .stroke(Color.green, style: StrokeStyle(lineWidth: 8, lineCap: .round))
                     .rotationEffect(.degrees(-90))
                 
                 VStack(spacing: 1) {
@@ -184,14 +190,17 @@ struct StepsSmallWidgetView: View {
                 }
                 .padding(.horizontal, 8)
             }
-            .frame(width: 84, height: 84)
+            .frame(width: 80, height: 80)
+            
+            Spacer(minLength: 0)
             
             Text(entry.remainingSteps == 0 ? "Ziel erreicht!" : "Noch \(formattedSteps(entry.remainingSteps))")
                 .font(.system(size: 10, weight: .medium))
                 .foregroundColor(entry.remainingSteps == 0 ? .green : .secondary)
                 .lineLimit(1)
+                .minimumScaleFactor(0.8)
         }
-        .padding(14)
+        .padding(2)
     }
 }
 
@@ -290,7 +299,7 @@ struct StepsMediumWidgetView: View {
                 }
             }
         }
-        .padding(14)
+        .padding(2)
     }
 }
 
