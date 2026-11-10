@@ -8,6 +8,7 @@ struct RecoveryView: View {
     
     @AppStorage(AppStorageKeys.dailySleepGoalHours) private var sleepGoalHours: Double = 8.0
     @AppStorage(AppStorageKeys.dailyStepGoal) private var dailyStepGoal: Int = 10000
+    @AppStorage(AppStorageKeys.dailyActiveCalorieGoal) private var dailyActiveCalorieGoal: Double = 600
     
     @State private var recoveryResult: RecoveryResult?
     @State private var isLoading = true
@@ -362,7 +363,7 @@ struct RecoveryView: View {
                     color: .orange,
                     title: "Aktive Kalorien",
                     value: "\(Int(todayActiveKcal)) kcal",
-                    subtitle: "Heute verbrannt"
+                    subtitle: "Ziel: \(Int(dailyActiveCalorieGoal)) kcal"
                 )
                 dataCard(
                     icon: "dumbbell.fill",
@@ -389,6 +390,7 @@ struct RecoveryView: View {
             todaySteps: todaySteps,
             dailyStepGoal: dailyStepGoal,
             todayActiveKcal: todayActiveKcal,
+            dailyActiveCalorieGoal: dailyActiveCalorieGoal,
             sleepSourceLabel: sleepSourceLabel
         )
     }

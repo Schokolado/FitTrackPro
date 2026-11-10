@@ -77,30 +77,15 @@ struct PlanDetailView: View {
                         .padding(.top, 4)
                         
                     if !plan.notes.isEmpty {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(RichNotesParser.parseCompactPreview(plan.notes))
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
-                                .lineLimit(3)
-                                .tint(.brand)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                            
-                            if plan.notes.count > 100 || plan.notes.filter({ $0 == "\n" }).count > 1 || plan.notes.contains("#") || plan.notes.contains("**") || plan.notes.contains("<u>") {
-                                Button(action: {
-                                    startNotesEditing = false
-                                    showingNotesSheet = true
-                                }) {
-                                    Text("Mehr anzeigen...")
-                                        .font(.caption.bold())
-                                        .foregroundColor(.brand)
-                                }
+                        RichNotesCard(
+                            title: "Plan-Notizen",
+                            text: plan.notes,
+                            maxCollapsedHeight: 140,
+                            onEdit: {
+                                startNotesEditing = true
+                                showingNotesSheet = true
                             }
-                        }
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            startNotesEditing = false
-                            showingNotesSheet = true
-                        }
+                        )
                         .padding(.horizontal)
                     }
                     

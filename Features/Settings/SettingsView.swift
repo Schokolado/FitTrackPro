@@ -30,6 +30,7 @@ struct SettingsView: View {
     @AppStorage(AppStorageKeys.userBiologicalSex) private var userSex: String = "other"
     @AppStorage(AppStorageKeys.userHeightCm) private var heightCm: Double = 175
     @AppStorage(AppStorageKeys.dailyCalorieGoal) private var dailyCalorieGoal: Double = 2500
+    @AppStorage(AppStorageKeys.dailyActiveCalorieGoal) private var dailyActiveCalorieGoal: Double = 600
     @AppStorage("nutritionTolerance") private var nutritionTolerance: Double = 300
     @AppStorage(AppStorageKeys.dailyStepGoal) private var dailyStepGoal: Int = 10000
     @AppStorage(AppStorageKeys.dailyWaterGoalML) private var dailyWaterGoalML: Double = 2500
@@ -152,6 +153,12 @@ struct SettingsView: View {
                         ), format: .number)
                         .keyboardType(.numberPad)
                         .multilineTextAlignment(.trailing)
+                    }
+
+                    HStack {
+                        Label("Belastungsziel (Aktiv)", systemImage: "flame.fill")
+                        Spacer()
+                        Stepper("\(Int(dailyActiveCalorieGoal)) kcal", value: $dailyActiveCalorieGoal, in: 150...2500, step: 50)
                     }
                     
                     HStack {

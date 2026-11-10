@@ -366,6 +366,7 @@ struct VitalMetricsSnapshot {
     let todaySteps: Int
     let dailyStepGoal: Int
     let todayActiveKcal: Double
+    let dailyActiveCalorieGoal: Double
     let sleepSourceLabel: String?
 
     var hasActivityData: Bool {
@@ -377,7 +378,7 @@ struct VitalMetricsSnapshot {
     }
 
     var calorieLoadRatio: Double {
-        min(1.0, todayActiveKcal / 600.0)
+        min(1.0, todayActiveKcal / max(dailyActiveCalorieGoal, 1.0))
     }
 
     var stepLoadRatio: Double {
@@ -522,7 +523,7 @@ struct VitalRingDetailView: View {
                     icon: "flame.fill",
                     color: .orange,
                     title: "Aktive Kalorien heute",
-                    valueText: "\(Int(snapshot.todayActiveKcal)) / 600 kcal",
+                    valueText: "\(Int(snapshot.todayActiveKcal)) / \(Int(max(snapshot.dailyActiveCalorieGoal, 1))) kcal",
                     weightText: hasAct ? "Gewichtung: 35%" : "Keine Daten heute",
                     progress: snapshot.calorieLoadRatio
                 )
@@ -705,7 +706,7 @@ struct VitalRingDetailView: View {
     private var explanationText: String {
         switch metric {
         case .strain:
-            return "Die Belastung (0–100%) zeigt, wie stark dein Körper aktuell beansprucht ist. Dazu kombiniert sie deine Workouts der letzten 3 Tage (Referenz: 3 Einheiten), deine heutigen aktiven Kalorien (Referenz: 600 kcal) und deine heutigen Schritte gegen dein Tagesziel."
+            return "Die Belastung (0–100%) zeigt, wie stark dein Körper aktuell beansprucht ist. Dazu kombiniert sie deine Workouts der letzten 3 Tage (Referenz: 3 Einheiten), deine heutigen aktiven Kalorien (Ziel: \(Int(max(snapshot.dailyActiveCalorieGoal, 1))) kcal) und deine heutigen Schritte gegen dein Tagesziel."
         case .recovery:
             return "Die Erholung (0–100%) beschreibt, wie gut dein Körper regeneriert und bereit für Belastung ist. Sie setzt sich aus Schlaf, Trainingsfrequenz, Erholungstagen und – sofern von der Apple Watch verfügbar – HRV bzw. Ruhepuls im Vergleich zu deinem 7-Tage-Durchschnitt zusammen."
         case .sleep:

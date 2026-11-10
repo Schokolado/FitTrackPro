@@ -126,11 +126,7 @@ struct WorkoutSummaryView: View {
                         Text("Notizen")
                             .font(.headline)
                         
-                        TextEditor(text: $notes)
-                            .frame(height: 100)
-                            .padding(8)
-                            .background(Color(uiColor: .systemGray6))
-                            .cornerRadius(8)
+                        RichNotesEditor(text: $notes, minHeight: 120, placeholder: "Notizen zum Workout eingeben...")
                             
                         if healthKitEnabled {
                             Divider().padding(.vertical, 4)

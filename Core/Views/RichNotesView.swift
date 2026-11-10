@@ -439,3 +439,142 @@ struct RichNotesEditor: View {
         .buttonStyle(.borderless)
     }
 }
+
+// MARK: - Rich Notes Card & Edit Sheet
+
+struct RichNotesCard: View {
+    var title: String = "Notizen"
+    let text: String
+    var maxCollapsedHeight: CGFloat = 165
+    var onEdit: (() -> Void)? = nil
+
+    @State private var isExpanded = false
+
+    private var needsCollapse: Bool {
+        let lines = text.components(separatedBy: .newlines)
+        return lines.count > 6 || text.count > 260
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 8) {
+                Image(systemName: "note.text")
+                    .font(.subheadline)
+                    .foregroundColor(.brand)
+
+                Text(title)
+                    .font(.headline)
+                    .foregroundColor(.primary)
+
+                Spacer()
+
+                if let onEdit {
+                    Button(action: onEdit) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "pencil")
+                                .font(.caption2.bold())
+                            Text("Bearbeiten")
+                                .font(.caption.weight(.semibold))
+                        }
+                        .foregroundColor(.brand)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 5)
+                        .background(Color.brand.opacity(0.12))
+                        .clipShape(Capsule())
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+
+            HStack(alignment: .top, spacing: 12) {
+                RoundedRectangle(cornerRadius: 2, style: .continuous)
+                    .fill(Color.brand.opacity(0.75))
+                    .frame(width: 3)
+
+                VStack(alignment: .leading, spacing: 8) {
+                    RichNotesView(text: text, baseFont: .subheadline, textColor: .primary)
+                        .frame(maxHeight: (needsCollapse && !isExpanded) ? maxCollapsedHeight : nil, alignment: .top)
+                        .clipped()
+                        .overlay(alignment: .bottom) {
+                            if needsCollapse && !isExpanded {
+                                LinearGradient(
+                                    colors: [Color.backgroundSecondary.opacity(0), Color.backgroundSecondary],
+                                    startPoint: .top,
+                                    endPoint: .bottom
+                                )
+                                .frame(height: 36)
+                            }
+                        }
+
+                    if needsCollapse {
+                        Button {
+                            withAnimation(.easeInOut(duration: 0.22)) {
+                                isExpanded.toggle()
+                            }
+                        } label: {
+                            HStack(spacing: 4) {
+                                Text(isExpanded ? "Weniger anzeigen" : "Vollständig anzeigen")
+                                Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
+                                    .font(.caption2.bold())
+                            }
+                            .font(.caption.bold())
+                            .foregroundColor(.brand)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+            }
+        }
+        .padding(16)
+        .background(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(Color.backgroundSecondary)
+        )
+    }
+}
+
+struct RichNotesEditSheet: View {
+    @Environment(\.dismiss) private var dismiss
+
+    let title: String
+    @Binding var text: String
+    var placeholder: String = "Notizen eingeben..."
+    let onSave: (String) -> Void
+
+    @State private var draft: String
+
+    init(title: String = "Notizen bearbeiten", text: Binding<String>, placeholder: String = "Notizen eingeben...", onSave: @escaping (String) -> Void) {
+        self.title = title
+        self._text = text
+        self.placeholder = placeholder
+        self.onSave = onSave
+        self._draft = State(initialValue: text.wrappedValue)
+    }
+
+    var body: some View {
+        NavigationStack {
+            VStack {
+                RichNotesEditor(text: $draft, minHeight: 240, placeholder: placeholder)
+                    .padding()
+                Spacer()
+            }
+            .navigationTitle(title)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Abbrechen") { dismiss() }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Speichern") {
+                        let cleaned = draft.trimmingCharacters(in: .whitespacesAndNewlines)
+                        text = cleaned
+                        onSave(cleaned)
+                        dismiss()
+                    }
+                    .bold()
+                }
+            }
+        }
+        .presentationDetents([.medium, .large])
+    }
+}

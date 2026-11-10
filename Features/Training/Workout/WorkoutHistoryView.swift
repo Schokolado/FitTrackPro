@@ -290,9 +290,11 @@ struct WorkoutHistoryDetailView: View {
     let session: WorkoutSession
     let activeSessionId: UUID?
     @State private var showingDeleteAlert = false
-    @State private var isNotesExpanded = false
+    @State private var showingNotesEditSheet = false
+    @State private var draftNotes = ""
     @State private var isBalanceExpanded = false
     @State private var isExercisesExpanded = false
+    @State private var isSkippedExpanded = false
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     @State private var showDeleteConfirm = false
@@ -412,43 +414,44 @@ struct WorkoutHistoryDetailView: View {
                         }
                         .frame(maxWidth: .infinity)
                     }
-
-                    // Notes
-                    if !session.notes.isEmpty {
-                        Divider()
-                        VStack(alignment: .leading, spacing: 4) {
-                            if isNotesExpanded {
-                                RichNotesView(text: session.notes, baseFont: .subheadline, textColor: .secondary)
-                            } else {
-                                Text(RichNotesParser.parseCompactPreview(session.notes))
-                                    .font(.subheadline)
-                                    .foregroundColor(.secondary)
-                                    .multilineTextAlignment(.leading)
-                                    .lineLimit(2)
-                                    .tint(.brand)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                            }
-                            
-                            if session.notes.count > 100 || session.notes.filter({ $0 == "\n" }).count > 1 || session.notes.contains("#") || session.notes.contains("**") || session.notes.contains("<u>") {
-                                Button(action: {
-                                    withAnimation(.easeInOut(duration: 0.2)) {
-                                        isNotesExpanded.toggle()
-                                    }
-                                }) {
-                                    Text(isNotesExpanded ? "Weniger anzeigen" : "Mehr anzeigen...")
-                                        .font(.caption.bold())
-                                        .foregroundColor(.brand)
-                                }
-                                .padding(.top, 2)
-                            }
-                        }
-                    }
                 }
                 .padding(20)
                 .background(
                     RoundedRectangle(cornerRadius: 20, style: .continuous)
                         .fill(Color.backgroundSecondary)
                 )
+
+                // Workout-Notizen (eigene Rich-Notes-Card)
+                if !session.notes.isEmpty {
+                    RichNotesCard(
+                        title: "Notizen",
+                        text: session.notes,
+                        onEdit: {
+                            draftNotes = session.notes
+                            showingNotesEditSheet = true
+                        }
+                    )
+                } else {
+                    Button {
+                        draftNotes = ""
+                        showingNotesEditSheet = true
+                    } label: {
+                        HStack(spacing: 8) {
+                            Image(systemName: "square.and.pencil")
+                                .foregroundColor(.brand)
+                            Text("Notiz hinzufügen")
+                                .font(.subheadline.weight(.medium))
+                                .foregroundColor(.brand)
+                            Spacer()
+                        }
+                        .padding(14)
+                        .background(
+                            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                .fill(Color.backgroundSecondary)
+                        )
+                    }
+                    .buttonStyle(.plain)
+                }
 
                 // Muskelgruppen-Balance (einklappbar)
                 let sessionBalanceStats = StatisticsViewModel.muscleGroupBreakdown(in: session)
@@ -488,48 +491,14 @@ struct WorkoutHistoryDetailView: View {
                 // Exercise breakdown (einklappbar)
                 if !exerciseGroups.isEmpty {
                     VStack(alignment: .leading, spacing: 12) {
-                        Button {
-                            withAnimation(.easeInOut(duration: 0.25)) {
-                                isExercisesExpanded.toggle()
-                            }
-                        } label: {
-                            HStack(spacing: 12) {
-                                Image(systemName: "dumbbell.fill")
-                                    .foregroundColor(.blue)
-                                    .font(.subheadline)
-                                    .frame(width: 24)
-
-                                VStack(alignment: .leading, spacing: 3) {
-                                    HStack(spacing: 6) {
-                                        Text("Erledigte Übungen")
-                                            .font(.subheadline.bold())
-                                            .foregroundColor(.primary)
-                                        Text("\(exerciseGroups.count) Übungen • \(completedSets.count) Sätze")
-                                            .font(.caption)
-                                            .foregroundColor(.secondary)
-                                    }
-
-                                    if !isExercisesExpanded {
-                                        Text(exerciseGroups.map { $0.0.name }.joined(separator: " · "))
-                                            .font(.caption2)
-                                            .foregroundColor(.secondary)
-                                            .lineLimit(1)
-                                    }
-                                }
-
-                                Spacer()
-
-                                Image(systemName: isExercisesExpanded ? "chevron.up" : "chevron.down")
-                                    .font(.caption.bold())
-                                    .foregroundColor(.secondary)
-                            }
-                            .padding(14)
-                            .background(
-                                RoundedRectangle(cornerRadius: 16, style: .continuous)
-                                    .fill(Color.backgroundSecondary)
-                            )
-                        }
-                        .buttonStyle(.plain)
+                        collapsibleListHeader(
+                            icon: "dumbbell.fill",
+                            color: .blue,
+                            title: "Erledigte Übungen",
+                            countText: "\(exerciseGroups.count) Übungen • \(completedSets.count) Sätze",
+                            previewText: exerciseGroups.map { $0.0.name }.joined(separator: " · "),
+                            isExpanded: $isExercisesExpanded
+                        )
 
                         if isExercisesExpanded {
                             ForEach(exerciseGroups, id: \.0.id) { exercise, sets in
@@ -540,31 +509,37 @@ struct WorkoutHistoryDetailView: View {
                     }
                 }
                 
-                // Skipped Exercises
+                // Skipped Exercises (einklappbar)
                 if !skippedExercises.isEmpty {
                     VStack(alignment: .leading, spacing: 12) {
-                        Text("Nicht absolviert")
-                            .font(.headline)
-                            .padding(.horizontal, 4)
-                            .padding(.top, 8)
+                        collapsibleListHeader(
+                            icon: "xmark.circle.fill",
+                            color: .secondary,
+                            title: "Nicht absolviert",
+                            countText: skippedExercises.count == 1 ? "1 Übung" : "\(skippedExercises.count) Übungen",
+                            previewText: skippedExercises.map { $0.name }.joined(separator: " · "),
+                            isExpanded: $isSkippedExpanded
+                        )
 
-                        ForEach(skippedExercises) { exercise in
-                            HStack(spacing: 12) {
-                                ExerciseIconView(exercise: exercise, size: 28)
-                                    .grayscale(1.0)
-                                    .opacity(0.6)
-                                Text(exercise.name)
-                                    .font(.subheadline)
-                                    .foregroundColor(.secondary)
-                                Spacer()
-                                Image(systemName: "xmark.circle")
-                                    .foregroundColor(.secondary)
+                        if isSkippedExpanded {
+                            ForEach(skippedExercises) { exercise in
+                                HStack(spacing: 12) {
+                                    ExerciseIconView(exercise: exercise, size: 28)
+                                        .grayscale(1.0)
+                                        .opacity(0.6)
+                                    Text(exercise.name)
+                                        .font(.subheadline)
+                                        .foregroundColor(.secondary)
+                                    Spacer()
+                                    Image(systemName: "xmark.circle")
+                                        .foregroundColor(.secondary)
+                                }
+                                .padding(14)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                        .fill(Color.backgroundSecondary.opacity(0.6))
+                                )
                             }
-                            .padding(14)
-                            .background(
-                                RoundedRectangle(cornerRadius: 14, style: .continuous)
-                                    .fill(Color.backgroundSecondary.opacity(0.6))
-                            )
                         }
                     }
                 }
@@ -622,6 +597,68 @@ struct WorkoutHistoryDetailView: View {
         } message: {
             Text("Bitte beende das Workout zuerst, bevor du es löschen kannst.")
         }
+        .sheet(isPresented: $showingNotesEditSheet) {
+            RichNotesEditSheet(
+                title: "Workout-Notizen",
+                text: $draftNotes,
+                placeholder: "Notizen zum Workout eingeben..."
+            ) { updated in
+                session.notes = updated
+                try? modelContext.save()
+            }
+        }
+    }
+
+    private func collapsibleListHeader(
+        icon: String,
+        color: Color,
+        title: String,
+        countText: String,
+        previewText: String,
+        isExpanded: Binding<Bool>
+    ) -> some View {
+        Button {
+            withAnimation(.easeInOut(duration: 0.25)) {
+                isExpanded.wrappedValue.toggle()
+            }
+        } label: {
+            HStack(spacing: 12) {
+                Image(systemName: icon)
+                    .foregroundColor(color)
+                    .font(.subheadline)
+                    .frame(width: 24)
+
+                VStack(alignment: .leading, spacing: 3) {
+                    HStack(spacing: 6) {
+                        Text(title)
+                            .font(.subheadline.bold())
+                            .foregroundColor(.primary)
+                        Text(countText)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+
+                    if !isExpanded.wrappedValue && !previewText.isEmpty {
+                        Text(previewText)
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+                            .lineLimit(1)
+                    }
+                }
+
+                Spacer()
+
+                Image(systemName: isExpanded.wrappedValue ? "chevron.up" : "chevron.down")
+                    .font(.caption.bold())
+                    .foregroundColor(.secondary)
+            }
+            .padding(14)
+            .background(
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .fill(Color.backgroundSecondary)
+            )
+        }
+        .buttonStyle(.plain)
     }
 }
 
