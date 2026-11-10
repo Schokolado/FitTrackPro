@@ -292,7 +292,6 @@ struct WorkoutHistoryDetailView: View {
     @State private var showingDeleteAlert = false
     @State private var showingNotesEditSheet = false
     @State private var draftNotes = ""
-    @State private var isBalanceExpanded = false
     @State private var isExercisesExpanded = false
     @State private var isSkippedExpanded = false
     @Environment(\.modelContext) private var modelContext
@@ -456,36 +455,14 @@ struct WorkoutHistoryDetailView: View {
                 // Muskelgruppen-Balance (einklappbar)
                 let sessionBalanceStats = StatisticsViewModel.muscleGroupBreakdown(in: session)
                 if !sessionBalanceStats.isEmpty {
-                    if isBalanceExpanded {
-                        MuscleBalanceCard(
-                            title: "Muskelgruppen-Balance",
-                            stats: sessionBalanceStats,
-                            availableMetrics: [.sets, .volume, .exercises],
-                            showInsight: true,
-                            configuredFocus: session.plan?.focus ?? .auto,
-                            planName: session.plan?.name,
-                            onCollapse: {
-                                withAnimation(.easeInOut(duration: 0.25)) {
-                                    isBalanceExpanded = false
-                                }
-                            }
-                        )
-                    } else {
-                        Button {
-                            withAnimation(.easeInOut(duration: 0.25)) {
-                                isBalanceExpanded = true
-                            }
-                        } label: {
-                            MuscleBalanceCompactBar(
-                                title: "Muskelgruppen-Balance",
-                                stats: sessionBalanceStats,
-                                configuredFocus: session.plan?.focus ?? .auto,
-                                planName: session.plan?.name,
-                                trailingIcon: "chevron.down"
-                            )
-                        }
-                        .buttonStyle(.plain)
-                    }
+                    CollapsibleMuscleBalanceCard(
+                        title: "Muskelgruppen-Balance",
+                        stats: sessionBalanceStats,
+                        availableMetrics: [.sets, .volume, .exercises],
+                        showInsight: true,
+                        configuredFocus: session.plan?.focus ?? .auto,
+                        planName: session.plan?.name
+                    )
                 }
 
                 // Exercise breakdown (einklappbar)

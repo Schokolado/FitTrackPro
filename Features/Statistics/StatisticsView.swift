@@ -1175,3 +1175,69 @@ struct MuscleBalanceCompactBar: View {
         .cornerRadius(16)
     }
 }
+
+struct CollapsibleMuscleBalanceCard: View {
+    let title: String
+    let stats: [MuscleGroupStat]
+    let availableMetrics: [MuscleBalanceMetric]
+    let showInsight: Bool
+    let configuredFocus: PlanFocus
+    let focusBinding: Binding<PlanFocus>?
+    let planName: String?
+
+    @State private var isExpanded: Bool
+
+    init(
+        title: String = "Muskelgruppen-Balance",
+        stats: [MuscleGroupStat],
+        availableMetrics: [MuscleBalanceMetric] = [.sets, .volume],
+        showInsight: Bool = true,
+        configuredFocus: PlanFocus = .auto,
+        focusBinding: Binding<PlanFocus>? = nil,
+        planName: String? = nil,
+        initiallyExpanded: Bool = false
+    ) {
+        self.title = title
+        self.stats = stats
+        self.availableMetrics = availableMetrics
+        self.showInsight = showInsight
+        self.configuredFocus = configuredFocus
+        self.focusBinding = focusBinding
+        self.planName = planName
+        self._isExpanded = State(initialValue: initiallyExpanded)
+    }
+
+    var body: some View {
+        if isExpanded {
+            MuscleBalanceCard(
+                title: title,
+                stats: stats,
+                availableMetrics: availableMetrics,
+                showInsight: showInsight,
+                configuredFocus: configuredFocus,
+                focusBinding: focusBinding,
+                planName: planName,
+                onCollapse: {
+                    withAnimation(.easeInOut(duration: 0.25)) {
+                        isExpanded = false
+                    }
+                }
+            )
+        } else {
+            Button {
+                withAnimation(.easeInOut(duration: 0.25)) {
+                    isExpanded = true
+                }
+            } label: {
+                MuscleBalanceCompactBar(
+                    title: title,
+                    stats: stats,
+                    configuredFocus: focusBinding?.wrappedValue ?? configuredFocus,
+                    planName: planName,
+                    trailingIcon: "chevron.down"
+                )
+            }
+            .buttonStyle(.plain)
+        }
+    }
+}
