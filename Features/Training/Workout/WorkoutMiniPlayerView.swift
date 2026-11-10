@@ -5,6 +5,10 @@ struct WorkoutMiniPlayerView: View {
     let planName: String?
     let onTap: () -> Void
     
+    private var timer: WorkoutTimerViewModel {
+        viewModel.timer
+    }
+    
     @State private var showingCancelTimerAlert = false
     @State private var showingCustomTimerAlert = false
     @State private var customTimerSeconds = ""
@@ -18,11 +22,11 @@ struct WorkoutMiniPlayerView: View {
             // Icon
             ZStack {
                 Circle()
-                    .fill(viewModel.restTimerActive ? Color.green.opacity(0.15) : Color.brand.opacity(0.15))
+                    .fill(timer.restTimerActive ? Color.green.opacity(0.15) : Color.brand.opacity(0.15))
                     .frame(width: 40, height: 40)
                 
-                Image(systemName: viewModel.restTimerActive ? "timer" : "figure.run")
-                    .foregroundColor(viewModel.restTimerActive ? .green : .brand)
+                Image(systemName: timer.restTimerActive ? "timer" : "figure.run")
+                    .foregroundColor(timer.restTimerActive ? .green : .brand)
                     .font(.system(size: 20))
             }
             
@@ -35,7 +39,7 @@ struct WorkoutMiniPlayerView: View {
                         .foregroundColor(.primary)
                         .lineLimit(1)
                     
-                    if !viewModel.timerActive {
+                    if !timer.timerActive {
                         Text("ANGEHALTEN")
                             .font(.system(size: 10, weight: .bold))
                             .foregroundColor(.orange)
@@ -46,17 +50,17 @@ struct WorkoutMiniPlayerView: View {
                     }
                 }
                 
-                HStack {
-                    Text(viewModel.formatTime(viewModel.elapsedTime))
+                HStack(spacing: 4) {
+                    elapsedText
                         .font(.caption.monospacedDigit())
                         .foregroundColor(.primary)
                     
-                    if viewModel.restTimerActive {
+                    if timer.restTimerActive {
                         Text("•")
                             .font(.caption)
                             .foregroundColor(.secondary)
                         
-                        Text("Pause: \(viewModel.formatTime(viewModel.restTimeRemaining))")
+                        restText
                             .font(.caption.monospacedDigit())
                             .foregroundColor(.green)
                     }
@@ -68,7 +72,7 @@ struct WorkoutMiniPlayerView: View {
             // Buttons
             HStack(spacing: 12) {
                 // Start Rest Timer Menu
-                if !viewModel.restTimerActive {
+                if !timer.restTimerActive {
                     Menu {
                         Button("\(timerFav1) Sek") { viewModel.startRestTimer(duration: TimeInterval(timerFav1)) }
                         Button("\(timerFav2) Sek") { viewModel.startRestTimer(duration: TimeInterval(timerFav2)) }
@@ -97,14 +101,14 @@ struct WorkoutMiniPlayerView: View {
                 // Play/Pause button
                 Button(action: {
                     withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
-                        if viewModel.timerActive {
+                        if timer.timerActive {
                             viewModel.pauseWorkout()
                         } else {
                             viewModel.resumeWorkout()
                         }
                     }
                 }) {
-                    Image(systemName: viewModel.timerActive ? "pause.circle" : "play.circle")
+                    Image(systemName: timer.timerActive ? "pause.circle" : "play.circle")
                         .font(.system(size: 32))
                         .foregroundColor(.primary)
                 }
@@ -145,6 +149,34 @@ struct WorkoutMiniPlayerView: View {
             }
         } message: {
             Text("Gib die gewünschte Pausenzeit in Sekunden ein.")
+        }
+    }
+    
+    @ViewBuilder
+    private var elapsedText: some View {
+        if timer.timerActive, let anchor = timer.elapsedAnchorDate {
+            let floored = Date(timeIntervalSinceReferenceDate: floor(anchor.timeIntervalSinceReferenceDate))
+            let safeAnchor = min(floored, Date())
+            Text(timerInterval: safeAnchor...safeAnchor.addingTimeInterval(360000), countsDown: false)
+        } else {
+            Text(timer.formatTime(timer.accumulatedTime))
+        }
+    }
+    
+    @ViewBuilder
+    private var restText: some View {
+        if timer.restTimerPaused || !timer.timerActive {
+            Text("Pause: \(timer.formatTime(timer.currentRestRemaining))")
+        } else if let target = timer.restTargetTime {
+            let flooredTarget = Date(timeIntervalSinceReferenceDate: floor(target.timeIntervalSinceReferenceDate))
+            let flooredNow = Date(timeIntervalSinceReferenceDate: floor(Date().timeIntervalSinceReferenceDate))
+            let start = min(flooredNow, flooredTarget)
+            HStack(spacing: 3) {
+                Text("Pause:")
+                Text(timerInterval: start...flooredTarget, countsDown: true)
+            }
+        } else {
+            Text("Pause: 00:00")
         }
     }
 }

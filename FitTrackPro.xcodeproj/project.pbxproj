@@ -113,6 +113,7 @@
 		C3FDAE0B2FCADF8E00E8767F /* Features/Training/Workout/WorkoutSessionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3FDAE072FCADF8E00E8767F /* Features/Training/Workout/WorkoutSessionView.swift */; };
 		C3FDAE0C2FCADF8E00E8767F /* Features/Training/Workout/WorkoutSetRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3FDAE092FCADF8E00E8767F /* Features/Training/Workout/WorkoutSetRowView.swift */; };
 		C3FDAE0E2FCADF8E00E8767F /* Features/Training/Workout/WorkoutSessionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3FDAE082FCADF8E00E8767F /* Features/Training/Workout/WorkoutSessionViewModel.swift */; };
+		C3FDAE0E2FCADF8E00E87689 /* Features/Training/Workout/WorkoutTimerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3FDAE082FCADF8E00E87688 /* Features/Training/Workout/WorkoutTimerViewModel.swift */; };
 		C3FDAE102FCAE41100E8767F /* Features/Training/Workout/WorkoutSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3FDAE0F2FCAE41100E8767F /* Features/Training/Workout/WorkoutSummaryView.swift */; };
 		C3FDAE122FCAE73F00E8767F /* Features/Training/Workout/ExerciseHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3FDAE112FCAE73F00E8767F /* Features/Training/Workout/ExerciseHistoryView.swift */; };
 		D103DFCD8977A59169073514 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419465B90755D5DA410C4EE /* OnboardingView.swift */; };
@@ -248,6 +249,7 @@
 		C3FDAE052FCADF8E00E8767F /* Core/Services/NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Services/NotificationService.swift; sourceTree = SOURCE_ROOT; };
 		C3FDAE072FCADF8E00E8767F /* Features/Training/Workout/WorkoutSessionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Training/Workout/WorkoutSessionView.swift; sourceTree = SOURCE_ROOT; };
 		C3FDAE082FCADF8E00E8767F /* Features/Training/Workout/WorkoutSessionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Training/Workout/WorkoutSessionViewModel.swift; sourceTree = SOURCE_ROOT; };
+		C3FDAE082FCADF8E00E87688 /* Features/Training/Workout/WorkoutTimerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Training/Workout/WorkoutTimerViewModel.swift; sourceTree = SOURCE_ROOT; };
 		C3FDAE092FCADF8E00E8767F /* Features/Training/Workout/WorkoutSetRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Training/Workout/WorkoutSetRowView.swift; sourceTree = SOURCE_ROOT; };
 		C3FDAE0F2FCAE41100E8767F /* Features/Training/Workout/WorkoutSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Training/Workout/WorkoutSummaryView.swift; sourceTree = SOURCE_ROOT; };
 		C3FDAE112FCAE73F00E8767F /* Features/Training/Workout/ExerciseHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Training/Workout/ExerciseHistoryView.swift; sourceTree = SOURCE_ROOT; };
@@ -677,6 +679,7 @@
 			children = (
 				C3FDAE072FCADF8E00E8767F /* Features/Training/Workout/WorkoutSessionView.swift */,
 				C3FDAE082FCADF8E00E8767F /* Features/Training/Workout/WorkoutSessionViewModel.swift */,
+				C3FDAE082FCADF8E00E87688 /* Features/Training/Workout/WorkoutTimerViewModel.swift */,
 				C3FDAE092FCADF8E00E8767F /* Features/Training/Workout/WorkoutSetRowView.swift */,
 				C3FDAE0F2FCAE41100E8767F /* Features/Training/Workout/WorkoutSummaryView.swift */,
 				C3FDAE112FCAE73F00E8767F /* Features/Training/Workout/ExerciseHistoryView.swift */,
@@ -946,6 +949,7 @@
 				C3FDAE0B2FCADF8E00E8767F /* Features/Training/Workout/WorkoutSessionView.swift in Sources */,
 				C3FDAE0C2FCADF8E00E8767F /* Features/Training/Workout/WorkoutSetRowView.swift in Sources */,
 				C3FDAE0E2FCADF8E00E8767F /* Features/Training/Workout/WorkoutSessionViewModel.swift in Sources */,
+				C3FDAE0E2FCADF8E00E87689 /* Features/Training/Workout/WorkoutTimerViewModel.swift in Sources */,
 				C3FDADFA2FCADE4800E8767F /* Features/Training/ExerciseLibrary/ExerciseDetailView.swift in Sources */,
 				C3FDADFB2FCADE4800E8767F /* Core/Services/SeedDataService.swift in Sources */,
 				C3FDADFC2FCADE4800E8767F /* Features/Training/ExerciseLibrary/ExerciseLibraryViewModel.swift in Sources */,
