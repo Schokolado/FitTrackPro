@@ -415,14 +415,19 @@ struct WorkoutHistoryDetailView: View {
                     if !session.notes.isEmpty {
                         Divider()
                         VStack(alignment: .leading, spacing: 4) {
-                            Text(session.notes)
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
-                                .multilineTextAlignment(.leading)
-                                .lineLimit(isNotesExpanded ? nil : 2)
-                                .frame(maxWidth: .infinity, alignment: .leading)
+                            if isNotesExpanded {
+                                RichNotesView(text: session.notes, baseFont: .subheadline, textColor: .secondary)
+                            } else {
+                                Text(RichNotesParser.parseCompactPreview(session.notes))
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary)
+                                    .multilineTextAlignment(.leading)
+                                    .lineLimit(2)
+                                    .tint(.brand)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                            }
                             
-                            if session.notes.count > 100 || session.notes.filter({ $0 == "\n" }).count > 1 {
+                            if session.notes.count > 100 || session.notes.filter({ $0 == "\n" }).count > 1 || session.notes.contains("#") || session.notes.contains("**") || session.notes.contains("<u>") {
                                 Button(action: {
                                     withAnimation(.easeInOut(duration: 0.2)) {
                                         isNotesExpanded.toggle()

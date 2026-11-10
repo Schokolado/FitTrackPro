@@ -10,6 +10,7 @@ struct ExerciseDetailView: View {
     @State private var showingEditForm = false
     @State private var showingFullScreenViewer = false
     @State private var selectedImageIndex: Int = 0
+    @State private var showingResetNotesAlert = false
     
     private var categoryIcon: String {
         switch exercise.category.lowercased() {
@@ -69,26 +70,49 @@ struct ExerciseDetailView: View {
                 .cardStyle()
                 .padding(.horizontal)
                 
+                let defaultNote = SeedDataService.shared.defaultExerciseNotes(for: exercise.name)
+                
                 if exercise.notes.isEmpty {
-                    Button(action: { showingEditForm = true }) {
-                        HStack {
-                            Image(systemName: "note.text.badge.plus")
-                                .font(.title2)
-                                .foregroundColor(.secondary)
-                            Text("Notizen hinzufügen")
-                                .font(.headline)
-                                .foregroundColor(.secondary)
-                            Spacer()
+                    VStack(alignment: .leading, spacing: Spacing.sm) {
+                        Button(action: { showingEditForm = true }) {
+                            HStack {
+                                Image(systemName: "note.text.badge.plus")
+                                    .font(.title2)
+                                    .foregroundColor(.secondary)
+                                Text("Notizen hinzufügen")
+                                    .font(.headline)
+                                    .foregroundColor(.secondary)
+                                Spacer()
+                            }
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                        
+                        if defaultNote != nil {
+                            Divider()
+                            Button(action: { showingResetNotesAlert = true }) {
+                                Label("Standard-Notiz wiederherstellen", systemImage: "arrow.counterclockwise")
+                                    .font(.subheadline.weight(.medium))
+                                    .foregroundColor(.brand)
+                            }
                         }
                     }
-                    .buttonStyle(PlainButtonStyle())
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .cardStyle()
                     .padding(.horizontal)
                 } else {
                     VStack(alignment: .leading, spacing: Spacing.sm) {
-                        Text("Notizen")
-                            .font(.headline)
+                        HStack {
+                            Text("Notizen")
+                                .font(.headline)
+                            Spacer()
+                            if let def = defaultNote, exercise.notes != def {
+                                Button(action: { showingResetNotesAlert = true }) {
+                                    Label("Werkseinstellungen", systemImage: "arrow.counterclockwise")
+                                        .font(.caption.weight(.medium))
+                                        .foregroundColor(.brand)
+                                }
+                            }
+                        }
                         RichNotesView(text: exercise.notes, baseFont: .body, textColor: .secondary)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -212,6 +236,17 @@ struct ExerciseDetailView: View {
         }
         .fullScreenCover(isPresented: $showingFullScreenViewer) {
             FullScreenImageViewer(mediaPaths: exercise.localMediaPaths, initialIndex: selectedImageIndex)
+        }
+        .alert("Notiz zurücksetzen?", isPresented: $showingResetNotesAlert) {
+            Button("Abbrechen", role: .cancel) { }
+            Button("Zurücksetzen", role: .destructive) {
+                if let def = SeedDataService.shared.defaultExerciseNotes(for: exercise.name) {
+                    exercise.notes = def
+                    try? modelContext.save()
+                }
+            }
+        } message: {
+            Text("Möchtest du die Notizen für diese Übung auf die Standardbeschreibung (Werkseinstellungen) zurücksetzen?")
         }
     }
     

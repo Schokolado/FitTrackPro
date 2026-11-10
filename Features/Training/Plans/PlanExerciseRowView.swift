@@ -322,6 +322,14 @@ struct PlanExerciseNotesSheet: View {
     @Bindable var planExercise: PlanExercise
     @Binding var isEditing: Bool
     @State private var draftNotes = ""
+    @State private var showingResetAlert = false
+    
+    private var defaultFactoryNote: String? {
+        SeedDataService.shared.defaultPlanExerciseNotes(
+            planName: planExercise.plan?.name ?? "",
+            exerciseName: planExercise.exercise?.name ?? ""
+        )
+    }
 
     var body: some View {
         NavigationStack {
@@ -342,6 +350,22 @@ struct PlanExerciseNotesSheet: View {
                                 .padding()
                         }
                     }
+                }
+                
+                if let defaultNote = defaultFactoryNote,
+                   (isEditing ? draftNotes != defaultNote : planExercise.planSpecificNotes != defaultNote) {
+                    Button {
+                        showingResetAlert = true
+                    } label: {
+                        Label("Auf Werkseinstellungen zurücksetzen", systemImage: "arrow.counterclockwise")
+                            .font(.subheadline.weight(.medium))
+                            .foregroundColor(.brand)
+                            .padding(.vertical, 8)
+                            .padding(.horizontal, 14)
+                            .background(Color.brand.opacity(0.1))
+                            .cornerRadius(10)
+                    }
+                    .padding(.bottom, 12)
                 }
             }
             .navigationTitle("Notiz zur Übung")
@@ -371,6 +395,18 @@ struct PlanExerciseNotesSheet: View {
                         }
                     }
                 }
+            }
+            .alert("Notiz zurücksetzen?", isPresented: $showingResetAlert) {
+                Button("Abbrechen", role: .cancel) { }
+                Button("Zurücksetzen", role: .destructive) {
+                    if let defaultNote = defaultFactoryNote {
+                        planExercise.planSpecificNotes = defaultNote
+                        draftNotes = defaultNote
+                        try? modelContext.save()
+                    }
+                }
+            } message: {
+                Text("Möchtest du diese Übungsnotiz im Plan auf die Standardbeschreibung (Werkseinstellungen) zurücksetzen?")
             }
             .onAppear {
                 draftNotes = planExercise.planSpecificNotes

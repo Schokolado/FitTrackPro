@@ -27,6 +27,7 @@ struct ExerciseFormView: View {
     @State private var timeUnit: String = "Min"
     @State private var defaultRestDuration: Double = 90
     @State private var notes: String = ""
+    @State private var showingResetNotesAlert = false
     @State private var externalVideoURLString: String = ""
     @State private var localMediaPaths: [String] = []
     @State private var selectedMediaItems: [PhotosPickerItem] = []
@@ -105,6 +106,15 @@ struct ExerciseFormView: View {
             Section(header: Text("Notizen")) {
                 RichNotesEditor(text: $notes, minHeight: 160, placeholder: "Notizen / Ausführung eingeben...")
                     .padding(.vertical, 4)
+                
+                if let defaultNotes = SeedDataService.shared.defaultExerciseNotes(for: exerciseToEdit?.name ?? name),
+                   notes != defaultNotes {
+                    Button(action: { showingResetNotesAlert = true }) {
+                        Label("Auf Werkseinstellungen zurücksetzen", systemImage: "arrow.counterclockwise")
+                            .font(.subheadline.weight(.medium))
+                            .foregroundColor(.brand)
+                    }
+                }
             }
             
             Section(header: Text("Medien & Video")) {
@@ -173,6 +183,16 @@ struct ExerciseFormView: View {
                 }
                 .disabled(name.trimmingCharacters(in: .whitespaces).isEmpty)
             }
+        }
+        .alert("Notiz zurücksetzen?", isPresented: $showingResetNotesAlert) {
+            Button("Abbrechen", role: .cancel) { }
+            Button("Zurücksetzen", role: .destructive) {
+                if let defaultNotes = SeedDataService.shared.defaultExerciseNotes(for: exerciseToEdit?.name ?? name) {
+                    notes = defaultNotes
+                }
+            }
+        } message: {
+            Text("Möchtest du die Notizen für diese Übung auf die Standardbeschreibung (Werkseinstellungen) zurücksetzen?")
         }
     }
     

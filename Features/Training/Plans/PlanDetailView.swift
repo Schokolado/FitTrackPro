@@ -75,7 +75,7 @@ struct PlanDetailView: View {
                             Text(RichNotesParser.parseCompactPreview(plan.notes))
                                 .font(.subheadline)
                                 .foregroundColor(.secondary)
-                                .lineLimit(2)
+                                .lineLimit(3)
                                 .tint(.brand)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                             
@@ -89,6 +89,11 @@ struct PlanDetailView: View {
                                         .foregroundColor(.brand)
                                 }
                             }
+                        }
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            startNotesEditing = false
+                            showingNotesSheet = true
                         }
                         .padding(.horizontal)
                     }
@@ -700,16 +705,22 @@ struct PlanExerciseReorderView: View {
 }
 
 struct PlanNotesSheetView: View {
+    @Environment(\.modelContext) private var modelContext
     @Bindable var plan: TrainingPlan
     @Binding var showingNotesSheet: Bool
     @State private var isEditingNotes: Bool
     @State private var editNotes: String
+    @State private var showingResetAlert = false
     
     init(plan: TrainingPlan, showingNotesSheet: Binding<Bool>, startEditing: Bool) {
         self.plan = plan
         self._showingNotesSheet = showingNotesSheet
         self._isEditingNotes = State(initialValue: startEditing)
         self._editNotes = State(initialValue: plan.notes)
+    }
+    
+    private var defaultFactoryNote: String? {
+        SeedDataService.shared.defaultPlanNotes(for: plan.name)
     }
     
     var body: some View {
@@ -732,6 +743,22 @@ struct PlanNotesSheetView: View {
                         }
                     }
                 }
+                
+                if let defaultNote = defaultFactoryNote,
+                   (isEditingNotes ? editNotes != defaultNote : plan.notes != defaultNote) {
+                    Button {
+                        showingResetAlert = true
+                    } label: {
+                        Label("Auf Werkseinstellungen zurücksetzen", systemImage: "arrow.counterclockwise")
+                            .font(.subheadline.weight(.medium))
+                            .foregroundColor(.brand)
+                            .padding(.vertical, 8)
+                            .padding(.horizontal, 14)
+                            .background(Color.brand.opacity(0.1))
+                            .cornerRadius(10)
+                    }
+                    .padding(.bottom, 12)
+                }
             }
             .navigationTitle(isEditingNotes ? "Notizen bearbeiten" : "Plan-Notizen")
             .navigationBarTitleDisplayMode(.inline)
@@ -747,6 +774,7 @@ struct PlanNotesSheetView: View {
                     if isEditingNotes {
                         Button("Speichern") {
                             plan.notes = editNotes.trimmingCharacters(in: .whitespacesAndNewlines)
+                            try? modelContext.save()
                             showingNotesSheet = false
                         }
                     } else {
@@ -756,6 +784,18 @@ struct PlanNotesSheetView: View {
                         }
                     }
                 }
+            }
+            .alert("Notiz zurücksetzen?", isPresented: $showingResetAlert) {
+                Button("Abbrechen", role: .cancel) { }
+                Button("Zurücksetzen", role: .destructive) {
+                    if let defaultNote = defaultFactoryNote {
+                        plan.notes = defaultNote
+                        editNotes = defaultNote
+                        try? modelContext.save()
+                    }
+                }
+            } message: {
+                Text("Möchtest du diese Plan-Notiz auf die Standardbeschreibung (Werkseinstellungen) zurücksetzen?")
             }
         }
         .presentationDetents([.medium, .large])

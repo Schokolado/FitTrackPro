@@ -49,7 +49,7 @@
     "sortOrder": 80,
     "isTimeBased": true,
     "timeUnit": "Min",
-    "notes": "Target / Focus: Hip flexor relief, pelvic tilt alignment.\nDuration: 2 min per side (4 min total).\nExecution: Place knee against wall or couch, step front foot forward, squeeze rear glute tightly."
+    "notes": "### 🎯 Target / Focus\nHip flexor relief, pelvic tilt alignment.\n\n### ⏱️ Duration\n**2 min per side** *(4 min total)*\n\n### 📋 Execution\n- Place knee against wall or couch\n- Step front foot forward\n- Squeeze rear glute tightly"
   },
   {
     "name": "Taube / Pigeon Pose",
@@ -58,7 +58,7 @@
     "sortOrder": 81,
     "isTimeBased": true,
     "timeUnit": "Min",
-    "notes": "Target / Focus: Stretch glutes & piriformis, relieve SI joint.\nDuration: 1.5–2 min per side.\nExecution: Front leg bent across body, back leg straight behind. Lean chest forward with control."
+    "notes": "### 🎯 Target / Focus\nStretch glutes & piriformis, relieve SI joint.\n\n### ⏱️ Duration\n**1.5–2 min per side** *(3–4 min total)*\n\n### 📋 Execution\n- Front leg bent across body\n- Back leg straight behind\n- Lean chest forward with control"
   },
   {
     "name": "90/90 Hüftrotation",
@@ -67,7 +67,7 @@
     "sortOrder": 82,
     "isTimeBased": true,
     "timeUnit": "Min",
-    "notes": "Target / Focus: Internal & external hip mobility.\nDuration: 1.5–2 min dynamic.\nExecution: Sit on floor with both legs bent at 90 degrees. Rotate smoothly side to side."
+    "notes": "### 🎯 Target / Focus\nInternal & external hip mobility.\n\n### ⏱️ Duration\n**1.5–2 min** *(dynamic)*\n\n### 📋 Execution\n- Sit on floor with both legs bent at **90 degrees**\n- Rotate smoothly side to side"
   },
   {
     "name": "Triggerpunkt-Behandlung (Gluteus & Piriformis)",
@@ -76,7 +76,7 @@
     "sortOrder": 83,
     "isTimeBased": true,
     "timeUnit": "Min",
-    "notes": "Target / Focus: Release myofascial trigger points in glutes.\nDuration: 2–3 min.\nExecution: Sit on lacrosse ball on glute, find tender spots, hold 30–60s with deep breathing."
+    "notes": "### 🎯 Target / Focus\nRelease myofascial trigger points in glutes.\n\n### ⏱️ Duration\n**2–3 min**\n\n### 📋 Execution\n- Sit on lacrosse ball on glute\n- Find tender spots\n- Hold **30–60s** with deep breathing"
   },
   {
     "name": "Plank mit Beckenkippung (Posterior Pelvic Tilt)",
@@ -85,7 +85,7 @@
     "sortOrder": 84,
     "isTimeBased": true,
     "timeUnit": "Sek",
-    "notes": "Target / Focus: Core activation and pelvic stabilization.\nDuration: 2 sets of 45s.\nExecution: Forearm plank, actively tuck pelvis under, squeeze glutes and pull navel inward."
+    "notes": "### 🎯 Target / Focus\nCore activation and pelvic stabilization.\n\n### ⏱️ Duration\n**2 sets of 45s**\n\n### 📋 Execution\n- Forearm plank\n- Actively tuck pelvis under\n- Squeeze glutes and pull navel inward"
   },
   {
     "name": "BWS-Extension (auf Faszienrolle)",
@@ -94,7 +94,7 @@
     "sortOrder": 85,
     "isTimeBased": false,
     "timeUnit": "Wdh",
-    "notes": "Target / Focus: Thoracic extension to counter slouching.\nDuration: 2 min (10–12 reps).\nExecution: Foam roller under mid back, hands behind head, gently extend backward over roller."
+    "notes": "### 🎯 Target / Focus\nThoracic extension to counter slouching.\n\n### ⏱️ Duration\n**2 min** *(10–12 reps)*\n\n### 📋 Execution\n- Foam roller under mid back\n- Hands behind head\n- Gently extend backward over roller"
   },
   {
     "name": "Thorax-Rotation (Open Book / Buch öffnen)",
@@ -103,7 +103,7 @@
     "sortOrder": 86,
     "isTimeBased": false,
     "timeUnit": "Wdh",
-    "notes": "Target / Focus: Thoracic spine rotation.\nDuration: 10 reps per side.\nExecution: Side-lying, knees at 90°. Open top arm in wide arc backward, eyes follow hand."
+    "notes": "### 🎯 Target / Focus\nThoracic spine rotation.\n\n### ⏱️ Duration\n**10 reps per side** *(approx. 2–3 min)*\n\n### 📋 Execution\n- Side-lying, knees at **90°**\n- Open top arm in wide arc backward\n- Eyes follow hand"
   },
   {
     "name": "Doorway Chest Stretch (Brustöffner)",
@@ -112,7 +112,7 @@
     "sortOrder": 87,
     "isTimeBased": true,
     "timeUnit": "Min",
-    "notes": "Target / Focus: Chest & shoulder opener.\nDuration: 1–1.5 min per side.\nExecution: Place forearm on door frame, step forward and rotate torso slightly until stretch is felt."
+    "notes": "### 🎯 Target / Focus\nChest & shoulder opener.\n\n### ⏱️ Duration\n**1–1.5 min per side** *(3 min total)*\n\n### 📋 Execution\n- Place forearm on door frame\n- Step forward\n- Rotate torso slightly until stretch is felt"
   },
   {
     "name": "Chin Tucks & Wall Slides",
@@ -121,7 +121,7 @@
     "sortOrder": 88,
     "isTimeBased": false,
     "timeUnit": "Wdh",
-    "notes": "Target / Focus: Deep neck flexors & lower trap activation.\nDuration: 2 sets of 12 reps.\nExecution: Chin tucks: create double chin against resistance. Wall slides: slide arms up wall smoothly."
+    "notes": "### 🎯 Target / Focus\nDeep neck flexors & lower trap activation.\n\n### ⏱️ Duration\n**2 sets of 12 reps**\n\n### 📋 Execution\n- **Chin tucks:** Create double chin against resistance\n- **Wall slides:** Slide arms up wall smoothly"
   },
   {
     "name": "Faszienbehandlung (Oberer Rücken)",
@@ -130,7 +130,7 @@
     "sortOrder": 89,
     "isTimeBased": true,
     "timeUnit": "Min",
-    "notes": "Target / Focus: Relieve upper back tension along spine.\nDuration: 3 min.\nExecution: Roll out muscles along spine with peanut ball, avoid spinal bones directly."
+    "notes": "### 🎯 Target / Focus\nRelieve upper back tension along spine.\n\n### ⏱️ Duration\n**3 min**\n\n### 📋 Execution\n- Roll out muscles along spine with peanut ball\n- **Note:** Avoid spinal bones directly"
   },
   {
     "name": "Katze-Kuh & Threading the Needle",
@@ -139,7 +139,7 @@
     "sortOrder": 90,
     "isTimeBased": false,
     "timeUnit": "Wdh",
-    "notes": "Target / Focus: Spine warm-up and mobility.\nDuration: 10 reps.\nExecution: Hands and knees, alternate between arching and rounding back, then thread arm through."
+    "notes": "### 🎯 Target / Focus\nSpine warm-up and mobility.\n\n### ⏱️ Duration\n**10 reps**\n\n### 📋 Execution\n- Hands and knees, alternate between arching and rounding back\n- Thread arm through underneath"
   },
   {
     "name": "Glute Bridge mit Miniband",
@@ -148,7 +148,7 @@
     "sortOrder": 91,
     "isTimeBased": false,
     "timeUnit": "Wdh",
-    "notes": "Target / Focus: Glute activation before heavy squats or deadlifts.\nDuration: 2 sets of 15 reps.\nExecution: Lie on back with miniband above knees, push knees outward, lift hips to full extension."
+    "notes": "### 🎯 Target / Focus\nGlute activation before heavy squats or deadlifts.\n\n### ⏱️ Duration\n**2 sets of 15 reps**\n\n### 📋 Execution\n- Lie on back with miniband above knees\n- Push knees outward\n- Lift hips to full extension"
   },
   {
     "name": "Pallof Press / Deadbugs",
@@ -157,7 +157,7 @@
     "sortOrder": 92,
     "isTimeBased": false,
     "timeUnit": "Wdh",
-    "notes": "Target / Focus: Anti-rotation & core stability.\nDuration: 2 sets of 10–12 reps.\nExecution: Cable/band anti-rotation press or deadbug lowering opposite arm and leg while lower back stays flat."
+    "notes": "### 🎯 Target / Focus\nAnti-rotation & core stability.\n\n### ⏱️ Duration\n**2 sets of 10–12 reps**\n\n### 📋 Execution\n- **Pallof Press:** Cable/band anti-rotation press\n- **Deadbug:** Lower opposite arm and leg while lower back stays flat"
   },
   {
     "name": "Dynamische Hüftkreise & Beinschwünge",
@@ -166,6 +166,6 @@
     "sortOrder": 93,
     "isTimeBased": false,
     "timeUnit": "Wdh",
-    "notes": "Target / Focus: Dynamic hip range of motion warm-up.\nDuration: 10–12 reps per side.\nExecution: Stand on one leg, swing free leg forward/back with control and perform wide hip circles."
+    "notes": "### 🎯 Target / Focus\nDynamic hip range of motion warm-up.\n\n### ⏱️ Duration\n**10–12 reps per side**\n\n### 📋 Execution\n- Stand on one leg\n- Swing free leg forward/back with control\n- Perform wide hip circles"
   }
 ]
