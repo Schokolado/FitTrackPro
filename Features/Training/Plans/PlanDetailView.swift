@@ -34,6 +34,7 @@ struct PlanDetailView: View {
     @State private var generatedPDFUrl: URL?
     @State private var isGeneratingPDF = false
     @State private var showingBalanceSheet = false
+    @State private var isExercisesExpanded = true
     
     private var planSessions: [WorkoutSession] {
         allSessions.filter { $0.plan?.id == plan.id }
@@ -76,19 +77,6 @@ struct PlanDetailView: View {
                         .padding(.horizontal)
                         .padding(.top, 4)
                         
-                    if !plan.notes.isEmpty {
-                        RichNotesCard(
-                            title: "Plan-Notizen",
-                            text: plan.notes,
-                            maxCollapsedHeight: 140,
-                            onEdit: {
-                                startNotesEditing = true
-                                showingNotesSheet = true
-                            }
-                        )
-                        .padding(.horizontal)
-                    }
-                    
                     if !groupedExercises.isEmpty {
                         startWorkoutButton
                     }
@@ -110,8 +98,73 @@ struct PlanDetailView: View {
                         .padding(.horizontal)
                     }
                     
-                    ForEach(groupedExercises) { group in
-                        exerciseGroupView(for: group)
+                    if !plan.notes.isEmpty {
+                        RichNotesCard(
+                            title: "Plan-Notizen",
+                            text: plan.notes,
+                            maxCollapsedHeight: 140,
+                            onEdit: {
+                                startNotesEditing = true
+                                showingNotesSheet = true
+                            }
+                        )
+                        .padding(.horizontal)
+                    }
+                    
+                    if !groupedExercises.isEmpty {
+                        let sortedPlanExercises = (plan.planExercises ?? []).sorted { $0.sortOrder < $1.sortOrder }
+                        let totalSets = sortedPlanExercises.reduce(0) { $0 + $1.targetSets }
+                        let previewNames = sortedPlanExercises.compactMap { $0.exercise?.name }.joined(separator: " · ")
+
+                        Button {
+                            withAnimation(.easeInOut(duration: 0.25)) {
+                                isExercisesExpanded.toggle()
+                            }
+                        } label: {
+                            HStack(spacing: 12) {
+                                Image(systemName: "dumbbell.fill")
+                                    .foregroundColor(.blue)
+                                    .font(.subheadline)
+                                    .frame(width: 24)
+
+                                VStack(alignment: .leading, spacing: 3) {
+                                    HStack(spacing: 6) {
+                                        Text("Übungen")
+                                            .font(.subheadline.bold())
+                                            .foregroundColor(.primary)
+                                        Text("\(sortedPlanExercises.count) Übungen • \(totalSets) Sätze")
+                                            .font(.caption)
+                                            .foregroundColor(.secondary)
+                                    }
+
+                                    if !isExercisesExpanded && !previewNames.isEmpty {
+                                        Text(previewNames)
+                                            .font(.caption2)
+                                            .foregroundColor(.secondary)
+                                            .lineLimit(1)
+                                    }
+                                }
+
+                                Spacer()
+
+                                Image(systemName: isExercisesExpanded ? "chevron.up" : "chevron.down")
+                                    .font(.caption.bold())
+                                    .foregroundColor(.secondary)
+                            }
+                            .padding(14)
+                            .background(
+                                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                    .fill(Color.backgroundSecondary)
+                            )
+                        }
+                        .buttonStyle(.plain)
+                        .padding(.horizontal)
+
+                        if isExercisesExpanded {
+                            ForEach(groupedExercises) { group in
+                                exerciseGroupView(for: group)
+                            }
+                        }
                     }
                     
                     addExerciseButton
@@ -119,6 +172,7 @@ struct PlanDetailView: View {
                 .padding(.vertical)
                 .onChange(of: newlyAddedExerciseIds) { oldValue, newValue in
                     if let newId = newValue.subtracting(oldValue).first {
+                        isExercisesExpanded = true
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                             withAnimation(.spring()) {
                                 proxy.scrollTo(newId, anchor: .center)
