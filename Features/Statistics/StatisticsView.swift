@@ -790,6 +790,16 @@ struct MuscleBalanceCard: View {
                     .buttonStyle(.plain)
                 }
             }
+            .contentShape(Rectangle())
+            .onTapGesture {
+                if let onCollapse {
+                    onCollapse()
+                } else if selectedCategory != nil {
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        selectedCategory = nil
+                    }
+                }
+            }
 
             if availableMetrics.count > 1 {
                 Picker("Balance-Metrik", selection: $selectedMetric) {
