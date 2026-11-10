@@ -16,15 +16,25 @@ class SeedDataService {
     static let shared = SeedDataService()
     private init() {}
     
-    private let hasSeededMobilityPlansKey = "hasSeededMobilityPlansV1"
+    private let hasSeededMobilityPlansKey = "hasSeededMobilityPlansV2"
     
     func seedExercisesIfNeeded(context: ModelContext) {
         let lang = Locale.current.language.languageCode?.identifier == "de" ? "de" : "en"
-        guard let url = Bundle.main.url(forResource: "DefaultExercises_\(lang)", withExtension: "json"),
-              let data = try? Data(contentsOf: url),
-              let seedData = try? JSONDecoder().decode([SeedExercise].self, from: data) else {
-            print("Failed to load seed data from DefaultExercises_\(lang).json")
-            return
+        var seedData: [SeedExercise] = []
+        
+        if let url = Bundle.main.url(forResource: "DefaultExercises_\(lang)", withExtension: "json"),
+           let data = try? Data(contentsOf: url),
+           let decoded = try? JSONDecoder().decode([SeedExercise].self, from: data) {
+            seedData = decoded
+        } else {
+            print("Warning: Could not load DefaultExercises_\(lang).json from bundle, using built-in mobility fallback.")
+        }
+        
+        // Always ensure built-in mobility exercises are included even if JSON fails
+        let mobilitySeeds = Self.builtInMobilitySeeds
+        let seedNamesInJson = Set(seedData.map { $0.name })
+        for m in mobilitySeeds where !seedNamesInJson.contains(m.name) {
+            seedData.append(m)
         }
         
         let fetchDescriptor = FetchDescriptor<Exercise>()
@@ -82,7 +92,8 @@ class SeedDataService {
         let allExercises = (try? context.fetch(exerciseDescriptor)) ?? []
         
         func findExercise(_ keyword: String) -> Exercise? {
-            allExercises.first { $0.name.localizedCaseInsensitiveContains(keyword) }
+            allExercises.first { !$0.isCustom && $0.name.localizedCaseInsensitiveContains(keyword) }
+                ?? allExercises.first { $0.name.localizedCaseInsensitiveContains(keyword) }
         }
         
         struct PlanSeedSpec {
@@ -163,4 +174,133 @@ class SeedDataService {
             print("Failed to save mobility plans: \(error)")
         }
     }
+    
+    static let builtInMobilitySeeds: [SeedExercise] = [
+        SeedExercise(
+            name: "Couch Stretch (Hüftbeuger-Dehnung)",
+            category: "Mobilität",
+            defaultRestDuration: 15,
+            sortOrder: 80,
+            notes: "Ziel / Fokus: Hüftbeuger entlasten, Becken aufrichten und LWS entlasten.\nDauer / Umfang: 2 Min. pro Seite (4 Min. gesamt).\nAusführung: Knie nah an eine Wand oder Couch stellen, oberer Fuß aufstellen, Becken aufrichten und den Po der hinteren Seite fest anspannen.",
+            isTimeBased: true,
+            timeUnit: "Min"
+        ),
+        SeedExercise(
+            name: "Taube / Pigeon Pose (Gluteus & Piriformis)",
+            category: "Mobilität",
+            defaultRestDuration: 15,
+            sortOrder: 81,
+            notes: "Ziel / Fokus: Dehnung von Gluteus & Piriformis, Entlastung des Iliosakralgelenks (ISG).\nDauer / Umfang: 1,5–2 Min. pro Seite (3–4 Min. gesamt).\nAusführung: Vorderes Bein angewinkelt vor dem Körper ablegen, hinteres Bein weit nach hinten ausstrecken. Oberkörper kontrolliert nach vorne neigen.",
+            isTimeBased: true,
+            timeUnit: "Min"
+        ),
+        SeedExercise(
+            name: "90/90 Hüftrotation (Hüftgelenke)",
+            category: "Mobilität",
+            defaultRestDuration: 15,
+            sortOrder: 82,
+            notes: "Ziel / Fokus: Verbesserung der Innen- und Außenrotation der Hüftgelenke.\nDauer / Umfang: 1,5–2 Min. (dynamisch).\nAusführung: Auf den Boden setzen, beide Beine im 90-Grad-Winkel ablegen. Dynamisch und geführt von links nach rechts rotieren.",
+            isTimeBased: true,
+            timeUnit: "Min"
+        ),
+        SeedExercise(
+            name: "Triggerpunkt-Behandlung (Gluteus & Piriformis)",
+            category: "Mobilität",
+            defaultRestDuration: 15,
+            sortOrder: 83,
+            notes: "Ziel / Fokus: Myofasziale Verklebungen & Triggerpunkte im Gesäß lösen.\nDauer / Umfang: 2–3 Min.\nAusführung: Mit einer Gesäßhälfte auf einen Lacrosse- oder Tennisball setzen, schmerzhafte Punkte suchen und 30–60 Sekunden gezielt unter tiefem Ausatmen halten.",
+            isTimeBased: true,
+            timeUnit: "Min"
+        ),
+        SeedExercise(
+            name: "Plank mit Beckenkippung (Posterior Pelvic Tilt)",
+            category: "Mobilität",
+            defaultRestDuration: 30,
+            sortOrder: 84,
+            notes: "Ziel / Fokus: Tiefe Rumpfmuskulatur aktivieren, Beckenstabilisierung gegen Hohlkreuz.\nDauer / Umfang: 2 Sätze á 45 Sek.\nAusführung: Unterarmstütz halten, dabei das Becken aktiv nach hinten kippen (Po fest anspannen, Bauchnabel nach innen ziehen).",
+            isTimeBased: true,
+            timeUnit: "Sek"
+        ),
+        SeedExercise(
+            name: "BWS-Extension (auf Faszienrolle)",
+            category: "Mobilität",
+            defaultRestDuration: 15,
+            sortOrder: 85,
+            notes: "Ziel / Fokus: Aufrichtung der Brustwirbelsäule, Gegenmaßnahme bei Rundrücken.\nDauer / Umfang: 2 Min. (10–12 Wdh.).\nAusführung: Faszienrolle auf Höhe der Schulterblätter unter die BWS legen, Hände an den Hinterkopf nehmen und sanft nach hinten über die Rolle lehnen.",
+            isTimeBased: false,
+            timeUnit: "Wdh"
+        ),
+        SeedExercise(
+            name: "Thorax-Rotation (Open Book / Buch öffnen)",
+            category: "Mobilität",
+            defaultRestDuration: 15,
+            sortOrder: 86,
+            notes: "Ziel / Fokus: Rotationsfähigkeit der Brustwirbelsäule verbessern.\nDauer / Umfang: 10 Wdh. pro Seite (ca. 2–3 Min.).\nAusführung: Seitenlage, Knie um 90° angezogen. Der obere Arm dreht in einem großen Bogen nach hinten auf, der Blick folgt der Hand.",
+            isTimeBased: false,
+            timeUnit: "Wdh"
+        ),
+        SeedExercise(
+            name: "Doorway Chest Stretch (Brustöffner)",
+            category: "Mobilität",
+            defaultRestDuration: 15,
+            sortOrder: 87,
+            notes: "Ziel / Fokus: Dehnung des großen und kleinen Brustmuskels (Pectoralis), Schulteröffnung.\nDauer / Umfang: 1–1,5 Min. pro Seite (3 Min. gesamt).\nAusführung: Unterarm an einen Türrahmen legen, einen Schritt nach vorne machen und den Oberkörper leicht eindrehen, bis eine Dehnung spürbar ist.",
+            isTimeBased: true,
+            timeUnit: "Min"
+        ),
+        SeedExercise(
+            name: "Chin Tucks & Wall Slides (Nacken & Rücken)",
+            category: "Mobilität",
+            defaultRestDuration: 30,
+            sortOrder: 88,
+            notes: "Ziel / Fokus: Nacken entlasten, tiefere Nackenbeuger stärken, unterer Trapez & Rhomboiden aktivieren.\nDauer / Umfang: 2 Sätze á 12 Wdh. (ca. 3 Min.).\nAusführung: Chin Tucks: Doppelkinn-Aktivierung für die tiefen Nackenbeuger. Wall Slides: Aufrecht an der Wand für den unteren Trapez und die Rhomboiden.",
+            isTimeBased: false,
+            timeUnit: "Wdh"
+        ),
+        SeedExercise(
+            name: "Faszienbehandlung (Oberer Rücken)",
+            category: "Mobilität",
+            defaultRestDuration: 15,
+            sortOrder: 89,
+            notes: "Ziel / Fokus: Lösen von Verspannungen der paravertebralen Muskulatur im oberen Rücken.\nDauer / Umfang: 3 Min.\nAusführung: Muskelstränge links und rechts der Wirbelsäule mit dem Duoball ausrollen, dabei die Dornfortsätze aussparen.",
+            isTimeBased: true,
+            timeUnit: "Min"
+        ),
+        SeedExercise(
+            name: "Katze-Kuh & Threading the Needle",
+            category: "Mobilität",
+            defaultRestDuration: 15,
+            sortOrder: 90,
+            notes: "Ziel / Fokus: Mobilisierung und Durchbewegung von BWS & LWS.\nDauer / Umfang: 10 Wiederholungen.\nAusführung: Im Vierfüßlerstand im Wechsel Rücken runden (Katze) und leicht durchhängen lassen (Kuh), danach einen Arm unter dem Körper durchfädeln (Threading the Needle).",
+            isTimeBased: false,
+            timeUnit: "Wdh"
+        ),
+        SeedExercise(
+            name: "Glute Bridge mit Miniband",
+            category: "Mobilität",
+            defaultRestDuration: 30,
+            sortOrder: 91,
+            notes: "Ziel / Fokus: Gezielte Aktivierung der Gesäßmuskulatur vor Kniebeugen oder Kreuzheben.\nDauer / Umfang: 2 Sätze á 15 Wiederholungen.\nAusführung: Rückenlage, Miniband oberhalb der Knie, Knie nach außen drücken und das Becken hochdrücken, bis Oberschenkel und Oberkörper eine Linie bilden.",
+            isTimeBased: false,
+            timeUnit: "Wdh"
+        ),
+        SeedExercise(
+            name: "Pallof Press / Deadbugs",
+            category: "Mobilität",
+            defaultRestDuration: 30,
+            sortOrder: 92,
+            notes: "Ziel / Fokus: Antirotation & Rumpfstabilität aufbauen ohne Überlastung der Hüftbeuger.\nDauer / Umfang: 2 Sätze á 10–12 Wiederholungen.\nAusführung: Pallof Press am Kabelzug/Band gegen Rotation halten oder Deadbugs kontrolliert diagonal Arm und Bein absenken, LWS bleibt fest am Boden.",
+            isTimeBased: false,
+            timeUnit: "Wdh"
+        ),
+        SeedExercise(
+            name: "Dynamische Hüftkreise & Beinschwünge",
+            category: "Mobilität",
+            defaultRestDuration: 15,
+            sortOrder: 93,
+            notes: "Ziel / Fokus: Dynamische Bereitstellung des vollen Bewegungsausmaßes (Range of Motion).\nDauer / Umfang: 10–12 Wdh. pro Seite.\nAusführung: Einbeinig stehen (ggf. abstützen), freies Bein kontrolliert vor- und zurückschwingen sowie weite Hüftkreise nach außen und innen durchführen.",
+            isTimeBased: false,
+            timeUnit: "Wdh"
+        )
+    ]
 }

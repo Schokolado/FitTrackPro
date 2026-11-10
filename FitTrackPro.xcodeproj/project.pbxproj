@@ -89,6 +89,8 @@
 		C3FDADDD2FCAD75500E8767F /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = C3FDADD32FCAD75500E8767F /* InfoPlist.strings */; };
 		C3FDADDE2FCAD75500E8767F /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = C3FDADD62FCAD75500E8767F /* Localizable.strings */; };
 		C3FDADDF2FCAD75500E8767F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C3FDADD02FCAD75500E8767F /* Assets.xcassets */; };
+		C3FDADE03FCADD8C00E87682 /* DefaultExercises_de.json in Resources */ = {isa = PBXBuildFile; fileRef = C3FDADE03FCADD8C00E87680 /* DefaultExercises_de.json */; };
+		C3FDADE03FCADD8C00E87683 /* DefaultExercises_en.json in Resources */ = {isa = PBXBuildFile; fileRef = C3FDADE03FCADD8C00E87681 /* DefaultExercises_en.json */; };
 		C3FDADE82FCADD8C00E8767F /* WorkoutSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3FDADE62FCADD8C00E8767F /* WorkoutSession.swift */; };
 		C3FDADE92FCADD8C00E8767F /* PlanExercise.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3FDADE32FCADD8C00E8767F /* PlanExercise.swift */; };
 		C3FDADEA2FCADD8C00E8767F /* TrainingPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3FDADE42FCADD8C00E8767F /* TrainingPlan.swift */; };
@@ -219,6 +221,8 @@
 		C3FDADC02FCAD75500E8767F /* Color+Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Theme.swift"; sourceTree = "<group>"; };
 		C3FDADC12FCAD75500E8767F /* View+Modifiers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+Modifiers.swift"; sourceTree = "<group>"; };
 		C3FDADD02FCAD75500E8767F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		C3FDADE03FCADD8C00E87680 /* DefaultExercises_de.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = DefaultExercises_de.json; sourceTree = "<group>"; };
+		C3FDADE03FCADD8C00E87681 /* DefaultExercises_en.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = DefaultExercises_en.json; sourceTree = "<group>"; };
 		C3FDADD12FCAD75500E8767F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		C3FDADD22FCAD75500E8767F /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		C3FDADD42FCAD75500E8767F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -725,6 +729,8 @@
 				C3FDADD02FCAD75500E8767F /* Assets.xcassets */,
 				C3FDADD32FCAD75500E8767F /* InfoPlist.strings */,
 				C3FDADD62FCAD75500E8767F /* Localizable.strings */,
+				C3FDADE03FCADD8C00E87680 /* DefaultExercises_de.json */,
+				C3FDADE03FCADD8C00E87681 /* DefaultExercises_en.json */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -889,6 +895,8 @@
 				C3FDADDD2FCAD75500E8767F /* InfoPlist.strings in Resources */,
 				C3FDADDE2FCAD75500E8767F /* Localizable.strings in Resources */,
 				C3FDADDF2FCAD75500E8767F /* Assets.xcassets in Resources */,
+				C3FDADE03FCADD8C00E87682 /* DefaultExercises_de.json in Resources */,
+				C3FDADE03FCADD8C00E87683 /* DefaultExercises_en.json in Resources */,
 				A3268CA138CE40874E8F2CFF /* LaunchScreen.storyboard in Resources */,
 				EFE16CD833F4617F911E2A45 /* LaunchLogoV3_raw.png in Resources */,
 				016F39B52EFA1ED9E15955AA /* VigrLaunchLogo_raw.png in Resources */,
