@@ -22,6 +22,7 @@
   { "name": "Military Press (Barbell)", "category": "Shoulders", "defaultRestDuration": 90, "sortOrder": 31 },
   { "name": "Lateral Raises (Dumbbells)", "category": "Shoulders", "defaultRestDuration": 60, "sortOrder": 32 },
   { "name": "Lateral Raises (Seated)", "category": "Shoulders", "defaultRestDuration": 60, "sortOrder": 33 },
+  { "name": "Lateral Raises (Cable)", "category": "Shoulders", "defaultRestDuration": 60, "sortOrder": 37 },
   { "name": "Face Pulls (Cable)", "category": "Shoulders", "defaultRestDuration": 60, "sortOrder": 33 },
   
   { "name": "Bicep Curls (Dumbbells)", "category": "Arms", "defaultRestDuration": 60, "sortOrder": 40 },

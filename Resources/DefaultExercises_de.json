@@ -24,6 +24,7 @@
   { "name": "Seitheben (Kurzhanteln)", "category": "Schultern", "defaultRestDuration": 60, "sortOrder": 32 },
   { "name": "Seitheben (Sitzend)", "category": "Schultern", "defaultRestDuration": 60, "sortOrder": 33 },
   { "name": "Seitheben (Maschine)", "category": "Schultern", "defaultRestDuration": 60, "sortOrder": 34 },
+  { "name": "Seitheben (Kabelzug)", "category": "Schultern", "defaultRestDuration": 60, "sortOrder": 37 },
   { "name": "Face Pulls (Kabelzug)", "category": "Schultern", "defaultRestDuration": 60, "sortOrder": 35 },
   { "name": "Shrugs", "category": "Schultern", "defaultRestDuration": 60, "sortOrder": 36 },
   
