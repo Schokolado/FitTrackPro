@@ -120,10 +120,11 @@ struct WorkoutMiniPlayerView: View {
         .background(
             RoundedRectangle(cornerRadius: 16, style: .continuous)
                 .fill(.ultraThinMaterial)
-                .shadow(color: .black.opacity(0.35), radius: 25, y: -5)
+                .shadow(color: .black.opacity(0.18), radius: 10, y: 2)
         )
         .padding(.horizontal)
-        .padding(.bottom, 8)
+        .padding(.top, 4)
+        .padding(.bottom, 6)
         .onTapGesture {
             onTap()
         }

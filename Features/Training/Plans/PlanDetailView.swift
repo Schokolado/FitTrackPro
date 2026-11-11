@@ -189,7 +189,7 @@ struct PlanDetailView: View {
             autoFillPlanFromHistory()
         }
         .safeAreaInset(edge: .bottom) {
-            if !groupedExercises.isEmpty {
+            if !groupedExercises.isEmpty, workoutManager.activeSession?.plan?.id != plan.id {
                 startWorkoutButton
                     .padding(.top, 10)
                     .padding(.bottom, 10)
@@ -231,27 +231,39 @@ struct PlanDetailView: View {
     }
     
     private var startWorkoutButton: some View {
-        Button(action: {
-            if workoutManager.isWorkoutActive {
+        let isOtherWorkoutActive = workoutManager.isWorkoutActive
+
+        return Button(action: {
+            if isOtherWorkoutActive {
                 showingActiveWorkoutAlert = true
             } else {
                 executeStartWorkout()
             }
         }) {
-            Label("Workout Starten", systemImage: "play.fill")
-                .font(.headline.bold())
-                .foregroundColor(.white)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 16)
-                .background(
-                    LinearGradient(
-                        colors: [Color.green, Color.green.opacity(0.85)],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                )
-                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                .shadow(color: Color.green.opacity(0.28), radius: 8, y: 4)
+            Label(
+                isOtherWorkoutActive ? "Workout wechseln" : "Workout Starten",
+                systemImage: isOtherWorkoutActive ? "arrow.triangle.2.circlepath" : "play.fill"
+            )
+            .font(.headline.bold())
+            .foregroundColor(isOtherWorkoutActive ? Color.brand : .white)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 16)
+            .background(
+                Group {
+                    if isOtherWorkoutActive {
+                        RoundedRectangle(cornerRadius: 16, style: .continuous)
+                            .fill(Color.brand.opacity(0.14))
+                    } else {
+                        LinearGradient(
+                            colors: [Color.green, Color.green.opacity(0.85)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    }
+                }
+            )
+            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+            .shadow(color: isOtherWorkoutActive ? .clear : Color.green.opacity(0.28), radius: 8, y: 4)
         }
         .padding(.horizontal)
     }

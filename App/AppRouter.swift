@@ -26,41 +26,47 @@ struct AppRouter: View {
     }
     
     var body: some View {
-        ZStack(alignment: .bottom) {
-            TabView(selection: tabSelection) {
-                DashboardView(selectedTab: $selectedTab)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .background(Color.backgroundPrimary)
-                    .globalMiniPlayerSafeArea(isActive: workoutManager.activeViewModel != nil)
-                    .tabItem {
-                        Label("Home", systemImage: "house.fill")
-                    }
-                    .tag(0)
-                
-                TrainingMainView()
-                    .globalMiniPlayerSafeArea(isActive: workoutManager.activeViewModel != nil)
-                    .tabItem {
-                        Label("Training", systemImage: "dumbbell.fill")
-                    }
-                    .tag(1)
-                
-                NutritionDashboardView()
-                    .globalMiniPlayerSafeArea(isActive: workoutManager.activeViewModel != nil)
-                    .tabItem {
-                        Label("Ernährung", systemImage: "fork.knife")
-                    }
-                    .tag(2)
-            }
-            .tint(.brand)
-            .preferredColorScheme(appTheme.colorScheme)
-            
-            if let vm = workoutManager.activeViewModel, !showingWorkoutSession {
-                WorkoutMiniPlayerView(viewModel: vm, planName: workoutManager.activeSession?.plan?.name) {
+        TabView(selection: tabSelection) {
+            DashboardView(selectedTab: $selectedTab)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(Color.backgroundPrimary)
+                .workoutMiniPlayerInset(
+                    viewModel: showingWorkoutSession ? nil : workoutManager.activeViewModel,
+                    planName: workoutManager.activeSession?.plan?.name
+                ) {
                     showingWorkoutSession = true
                 }
-                .padding(.bottom, 49) // Approximate tab bar height padding
-            }
+                .tabItem {
+                    Label("Home", systemImage: "house.fill")
+                }
+                .tag(0)
+            
+            TrainingMainView()
+                .workoutMiniPlayerInset(
+                    viewModel: showingWorkoutSession ? nil : workoutManager.activeViewModel,
+                    planName: workoutManager.activeSession?.plan?.name
+                ) {
+                    showingWorkoutSession = true
+                }
+                .tabItem {
+                    Label("Training", systemImage: "dumbbell.fill")
+                }
+                .tag(1)
+            
+            NutritionDashboardView()
+                .workoutMiniPlayerInset(
+                    viewModel: showingWorkoutSession ? nil : workoutManager.activeViewModel,
+                    planName: workoutManager.activeSession?.plan?.name
+                ) {
+                    showingWorkoutSession = true
+                }
+                .tabItem {
+                    Label("Ernährung", systemImage: "fork.knife")
+                }
+                .tag(2)
         }
+        .tint(.brand)
+        .preferredColorScheme(appTheme.colorScheme)
         .fullScreenCover(isPresented: $showingWorkoutSession) {
             if let session = workoutManager.activeSession, let vm = workoutManager.activeViewModel {
                 WorkoutSessionView(viewModel: vm, session: session)
@@ -132,35 +138,29 @@ struct AppRouter: View {
     }
 }
 
-// MARK: - Global Safe Area Hack for UITabBarController
-struct TabBarAccessor: UIViewControllerRepresentable {
-    var bottomInset: CGFloat
-    
-    func makeUIViewController(context: Context) -> UIViewController {
-        let vc = UIViewController()
-        vc.view.backgroundColor = .clear
-        return vc
-    }
-    
-    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
-        DispatchQueue.main.async {
-            // Finde den übergeordneten UITabBarController und setze die globalen Insets
-            // WICHTIG: Die Insets auf die CHILD-Controller anwenden, nicht auf den TabBarController selbst!
-            // Sonst verschiebt sich die Tab-Bar nach oben.
-            if let tabBarController = uiViewController.tabBarController {
-                for vc in tabBarController.viewControllers ?? [] {
-                    if vc.additionalSafeAreaInsets.bottom != bottomInset {
-                        vc.additionalSafeAreaInsets.bottom = bottomInset
-                    }
-                }
+// MARK: - Native SwiftUI Mini-Player Safe Area Inset
+private struct WorkoutMiniPlayerInsetModifier: ViewModifier {
+    let viewModel: WorkoutSessionViewModel?
+    let planName: String?
+    let onTap: () -> Void
+
+    func body(content: Content) -> some View {
+        content.safeAreaInset(edge: .bottom, spacing: 0) {
+            if let vm = viewModel {
+                WorkoutMiniPlayerView(viewModel: vm, planName: planName, onTap: onTap)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
             }
         }
     }
 }
 
 extension View {
-    func globalMiniPlayerSafeArea(isActive: Bool) -> some View {
-        self.background(TabBarAccessor(bottomInset: isActive ? 70 : 0))
+    func workoutMiniPlayerInset(
+        viewModel: WorkoutSessionViewModel?,
+        planName: String?,
+        onTap: @escaping () -> Void
+    ) -> some View {
+        modifier(WorkoutMiniPlayerInsetModifier(viewModel: viewModel, planName: planName, onTap: onTap))
     }
 }
 
