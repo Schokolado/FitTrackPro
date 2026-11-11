@@ -100,6 +100,9 @@ struct WorkoutSessionView: View {
         NavigationStack {
                 workoutSetsList
                     .background(Color.backgroundPrimary)
+                    .safeAreaInset(edge: .bottom) {
+                        activeWorkoutBottomBar
+                    }
                     .safeAreaInset(edge: .top) {
                         WorkoutTimerHeaderView(
                             viewModel: viewModel,
@@ -378,21 +381,7 @@ struct WorkoutSessionView: View {
                 .background(Color.brandSecondary.opacity(0.1))
                 .cornerRadius(12)
                 .padding(.horizontal)
-                
-                Button(action: {
-                    showingConfirmFinishAlert = true
-                }) {
-                    Text("Workout beenden")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 16)
-                        .background(Color.brand)
-                        .cornerRadius(12)
-                }
-                .padding(.horizontal)
-                .padding(.top, 16)
-                .padding(.bottom, 32)
+                .padding(.bottom, 16)
             }
             .padding(.top, 12)
             .padding(.vertical)
@@ -408,6 +397,54 @@ struct WorkoutSessionView: View {
         }
         }
         .background(Color.backgroundPrimary)
+    }
+
+    private var activeWorkoutBottomBar: some View {
+        let allSets = session.sets ?? []
+        let totalCount = allSets.count
+        let completedCount = allSets.filter { $0.isCompleted }.count
+        let progress = totalCount > 0 ? Double(completedCount) / Double(totalCount) : 0.0
+
+        return HStack(spacing: 14) {
+            if totalCount > 0 {
+                VStack(alignment: .leading, spacing: 5) {
+                    Text("\(completedCount) / \(totalCount) Sätze")
+                        .font(.caption.bold())
+                        .foregroundStyle(allSetsCompleted ? Color.green : Color.primary)
+                        .monospacedDigit()
+
+                    ProgressView(value: progress)
+                        .tint(.green)
+                        .frame(width: 88)
+                }
+            }
+
+            Button {
+                showingConfirmFinishAlert = true
+            } label: {
+                Label("Workout beenden", systemImage: "checkmark.circle.fill")
+                    .font(.subheadline.bold())
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 14)
+                    .background(
+                        LinearGradient(
+                            colors: [Color.green, Color.green.opacity(0.85)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    .shadow(color: Color.green.opacity(0.28), radius: 8, y: 4)
+            }
+        }
+        .padding(.horizontal)
+        .padding(.top, 10)
+        .padding(.bottom, 10)
+        .background(
+            .ultraThinMaterial,
+            ignoresSafeAreaEdges: .bottom
+        )
     }
     
     private func handleAdhocExercise(_ exercise: Exercise) {
