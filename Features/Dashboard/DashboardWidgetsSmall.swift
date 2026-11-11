@@ -8,7 +8,6 @@ struct NutritionSummaryCardSmall: View {
     let goal: Double
     var tolerance: Double = 300
     var eveningHour: Int = 18
-    var activeBurned: Double? = nil
     
     var progress: Double {
         min(consumed / max(goal, 1), 1.0)
@@ -54,7 +53,7 @@ struct NutritionSummaryCardSmall: View {
             Spacer()
             
             HStack(alignment: .bottom) {
-                VStack(alignment: .leading, spacing: 3) {
+                VStack(alignment: .leading, spacing: 4) {
                     Text("Ernährung")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
@@ -65,19 +64,6 @@ struct NutritionSummaryCardSmall: View {
                     Text(subtitleText)
                         .font(.caption)
                         .foregroundColor(subtitleColor)
-
-                    if let active = activeBurned {
-                        HStack(spacing: 3) {
-                            Image(systemName: "flame.fill")
-                                .font(.caption2)
-                                .foregroundColor(.orange)
-                            Text("\(Int(active)) kcal aktiv")
-                                .font(.caption2)
-                                .foregroundColor(.secondary)
-                                .lineLimit(1)
-                                .minimumScaleFactor(0.85)
-                        }
-                    }
                 }
                 
                 Spacer()
@@ -299,6 +285,67 @@ struct RecoveryCardSmall: View {
             restingHR: rhrScore,
             hrvBaseline: hrvBaseline,
             rhrBaseline: rhrBaseline
+        )
+    }
+}
+
+struct CalorieBurnSummaryCardSmall: View {
+    let consumed: Double
+    let effectiveGoal: Double
+    let activeBurned: Double?
+    let totalBurned: Double?
+
+    private var balanceValue: Int {
+        let reference = totalBurned ?? effectiveGoal
+        return Int((consumed - reference).rounded())
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(alignment: .top) {
+                Image(systemName: "flame.circle.fill")
+                    .foregroundColor(.orange)
+                    .font(.title2)
+                    .frame(width: 28, height: 28)
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .foregroundColor(.gray)
+                    .frame(width: 28, height: 28)
+            }
+
+            Spacer()
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Umsatz & Bilanz")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                    .lineLimit(1)
+
+                if let active = activeBurned {
+                    Text("\(Int(active)) aktiv")
+                        .font(.system(size: 22, weight: .bold, design: .rounded))
+                        .foregroundColor(.orange)
+                } else {
+                    Text("-- kcal")
+                        .font(.system(size: 22, weight: .bold, design: .rounded))
+                }
+
+                let prefix = balanceValue > 0 ? "+" : ""
+                let suffix = totalBurned != nil ? "vs. Umsatz" : "vs. Ziel"
+                Text("\(prefix)\(balanceValue) kcal \(suffix)")
+                    .font(.caption)
+                    .foregroundColor(balanceValue <= 0 ? .green : .orange)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.85)
+            }
+        }
+        .padding(20)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .frame(height: 160)
+        .background(
+            RoundedRectangle(cornerRadius: 24, style: .continuous)
+                .fill(Color.backgroundSecondary)
+                .shadow(color: .black.opacity(0.05), radius: 15, y: 8)
         )
     }
 }

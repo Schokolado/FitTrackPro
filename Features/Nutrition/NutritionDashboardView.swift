@@ -300,15 +300,6 @@ struct NutritionDashboardView: View {
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-
-            if let active = activeBurned {
-                Button {
-                    showingCalorieDetails = true
-                } label: {
-                    energyExpenditureStrip(consumed: totalCals, activeBurned: active)
-                }
-                .buttonStyle(.plain)
-            }
             
             HStack(spacing: Spacing.lg) {
                 macroBar(title: "Protein", current: totalProtein, goal: goalProtein, color: .blue)
@@ -383,71 +374,6 @@ struct NutritionDashboardView: View {
     
     private func deleteEntry(_ entry: FoodEntry) {
         modelContext.delete(entry)
-    }
-
-    @ViewBuilder
-    private func energyExpenditureStrip(consumed: Double, activeBurned: Double) -> some View {
-        let weight = weightEntries.first?.weightKg ?? (onboardingWeightKg > 0 ? onboardingWeightKg : nil)
-        let bmr = EnergyCalculator.estimatedBMR(
-            weightKg: weight,
-            heightCm: heightCm,
-            birthDateTimestamp: birthDateInterval,
-            biologicalSex: userSex,
-            referenceDate: selectedDate
-        )
-        let totalBurned = bmr.map { $0 + activeBurned }
-        let referenceForBalance = totalBurned ?? (goalCalories + activeBurned)
-        let balance = Int((consumed - referenceForBalance).rounded())
-        let balancePrefix = balance > 0 ? "+" : ""
-
-        HStack(spacing: 10) {
-            energyMetricTile(
-                title: "Aktiv verbrannt",
-                value: "\(Int(activeBurned)) kcal",
-                icon: "flame.fill",
-                tint: .orange
-            )
-
-            if let totalBurned {
-                energyMetricTile(
-                    title: "Tagesumsatz",
-                    value: "\(Int(totalBurned)) kcal",
-                    icon: "bolt.fill",
-                    tint: .brand
-                )
-            }
-
-            energyMetricTile(
-                title: totalBurned != nil ? "vs. Umsatz" : "vs. Ziel",
-                value: "\(balancePrefix)\(balance) kcal",
-                icon: balance <= 0 ? "arrow.down.right" : "arrow.up.right",
-                tint: balance <= 0 ? .green : .orange
-            )
-        }
-    }
-
-    private func energyMetricTile(title: String, value: String, icon: String, tint: Color) -> some View {
-        VStack(alignment: .leading, spacing: 3) {
-            HStack(spacing: 4) {
-                Image(systemName: icon)
-                    .font(.caption2)
-                    .foregroundColor(tint)
-                Text(title)
-                    .font(.caption2)
-                    .foregroundColor(.secondary)
-                    .lineLimit(1)
-            }
-            Text(value)
-                .font(.caption.bold())
-                .foregroundColor(.primary)
-                .lineLimit(1)
-                .minimumScaleFactor(0.85)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.horizontal, 10)
-        .padding(.vertical, 8)
-        .background(Color.backgroundPrimary.opacity(0.75))
-        .cornerRadius(10)
     }
 
     private func refreshActiveCalories(for date: Date) async {
@@ -614,7 +540,7 @@ struct WeekCalendarView: View {
     }
 }
 
-private struct CalorieBreakdownSheet: View {
+struct CalorieBreakdownSheet: View {
     @Environment(\.dismiss) private var dismiss
 
     let date: Date
@@ -634,6 +560,7 @@ private struct CalorieBreakdownSheet: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 16) {
+                    summaryPills
                     goalCard
                     expenditureCard
                 }
@@ -648,6 +575,60 @@ private struct CalorieBreakdownSheet: View {
                 }
             }
         }
+    }
+
+    private var summaryPills: some View {
+        let reference = totalBurned ?? effectiveGoal
+        let balance = Int((consumed - reference).rounded())
+        let prefix = balance > 0 ? "+" : ""
+
+        return HStack(spacing: 10) {
+            metricTile(
+                title: "Aktiv verbrannt",
+                value: activeBurned != nil ? "\(Int(activeValue)) kcal" : "–",
+                icon: "flame.fill",
+                tint: .orange
+            )
+
+            if let totalBurned {
+                metricTile(
+                    title: "Tagesumsatz",
+                    value: "\(Int(totalBurned)) kcal",
+                    icon: "bolt.fill",
+                    tint: .brand
+                )
+            }
+
+            metricTile(
+                title: totalBurned != nil ? "vs. Umsatz" : "vs. Ziel",
+                value: "\(prefix)\(balance) kcal",
+                icon: balance <= 0 ? "arrow.down.right" : "arrow.up.right",
+                tint: balance <= 0 ? .green : .orange
+            )
+        }
+    }
+
+    private func metricTile(title: String, value: String, icon: String, tint: Color) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack(spacing: 4) {
+                Image(systemName: icon)
+                    .font(.caption2)
+                    .foregroundColor(tint)
+                Text(title)
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+                    .lineLimit(1)
+            }
+            Text(value)
+                .font(.subheadline.bold())
+                .foregroundColor(.primary)
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(12)
+        .background(Color.backgroundSecondary)
+        .cornerRadius(14)
     }
 
     private var goalCard: some View {

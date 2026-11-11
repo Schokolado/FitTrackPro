@@ -2,12 +2,13 @@ import SwiftUI
 import Combine
 
 enum DashboardCardType: String, Codable, CaseIterable, Identifiable {
-    case nutrition, steps, weight, training, recovery, energy, water, sleep, mood
+    case nutrition, calorieBurn, steps, weight, training, recovery, energy, water, sleep, mood
     var id: String { rawValue }
     
     var displayName: String {
         switch self {
         case .nutrition: return "Ernährung"
+        case .calorieBurn: return "Umsatz & Bilanz"
         case .steps: return "Schritte"
         case .weight: return "Gewicht"
         case .training: return "Training"
@@ -22,6 +23,7 @@ enum DashboardCardType: String, Codable, CaseIterable, Identifiable {
     var icon: String {
         switch self {
         case .nutrition: return "flame.fill"
+        case .calorieBurn: return "flame.circle.fill"
         case .steps: return "figure.walk"
         case .weight: return "scalemass"
         case .training: return "figure.run"
@@ -48,6 +50,7 @@ struct DashboardCardConfig: Codable, Identifiable, Equatable {
         DashboardCardConfig(type: .recovery, size: .small),
         DashboardCardConfig(type: .energy, size: .small),
         DashboardCardConfig(type: .nutrition, size: .large),
+        DashboardCardConfig(type: .calorieBurn, size: .large),
         DashboardCardConfig(type: .steps, size: .small),
         DashboardCardConfig(type: .weight, size: .small),
         DashboardCardConfig(type: .training, size: .small),

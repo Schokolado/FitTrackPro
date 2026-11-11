@@ -81,22 +81,24 @@ struct DashboardView: View {
         dailyCalorieGoal + (addActiveCaloriesToGoal ? (todayActiveCalories ?? 0) : 0)
     }
 
-    private var todayTotalBurnedCalories: Double? {
-        guard let active = todayActiveCalories else { return nil }
+    private var todayEstimatedBMR: Double? {
         let weight = weightEntries.first?.weightKg ?? (onboardingWeightKg > 0 ? onboardingWeightKg : nil)
-        guard let bmr = EnergyCalculator.estimatedBMR(
+        return EnergyCalculator.estimatedBMR(
             weightKg: weight,
             heightCm: heightCm,
             birthDateTimestamp: birthDateInterval,
             biologicalSex: userSex
-        ) else {
-            return nil
-        }
+        )
+    }
+
+    private var todayTotalBurnedCalories: Double? {
+        guard let active = todayActiveCalories, let bmr = todayEstimatedBMR else { return nil }
         return bmr + active
     }
     @State private var navId = UUID()
     @StateObject private var layoutManager = DashboardLayoutManager()
     @State private var isEditMode = false
+    @State private var showingCalorieBreakdown = false
     
     var body: some View {
         NavigationStack {
@@ -218,6 +220,19 @@ struct DashboardView: View {
                 }
                 .navigationDestination(isPresented: $showingStepTrackerFromWidget) {
                     StepTrackerView()
+                }
+                .sheet(isPresented: $showingCalorieBreakdown) {
+                    CalorieBreakdownSheet(
+                        date: Date(),
+                        consumed: consumedCalories,
+                        baseGoal: dailyCalorieGoal,
+                        activeBurned: todayActiveCalories,
+                        addActiveToGoal: addActiveCaloriesToGoal,
+                        bmr: todayEstimatedBMR,
+                        tolerance: nutritionTolerance,
+                        eveningHour: calorieWarningEveningHour
+                    )
+                    .presentationDetents([.medium, .large])
                 }
         }
         .id(navId)
@@ -378,17 +393,36 @@ struct DashboardView: View {
                         protein: consumedProtein,
                         fat: consumedFat,
                         tolerance: nutritionTolerance,
-                        eveningHour: calorieWarningEveningHour,
-                        activeBurned: todayActiveCalories,
-                        totalBurned: todayTotalBurnedCalories
+                        eveningHour: calorieWarningEveningHour
                     )
                 } else {
                     NutritionSummaryCardSmall(
                         consumed: consumedCalories,
                         goal: effectiveDailyCalorieGoal,
                         tolerance: nutritionTolerance,
-                        eveningHour: calorieWarningEveningHour,
-                        activeBurned: todayActiveCalories
+                        eveningHour: calorieWarningEveningHour
+                    )
+                }
+            }
+            .buttonStyle(PlainButtonStyle())
+
+        case .calorieBurn:
+            Button(action: {
+                showingCalorieBreakdown = true
+            }) {
+                if config.size == .large {
+                    CalorieBurnSummaryCard(
+                        consumed: consumedCalories,
+                        effectiveGoal: effectiveDailyCalorieGoal,
+                        activeBurned: todayActiveCalories,
+                        totalBurned: todayTotalBurnedCalories
+                    )
+                } else {
+                    CalorieBurnSummaryCardSmall(
+                        consumed: consumedCalories,
+                        effectiveGoal: effectiveDailyCalorieGoal,
+                        activeBurned: todayActiveCalories,
+                        totalBurned: todayTotalBurnedCalories
                     )
                 }
             }
@@ -498,17 +532,30 @@ struct DashboardView: View {
                     protein: consumedProtein,
                     fat: consumedFat,
                     tolerance: nutritionTolerance,
-                    eveningHour: calorieWarningEveningHour,
-                    activeBurned: todayActiveCalories,
-                    totalBurned: todayTotalBurnedCalories
+                    eveningHour: calorieWarningEveningHour
                 )
             } else {
                 NutritionSummaryCardSmall(
                     consumed: consumedCalories,
                     goal: effectiveDailyCalorieGoal,
                     tolerance: nutritionTolerance,
-                    eveningHour: calorieWarningEveningHour,
-                    activeBurned: todayActiveCalories
+                    eveningHour: calorieWarningEveningHour
+                )
+            }
+        case .calorieBurn:
+            if config.size == .large {
+                CalorieBurnSummaryCard(
+                    consumed: consumedCalories,
+                    effectiveGoal: effectiveDailyCalorieGoal,
+                    activeBurned: todayActiveCalories,
+                    totalBurned: todayTotalBurnedCalories
+                )
+            } else {
+                CalorieBurnSummaryCardSmall(
+                    consumed: consumedCalories,
+                    effectiveGoal: effectiveDailyCalorieGoal,
+                    activeBurned: todayActiveCalories,
+                    totalBurned: todayTotalBurnedCalories
                 )
             }
         case .steps:

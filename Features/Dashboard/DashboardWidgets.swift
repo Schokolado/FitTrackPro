@@ -9,8 +9,6 @@ struct NutritionSummaryCard: View {
     let fat: Double
     var tolerance: Double = 300
     var eveningHour: Int = 18
-    var activeBurned: Double? = nil
-    var totalBurned: Double? = nil
     
     var progress: Double {
         min(consumed / max(goal, 1), 1.0)
@@ -30,14 +28,6 @@ struct NutritionSummaryCard: View {
             return "+\(Int(consumed - goal)) kcal über Ziel"
         }
         return "\(Int(max(goal - consumed, 0))) kcal verbleibend"
-    }
-
-    private var burnedSummaryText: String? {
-        guard let active = activeBurned else { return nil }
-        if let total = totalBurned {
-            return "Aktiv \(Int(active)) · Umsatz \(Int(total)) kcal"
-        }
-        return "\(Int(active)) kcal aktiv verbrannt"
     }
 
     private var remainingColor: Color {
@@ -72,7 +62,7 @@ struct NutritionSummaryCard: View {
             .frame(width: 90, height: 90)
             
             // Texts
-            VStack(alignment: .leading, spacing: 5) {
+            VStack(alignment: .leading, spacing: 8) {
                 Text("Ernährung heute")
                     .font(.headline)
                     .foregroundColor(.primary)
@@ -80,26 +70,13 @@ struct NutritionSummaryCard: View {
                 Text(remainingText)
                     .font(.subheadline)
                     .foregroundColor(remainingColor)
-
-                if let burnedText = burnedSummaryText {
-                    HStack(spacing: 4) {
-                        Image(systemName: "flame.fill")
-                            .font(.caption2)
-                            .foregroundColor(.orange)
-                        Text(burnedText)
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.8)
-                    }
-                }
                     
                 HStack(spacing: 12) {
                     MacroBadge(label: "K", value: Int(carbs), color: .blue)
                     MacroBadge(label: "P", value: Int(protein), color: .purple)
                     MacroBadge(label: "F", value: Int(fat), color: .orange)
                 }
-                .padding(.top, 2)
+                .padding(.top, 4)
             }
             
             Spacer()
@@ -334,6 +311,74 @@ struct StepSummaryCard: View {
 }
 
 
+
+struct CalorieBurnSummaryCard: View {
+    let consumed: Double
+    let effectiveGoal: Double
+    let activeBurned: Double?
+    let totalBurned: Double?
+
+    private var balanceValue: Int {
+        let reference = totalBurned ?? effectiveGoal
+        return Int((consumed - reference).rounded())
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Label("Umsatz & Bilanz", systemImage: "flame.circle.fill")
+                    .font(.headline)
+                    .foregroundColor(.orange)
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .foregroundColor(.gray)
+            }
+
+            HStack(spacing: 12) {
+                burnMetric(
+                    title: "Aktiv verbrannt",
+                    value: activeBurned.map { "\(Int($0)) kcal" } ?? "–",
+                    color: .orange
+                )
+
+                burnMetric(
+                    title: "Tagesumsatz",
+                    value: totalBurned.map { "\(Int($0)) kcal" } ?? "–",
+                    color: .brand
+                )
+
+                let prefix = balanceValue > 0 ? "+" : ""
+                burnMetric(
+                    title: totalBurned != nil ? "vs. Umsatz" : "vs. Ziel",
+                    value: "\(prefix)\(balanceValue) kcal",
+                    color: balanceValue <= 0 ? .green : .orange
+                )
+            }
+        }
+        .padding(20)
+        .frame(height: 130)
+        .background(
+            RoundedRectangle(cornerRadius: 24, style: .continuous)
+                .fill(Color.backgroundSecondary)
+                .shadow(color: .black.opacity(0.05), radius: 15, y: 8)
+        )
+    }
+
+    private func burnMetric(title: String, value: String, color: Color) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(title)
+                .font(.caption)
+                .foregroundColor(.secondary)
+                .lineLimit(1)
+            Text(value)
+                .font(.system(size: 16, weight: .bold, design: .rounded))
+                .foregroundColor(color)
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+}
 
 struct MoodSummaryCard: View {
     var body: some View {
