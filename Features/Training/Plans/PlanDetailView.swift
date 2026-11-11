@@ -67,14 +67,7 @@ struct PlanDetailView: View {
             ScrollViewReader { proxy in
                 VStack(spacing: Spacing.md) {
                     
-                    Text(plan.name)
-                        .font(.largeTitle)
-                        .fontWeight(.bold)
-                        .minimumScaleFactor(0.4)
-                        .lineLimit(1)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.horizontal)
-                        .padding(.top, 4)
+                    planMetaHeaderRow
                     
                     let planBalanceStats = StatisticsViewModel.muscleGroupBreakdown(for: plan)
                     if !planBalanceStats.isEmpty {
@@ -251,6 +244,47 @@ struct PlanDetailView: View {
         .padding(.horizontal)
     }
 
+    private var planMetaHeaderRow: some View {
+        let exercises = plan.planExercises ?? []
+        let totalSets = exercises.reduce(0) { $0 + $1.targetSets }
+        let lastCompleted = planSessions.first(where: { $0.endTime != nil })
+
+        return ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
+                if let groupName = plan.group?.name, !groupName.isEmpty {
+                    Label(groupName, systemImage: "folder.fill")
+                        .font(.caption.weight(.semibold))
+                        .foregroundColor(.brand)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 5)
+                        .background(Color.brand.opacity(0.12))
+                        .clipShape(Capsule())
+                }
+
+                if !exercises.isEmpty {
+                    Label("\(exercises.count) Übungen • \(totalSets) Sätze", systemImage: "dumbbell.fill")
+                        .font(.caption.weight(.medium))
+                        .foregroundColor(.secondary)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 5)
+                        .background(Color.backgroundSecondary)
+                        .clipShape(Capsule())
+                }
+
+                if let last = lastCompleted {
+                    Label("Zuletzt \(last.startTime.formatted(.dateTime.day().month()))", systemImage: "clock")
+                        .font(.caption.weight(.medium))
+                        .foregroundColor(.secondary)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 5)
+                        .background(Color.backgroundSecondary)
+                        .clipShape(Capsule())
+                }
+            }
+            .padding(.horizontal)
+        }
+    }
+
     private var addExerciseButton: some View {
         Button(action: { showingExerciseSelection = true }) {
             Label("Übung hinzufügen", systemImage: "plus.circle.fill")
@@ -270,8 +304,8 @@ struct PlanDetailView: View {
         mainContent
         .id(refreshId)
         .background(Color.backgroundPrimary)
-        .navigationTitle("Training")
-        .navigationBarTitleDisplayMode(.inline)
+        .navigationTitle(plan.name)
+        .navigationBarTitleDisplayMode(.large)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 HStack(spacing: 16) {
