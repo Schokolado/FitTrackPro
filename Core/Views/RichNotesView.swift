@@ -469,6 +469,7 @@ struct RichNotesCard: View {
     }
 
     private var needsCollapse: Bool {
+        guard !isCollapsible else { return false }
         let lines = text.components(separatedBy: .newlines)
         return lines.count > 6 || text.count > 260
     }
