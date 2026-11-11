@@ -12,63 +12,81 @@ struct ExerciseDetailView: View {
     @State private var selectedImageIndex: Int = 0
     @State private var showingResetNotesAlert = false
     
-    private var categoryIcon: String {
-        switch exercise.category.lowercased() {
-        case "brust": return "figure.strengthtraining.traditional"
-        case "rücken": return "figure.core.training"
-        case "beine": return "figure.run"
-        case "schultern": return "figure.cross.training"
-        case "arme": return "figure.mind.and.body"
-        case "bauch": return "figure.pilates"
-        case "cardio": return "heart.fill"
-        case "ganzkörper": return "figure.highintensity.intervaltraining"
-        case "mobilität", "mobility": return "figure.flexibility"
-        default: return "dumbbell.fill"
+    private var trackingChipLabel: String {
+        if exercise.usesLevelInput {
+            return "Level • \(exercise.effectiveTimeUnit)"
         }
+        if exercise.usesTimeInput {
+            return exercise.usesWeightInput
+                ? "Dauer (\(exercise.effectiveTimeUnit)) + kg"
+                : "Dauer (\(exercise.effectiveTimeUnit))"
+        }
+        return "Wdh. & kg"
     }
-    
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: Spacing.md) {
-                Text(exercise.name)
-                    .font(.largeTitle.bold())
-                    .foregroundStyle(Color.textPrimary)
-                    .padding(.horizontal)
-                
-                HStack {
-                    HStack(spacing: 4) {
-                        Image(systemName: categoryIcon)
-                            .font(.system(size: 14))
-                        Text(exercise.category.uppercased())
-                            .font(.system(size: 12, weight: .bold))
+                // Hero Header: Farb-Icon + voller Übungsname + kompakte Meta-Chips
+                VStack(alignment: .leading, spacing: 12) {
+                    HStack(alignment: .center, spacing: 14) {
+                        let catColor = themeManager.color(for: exercise.category)
+                        ZStack {
+                            Circle()
+                                .fill(
+                                    LinearGradient(
+                                        colors: [catColor.opacity(0.75), catColor],
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    )
+                                )
+                                .frame(width: 52, height: 52)
+                            ExerciseIconView(exercise: exercise, size: 24)
+                                .foregroundColor(.white)
+                        }
+                        .shadow(color: catColor.opacity(0.25), radius: 5, y: 2)
+
+                        Text(exercise.name)
+                            .font(.title2.bold())
+                            .foregroundStyle(Color.textPrimary)
+                            .fixedSize(horizontal: false, vertical: true)
+
+                        Spacer(minLength: 0)
                     }
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    .background(themeManager.color(for: exercise.category).opacity(0.15))
-                    .foregroundColor(themeManager.color(for: exercise.category))
-                    .clipShape(Capsule())
-                    
-                    Spacer()
-                    
-                    if exercise.isCustom {
-                        Text("Eigene Übung")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
+
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 8) {
+                            Label("\(Int(exercise.defaultRestDuration))s Pause", systemImage: "timer")
+                                .font(.caption.weight(.medium))
+                                .foregroundColor(.secondary)
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 5)
+                                .background(Color.backgroundSecondary)
+                                .clipShape(Capsule())
+
+                            Label(trackingChipLabel, systemImage: exercise.usesTimeInput ? "clock" : "arrow.triangle.2.circlepath")
+                                .font(.caption.weight(.medium))
+                                .foregroundColor(.secondary)
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 5)
+                                .background(Color.backgroundSecondary)
+                                .clipShape(Capsule())
+
+                            if exercise.isCustom {
+                                Label("Eigene Übung", systemImage: "person.fill")
+                                    .font(.caption.weight(.semibold))
+                                    .foregroundColor(themeManager.color(for: exercise.category))
+                                    .padding(.horizontal, 10)
+                                    .padding(.vertical, 5)
+                                    .background(themeManager.color(for: exercise.category).opacity(0.14))
+                                    .clipShape(Capsule())
+                            }
+                        }
                     }
                 }
                 .padding(.horizontal)
                 
                 ExerciseHistoryPreview(exercise: exercise)
-                
-                VStack(alignment: .leading, spacing: Spacing.sm) {
-                    Text("Standard-Pause")
-                        .font(.headline)
-                    Text("\(Int(exercise.defaultRestDuration)) Sekunden")
-                        .foregroundColor(.secondary)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .cardStyle()
-                .padding(.horizontal)
                 
                 let defaultNote = SeedDataService.shared.defaultExerciseNotes(for: exercise.name)
                 
@@ -100,23 +118,22 @@ struct ExerciseDetailView: View {
                     .cardStyle()
                     .padding(.horizontal)
                 } else {
-                    VStack(alignment: .leading, spacing: Spacing.sm) {
-                        HStack {
-                            Text("Notizen")
-                                .font(.headline)
-                            Spacer()
-                            if let def = defaultNote, exercise.notes != def {
-                                Button(action: { showingResetNotesAlert = true }) {
-                                    Label("Werkseinstellungen", systemImage: "arrow.counterclockwise")
-                                        .font(.caption.weight(.medium))
-                                        .foregroundColor(.brand)
-                                }
+                    VStack(alignment: .leading, spacing: 8) {
+                        RichNotesCard(
+                            title: "Notizen",
+                            text: exercise.notes,
+                            onEdit: { showingEditForm = true }
+                        )
+
+                        if let def = defaultNote, exercise.notes != def {
+                            Button(action: { showingResetNotesAlert = true }) {
+                                Label("Auf Werkseinstellungen zurücksetzen", systemImage: "arrow.counterclockwise")
+                                    .font(.caption.weight(.medium))
+                                    .foregroundColor(.brand)
                             }
+                            .padding(.leading, 4)
                         }
-                        RichNotesView(text: exercise.notes, baseFont: .body, textColor: .secondary)
                     }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .cardStyle()
                     .padding(.horizontal)
                 }
                 
@@ -207,7 +224,7 @@ struct ExerciseDetailView: View {
             }
             .padding(.top)
         }
-        .navigationTitle("Training")
+        .navigationTitle(exercise.category)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
