@@ -3,10 +3,10 @@ import SwiftData
 
 struct VitalityView: View {
     @AppStorage("vitalitySelectedTab") private var selectedSection = 0
-    @State private var navId = UUID()
+    @State private var navigationPath = NavigationPath()
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $navigationPath) {
             VStack(spacing: 0) {
                 Picker("Bereich", selection: $selectedSection) {
                     Text("Erholung").tag(0)
@@ -16,20 +16,32 @@ struct VitalityView: View {
                 .padding()
                 .background(Color.backgroundPrimary)
 
-                if selectedSection == 0 {
+                ZStack {
                     RecoveryView(isEmbeddedInTab: true)
-                } else {
+                        .opacity(selectedSection == 0 ? 1 : 0)
+                        .allowsHitTesting(selectedSection == 0)
+                        .accessibilityHidden(selectedSection != 0)
+
                     EnergyDetailView(isEmbeddedInTab: true)
+                        .opacity(selectedSection == 1 ? 1 : 0)
+                        .allowsHitTesting(selectedSection == 1)
+                        .accessibilityHidden(selectedSection != 1)
                 }
             }
             .background(Color.backgroundPrimary)
             .navigationTitle("Vitalität")
             .navigationBarTitleDisplayMode(.large)
         }
-        .id(navId)
         .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("TabReselected"))) { notification in
             if let tab = notification.object as? Int, tab == 3 {
-                navId = UUID()
+                if !navigationPath.isEmpty {
+                    navigationPath = NavigationPath()
+                }
+                if selectedSection != 0 {
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        selectedSection = 0
+                    }
+                }
             }
         }
     }
@@ -480,7 +492,9 @@ struct RecoveryView: View {
     }
     
     private func calculateRecovery() async {
-        isLoading = true
+        if recoveryResult == nil {
+            isLoading = true
+        }
         defer { isLoading = false }
         
         // Ensure HealthKit authorization
