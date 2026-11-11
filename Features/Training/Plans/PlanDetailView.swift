@@ -945,10 +945,8 @@ struct PlanNotesSheetView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    if isEditingNotes && !plan.notes.isEmpty {
-                        Button("Abbrechen") { isEditingNotes = false }
-                    } else {
-                        Button("Schließen") { showingNotesSheet = false }
+                    Button(isEditingNotes ? "Abbrechen" : "Schließen") {
+                        showingNotesSheet = false
                     }
                 }
                 ToolbarItem(placement: .confirmationAction) {
