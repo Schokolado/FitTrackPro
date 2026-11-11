@@ -13,6 +13,7 @@ struct NutritionDashboardView: View {
     @State private var selectedDate: Date = Date()
     @State private var activeBurnedCalories: Double? = nil
     @State private var showingAddEntry = false
+    @State private var showingCalorieDetails = false
     @State private var showingFoodSearch = false
     @State private var showingScanner = false
     @State private var selectedMealType: MealType? = nil
@@ -86,6 +87,33 @@ struct NutritionDashboardView: View {
                     showingSavedAlert = true
                 }
                 .presentationDetents([.large])
+            }
+            .sheet(isPresented: $showingCalorieDetails) {
+                let consumed = todayEntries.reduce(0) { $0 + $1.calories }
+                let active = EnergyCalculator.totalActiveCalories(
+                    healthKitActive: activeBurnedCalories,
+                    sessions: allWorkouts,
+                    on: selectedDate
+                )
+                let weight = weightEntries.first?.weightKg ?? (onboardingWeightKg > 0 ? onboardingWeightKg : nil)
+                let bmr = EnergyCalculator.estimatedBMR(
+                    weightKg: weight,
+                    heightCm: heightCm,
+                    birthDateTimestamp: birthDateInterval,
+                    biologicalSex: userSex,
+                    referenceDate: selectedDate
+                )
+                CalorieBreakdownSheet(
+                    date: selectedDate,
+                    consumed: consumed,
+                    baseGoal: goalCalories,
+                    activeBurned: active,
+                    addActiveToGoal: addActiveCaloriesToGoal,
+                    bmr: bmr,
+                    tolerance: nutritionTolerance,
+                    eveningHour: calorieWarningEveningHour
+                )
+                .presentationDetents([.medium, .large])
             }
             .sheet(isPresented: $showingFoodSearch) {
                 FoodSearchView(mealType: selectedMealType, targetDate: selectedDate) { savedName in
@@ -223,42 +251,63 @@ struct NutritionDashboardView: View {
             Text("Kalorien")
                 .font(.headline)
             
-            ZStack {
-                Circle()
-                    .stroke(ringState.color.opacity(0.25), lineWidth: 15)
-                Circle()
-                    .trim(from: 0, to: min(CGFloat(totalCals / max(effectiveGoal, 1)), 1.0))
-                    .stroke(ringState.color, style: StrokeStyle(lineWidth: 15, lineCap: .round))
-                    .rotationEffect(.degrees(-90))
-                    .animation(.spring(response: 0.6, dampingFraction: 0.8), value: totalCals)
-                
-                VStack {
-                    Text("\(Int(totalCals))")
-                        .font(.system(size: 32, weight: .bold))
-                    Text("/ \(Int(effectiveGoal)) kcal")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                    if addActiveCaloriesToGoal, let active = activeBurned, active > 0 {
-                        Text("\(Int(goalCalories)) + \(Int(active)) aktiv")
-                            .font(.caption2)
+            Button {
+                showingCalorieDetails = true
+            } label: {
+                VStack(spacing: Spacing.sm) {
+                    ZStack {
+                        Circle()
+                            .stroke(ringState.color.opacity(0.25), lineWidth: 15)
+                        Circle()
+                            .trim(from: 0, to: min(CGFloat(totalCals / max(effectiveGoal, 1)), 1.0))
+                            .stroke(ringState.color, style: StrokeStyle(lineWidth: 15, lineCap: .round))
+                            .rotationEffect(.degrees(-90))
+                            .animation(.spring(response: 0.6, dampingFraction: 0.8), value: totalCals)
+                        
+                        VStack(spacing: 2) {
+                            Text("\(Int(totalCals))")
+                                .font(.system(size: 32, weight: .bold, design: .rounded))
+                                .foregroundColor(.primary)
+                            Text("/ \(Int(effectiveGoal)) kcal")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                    .frame(height: 150)
+                    .padding(.vertical, Spacing.sm)
+
+                    HStack(spacing: 6) {
+                        if ringState == .surplusWarning {
+                            Text("+\(Int(totalCals - effectiveGoal)) kcal über Ziel")
+                                .foregroundColor(.destructive)
+                                .fontWeight(.semibold)
+                        } else if ringState == .eveningDeficitWarning {
+                            Text("−\(Int(effectiveGoal - totalCals)) kcal unter Ziel")
+                                .foregroundColor(.warning)
+                                .fontWeight(.semibold)
+                        } else if totalCals > effectiveGoal {
+                            Text("+\(Int(totalCals - effectiveGoal)) kcal über Ziel")
+                                .foregroundColor(.secondary)
+                        } else {
+                            Text("Noch \(Int(max(effectiveGoal - totalCals, 0))) kcal offen")
+                                .foregroundColor(.secondary)
+                        }
+                        Image(systemName: "info.circle")
                             .foregroundColor(.secondary)
                     }
-                    if ringState == .surplusWarning {
-                        Text("+\(Int(totalCals - effectiveGoal)) über Ziel")
-                            .font(.caption2.bold())
-                            .foregroundColor(.destructive)
-                    } else if ringState == .eveningDeficitWarning {
-                        Text("−\(Int(effectiveGoal - totalCals)) Defizit")
-                            .font(.caption2.bold())
-                            .foregroundColor(.warning)
-                    }
+                    .font(.caption)
                 }
+                .contentShape(Rectangle())
             }
-            .frame(height: 150)
-            .padding(.vertical, Spacing.sm)
+            .buttonStyle(.plain)
 
             if let active = activeBurned {
-                energyExpenditureStrip(consumed: totalCals, activeBurned: active)
+                Button {
+                    showingCalorieDetails = true
+                } label: {
+                    energyExpenditureStrip(consumed: totalCals, activeBurned: active)
+                }
+                .buttonStyle(.plain)
             }
             
             HStack(spacing: Spacing.lg) {
@@ -369,7 +418,7 @@ struct NutritionDashboardView: View {
             }
 
             energyMetricTile(
-                title: "Bilanz",
+                title: totalBurned != nil ? "vs. Umsatz" : "vs. Ziel",
                 value: "\(balancePrefix)\(balance) kcal",
                 icon: balance <= 0 ? "arrow.down.right" : "arrow.up.right",
                 tint: balance <= 0 ? .green : .orange
@@ -562,5 +611,133 @@ struct WeekCalendarView: View {
         Color(.systemGroupedBackground).edgesIgnoringSafeArea(.all)
         WeekCalendarView(selectedDate: .constant(Date()), allDailyLogs: [], goalCalories: 2500, tolerance: 300)
             .padding()
+    }
+}
+
+private struct CalorieBreakdownSheet: View {
+    @Environment(\.dismiss) private var dismiss
+
+    let date: Date
+    let consumed: Double
+    let baseGoal: Double
+    let activeBurned: Double?
+    let addActiveToGoal: Bool
+    let bmr: Double?
+    let tolerance: Double
+    let eveningHour: Int
+
+    private var activeValue: Double { activeBurned ?? 0 }
+    private var effectiveGoal: Double { baseGoal + (addActiveToGoal ? activeValue : 0) }
+    private var totalBurned: Double? { bmr.map { $0 + activeValue } }
+
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(spacing: 16) {
+                    goalCard
+                    expenditureCard
+                }
+                .padding()
+            }
+            .background(Color.backgroundPrimary)
+            .navigationTitle("Kalorien-Details")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Fertig") { dismiss() }
+                }
+            }
+        }
+    }
+
+    private var goalCard: some View {
+        let remaining = effectiveGoal - consumed
+        let ringState = CalorieRingEvaluator.evaluate(
+            consumed: consumed,
+            goal: effectiveGoal,
+            tolerance: tolerance,
+            date: date,
+            eveningHour: eveningHour
+        )
+
+        return VStack(alignment: .leading, spacing: 12) {
+            Label("Tagesziel & Budget", systemImage: "target")
+                .font(.headline)
+
+            breakdownRow(title: "Basis-Kalorienziel", value: "\(Int(baseGoal)) kcal")
+            breakdownRow(
+                title: addActiveToGoal ? "+ Aktiv verbrannt (addiert)" : "Aktiv verbrannt (nicht addiert)",
+                value: activeBurned != nil ? (addActiveToGoal ? "+\(Int(activeValue)) kcal" : "\(Int(activeValue)) kcal") : "–",
+                valueColor: addActiveToGoal ? .orange : .secondary
+            )
+            Divider()
+            breakdownRow(title: "Effektives Tagesziel", value: "\(Int(effectiveGoal)) kcal", bold: true)
+            breakdownRow(title: "Bereits getrackt", value: "\(Int(consumed)) kcal")
+            breakdownRow(
+                title: remaining >= 0 ? "Noch offen" : "Über Ziel",
+                value: remaining >= 0 ? "\(Int(remaining)) kcal" : "+\(Int(-remaining)) kcal",
+                valueColor: ringState.color,
+                bold: true
+            )
+
+            Text("Toleranz: ±\(Int(max(tolerance, 0))) kcal (ab \(eveningHour):00 Uhr orange bei Defizit, rot bei Überschuss).")
+                .font(.caption)
+                .foregroundColor(.secondary)
+        }
+        .padding()
+        .cardStyle()
+    }
+
+    private var expenditureCard: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Label("Energieverbrauch & Bilanz", systemImage: "flame.fill")
+                .font(.headline)
+
+            if let bmr {
+                let total = bmr + activeValue
+                let diff = Int((consumed - total).rounded())
+                let prefix = diff > 0 ? "+" : ""
+
+                breakdownRow(title: "Grundumsatz (24h, geschätzt)", value: "\(Int(bmr)) kcal")
+                breakdownRow(title: "+ Aktiv verbrannt (bisher)", value: "+\(Int(activeValue)) kcal", valueColor: .orange)
+                Divider()
+                breakdownRow(title: "Tagesumsatz gesamt", value: "\(Int(total)) kcal", bold: true)
+                breakdownRow(title: "Gegessen (bisher)", value: "\(Int(consumed)) kcal")
+                breakdownRow(
+                    title: diff <= 0 ? "Kaloriendefizit vs. Umsatz" : "Kalorienüberschuss vs. Umsatz",
+                    value: "\(prefix)\(diff) kcal",
+                    valueColor: diff <= 0 ? .green : .orange,
+                    bold: true
+                )
+
+                Text("Vergleicht deine bisher getrackten Kalorien mit deinem vollen Tagesumsatz (24h-Grundumsatz + bisherige Aktivitätskalorien).")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            } else {
+                breakdownRow(title: "Aktiv verbrannt (bisher)", value: "\(Int(activeValue)) kcal", valueColor: .orange)
+                Text("Hinterlege dein Körpergewicht, um deinen geschätzten 24h-Grundumsatz und die Gesamtbilanz zu berechnen.")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+        }
+        .padding()
+        .cardStyle()
+    }
+
+    private func breakdownRow(
+        title: String,
+        value: String,
+        valueColor: Color = .primary,
+        bold: Bool = false
+    ) -> some View {
+        HStack {
+            Text(title)
+                .font(bold ? .subheadline.bold() : .subheadline)
+                .foregroundColor(.secondary)
+            Spacer()
+            Text(value)
+                .font(bold ? .subheadline.bold() : .subheadline)
+                .foregroundColor(valueColor)
+        }
     }
 }
