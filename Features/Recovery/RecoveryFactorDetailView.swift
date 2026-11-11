@@ -1102,3 +1102,289 @@ struct TrainingLoadDetailView: View {
         return "\(startStr) – \(endStr)"
     }
 }
+
+// MARK: - Biologisches Alter / Fitness-Alter UI
+
+extension FitnessAgeFactorKind {
+    var color: Color {
+        switch self {
+        case .rhr:      return .red
+        case .steps:    return .green
+        case .workouts: return .blue
+        case .sleep:    return .indigo
+        case .bmi:      return .purple
+        case .vo2max:   return .teal
+        }
+    }
+}
+
+struct FitnessAgeSummaryCard: View {
+    let result: FitnessAgeResult
+
+    private var accentColor: Color {
+        if result.ageDifference < 0 { return .green }
+        if result.ageDifference == 0 { return .teal }
+        return .orange
+    }
+
+    private var deltaBadgeText: String {
+        if result.ageDifference < 0 {
+            return "\(abs(result.ageDifference)) J. jünger"
+        } else if result.ageDifference == 0 {
+            return "Im Schnitt"
+        } else {
+            return "+\(result.ageDifference) J. älter"
+        }
+    }
+
+    var body: some View {
+        HStack(spacing: 14) {
+            ZStack {
+                Circle()
+                    .fill(accentColor.opacity(0.14))
+                    .frame(width: 54, height: 54)
+                VStack(spacing: 0) {
+                    Text("\(result.estimatedFitnessAge)")
+                        .font(.title3.bold().monospacedDigit())
+                        .foregroundColor(accentColor)
+                    Text("Jahre")
+                        .font(.system(size: 9, weight: .semibold))
+                        .foregroundColor(accentColor)
+                }
+            }
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text("Fitness-Alter")
+                    .font(.headline)
+                    .foregroundColor(.primary)
+
+                Text(result.hasBirthDate
+                     ? "Chronologisch: \(result.chronologicalAge) Jahre"
+                     : "Geburtsdatum in Einstellungen ergänzen")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+
+            Spacer()
+
+            Text(deltaBadgeText)
+                .font(.caption.bold())
+                .foregroundColor(accentColor)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 5)
+                .background(accentColor.opacity(0.14))
+                .clipShape(Capsule())
+
+            Image(systemName: "chevron.right")
+                .font(.caption.bold())
+                .foregroundColor(.secondary)
+        }
+        .padding(16)
+        .background(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(Color.backgroundSecondary)
+        )
+    }
+}
+
+struct FitnessAgeDetailView: View {
+    let result: FitnessAgeResult
+
+    private var accentColor: Color {
+        if result.ageDifference < 0 { return .green }
+        if result.ageDifference == 0 { return .teal }
+        return .orange
+    }
+
+    private var deltaSummaryText: String {
+        if result.ageDifference < 0 {
+            return "Dein geschätztes Fitness-Alter liegt \(abs(result.ageDifference)) Jahre unter deinem chronologischen Alter."
+        } else if result.ageDifference == 0 {
+            return "Dein geschätztes Fitness-Alter entspricht aktuell deinem chronologischen Alter."
+        } else {
+            return "Dein geschätztes Fitness-Alter liegt \(result.ageDifference) Jahre über deinem chronologischen Alter – mit gezielten Routinen lässt sich das senken."
+        }
+    }
+
+    var body: some View {
+        ScrollView {
+            VStack(spacing: 20) {
+                heroComparisonCard
+
+                if !result.hasBirthDate {
+                    HStack(spacing: 10) {
+                        Image(systemName: "info.circle.fill")
+                            .foregroundColor(.orange)
+                        Text("Hinterlege dein Geburtsdatum in den Einstellungen, damit der Vergleich mit deinem echten Alter exakt stimmt (aktuell Basis 30 Jahre).")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    .padding(14)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(
+                        RoundedRectangle(cornerRadius: 14, style: .continuous)
+                            .fill(Color.orange.opacity(0.12))
+                    )
+                    .padding(.horizontal)
+                }
+
+                factorsCard
+                improvementTipsCard
+            }
+            .padding(.vertical, 20)
+        }
+        .background(Color.backgroundPrimary)
+        .navigationTitle("Fitness-Alter")
+        .navigationBarTitleDisplayMode(.inline)
+    }
+
+    private var heroComparisonCard: some View {
+        VStack(spacing: 16) {
+            HStack(spacing: 24) {
+                VStack(spacing: 6) {
+                    ZStack {
+                        Circle()
+                            .stroke(accentColor.opacity(0.25), lineWidth: 10)
+                        Circle()
+                            .fill(accentColor.opacity(0.12))
+                        VStack(spacing: 2) {
+                            Text("\(result.estimatedFitnessAge)")
+                                .font(.system(size: 36, weight: .bold, design: .rounded))
+                                .foregroundColor(accentColor)
+                            Text("Fitness-Alter")
+                                .font(.caption2.weight(.semibold))
+                                .foregroundColor(accentColor)
+                        }
+                    }
+                    .frame(width: 118, height: 118)
+                }
+
+                VStack(alignment: .leading, spacing: 8) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Chronologisch")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        Text("\(result.chronologicalAge) Jahre")
+                            .font(.title3.bold())
+                    }
+
+                    Text(String(format: "%@%.1f Jahre", result.rawDeltaYears >= 0 ? "+" : "", result.rawDeltaYears))
+                        .font(.subheadline.bold().monospacedDigit())
+                        .foregroundColor(accentColor)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 4)
+                        .background(accentColor.opacity(0.14))
+                        .clipShape(Capsule())
+                }
+            }
+
+            Text(deltaSummaryText)
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(20)
+        .background(
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .fill(Color.backgroundSecondary)
+        )
+        .padding(.horizontal)
+    }
+
+    private var factorsCard: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            Text("Einflussfaktoren")
+                .font(.headline)
+
+            ForEach(result.factors) { factor in
+                HStack(spacing: 12) {
+                    Image(systemName: factor.systemIcon)
+                        .font(.subheadline)
+                        .foregroundColor(factor.kind.color)
+                        .frame(width: 32, height: 32)
+                        .background(factor.kind.color.opacity(0.14))
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(factor.title)
+                            .font(.subheadline.weight(.semibold))
+                        Text("\(factor.valueText) • \(factor.targetText)")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+
+                    Spacer()
+
+                    if factor.hasData {
+                        let d = factor.deltaYears
+                        let impactColor: Color = d < -0.1 ? .green : (d > 0.1 ? .orange : .secondary)
+                        Text(String(format: "%@%.1f J", d > 0 ? "+" : "", d))
+                            .font(.caption.bold().monospacedDigit())
+                            .foregroundColor(impactColor)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(impactColor.opacity(0.12))
+                            .clipShape(Capsule())
+                    } else {
+                        Text("Offen")
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+                    }
+                }
+                .padding(.vertical, 4)
+            }
+        }
+        .padding(16)
+        .background(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(Color.backgroundSecondary)
+        )
+        .padding(.horizontal)
+    }
+
+    private var improvementTipsCard: some View {
+        let improvable = result.factors
+            .filter { $0.hasData && $0.deltaYears > 0.1 }
+            .sorted { $0.deltaYears > $1.deltaYears }
+
+        return VStack(alignment: .leading, spacing: 12) {
+            Label(
+                improvable.isEmpty ? "Starke Gesundheits-Routine" : "Größte Hebel zum Senken",
+                systemImage: improvable.isEmpty ? "checkmark.seal.fill" : "lightbulb.fill"
+            )
+            .font(.headline)
+            .foregroundColor(improvable.isEmpty ? .green : .orange)
+
+            if improvable.isEmpty {
+                Text("Alle erfassten Faktoren wirken sich positiv oder stabil auf dein Fitness-Alter aus. Halte diese Konsistenz bei!")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+            } else {
+                ForEach(improvable.prefix(3)) { factor in
+                    HStack(alignment: .top, spacing: 8) {
+                        Image(systemName: factor.systemIcon)
+                            .font(.caption)
+                            .foregroundColor(factor.kind.color)
+                            .padding(.top, 3)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(factor.title)
+                                .font(.subheadline.bold())
+                            Text(factor.tip)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                }
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(16)
+        .background(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill((improvable.isEmpty ? Color.green : Color.orange).opacity(0.1))
+        )
+        .padding(.horizontal)
+    }
+}

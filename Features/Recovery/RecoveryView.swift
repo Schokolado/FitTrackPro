@@ -5,10 +5,16 @@ struct RecoveryView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var workouts: [WorkoutSession]
     @Query(sort: \SleepEntry.wakeTime, order: .reverse) private var manualSleeps: [SleepEntry]
+    @Query(sort: \WeightEntry.timestamp, order: .reverse) private var weightEntries: [WeightEntry]
+    @Query(sort: \StepEntry.timestamp, order: .reverse) private var manualSteps: [StepEntry]
     
     @AppStorage(AppStorageKeys.dailySleepGoalHours) private var sleepGoalHours: Double = 8.0
     @AppStorage(AppStorageKeys.dailyStepGoal) private var dailyStepGoal: Int = 10000
     @AppStorage(AppStorageKeys.dailyActiveCalorieGoal) private var dailyActiveCalorieGoal: Double = 600
+    @AppStorage(AppStorageKeys.userBirthDate) private var userBirthDateTimestamp: Double = 0
+    @AppStorage(AppStorageKeys.userBiologicalSex) private var userBiologicalSex: String = "other"
+    @AppStorage(AppStorageKeys.userHeightCm) private var userHeightCm: Double = 175
+    @AppStorage(AppStorageKeys.onboardingWeightKg) private var onboardingWeightKg: Double = 0
     
     @State private var recoveryResult: RecoveryResult?
     @State private var isLoading = true
@@ -26,6 +32,7 @@ struct RecoveryView: View {
     @State private var weekDurationMinutes: Int = 0
     @State private var weekTotalVolumeKg: Double = 0
     @State private var trainingLoadAnalysis: TrainingLoadAnalysis?
+    @State private var fitnessAgeResult: FitnessAgeResult?
     
     var colorForScore: Color {
         guard let score = recoveryResult?.score else { return .teal }
@@ -95,6 +102,21 @@ struct RecoveryView: View {
 
                             NavigationLink(destination: TrainingLoadDetailView(analysis: loadAnalysis)) {
                                 TrainingLoadSummaryCard(analysis: loadAnalysis)
+                                    .padding(.horizontal)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+
+                    // Biologisches Alter / Fitness-Alter
+                    if let fitnessAge = fitnessAgeResult {
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("Biologisches Alter")
+                                .font(.headline)
+                                .padding(.horizontal)
+
+                            NavigationLink(destination: FitnessAgeDetailView(result: fitnessAge)) {
+                                FitnessAgeSummaryCard(result: fitnessAge)
                                     .padding(.horizontal)
                             }
                             .buttonStyle(.plain)
@@ -514,6 +536,52 @@ struct RecoveryView: View {
             rhrBaseline: rhrBaseline
         )
         trainingLoadAnalysis = TrainingLoadCalculator.analyze(workouts: workouts, upTo: today)
+
+        // 4. Fitness-Alter berechnen (14T Schritte, 7T Schlaf, 28T Workouts, RHR, BMI, optional VO2max)
+        let fourteenDaysAgo = calendar.date(byAdding: .day, value: -13, to: calendar.startOfDay(for: today))!
+        let hkStepsHistory = (try? await HealthKitService.shared.fetchStepsHistory(startDate: fourteenDaysAgo, endDate: today)) ?? []
+        var stepsByDay: [Date: Int] = [:]
+        for item in hkStepsHistory where item.steps > 0 {
+            stepsByDay[calendar.startOfDay(for: item.date), default: 0] += item.steps
+        }
+        for entry in manualSteps where entry.timestamp >= fourteenDaysAgo && entry.steps > 0 {
+            stepsByDay[calendar.startOfDay(for: entry.timestamp), default: 0] += entry.steps
+        }
+        let activeStepDays = stepsByDay.values.filter { $0 > 0 }
+        let avgDailySteps: Double? = activeStepDays.isEmpty
+            ? (todaySteps > 0 ? Double(todaySteps) : nil)
+            : Double(activeStepDays.reduce(0, +)) / Double(activeStepDays.count)
+
+        let hkSleepHistory = (try? await HealthKitService.shared.fetchSleepHistory(days: 7)) ?? []
+        let hkSleepHoursList = hkSleepHistory.map { $0.totalDurationMinutes / 60.0 }.filter { $0 > 0 }
+        let avgSleepHours: Double? = {
+            if !hkSleepHoursList.isEmpty {
+                return hkSleepHoursList.reduce(0, +) / Double(hkSleepHoursList.count)
+            }
+            let recentManual = manualSleeps.prefix(7).map { $0.durationMinutes / 60.0 }.filter { $0 > 0 }
+            if !recentManual.isEmpty {
+                return recentManual.reduce(0, +) / Double(recentManual.count)
+            }
+            return sleepHours
+        }()
+
+        let vo2Max = try? await HealthKitService.shared.fetchLatestVO2Max()
+        let currentWeightKg: Double? = weightEntries.first?.weightKg ?? (onboardingWeightKg > 0 ? onboardingWeightKg : nil)
+        let effectiveRHR = rhrScore ?? rhrBaseline
+
+        fitnessAgeResult = FitnessAgeCalculator.calculate(
+            birthDateTimestamp: userBirthDateTimestamp,
+            biologicalSex: userBiologicalSex,
+            heightCm: userHeightCm,
+            weightKg: currentWeightKg,
+            restingHR: effectiveRHR,
+            avgDailySteps: avgDailySteps,
+            workoutsLast28Days: trainingLoadAnalysis?.workoutsLast28Days ?? weeklyWorkouts.count,
+            avgSleepHours: avgSleepHours,
+            sleepGoalHours: sleepGoalHours,
+            vo2Max: vo2Max,
+            referenceDate: today
+        )
     }
 }
 

@@ -356,3 +356,214 @@ struct TrainingLoadCalculator {
         return .recovery
     }
 }
+
+// MARK: - Biologisches Alter / Fitness-Alter
+
+enum FitnessAgeFactorKind: String, CaseIterable {
+    case rhr, steps, workouts, sleep, bmi, vo2max
+}
+
+struct FitnessAgeFactor: Identifiable {
+    var id: String { kind.rawValue }
+    let kind: FitnessAgeFactorKind
+    let title: String
+    let systemIcon: String
+    let valueText: String
+    let targetText: String
+    let deltaYears: Double
+    let hasData: Bool
+    let tip: String
+}
+
+struct FitnessAgeResult {
+    let chronologicalAge: Int
+    let estimatedFitnessAge: Int
+    let rawDeltaYears: Double
+    let hasBirthDate: Bool
+    let factors: [FitnessAgeFactor]
+
+    var ageDifference: Int {
+        estimatedFitnessAge - chronologicalAge
+    }
+}
+
+struct FitnessAgeCalculator {
+    static func calculate(
+        birthDateTimestamp: Double,
+        biologicalSex: String,
+        heightCm: Double,
+        weightKg: Double?,
+        restingHR: Double?,
+        avgDailySteps: Double?,
+        workoutsLast28Days: Int,
+        avgSleepHours: Double?,
+        sleepGoalHours: Double,
+        vo2Max: Double?,
+        referenceDate: Date = Date()
+    ) -> FitnessAgeResult {
+        let hasBirthDate = birthDateTimestamp > 0
+        let chronologicalAge: Int = {
+            guard hasBirthDate else { return 30 }
+            let birth = Date(timeIntervalSince1970: birthDateTimestamp)
+            let years = Calendar.current.dateComponents([.year], from: birth, to: referenceDate).year ?? 30
+            return min(max(years, 16), 95)
+        }()
+
+        var factors: [FitnessAgeFactor] = []
+
+        // 1. Ruhepuls (Baseline ~68 bpm, niedriger = jünger)
+        if let rhr = restingHR, rhr > 0 {
+            let delta = clamp((rhr - 68.0) / 5.0, min: -4.0, max: 4.0)
+            factors.append(FitnessAgeFactor(
+                kind: .rhr,
+                title: "Ruhepuls",
+                systemIcon: "heart.fill",
+                valueText: "\(Int(rhr.rounded())) bpm",
+                targetText: "Optimal: 50–62 bpm",
+                deltaYears: delta,
+                hasData: true,
+                tip: "Regelmäßiges Ausdauertraining (Zone 2) senkt den Ruhepuls nachhaltig."
+            ))
+        } else {
+            factors.append(FitnessAgeFactor(
+                kind: .rhr,
+                title: "Ruhepuls",
+                systemIcon: "heart.fill",
+                valueText: "Keine Daten",
+                targetText: "Optimal: 50–62 bpm",
+                deltaYears: 0,
+                hasData: false,
+                tip: "Trage eine Apple Watch oder erfasse den Ruhepuls in Apple Health."
+            ))
+        }
+
+        // 2. Aktivität / Schritte (14-Tage Durchschnitt)
+        if let steps = avgDailySteps, steps > 0 {
+            let delta = clamp((7500.0 - steps) / 1800.0, min: -2.8, max: 2.2)
+            factors.append(FitnessAgeFactor(
+                kind: .steps,
+                title: "Schritte (Ø 14 Tage)",
+                systemIcon: "figure.walk",
+                valueText: "\(Int(steps.rounded()).formatted()) / Tag",
+                targetText: "Optimal: ≥ 9.000 / Tag",
+                deltaYears: delta,
+                hasData: true,
+                tip: "Zusätzliche 2.000–3.000 Alltagsschritte senken das metabolische Risiko deutlich."
+            ))
+        } else {
+            factors.append(FitnessAgeFactor(
+                kind: .steps,
+                title: "Schritte (Ø 14 Tage)",
+                systemIcon: "figure.walk",
+                valueText: "Keine Daten",
+                targetText: "Optimal: ≥ 9.000 / Tag",
+                deltaYears: 0,
+                hasData: false,
+                tip: "Erfasse Schritte über Apple Health oder manuell im Schritt-Tracker."
+            ))
+        }
+
+        // 3. Trainingsfrequenz (letzte 28 Tage)
+        let workoutsPerWeek = Double(workoutsLast28Days) / 4.0
+        let workoutDelta: Double = {
+            if workoutsPerWeek >= 4.0 { return -2.5 }
+            if workoutsPerWeek >= 3.0 { return -2.0 }
+            if workoutsPerWeek >= 2.0 { return -1.2 }
+            if workoutsPerWeek >= 1.0 { return -0.3 }
+            return 2.0
+        }()
+        factors.append(FitnessAgeFactor(
+            kind: .workouts,
+            title: "Trainingsfrequenz (4 Wochen)",
+            systemIcon: "dumbbell.fill",
+            valueText: String(format: "%.1f× / Woche (%d)", workoutsPerWeek, workoutsLast28Days),
+            targetText: "Optimal: 3–4× / Woche",
+            deltaYears: workoutDelta,
+            hasData: true,
+            tip: "3 bis 4 Kraft- oder Ausdauereinheiten pro Woche sind der stärkste Hebel für das Fitness-Alter."
+        ))
+
+        // 4. Schlaf (7-Tage Durchschnitt oder letzte Nacht)
+        if let sleep = avgSleepHours, sleep > 0 {
+            let sleepDelta: Double = {
+                if sleep >= 7.2 && sleep <= 9.0 { return -1.2 }
+                if sleep >= 6.5 && sleep < 7.2 { return 0.2 }
+                if sleep > 9.0 { return -0.3 }
+                return 1.4
+            }()
+            let h = Int(sleep)
+            let m = Int(((sleep - Double(h)) * 60).rounded())
+            factors.append(FitnessAgeFactor(
+                kind: .sleep,
+                title: "Schlafqualität / -dauer",
+                systemIcon: "moon.zzz.fill",
+                valueText: "\(h)h \(m)m (Ziel \(Int(sleepGoalHours))h)",
+                targetText: "Optimal: 7–9 Stunden",
+                deltaYears: sleepDelta,
+                hasData: true,
+                tip: "Konstante Schlafzeiten zwischen 7 und 9 Stunden verbessern Regeneration und Hormonhaushalt."
+            ))
+        }
+
+        // 5. BMI (mit Toleranz bis BMI 26 bei regelmäßigem Krafttraining >= 3x/Woche)
+        if let w = weightKg, w > 0, heightCm > 0 {
+            let hM = heightCm / 100.0
+            let bmi = w / (hM * hM)
+            let upperHealthy = workoutsPerWeek >= 3.0 ? 26.2 : 24.9
+            let bmiDelta: Double = {
+                if bmi >= 19.0 && bmi <= upperHealthy { return -1.0 }
+                if (bmi > upperHealthy && bmi <= 28.5) || (bmi >= 18.0 && bmi < 19.0) { return 0.6 }
+                return 1.8
+            }()
+            factors.append(FitnessAgeFactor(
+                kind: .bmi,
+                title: "BMI / Körperkomposition",
+                systemIcon: "scalemass.fill",
+                valueText: String(format: "%.1f (%.1f kg)", bmi, w),
+                targetText: workoutsPerWeek >= 3.0 ? "Sport-Norm: 19–26" : "Optimal: 19–24,9",
+                deltaYears: bmiDelta,
+                hasData: true,
+                tip: "Ein ausgewogenes Verhältnis von Muskelmasse und Körperfett entlastet Herz und Gelenke."
+            ))
+        }
+
+        // 6. Optional: VO2max (Apple Watch)
+        if let vo2 = vo2Max, vo2 > 0 {
+            let ageOffset = Double(max(0, chronologicalAge - 25))
+            let referenceVO2: Double = {
+                switch biologicalSex {
+                case "male":   return max(30.0, 44.0 - ageOffset * 0.25)
+                case "female": return max(26.0, 38.0 - ageOffset * 0.22)
+                default:       return max(28.0, 41.0 - ageOffset * 0.23)
+                }
+            }()
+            let vo2Delta = clamp((referenceVO2 - vo2) / 3.0, min: -3.0, max: 3.0)
+            factors.append(FitnessAgeFactor(
+                kind: .vo2max,
+                title: "VO2max (Kardio-Fitness)",
+                systemIcon: "lungs.fill",
+                valueText: String(format: "%.1f ml/kg/min", vo2),
+                targetText: String(format: "Altersnorm: ~%.0f", referenceVO2),
+                deltaYears: vo2Delta,
+                hasData: true,
+                tip: "Intervalltraining oder längere zügige Läufe/Radfahrten steigern die maximale Sauerstoffaufnahme."
+            ))
+        }
+
+        let rawDelta = factors.reduce(0.0) { $0 + $1.deltaYears }
+        let clampedDelta = clamp(rawDelta, min: -14.0, max: 14.0)
+        let estimatedAge = max(18, Int((Double(chronologicalAge) + clampedDelta).rounded()))
+
+        return FitnessAgeResult(
+            chronologicalAge: chronologicalAge,
+            estimatedFitnessAge: estimatedAge,
+            rawDeltaYears: clampedDelta,
+            hasBirthDate: hasBirthDate,
+            factors: factors
+        )
+    }
+
+    private static func clamp(_ value: Double, min minVal: Double, max maxVal: Double) -> Double {
+        Swift.max(minVal, Swift.min(maxVal, value))
+    }
+}
