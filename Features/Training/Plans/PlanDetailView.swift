@@ -69,8 +69,16 @@ struct PlanDetailView: View {
             ScrollViewReader { proxy in
                 LazyVStack(spacing: Spacing.md, pinnedViews: [.sectionHeaders]) {
                     
-                    planMetaHeaderRow
+                    Text(plan.name)
+                        .font(.largeTitle.bold())
+                        .minimumScaleFactor(0.6)
+                        .lineLimit(2)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal)
                         .id("planTop")
+
+                    planMetaHeaderRow
                     
                     let planBalanceStats = StatisticsViewModel.muscleGroupBreakdown(for: plan)
                     if !planBalanceStats.isEmpty {
@@ -336,8 +344,8 @@ struct PlanDetailView: View {
         mainContent
         .id(refreshId)
         .background(Color.backgroundPrimary)
-        .navigationTitle(plan.name)
-        .navigationBarTitleDisplayMode(.large)
+        .navigationTitle(isScrolledDown ? plan.name : (plan.group?.name ?? "Trainingsplan"))
+        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 HStack(spacing: 16) {
