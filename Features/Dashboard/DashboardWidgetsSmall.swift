@@ -8,6 +8,7 @@ struct NutritionSummaryCardSmall: View {
     let goal: Double
     var tolerance: Double = 300
     var eveningHour: Int = 18
+    var activeBurned: Double? = nil
     
     var progress: Double {
         min(consumed / max(goal, 1), 1.0)
@@ -53,7 +54,7 @@ struct NutritionSummaryCardSmall: View {
             Spacer()
             
             HStack(alignment: .bottom) {
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: 3) {
                     Text("Ernährung")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
@@ -64,6 +65,19 @@ struct NutritionSummaryCardSmall: View {
                     Text(subtitleText)
                         .font(.caption)
                         .foregroundColor(subtitleColor)
+
+                    if let active = activeBurned {
+                        HStack(spacing: 3) {
+                            Image(systemName: "flame.fill")
+                                .font(.caption2)
+                                .foregroundColor(.orange)
+                            Text("\(Int(active)) kcal aktiv")
+                                .font(.caption2)
+                                .foregroundColor(.secondary)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.85)
+                        }
+                    }
                 }
                 
                 Spacer()

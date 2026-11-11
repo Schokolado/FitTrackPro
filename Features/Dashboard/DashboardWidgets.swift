@@ -9,6 +9,8 @@ struct NutritionSummaryCard: View {
     let fat: Double
     var tolerance: Double = 300
     var eveningHour: Int = 18
+    var activeBurned: Double? = nil
+    var totalBurned: Double? = nil
     
     var progress: Double {
         min(consumed / max(goal, 1), 1.0)
@@ -28,6 +30,14 @@ struct NutritionSummaryCard: View {
             return "+\(Int(consumed - goal)) kcal über Ziel"
         }
         return "\(Int(max(goal - consumed, 0))) kcal verbleibend"
+    }
+
+    private var burnedSummaryText: String? {
+        guard let active = activeBurned else { return nil }
+        if let total = totalBurned {
+            return "Aktiv \(Int(active)) · Umsatz \(Int(total)) kcal"
+        }
+        return "\(Int(active)) kcal aktiv verbrannt"
     }
 
     private var remainingColor: Color {
@@ -62,7 +72,7 @@ struct NutritionSummaryCard: View {
             .frame(width: 90, height: 90)
             
             // Texts
-            VStack(alignment: .leading, spacing: 6) {
+            VStack(alignment: .leading, spacing: 5) {
                 Text("Ernährung heute")
                     .font(.headline)
                     .foregroundColor(.primary)
@@ -70,6 +80,19 @@ struct NutritionSummaryCard: View {
                 Text(remainingText)
                     .font(.subheadline)
                     .foregroundColor(remainingColor)
+
+                if let burnedText = burnedSummaryText {
+                    HStack(spacing: 4) {
+                        Image(systemName: "flame.fill")
+                            .font(.caption2)
+                            .foregroundColor(.orange)
+                        Text(burnedText)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.8)
+                    }
+                }
                     
                 HStack(spacing: 12) {
                     MacroBadge(label: "K", value: Int(carbs), color: .blue)

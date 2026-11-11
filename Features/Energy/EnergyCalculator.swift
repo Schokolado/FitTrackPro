@@ -98,4 +98,32 @@ struct EnergyCalculator {
             recoveryScore: recoveryScore
         )
     }
+
+    /// Schätzt den täglichen Grundumsatz (BMR in kcal) nach Mifflin-St Jeor auf Basis der Profildaten.
+    static func estimatedBMR(
+        weightKg: Double?,
+        heightCm: Double,
+        birthDateTimestamp: Double,
+        biologicalSex: String,
+        referenceDate: Date = Date()
+    ) -> Double? {
+        guard let weightKg, weightKg > 0, heightCm > 0 else { return nil }
+
+        let ageYears: Int = {
+            guard birthDateTimestamp > 0 else { return 30 }
+            let birth = Date(timeIntervalSince1970: birthDateTimestamp)
+            let years = Calendar.current.dateComponents([.year], from: birth, to: referenceDate).year ?? 30
+            return min(max(years, 14), 100)
+        }()
+
+        let base = 10.0 * weightKg + 6.25 * heightCm - 5.0 * Double(ageYears)
+        let offset: Double
+        switch biologicalSex {
+        case "male": offset = 5
+        case "female": offset = -161
+        default: offset = -78
+        }
+
+        return max(800, (base + offset).rounded())
+    }
 }

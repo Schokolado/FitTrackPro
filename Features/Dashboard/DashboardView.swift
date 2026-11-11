@@ -12,12 +12,17 @@ struct DashboardView: View {
     @AppStorage("daily_step_goal") private var dailyStepGoal: Int = 10000
     @AppStorage("userName") private var userName: String = ""
     @AppStorage(AppStorageKeys.healthKitEnabled) private var healthKitEnabled = false
+    @AppStorage(AppStorageKeys.userBirthDate) private var birthDateInterval: Double = 0
+    @AppStorage(AppStorageKeys.userBiologicalSex) private var userSex: String = "other"
+    @AppStorage(AppStorageKeys.userHeightCm) private var heightCm: Double = 175
+    @AppStorage(AppStorageKeys.onboardingWeightKg) private var onboardingWeightKg: Double = 0
     @Environment(\.scenePhase) private var scenePhase
     
     @AppStorage("cached_today_steps") private var cachedTodaySteps: Int = 0
     @AppStorage("cached_today_steps_date") private var cachedTodayStepsDate: String = ""
     
     @State private var todaySteps: Int = 0
+    @State private var todayActiveCalories: Double? = nil
     @State private var showingStepTrackerFromWidget = false
     
     @Query(sort: \WeightEntry.timestamp, order: .reverse) private var weightEntries: [WeightEntry]
@@ -61,6 +66,20 @@ struct DashboardView: View {
     
     var consumedFat: Double {
         todayFoodEntries.reduce(0.0) { $0 + $1.fatGrams }
+    }
+
+    private var todayTotalBurnedCalories: Double? {
+        guard let active = todayActiveCalories else { return nil }
+        let weight = weightEntries.first?.weightKg ?? (onboardingWeightKg > 0 ? onboardingWeightKg : nil)
+        guard let bmr = EnergyCalculator.estimatedBMR(
+            weightKg: weight,
+            heightCm: heightCm,
+            birthDateTimestamp: birthDateInterval,
+            biologicalSex: userSex
+        ) else {
+            return nil
+        }
+        return bmr + active
     }
     @State private var navId = UUID()
     @StateObject private var layoutManager = DashboardLayoutManager()
@@ -219,6 +238,8 @@ struct DashboardView: View {
                 Task {
                     await refreshSteps()
                 }
+            } else {
+                todayActiveCalories = nil
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.significantTimeChangeNotification)) { _ in
@@ -235,6 +256,12 @@ struct DashboardView: View {
                     self.todaySteps = steps
                     self.cachedTodaySteps = steps
                     self.cachedTodayStepsDate = Date().iso8601String()
+                }
+            }
+
+            if let activeKcal = try? await HealthKitService.shared.fetchActiveEnergyBurned(for: Date()) {
+                await MainActor.run {
+                    self.todayActiveCalories = activeKcal
                 }
             }
             
@@ -338,14 +365,17 @@ struct DashboardView: View {
                         protein: consumedProtein,
                         fat: consumedFat,
                         tolerance: nutritionTolerance,
-                        eveningHour: calorieWarningEveningHour
+                        eveningHour: calorieWarningEveningHour,
+                        activeBurned: todayActiveCalories,
+                        totalBurned: todayTotalBurnedCalories
                     )
                 } else {
                     NutritionSummaryCardSmall(
                         consumed: consumedCalories,
                         goal: dailyCalorieGoal,
                         tolerance: nutritionTolerance,
-                        eveningHour: calorieWarningEveningHour
+                        eveningHour: calorieWarningEveningHour,
+                        activeBurned: todayActiveCalories
                     )
                 }
             }
@@ -455,14 +485,17 @@ struct DashboardView: View {
                     protein: consumedProtein,
                     fat: consumedFat,
                     tolerance: nutritionTolerance,
-                    eveningHour: calorieWarningEveningHour
+                    eveningHour: calorieWarningEveningHour,
+                    activeBurned: todayActiveCalories,
+                    totalBurned: todayTotalBurnedCalories
                 )
             } else {
                 NutritionSummaryCardSmall(
                     consumed: consumedCalories,
                     goal: dailyCalorieGoal,
                     tolerance: nutritionTolerance,
-                    eveningHour: calorieWarningEveningHour
+                    eveningHour: calorieWarningEveningHour,
+                    activeBurned: todayActiveCalories
                 )
             }
         case .steps:

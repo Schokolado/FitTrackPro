@@ -5,9 +5,12 @@ struct NutritionDashboardView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(WorkoutManager.self) private var workoutManager
     @Environment(\.miniPlayerBottomInset) private var miniPlayerBottomInset
+    @Environment(\.scenePhase) private var scenePhase
     @Query private var allDailyLogs: [DailyLog]
+    @Query(sort: \WeightEntry.timestamp, order: .reverse) private var weightEntries: [WeightEntry]
     
     @State private var selectedDate: Date = Date()
+    @State private var activeBurnedCalories: Double? = nil
     @State private var showingAddEntry = false
     @State private var showingFoodSearch = false
     @State private var showingScanner = false
@@ -24,6 +27,11 @@ struct NutritionDashboardView: View {
     @AppStorage("nutritionGoalProtein") private var goalProtein: Double = 150
     @AppStorage("nutritionGoalCarbs") private var goalCarbs: Double = 250
     @AppStorage("nutritionGoalFat") private var goalFat: Double = 70
+    @AppStorage(AppStorageKeys.healthKitEnabled) private var healthKitEnabled = false
+    @AppStorage(AppStorageKeys.userBirthDate) private var birthDateInterval: Double = 0
+    @AppStorage(AppStorageKeys.userBiologicalSex) private var userSex: String = "other"
+    @AppStorage(AppStorageKeys.userHeightCm) private var heightCm: Double = 175
+    @AppStorage(AppStorageKeys.onboardingWeightKg) private var onboardingWeightKg: Double = 0
     
     private var todayLog: DailyLog? {
         let dateString = selectedDate.iso8601String()
@@ -130,6 +138,21 @@ struct NutritionDashboardView: View {
             .onChange(of: selectedDate) { _, _ in
                 ensureDailyLogExists()
             }
+            .task(id: selectedDate) {
+                await refreshActiveCalories(for: selectedDate)
+            }
+            .onChange(of: healthKitEnabled) { _, enabled in
+                if enabled {
+                    Task { await refreshActiveCalories(for: selectedDate) }
+                } else {
+                    activeBurnedCalories = nil
+                }
+            }
+            .onChange(of: scenePhase) { _, phase in
+                if phase == .active {
+                    Task { await refreshActiveCalories(for: selectedDate) }
+                }
+            }
             .alert("Gespeichert", isPresented: $showingSavedAlert) {
                 Button("OK", role: .cancel) { }
             } message: {
@@ -220,6 +243,10 @@ struct NutritionDashboardView: View {
             }
             .frame(height: 150)
             .padding(.vertical, Spacing.sm)
+
+            if let active = activeBurnedCalories {
+                energyExpenditureStrip(consumed: totalCals, activeBurned: active)
+            }
             
             HStack(spacing: Spacing.lg) {
                 macroBar(title: "Protein", current: totalProtein, goal: goalProtein, color: .blue)
@@ -294,6 +321,86 @@ struct NutritionDashboardView: View {
     
     private func deleteEntry(_ entry: FoodEntry) {
         modelContext.delete(entry)
+    }
+
+    @ViewBuilder
+    private func energyExpenditureStrip(consumed: Double, activeBurned: Double) -> some View {
+        let weight = weightEntries.first?.weightKg ?? (onboardingWeightKg > 0 ? onboardingWeightKg : nil)
+        let bmr = EnergyCalculator.estimatedBMR(
+            weightKg: weight,
+            heightCm: heightCm,
+            birthDateTimestamp: birthDateInterval,
+            biologicalSex: userSex,
+            referenceDate: selectedDate
+        )
+        let totalBurned = bmr.map { $0 + activeBurned }
+
+        HStack(spacing: 10) {
+            energyMetricTile(
+                title: "Aktiv verbrannt",
+                value: "\(Int(activeBurned)) kcal",
+                icon: "flame.fill",
+                tint: .orange
+            )
+
+            if let totalBurned {
+                energyMetricTile(
+                    title: "Tagesumsatz",
+                    value: "\(Int(totalBurned)) kcal",
+                    icon: "bolt.fill",
+                    tint: .brand
+                )
+
+                let balance = Int((consumed - totalBurned).rounded())
+                let balancePrefix = balance > 0 ? "+" : ""
+                energyMetricTile(
+                    title: "Bilanz",
+                    value: "\(balancePrefix)\(balance) kcal",
+                    icon: balance <= 0 ? "arrow.down.right" : "arrow.up.right",
+                    tint: balance <= 0 ? .green : .orange
+                )
+            }
+        }
+    }
+
+    private func energyMetricTile(title: String, value: String, icon: String, tint: Color) -> some View {
+        VStack(alignment: .leading, spacing: 3) {
+            HStack(spacing: 4) {
+                Image(systemName: icon)
+                    .font(.caption2)
+                    .foregroundColor(tint)
+                Text(title)
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+                    .lineLimit(1)
+            }
+            Text(value)
+                .font(.caption.bold())
+                .foregroundColor(.primary)
+                .lineLimit(1)
+                .minimumScaleFactor(0.85)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, 10)
+        .padding(.vertical, 8)
+        .background(Color.backgroundPrimary.opacity(0.75))
+        .cornerRadius(10)
+    }
+
+    private func refreshActiveCalories(for date: Date) async {
+        guard healthKitEnabled else {
+            await MainActor.run { activeBurnedCalories = nil }
+            return
+        }
+        let calendar = Calendar.current
+        if calendar.startOfDay(for: date) > calendar.startOfDay(for: Date()) {
+            await MainActor.run { activeBurnedCalories = nil }
+            return
+        }
+        let cals = try? await HealthKitService.shared.fetchActiveEnergyBurned(for: date)
+        await MainActor.run {
+            activeBurnedCalories = cals
+        }
     }
 }
 
