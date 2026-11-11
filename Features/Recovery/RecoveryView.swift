@@ -25,6 +25,7 @@ struct RecoveryView: View {
     @State private var weekWorkoutsCount: Int = 0
     @State private var weekDurationMinutes: Int = 0
     @State private var weekTotalVolumeKg: Double = 0
+    @State private var trainingLoadAnalysis: TrainingLoadAnalysis?
     
     var colorForScore: Color {
         guard let score = recoveryResult?.score else { return .teal }
@@ -84,6 +85,21 @@ struct RecoveryView: View {
                     
                     // Kompakte Aktivitätszusammenfassung (Heute & 7 Tage)
                     activitySummarySection
+                    
+                    // Trainingsbelastung & Fitness-Status
+                    if let loadAnalysis = trainingLoadAnalysis {
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("Trainingsbelastung & Status")
+                                .font(.headline)
+                                .padding(.horizontal)
+
+                            NavigationLink(destination: TrainingLoadDetailView(analysis: loadAnalysis)) {
+                                TrainingLoadSummaryCard(analysis: loadAnalysis)
+                                    .padding(.horizontal)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
                     
                     // Breakdown
                     VStack(alignment: .leading, spacing: 16) {
@@ -497,6 +513,7 @@ struct RecoveryView: View {
             hrvBaseline: hrvBaseline,
             rhrBaseline: rhrBaseline
         )
+        trainingLoadAnalysis = TrainingLoadCalculator.analyze(workouts: workouts, upTo: today)
     }
 }
 

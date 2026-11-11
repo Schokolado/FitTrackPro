@@ -157,3 +157,202 @@ struct RecoveryCalculator {
         )
     }
 }
+
+// MARK: - Trainingsbelastung & Fitness-Status (ACWR + Verlauf)
+
+enum TrainingStatus: String, CaseIterable {
+    case detraining   = "Geringe Aktivität"
+    case recovery     = "Erholung"
+    case maintaining  = "Erhalt"
+    case productive   = "Produktiver Aufbau"
+    case peaking      = "Höchstform"
+    case overreaching = "Überlastung"
+
+    var subtitle: String {
+        switch self {
+        case .detraining:   return "Fitness kann abnehmen"
+        case .recovery:     return "Aktive Regeneration"
+        case .maintaining:  return "Aktuelle Form wird gehalten"
+        case .productive:   return "Optimaler Leistungszuwachs"
+        case .peaking:      return "Starke Basis & frische Reserven"
+        case .overreaching: return "Regeneration priorisieren"
+        }
+    }
+
+    var systemIcon: String {
+        switch self {
+        case .detraining:   return "arrow.down.right.circle.fill"
+        case .recovery:     return "leaf.fill"
+        case .maintaining:  return "equal.circle.fill"
+        case .productive:   return "arrow.up.right.circle.fill"
+        case .peaking:      return "flame.fill"
+        case .overreaching: return "exclamationmark.triangle.fill"
+        }
+    }
+
+    var explanation: String {
+        switch self {
+        case .detraining:
+            return "Deine Trainingsbelastung der letzten 7 Tage liegt deutlich unter dem Bereich für weitere Anpassung. Bei längerer Inaktivität kann die aufgebaute Fitness langsam zurückgehen."
+        case .recovery:
+            return "Deine akute Belastung liegt unter deinem 4-Wochen-Schnitt. Das gibt Muskeln und Nervensystem gezielt Raum zur Regeneration."
+        case .maintaining:
+            return "Deine aktuelle Wochenbelastung entspricht weitgehend deiner chronischen Basis. Du stabilisierst deine Fitness zuverlässig ohne Überlastungsrisiko."
+        case .productive:
+            return "Deine akute Belastung liegt leicht über deinem 4-Wochen-Durchschnitt (ACWR ca. 1,1–1,45×). Genau in diesem Korridor baut dein Körper nachhaltig neue Leistungsfähigkeit auf."
+        case .peaking:
+            return "Du hast über die letzten Wochen eine starke Trainingsbasis aufgebaut und die akute Last zuletzt kontrolliert reduziert – ideale Voraussetzungen für Bestleistungen."
+        case .overreaching:
+            return "Deine akute Trainingsbelastung ist deutlich stärker gestiegen als deine 4-Wochen-Basis gewohnt ist (> 1,45×). Plane zeitnah einen Ruhetag oder eine leichtere Einheit ein."
+        }
+    }
+}
+
+struct TrainingLoadPoint: Identifiable {
+    var id: Date { date }
+    let date: Date
+    let acuteLoad: Double
+    let chronicLoad: Double
+    let ratio: Double
+    let status: TrainingStatus
+}
+
+struct TrainingStatusPeriod: Identifiable {
+    var id: String { "\(startDate.timeIntervalSince1970)-\(status.rawValue)" }
+    let status: TrainingStatus
+    let startDate: Date
+    let endDate: Date
+    let days: Int
+}
+
+struct TrainingLoadAnalysis {
+    let currentStatus: TrainingStatus
+    let acuteLoad: Double
+    let chronicLoad: Double
+    let acwr: Double
+    let workoutsLast7Days: Int
+    let workoutsLast28Days: Int
+    let historyPoints: [TrainingLoadPoint]
+    let statusTimeline: [TrainingStatusPeriod]
+}
+
+struct TrainingLoadCalculator {
+    static func sessionLoad(for session: WorkoutSession) -> Double {
+        guard let end = session.endTime else { return 0 }
+        let durationMinutes = max(15.0, end.timeIntervalSince(session.startTime) / 60.0)
+        let intensity = min(max(session.intensityRating ?? 3, 1), 5)
+        let intensityFactor = 0.55 + Double(intensity) * 0.15 // 0.70 ... 1.30
+        let completedSets = (session.sets ?? []).filter { $0.isCompleted }.count
+        return (durationMinutes * intensityFactor) + Double(completedSets) * 1.5
+    }
+
+    static func analyze(
+        workouts: [WorkoutSession],
+        upTo referenceDate: Date = Date(),
+        historyDays: Int = 42
+    ) -> TrainingLoadAnalysis {
+        let cal = Calendar.current
+        let todayStart = cal.startOfDay(for: referenceDate)
+        let completed = workouts.filter { $0.endTime != nil }
+
+        var dailyLoads: [Date: Double] = [:]
+        for session in completed {
+            let day = cal.startOfDay(for: session.startTime)
+            dailyLoads[day, default: 0] += sessionLoad(for: session)
+        }
+
+        let sevenDaysAgo = cal.date(byAdding: .day, value: -6, to: todayStart)!
+        let twentyEightDaysAgo = cal.date(byAdding: .day, value: -27, to: todayStart)!
+        let workouts7 = completed.filter { cal.startOfDay(for: $0.startTime) >= sevenDaysAgo && cal.startOfDay(for: $0.startTime) <= todayStart }.count
+        let workouts28 = completed.filter { cal.startOfDay(for: $0.startTime) >= twentyEightDaysAgo && cal.startOfDay(for: $0.startTime) <= todayStart }.count
+
+        var points: [TrainingLoadPoint] = []
+        for offset in stride(from: -(historyDays - 1), through: 0, by: 1) {
+            guard let day = cal.date(byAdding: .day, value: offset, to: todayStart) else { continue }
+
+            var acuteSum: Double = 0
+            for d in 0..<7 {
+                if let target = cal.date(byAdding: .day, value: -d, to: day) {
+                    acuteSum += dailyLoads[target, default: 0]
+                }
+            }
+
+            var chronicSum: Double = 0
+            for d in 0..<28 {
+                if let target = cal.date(byAdding: .day, value: -d, to: day) {
+                    chronicSum += dailyLoads[target, default: 0]
+                }
+            }
+            let chronicWeeklyAvg = chronicSum / 4.0
+            let ratio = chronicWeeklyAvg >= 15.0 ? (acuteSum / chronicWeeklyAvg) : (acuteSum > 0 ? 1.08 : 0.0)
+            let status = classifyStatus(acute7: acuteSum, chronicWeeklyAvg: chronicWeeklyAvg, ratio: ratio)
+
+            points.append(
+                TrainingLoadPoint(
+                    date: day,
+                    acuteLoad: acuteSum,
+                    chronicLoad: chronicWeeklyAvg,
+                    ratio: ratio,
+                    status: status
+                )
+            )
+        }
+
+        // Status-Phasen für die Timeline zusammenfassen (neueste zuerst)
+        var periods: [TrainingStatusPeriod] = []
+        if let first = points.first {
+            var currentStatus = first.status
+            var periodStart = first.date
+            var periodEnd = first.date
+            var count = 1
+
+            for pt in points.dropFirst() {
+                if pt.status == currentStatus {
+                    periodEnd = pt.date
+                    count += 1
+                } else {
+                    periods.append(TrainingStatusPeriod(status: currentStatus, startDate: periodStart, endDate: periodEnd, days: count))
+                    currentStatus = pt.status
+                    periodStart = pt.date
+                    periodEnd = pt.date
+                    count = 1
+                }
+            }
+            periods.append(TrainingStatusPeriod(status: currentStatus, startDate: periodStart, endDate: periodEnd, days: count))
+        }
+
+        let latest = points.last
+        return TrainingLoadAnalysis(
+            currentStatus: latest?.status ?? .detraining,
+            acuteLoad: latest?.acuteLoad ?? 0,
+            chronicLoad: latest?.chronicLoad ?? 0,
+            acwr: latest?.ratio ?? 0,
+            workoutsLast7Days: workouts7,
+            workoutsLast28Days: workouts28,
+            historyPoints: points,
+            statusTimeline: periods.reversed()
+        )
+    }
+
+    private static func classifyStatus(acute7: Double, chronicWeeklyAvg: Double, ratio: Double) -> TrainingStatus {
+        if acute7 < 20 && chronicWeeklyAvg < 25 {
+            return .detraining
+        }
+        if acute7 < 20 {
+            return chronicWeeklyAvg >= 55 ? .recovery : .detraining
+        }
+        if chronicWeeklyAvg >= 75 && ratio >= 0.65 && ratio < 0.85 {
+            return .peaking
+        }
+        if ratio > 1.45 {
+            return .overreaching
+        }
+        if ratio >= 1.08 {
+            return .productive
+        }
+        if ratio >= 0.80 {
+            return .maintaining
+        }
+        return .recovery
+    }
+}

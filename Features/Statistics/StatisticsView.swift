@@ -475,6 +475,14 @@ struct StatisticsView: View {
                     )
                     .padding(.horizontal)
                 }
+
+                // 3. Trainingsbelastung & Fitness-Status (über letzte 6 Wochen)
+                let loadAnalysis = TrainingLoadCalculator.analyze(workouts: allSessions)
+                NavigationLink(destination: TrainingLoadDetailView(analysis: loadAnalysis)) {
+                    TrainingLoadSummaryCard(analysis: loadAnalysis)
+                        .padding(.horizontal)
+                }
+                .buttonStyle(.plain)
             }
         }
     }

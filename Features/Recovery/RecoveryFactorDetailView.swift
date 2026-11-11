@@ -737,3 +737,368 @@ struct VitalRingDetailView: View {
         }
     }
 }
+
+// MARK: - Trainingsbelastung & Fitness-Status UI
+
+extension TrainingStatus {
+    var color: Color {
+        switch self {
+        case .detraining:   return .gray
+        case .recovery:     return .teal
+        case .maintaining:  return .blue
+        case .productive:   return .green
+        case .peaking:      return .purple
+        case .overreaching: return .red
+        }
+    }
+}
+
+struct TrainingLoadSummaryCard: View {
+    let analysis: TrainingLoadAnalysis
+
+    private var status: TrainingStatus { analysis.currentStatus }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 10) {
+                Image(systemName: status.systemIcon)
+                    .font(.title2)
+                    .foregroundColor(status.color)
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(status.rawValue)
+                        .font(.headline)
+                        .foregroundColor(.primary)
+                    Text(status.subtitle)
+                        .font(.caption)
+                        .foregroundColor(status.color)
+                }
+
+                Spacer()
+
+                Text(String(format: "%.2f×", analysis.acwr))
+                    .font(.caption.bold().monospacedDigit())
+                    .foregroundColor(status.color)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 5)
+                    .background(status.color.opacity(0.14))
+                    .clipShape(Capsule())
+
+                Image(systemName: "chevron.right")
+                    .font(.caption.bold())
+                    .foregroundColor(.secondary)
+            }
+
+            HStack(spacing: 12) {
+                metricBox(title: "Akute Last (7T)", value: "\(Int(analysis.acuteLoad.rounded()))")
+                metricBox(title: "Chronische Basis (28T Ø)", value: "\(Int(analysis.chronicLoad.rounded()))")
+                metricBox(title: "Workouts (7T / 28T)", value: "\(analysis.workoutsLast7Days) / \(analysis.workoutsLast28Days)")
+            }
+        }
+        .padding(16)
+        .background(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(Color.backgroundSecondary)
+        )
+    }
+
+    private func metricBox(title: String, value: String) -> some View {
+        VStack(alignment: .leading, spacing: 3) {
+            Text(title)
+                .font(.caption2)
+                .foregroundColor(.secondary)
+                .lineLimit(1)
+            Text(value)
+                .font(.subheadline.bold().monospacedDigit())
+                .foregroundColor(.primary)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(10)
+        .background(Color.backgroundPrimary.opacity(0.6))
+        .cornerRadius(10)
+    }
+}
+
+struct TrainingLoadDetailView: View {
+    let analysis: TrainingLoadAnalysis
+
+    private var status: TrainingStatus { analysis.currentStatus }
+
+    var body: some View {
+        ScrollView {
+            VStack(spacing: 20) {
+                statusHeroCard
+                acuteVsChronicCard
+                loadTrendChartCard
+                statusTimelineCard
+            }
+            .padding(.vertical, 20)
+        }
+        .background(Color.backgroundPrimary)
+        .navigationTitle("Fitness-Status")
+        .navigationBarTitleDisplayMode(.inline)
+    }
+
+    private var statusHeroCard: some View {
+        VStack(spacing: 14) {
+            ZStack {
+                Circle()
+                    .fill(status.color.opacity(0.14))
+                    .frame(width: 84, height: 84)
+                Image(systemName: status.systemIcon)
+                    .font(.system(size: 38))
+                    .foregroundColor(status.color)
+            }
+
+            VStack(spacing: 4) {
+                Text(status.rawValue)
+                    .font(.title2.bold())
+                    .foregroundColor(.primary)
+                Text(status.subtitle)
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundColor(status.color)
+            }
+
+            Text(status.explanation)
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(20)
+        .background(
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .fill(Color.backgroundSecondary)
+        )
+        .padding(.horizontal)
+    }
+
+    private var acuteVsChronicCard: some View {
+        let ratio = analysis.acwr
+        let clampedMarker = min(max(ratio / 2.0, 0.0), 1.0) // 0.0...2.0 -> 0...1
+
+        return VStack(alignment: .leading, spacing: 14) {
+            HStack {
+                Text("Akute vs. Chronische Belastung")
+                    .font(.headline)
+                Spacer()
+                Text(String(format: "ACWR %.2f×", ratio))
+                    .font(.caption.bold().monospacedDigit())
+                    .foregroundColor(status.color)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 4)
+                    .background(status.color.opacity(0.14))
+                    .clipShape(Capsule())
+            }
+
+            HStack(spacing: 12) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Akut (letzte 7 Tage)")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    Text("\(Int(analysis.acuteLoad.rounded()))")
+                        .font(.title2.bold().monospacedDigit())
+                        .foregroundColor(status.color)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(12)
+                .background(Color.backgroundPrimary.opacity(0.6))
+                .cornerRadius(12)
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Chronisch (28T Ø/Woche)")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    Text("\(Int(analysis.chronicLoad.rounded()))")
+                        .font(.title2.bold().monospacedDigit())
+                        .foregroundColor(.primary)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(12)
+                .background(Color.backgroundPrimary.opacity(0.6))
+                .cornerRadius(12)
+            }
+
+            // ACWR Zonen-Skala (0.0 ... 2.0)
+            VStack(alignment: .leading, spacing: 6) {
+                GeometryReader { geo in
+                    ZStack(alignment: .leading) {
+                        HStack(spacing: 2) {
+                            RoundedRectangle(cornerRadius: 3).fill(Color.gray.opacity(0.35))
+                                .frame(width: geo.size.width * 0.40) // < 0.8 Unterlast
+                            RoundedRectangle(cornerRadius: 3).fill(Color.green.opacity(0.55))
+                                .frame(width: geo.size.width * 0.32) // 0.8 - 1.45 Optimal / Aufbau
+                            RoundedRectangle(cornerRadius: 3).fill(Color.red.opacity(0.5))
+                        }
+                        .frame(height: 8)
+
+                        Circle()
+                            .fill(Color.white)
+                            .frame(width: 14, height: 14)
+                            .overlay(Circle().stroke(status.color, lineWidth: 3))
+                            .offset(x: max(0, min(geo.size.width - 14, geo.size.width * clampedMarker - 7)))
+                    }
+                }
+                .frame(height: 14)
+
+                HStack {
+                    Text("< 0,8 Unterlast")
+                    Spacer()
+                    Text("0,8–1,45 Optimal")
+                    Spacer()
+                    Text("> 1,45 Überlast")
+                }
+                .font(.caption2)
+                .foregroundColor(.secondary)
+            }
+        }
+        .padding(16)
+        .background(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(Color.backgroundSecondary)
+        )
+        .padding(.horizontal)
+    }
+
+    private var loadTrendChartCard: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Text("Belastungsverlauf (6 Wochen)")
+                    .font(.headline)
+                Spacer()
+                HStack(spacing: 10) {
+                    Label("Akut", systemImage: "circle.fill")
+                        .font(.caption2)
+                        .foregroundColor(status.color)
+                    Label("Basis", systemImage: "circle.fill")
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                }
+            }
+
+            if analysis.historyPoints.allSatisfy({ $0.acuteLoad == 0 && $0.chronicLoad == 0 }) {
+                Text("Noch keine abgeschlossenen Workouts in den letzten 6 Wochen vorhanden.")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .padding(.vertical, 32)
+            } else {
+                Chart(analysis.historyPoints) { point in
+                    AreaMark(
+                        x: .value("Datum", point.date),
+                        y: .value("Akute Last", point.acuteLoad)
+                    )
+                    .foregroundStyle(
+                        LinearGradient(
+                            colors: [status.color.opacity(0.28), status.color.opacity(0.0)],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
+
+                    LineMark(
+                        x: .value("Datum", point.date),
+                        y: .value("Akute Last", point.acuteLoad)
+                    )
+                    .foregroundStyle(status.color)
+                    .lineStyle(StrokeStyle(lineWidth: 2.5))
+
+                    LineMark(
+                        x: .value("Datum", point.date),
+                        y: .value("Chronische Basis", point.chronicLoad)
+                    )
+                    .foregroundStyle(Color.secondary.opacity(0.7))
+                    .lineStyle(StrokeStyle(lineWidth: 1.8, dash: [4, 4]))
+                }
+                .frame(height: 170)
+                .chartXAxis {
+                    AxisMarks(values: .stride(by: .day, count: 14)) { _ in
+                        AxisValueLabel(format: .dateTime.day().month(.abbreviated))
+                            .font(.caption2)
+                        AxisGridLine(stroke: StrokeStyle(lineWidth: 0.5))
+                            .foregroundStyle(Color.secondary.opacity(0.2))
+                    }
+                }
+            }
+        }
+        .padding(16)
+        .background(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(Color.backgroundSecondary)
+        )
+        .padding(.horizontal)
+    }
+
+    private var statusTimelineCard: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            Text("Status-Verlauf (wann aufgetreten)")
+                .font(.headline)
+
+            if analysis.statusTimeline.isEmpty {
+                Text("Noch kein Status-Verlauf verfügbar.")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            } else {
+                VStack(spacing: 0) {
+                    ForEach(Array(analysis.statusTimeline.enumerated()), id: \.element.id) { idx, period in
+                        HStack(alignment: .top, spacing: 12) {
+                            VStack(spacing: 0) {
+                                Circle()
+                                    .fill(period.status.color)
+                                    .frame(width: 12, height: 12)
+                                    .padding(.top, 4)
+                                if idx < analysis.statusTimeline.count - 1 {
+                                    Rectangle()
+                                        .fill(Color.secondary.opacity(0.25))
+                                        .frame(width: 2)
+                                        .frame(minHeight: 34)
+                                }
+                            }
+
+                            VStack(alignment: .leading, spacing: 2) {
+                                HStack {
+                                    Text(period.status.rawValue)
+                                        .font(.subheadline.bold())
+                                        .foregroundColor(period.status.color)
+                                    Spacer()
+                                    Text(period.days == 1 ? "1 Tag" : "\(period.days) Tage")
+                                        .font(.caption2.weight(.semibold))
+                                        .foregroundColor(.secondary)
+                                        .padding(.horizontal, 8)
+                                        .padding(.vertical, 3)
+                                        .background(Color.backgroundPrimary.opacity(0.7))
+                                        .clipShape(Capsule())
+                                }
+
+                                Text(periodDateRangeText(period))
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                            .padding(.bottom, idx < analysis.statusTimeline.count - 1 ? 12 : 0)
+                        }
+                    }
+                }
+            }
+        }
+        .padding(16)
+        .background(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(Color.backgroundSecondary)
+        )
+        .padding(.horizontal)
+    }
+
+    private func periodDateRangeText(_ period: TrainingStatusPeriod) -> String {
+        let cal = Calendar.current
+        let startStr = period.startDate.formatted(.dateTime.day().month())
+        if cal.isDateInToday(period.endDate) {
+            return cal.isDate(period.startDate, inSameDayAs: period.endDate) ? "Heute" : "\(startStr) – Heute"
+        }
+        if cal.isDate(period.startDate, inSameDayAs: period.endDate) {
+            return startStr
+        }
+        let endStr = period.endDate.formatted(.dateTime.day().month())
+        return "\(startStr) – \(endStr)"
+    }
+}
