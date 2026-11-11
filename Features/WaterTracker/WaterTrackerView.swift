@@ -19,6 +19,7 @@ struct WaterChartDataPoint: Identifiable {
 
 struct WaterTrackerView: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.miniPlayerBottomInset) private var miniPlayerBottomInset
     @Query(sort: \WaterEntry.timestamp, order: .reverse) private var entries: [WaterEntry]
     
     @AppStorage(AppStorageKeys.dailyWaterGoalML) private var goalML: Double = 2500
@@ -256,7 +257,7 @@ struct WaterTrackerView: View {
                     .clipShape(Circle())
                     .shadow(color: .cyan.opacity(0.4), radius: 10, y: 5)
             }
-            .padding(.bottom, 20)
+            .padding(.bottom, 20 + miniPlayerBottomInset)
             .padding(.trailing, 20)
         }
         .sheet(isPresented: $showingAddEntry) {

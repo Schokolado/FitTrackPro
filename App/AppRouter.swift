@@ -138,24 +138,38 @@ struct AppRouter: View {
     }
 }
 
-// MARK: - VStack Layout Container for Mini-Player (prevents overlapping FABs & bottom CTAs)
+// MARK: - Native SwiftUI Mini-Player Overlay + Content Margin & Environment Inset
+private struct MiniPlayerBottomInsetKey: EnvironmentKey {
+    static let defaultValue: CGFloat = 0
+}
+
+extension EnvironmentValues {
+    var miniPlayerBottomInset: CGFloat {
+        get { self[MiniPlayerBottomInsetKey.self] }
+        set { self[MiniPlayerBottomInsetKey.self] = newValue }
+    }
+}
+
 private struct WorkoutMiniPlayerInsetModifier: ViewModifier {
     let viewModel: WorkoutSessionViewModel?
     let planName: String?
     let onTap: () -> Void
 
-    func body(content: Content) -> some View {
-        VStack(spacing: 0) {
-            content
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+    private var activeInset: CGFloat {
+        viewModel != nil ? 82 : 0
+    }
 
-            if let vm = viewModel {
-                WorkoutMiniPlayerView(viewModel: vm, planName: planName, onTap: onTap)
-                    .background(Color.backgroundPrimary)
-                    .transition(.move(edge: .bottom).combined(with: .opacity))
+    func body(content: Content) -> some View {
+        content
+            .contentMargins(.bottom, activeInset, for: .scrollContent)
+            .environment(\.miniPlayerBottomInset, activeInset)
+            .overlay(alignment: .bottom) {
+                if let vm = viewModel {
+                    WorkoutMiniPlayerView(viewModel: vm, planName: planName, onTap: onTap)
+                        .transition(.move(edge: .bottom).combined(with: .opacity))
+                }
             }
-        }
-        .animation(.easeInOut(duration: 0.2), value: viewModel != nil)
+            .animation(.easeInOut(duration: 0.2), value: viewModel != nil)
     }
 }
 

@@ -5,6 +5,7 @@ struct PlanDetailView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     @Environment(WorkoutManager.self) private var workoutManager
+    @Environment(\.miniPlayerBottomInset) private var miniPlayerBottomInset
     @Query(sort: \PlanGroup.sortOrder) private var groups: [PlanGroup]
     @Bindable var plan: TrainingPlan
     @AppStorage(AppStorageKeys.workoutPrefillSource) private var workoutPrefillSourceRaw: String = WorkoutPrefillSource.last.rawValue
@@ -192,7 +193,7 @@ struct PlanDetailView: View {
             if !groupedExercises.isEmpty, workoutManager.activeSession?.plan?.id != plan.id {
                 startWorkoutButton
                     .padding(.top, 10)
-                    .padding(.bottom, 10)
+                    .padding(.bottom, 10 + miniPlayerBottomInset)
                     .background(
                         .ultraThinMaterial,
                         ignoresSafeAreaEdges: .bottom

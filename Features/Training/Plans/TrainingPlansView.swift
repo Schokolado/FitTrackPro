@@ -623,6 +623,7 @@ struct TrainingMainView: View {
     @State private var isFabExpanded = false
     @EnvironmentObject var themeManager: ThemeManager
     @Environment(WorkoutManager.self) private var workoutManager
+    @Environment(\.miniPlayerBottomInset) private var miniPlayerBottomInset
     
     @State private var triggerAddPlan = false
     @State private var triggerAddExercise = false
@@ -786,7 +787,7 @@ struct TrainingMainView: View {
                             .rotationEffect(.degrees(isFabExpanded ? 45 : 0))
                     }
                 }
-                .padding(.bottom, 20)
+                .padding(.bottom, 20 + miniPlayerBottomInset)
                 .padding(.trailing, 20)
                 .padding(.top, 20)
             }

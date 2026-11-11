@@ -4,6 +4,7 @@ import SwiftData
 struct NutritionDashboardView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(WorkoutManager.self) private var workoutManager
+    @Environment(\.miniPlayerBottomInset) private var miniPlayerBottomInset
     @Query private var allDailyLogs: [DailyLog]
     
     @State private var selectedDate: Date = Date()
@@ -151,7 +152,7 @@ struct NutritionDashboardView: View {
                     .shadow(color: .black.opacity(0.2), radius: 5, x: 0, y: 3)
                 }
                 .padding()
-                .padding(.bottom, 20)
+                .padding(.bottom, 20 + miniPlayerBottomInset)
             }
         }
         .id(navId)

@@ -12,6 +12,7 @@ struct SleepChartDataPoint: Identifiable {
 
 struct SleepTrackerView: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.miniPlayerBottomInset) private var miniPlayerBottomInset
     @Query(sort: \SleepEntry.wakeTime, order: .reverse) private var manualEntries: [SleepEntry]
     
     @AppStorage(AppStorageKeys.dailySleepGoalHours) private var sleepGoalHours: Double = 8.0
@@ -370,7 +371,7 @@ struct SleepTrackerView: View {
                     .clipShape(Circle())
                     .shadow(color: .indigo.opacity(0.4), radius: 10, y: 5)
             }
-            .padding(.bottom, 20)
+            .padding(.bottom, 20 + miniPlayerBottomInset)
             .padding(.trailing, 20)
         }
         .sheet(isPresented: $showingAddEntry) {

@@ -19,6 +19,7 @@ struct ChartDataPoint: Identifiable {
 
 struct WeightTrackerView: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.miniPlayerBottomInset) private var miniPlayerBottomInset
     @Query(sort: \WeightEntry.timestamp, order: .reverse) private var entries: [WeightEntry]
     
     @State private var showingAddEntry = false
@@ -305,7 +306,7 @@ struct WeightTrackerView: View {
                     .clipShape(Circle())
                     .shadow(color: .brand.opacity(0.4), radius: 10, y: 5)
             }
-            .padding(.bottom, 20)
+            .padding(.bottom, 20 + miniPlayerBottomInset)
             .padding(.trailing, 20)
         }
         .sheet(isPresented: $showingAddEntry) {
