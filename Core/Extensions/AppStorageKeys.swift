@@ -37,6 +37,18 @@ enum AppStorageKeys {
     static let waterQuickAddPreset3     = "waterQuickAddPreset3"         // Double
 
     static let targetWeightKg           = "target_weight_kg"             // Double, default: 0 (disabled)
+
+    // Erinnerungen / Push-Reminders
+    static let workoutReminderEnabled   = "workout_reminder_enabled"     // Bool, default: false
+    static let workoutReminderHour      = "workout_reminder_hour"        // Int, default: 17
+    static let workoutReminderMinute    = "workout_reminder_minute"      // Int, default: 0
+    static let workoutReminderWeekdays  = "workout_reminder_weekdays"    // String CSV ("2,4,6"), default: Mo/Mi/Fr
+    static let macroReminderEnabled     = "macro_reminder_enabled"       // Bool, default: false
+    static let macroReminderHour        = "macro_reminder_hour"          // Int, default: 19
+    static let macroReminderMinute      = "macro_reminder_minute"        // Int, default: 30
+    static let stepReminderEnabled      = "step_reminder_enabled"        // Bool, default: false
+    static let stepReminderHour         = "step_reminder_hour"           // Int, default: 20
+    static let stepReminderMinute       = "step_reminder_minute"         // Int, default: 0
 }
 
 import Combine

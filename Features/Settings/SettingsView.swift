@@ -8,6 +8,16 @@ struct SettingsView: View {
     @AppStorage("zeroWeightIsBodyweight") private var zeroWeightIsBodyweight = true
     @AppStorage("appTheme") private var appTheme: AppTheme = .system
     @AppStorage("notificationsEnabled") private var notificationsEnabled = true
+    @AppStorage(AppStorageKeys.workoutReminderEnabled) private var workoutReminderEnabled = false
+    @AppStorage(AppStorageKeys.workoutReminderHour) private var workoutReminderHour = 17
+    @AppStorage(AppStorageKeys.workoutReminderMinute) private var workoutReminderMinute = 0
+    @AppStorage(AppStorageKeys.workoutReminderWeekdays) private var workoutReminderWeekdays = "2,4,6"
+    @AppStorage(AppStorageKeys.macroReminderEnabled) private var macroReminderEnabled = false
+    @AppStorage(AppStorageKeys.macroReminderHour) private var macroReminderHour = 19
+    @AppStorage(AppStorageKeys.macroReminderMinute) private var macroReminderMinute = 30
+    @AppStorage(AppStorageKeys.stepReminderEnabled) private var stepReminderEnabled = false
+    @AppStorage(AppStorageKeys.stepReminderHour) private var stepReminderHour = 20
+    @AppStorage(AppStorageKeys.stepReminderMinute) private var stepReminderMinute = 0
     @State private var cloudKitStatus: CKAccountStatus = .couldNotDetermine
     
     @AppStorage(AppStorageKeys.healthKitEnabled) private var healthKitEnabled = false
@@ -322,13 +332,60 @@ struct SettingsView: View {
                     }
                 }
                 
-                Section(header: Text("Benachrichtigungen")) {
+                Section {
                     Toggle("Pausen-Timer Push", isOn: $notificationsEnabled)
                         .onChange(of: notificationsEnabled) { _, newValue in
                             if newValue {
                                 NotificationService.shared.requestAuthorization()
                             }
                         }
+
+                    Toggle("Workout-Erinnerung", isOn: $workoutReminderEnabled)
+                        .onChange(of: workoutReminderEnabled) { _, newValue in
+                            if newValue { NotificationService.shared.requestAuthorization() }
+                            NotificationService.shared.syncReminders(modelContext: modelContext)
+                        }
+
+                    if workoutReminderEnabled {
+                        DatePicker(
+                            "Trainingszeit",
+                            selection: reminderTimeBinding(hour: $workoutReminderHour, minute: $workoutReminderMinute),
+                            displayedComponents: .hourAndMinute
+                        )
+                        workoutWeekdaySelector
+                    }
+
+                    Toggle("Makro- & Protein-Erinnerung", isOn: $macroReminderEnabled)
+                        .onChange(of: macroReminderEnabled) { _, newValue in
+                            if newValue { NotificationService.shared.requestAuthorization() }
+                            NotificationService.shared.syncReminders(modelContext: modelContext)
+                        }
+
+                    if macroReminderEnabled {
+                        DatePicker(
+                            "Erinnerungszeit (Makros)",
+                            selection: reminderTimeBinding(hour: $macroReminderHour, minute: $macroReminderMinute),
+                            displayedComponents: .hourAndMinute
+                        )
+                    }
+
+                    Toggle("Schrittziel-Erinnerung", isOn: $stepReminderEnabled)
+                        .onChange(of: stepReminderEnabled) { _, newValue in
+                            if newValue { NotificationService.shared.requestAuthorization() }
+                            NotificationService.shared.syncReminders(modelContext: modelContext)
+                        }
+
+                    if stepReminderEnabled {
+                        DatePicker(
+                            "Erinnerungszeit (Schritte)",
+                            selection: reminderTimeBinding(hour: $stepReminderHour, minute: $stepReminderMinute),
+                            displayedComponents: .hourAndMinute
+                        )
+                    }
+                } header: {
+                    Text("Benachrichtigungen & Reminder")
+                } footer: {
+                    Text("Makro- und Schritt-Reminder prüfen dein heutiges Ziel und melden sich nur, wenn noch Protein, Kalorien oder Schritte offen sind.")
                 }
                 
                 Section(header: Text("Darstellung")) {
@@ -560,5 +617,59 @@ struct SettingsView: View {
         
         isSyncing = false
         showSyncCompleteAlert = true
+    }
+
+    private func reminderTimeBinding(hour: Binding<Int>, minute: Binding<Int>) -> Binding<Date> {
+        Binding<Date>(
+            get: {
+                Calendar.current.date(bySettingHour: hour.wrappedValue, minute: minute.wrappedValue, second: 0, of: Date()) ?? Date()
+            },
+            set: { newDate in
+                let comps = Calendar.current.dateComponents([.hour, .minute], from: newDate)
+                hour.wrappedValue = comps.hour ?? hour.wrappedValue
+                minute.wrappedValue = comps.minute ?? minute.wrappedValue
+                NotificationService.shared.syncReminders(modelContext: modelContext)
+            }
+        )
+    }
+
+    private var selectedWorkoutWeekdays: Set<Int> {
+        Set(workoutReminderWeekdays.split(separator: ",").compactMap { Int($0) })
+    }
+
+    private var workoutWeekdaySelector: some View {
+        let orderedDays: [(Int, String)] = [
+            (2, "Mo"), (3, "Di"), (4, "Mi"), (5, "Do"), (6, "Fr"), (7, "Sa"), (1, "So")
+        ]
+        return VStack(alignment: .leading, spacing: 8) {
+            Text("Trainingstage")
+                .font(.caption)
+                .foregroundColor(.secondary)
+            HStack(spacing: 6) {
+                ForEach(orderedDays, id: \.0) { weekday, label in
+                    let isSelected = selectedWorkoutWeekdays.contains(weekday)
+                    Button {
+                        var updated = selectedWorkoutWeekdays
+                        if isSelected {
+                            if updated.count > 1 { updated.remove(weekday) }
+                        } else {
+                            updated.insert(weekday)
+                        }
+                        workoutReminderWeekdays = updated.sorted().map(String.init).joined(separator: ",")
+                        NotificationService.shared.syncReminders(modelContext: modelContext)
+                    } label: {
+                        Text(label)
+                            .font(.caption.bold())
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 6)
+                            .background(isSelected ? Color.brand : Color.backgroundPrimary)
+                            .foregroundColor(isSelected ? .white : .primary)
+                            .cornerRadius(8)
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+        }
+        .padding(.vertical, 4)
     }
 }

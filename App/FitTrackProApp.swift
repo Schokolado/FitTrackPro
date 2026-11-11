@@ -75,6 +75,13 @@ struct FitTrackProApp: App {
             .onChange(of: scenePhase) { oldPhase, newPhase in
                 if newPhase == .background || newPhase == .inactive {
                     WidgetDataSync.sync()
+                    if let container = modelContainer {
+                        NotificationService.shared.syncReminders(modelContext: container.mainContext)
+                    }
+                } else if newPhase == .active {
+                    if let container = modelContainer {
+                        NotificationService.shared.syncReminders(modelContext: container.mainContext)
+                    }
                 }
             }
         }

@@ -34,8 +34,6 @@
   - Umbau vom `.fullScreenCover` auf ein Custom-Overlay (`ZStack` im `AppRouter`), damit die Ansicht per Finger-Drag fließend in den Mini-Player gezogen werden kann.
 - [ ] **Widgets erweitern & verfeinern** *(Mittel)*
   - Design-Polishing bestehender Widgets sowie zusätzliche Formate (z. B. großes Widget oder dedizierte Workout-/Makro-Widgets).
-- [ ] **Push-Benachrichtigungen / Reminder** *(Mittel)*
-  - Konfigurierbare Erinnerungen für Workouts, Makro-Ziele (z. B. Rest-Protein) und Schrittziele.
 - [ ] **Apple Health Erweiterungen** *(Mittel)*
   - Gewicht aus Apple Health importieren („Import aus Health“).
   - Kalorien- und Makro-Export in Apple Health.
@@ -83,4 +81,5 @@
 - [x] **Trainingsbelastung & Fitness-Status (inkl. 6-Wochen-Verlauf)** (`c9425cc`) – Akute vs. chronische Belastung und Status-Timeline.
 - [x] **Biologisches Alter / Fitness-Alter** (`7498e28`, `db5e286`, `4c5deda`) – Berechnung mit HealthKit-`VO2max`, Ruhepuls, Schritten, Trainingsfrequenz, Schlaf sowie Körperfettanteil / Waist-to-Height-Ratio (mit BMI-Fallback).
 - [x] **Dynamische Farbgebung für Kalorien-Kreis (Dashboard & Ernährung)** (`d027585`) – `CalorieRingEvaluator` mit Warnfarben (Rot bei Überschuss, Orange bei abendlichem/vergangenem Defizit, Grün im Zielkorridor) auf Basis der konfigurierbaren Toleranz (`nutritionTolerance`) und Abend-Uhrzeit (`calorieWarningEveningHour`) in `SettingsView`.
-- [x] **Verbrannte Kalorien direkt im Dashboard & Ernährungs-Tab anzeigen** – Anzeige der aktiven HealthKit-Kalorien (`fetchActiveEnergyBurned(for:)`), geschätztem Tagesumsatz (`EnergyCalculator.estimatedBMR` + Aktiv) und Tagesbilanz in `NutritionSummaryCard`, `NutritionSummaryCardSmall` und `NutritionDashboardView`.
+- [x] **Verbrannte Kalorien direkt im Dashboard & Ernährungs-Tab anzeigen** (`b8bbc92`) – Anzeige der aktiven HealthKit-Kalorien (`fetchActiveEnergyBurned(for:)`), geschätztem Tagesumsatz (`EnergyCalculator.estimatedBMR` + Aktiv) und Tagesbilanz in `NutritionSummaryCard`, `NutritionSummaryCardSmall` und `NutritionDashboardView`.
+- [x] **Push-Benachrichtigungen / Reminder** – Konfigurierbare Erinnerungen für Workout-Tage/Uhrzeit, Makro-/Protein-Restbedarf und Schrittziel in `SettingsView` & `NotificationService` (automatischer Tages-Sync bei App-Wechsel).
