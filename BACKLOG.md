@@ -20,8 +20,6 @@
   - Balken- und Liniendiagramme direkt in der Trainingshistorie (`WorkoutHistoryView` / `ExerciseHistoryView`, z. B. gehobenes Volumen über Zeit, 1RM-Fortschritt).
 - [ ] **Erweiterte Statistik: Trainings-Kalender** *(Mittel)*
   - Übersichts-Kalender für absolvierte Trainingstage *(Hinweis: Muskelgruppen-Balance / „Muscle Fokus“ ist bereits umgesetzt).*
-- [ ] **Share Workout inkl. Selfie-Foto** *(Mittel)*
-  - Nach Workout-Abschluss und in der Historie eine Share-Grafik mit Workout-Stats + optionalem Selfie (Frontkamera/Galerie) per `ImageRenderer` rendern und über `ShareSheet` teilen, ohne das Foto dauerhaft zu speichern.
 - [ ] **„Was ist letzte Nacht passiert?“ (Schlaf-Einflüsse)** *(Mittel / iOS-Restriktionen)*
   - Automatische Hinweise auf mögliche Schlaf-Faktoren: späte Mahlzeiten (aus `FoodEntry`-Zeitstempeln), Umgebungslautstärke (`environmentalAudioExposure` via HealthKit) sowie Hinweis zu iOS-Limitierungen bei Screen-Time/Handynutzung.
 - [ ] **Interaktives Workout Live Activity (Lockscreen)** *(Mittel)*
@@ -79,3 +77,4 @@
 - [x] **Vitalität-Tab (ehem. Akku / Recovery)** (`593c9e9`, `56c6db2`) – Eigenständiger 4. Tab in der Navigationsleiste (`AppRouter`, `VitalityView`) mit Segment-Wechsel zwischen **Erholung** (`RecoveryView`) und **Tagesenergie** (`EnergyDetailView`) sowie umbenannten Dashboard-Karten.
 - [x] **Voraussichtliche Trainingsdauer anzeigen** (`2795f2b`) – Schätzung aus Sätzen, Ziel-Wdh./Zeit (`usesTimeInput`) und Pausenzeiten (`TrainingPlan.estimatedDurationText`), angezeigt in `PlanCard` (`TrainingPlansView`) und `PlanDetailView`.
 - [x] **Chart X-Achsen-Beschriftungen am Rand korrigieren** – Nach innen verankerte Rand-Labels (`ChartAxisHelper` / `edgeSafeDateXAxis` in `View+Modifiers.swift`) inkl. `.chartPlotStyle { $0.clipped() }` für `WeightTrackerView`, `ExerciseProgressChart`, `PlanProgressView`, `StepTrackerView`, `WaterTrackerView`, `SleepTrackerView` und `RecoveryFactorDetailView`.
+- [x] **Share Workout inkl. Selfie-Foto** – `WorkoutShareSheet` & `WorkoutShareCardContent` (`WorkoutShareView.swift`) mit `Feed (4:5)` / `Story (9:16)` Format, Themes, optionalem In-Memory-Selfie (Frontkamera via `UIImagePickerController` oder `PhotosPicker`, ohne Speicherung) und `@3x` Export via `ImageRenderer` & `ShareSheet` in `WorkoutSummaryView` und `WorkoutHistoryDetailView`.

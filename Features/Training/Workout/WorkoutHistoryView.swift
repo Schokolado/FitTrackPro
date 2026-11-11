@@ -303,6 +303,7 @@ struct WorkoutHistoryDetailView: View {
     @Query(sort: \WeightEntry.timestamp, order: .reverse) private var weightEntries: [WeightEntry]
     @State private var showDeleteConfirm = false
     @State private var showActiveWarning = false
+    @State private var showingShareSheet = false
 
     private var duration: String {
         durationString(session: session, activeSessionId: activeSessionId)
@@ -583,6 +584,19 @@ struct WorkoutHistoryDetailView: View {
         .background(Color.backgroundPrimary)
         .navigationTitle("Workout Details")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    showingShareSheet = true
+                } label: {
+                    Image(systemName: "square.and.arrow.up")
+                }
+                .accessibilityLabel("Workout teilen")
+            }
+        }
+        .sheet(isPresented: $showingShareSheet) {
+            WorkoutShareSheet(session: session)
+        }
         .alert("Workout wirklich löschen?", isPresented: $showDeleteConfirm) {
             Button("Löschen", role: .destructive) {
                 modelContext.delete(session)

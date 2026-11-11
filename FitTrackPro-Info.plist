@@ -22,5 +22,7 @@
 	</array>
 	<key>NSSupportsLiveActivities</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>Vantage benötigt die Kamera für Workout-Selfies und zum Scannen von Lebensmittel-Barcodes.</string>
 </dict>
 </plist>

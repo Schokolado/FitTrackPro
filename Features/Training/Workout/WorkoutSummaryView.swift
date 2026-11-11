@@ -20,6 +20,7 @@ struct WorkoutSummaryView: View {
     @Query(sort: \WeightEntry.timestamp, order: .reverse) private var weightEntries: [WeightEntry]
     @State private var syncToHealth: Bool = false
     @State private var calorieEstimate: WorkoutCalorieEstimate? = nil
+    @State private var showingShareSheet = false
     
     // Computed statistics
     private var totalVolume: Double {
@@ -89,6 +90,40 @@ struct WorkoutSummaryView: View {
                     .background(Color.backgroundCard)
                     .cornerRadius(16)
                     .shadow(color: .black.opacity(0.05), radius: 5, y: 2)
+
+                    // Share Workout inkl. optionalem Selfie
+                    Button {
+                        showingShareSheet = true
+                    } label: {
+                        HStack(spacing: 12) {
+                            Image(systemName: "camera.viewfinder")
+                                .font(.title3)
+                                .foregroundColor(.white)
+                                .frame(width: 40, height: 40)
+                                .background(Color.brand)
+                                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("Workout teilen")
+                                    .font(.headline)
+                                    .foregroundColor(.primary)
+                                Text("Grafik mit Stats & optionalem Selfie")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+
+                            Spacer()
+
+                            Image(systemName: "square.and.arrow.up")
+                                .font(.subheadline.weight(.semibold))
+                                .foregroundColor(.brand)
+                        }
+                        .padding(14)
+                        .background(Color.backgroundCard)
+                        .cornerRadius(16)
+                        .shadow(color: .black.opacity(0.05), radius: 5, y: 2)
+                    }
+                    .buttonStyle(.plain)
                     
                     // Muskelgruppen-Balance
                     let sessionBalanceStats = StatisticsViewModel.muscleGroupBreakdown(in: session)
@@ -203,6 +238,13 @@ struct WorkoutSummaryView: View {
                 Button("Abbrechen", role: .cancel) {}
             } message: {
                 Text("Bist du sicher, dass du das Training abbrechen und verwerfen möchtest? Alle bisherigen Einträge gehen verloren.")
+            }
+            .sheet(isPresented: $showingShareSheet) {
+                WorkoutShareSheet(
+                    session: session,
+                    burnedCaloriesOverride: calorieEstimate?.calories,
+                    averageHeartRateOverride: calorieEstimate?.averageHeartRate
+                )
             }
         }
     }

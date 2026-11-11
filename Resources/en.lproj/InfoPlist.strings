@@ -1,4 +1,4 @@
-"NSCameraUsageDescription" = "Vantage needs camera access to scan food barcodes.";
+"NSCameraUsageDescription" = "Vantage needs camera access for workout selfies and scanning food barcodes.";
 "NSHealthShareUsageDescription" = "Vantage reads health data for your fitness tracking.";
 "NSHealthUpdateUsageDescription" = "Vantage writes workout and weight data to Apple Health.";
 "NSPhotoLibraryUsageDescription" = "Select images and videos for your exercises.";
