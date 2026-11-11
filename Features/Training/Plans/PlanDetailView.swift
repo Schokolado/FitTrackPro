@@ -33,7 +33,7 @@ struct PlanDetailView: View {
     @State private var showingShareSheet = false
     @State private var generatedPDFUrl: URL?
     @State private var isGeneratingPDF = false
-    @State private var isExercisesExpanded = false
+    @State private var isExercisesExpanded = true
     
     private var planSessions: [WorkoutSession] {
         allSessions.filter { $0.plan?.id == plan.id }
@@ -65,9 +65,10 @@ struct PlanDetailView: View {
     private var mainContent: some View {
         ScrollView {
             ScrollViewReader { proxy in
-                VStack(spacing: Spacing.md) {
+                LazyVStack(spacing: Spacing.md, pinnedViews: [.sectionHeaders]) {
                     
                     planMetaHeaderRow
+                        .id("planTop")
                     
                     let planBalanceStats = StatisticsViewModel.muscleGroupBreakdown(for: plan)
                     if !planBalanceStats.isEmpty {
@@ -102,58 +103,69 @@ struct PlanDetailView: View {
                         let totalSets = sortedPlanExercises.reduce(0) { $0 + $1.targetSets }
                         let previewNames = sortedPlanExercises.compactMap { $0.exercise?.name }.joined(separator: " · ")
 
-                        Button {
-                            withAnimation(.easeInOut(duration: 0.25)) {
-                                isExercisesExpanded.toggle()
+                        Section {
+                            if isExercisesExpanded {
+                                ForEach(groupedExercises) { group in
+                                    exerciseGroupView(for: group)
+                                }
+                                addExerciseButton
                             }
-                        } label: {
-                            HStack(spacing: 12) {
-                                Image(systemName: "dumbbell.fill")
-                                    .foregroundColor(.blue)
-                                    .font(.subheadline)
-                                    .frame(width: 24)
-
-                                VStack(alignment: .leading, spacing: 3) {
-                                    HStack(spacing: 6) {
-                                        Text("Übungen")
-                                            .font(.subheadline.bold())
-                                            .foregroundColor(.primary)
-                                        Text("\(sortedPlanExercises.count) Übungen • \(totalSets) Sätze")
-                                            .font(.caption)
-                                            .foregroundColor(.secondary)
-                                    }
-
-                                    if !isExercisesExpanded && !previewNames.isEmpty {
-                                        Text(previewNames)
-                                            .font(.caption2)
-                                            .foregroundColor(.secondary)
-                                            .lineLimit(1)
+                        } header: {
+                            Button {
+                                let willCollapse = isExercisesExpanded
+                                withAnimation(.easeInOut(duration: 0.25)) {
+                                    isExercisesExpanded.toggle()
+                                }
+                                if willCollapse {
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                                        withAnimation(.easeInOut(duration: 0.25)) {
+                                            proxy.scrollTo("planTop", anchor: .top)
+                                        }
                                     }
                                 }
+                            } label: {
+                                HStack(spacing: 12) {
+                                    Image(systemName: "dumbbell.fill")
+                                        .foregroundColor(.blue)
+                                        .font(.subheadline)
+                                        .frame(width: 24)
 
-                                Spacer()
+                                    VStack(alignment: .leading, spacing: 3) {
+                                        HStack(spacing: 6) {
+                                            Text("Übungen")
+                                                .font(.subheadline.bold())
+                                                .foregroundColor(.primary)
+                                            Text("\(sortedPlanExercises.count) Übungen • \(totalSets) Sätze")
+                                                .font(.caption)
+                                                .foregroundColor(.secondary)
+                                        }
 
-                                Image(systemName: isExercisesExpanded ? "chevron.up" : "chevron.down")
-                                    .font(.caption.bold())
-                                    .foregroundColor(.secondary)
+                                        if !isExercisesExpanded && !previewNames.isEmpty {
+                                            Text(previewNames)
+                                                .font(.caption2)
+                                                .foregroundColor(.secondary)
+                                                .lineLimit(1)
+                                        }
+                                    }
+
+                                    Spacer()
+
+                                    Image(systemName: isExercisesExpanded ? "chevron.up" : "chevron.down")
+                                        .font(.caption.bold())
+                                        .foregroundColor(.secondary)
+                                }
+                                .padding(14)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                        .fill(Color.backgroundSecondary)
+                                )
                             }
-                            .padding(14)
-                            .background(
-                                RoundedRectangle(cornerRadius: 16, style: .continuous)
-                                    .fill(Color.backgroundSecondary)
-                            )
+                            .buttonStyle(.plain)
+                            .padding(.horizontal)
+                            .padding(.vertical, 4)
+                            .background(Color.backgroundPrimary)
                         }
-                        .buttonStyle(.plain)
-                        .padding(.horizontal)
-
-                        if isExercisesExpanded {
-                            ForEach(groupedExercises) { group in
-                                exerciseGroupView(for: group)
-                            }
-                        }
-                    }
-                    
-                    if groupedExercises.isEmpty || isExercisesExpanded {
+                    } else {
                         addExerciseButton
                     }
                 }
