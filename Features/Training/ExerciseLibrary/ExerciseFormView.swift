@@ -193,15 +193,15 @@ struct ExerciseFormView: View {
                 .disabled(name.trimmingCharacters(in: .whitespaces).isEmpty)
             }
         }
-        .alert("Notiz zurücksetzen?", isPresented: $showingResetNotesAlert) {
-            Button("Abbrechen", role: .cancel) { }
-            Button("Zurücksetzen", role: .destructive) {
-                if let defaultNotes = SeedDataService.shared.defaultExerciseNotes(for: exerciseToEdit?.name ?? name) {
+        .sheet(isPresented: $showingResetNotesAlert) {
+            if let defaultNotes = SeedDataService.shared.defaultExerciseNotes(for: exerciseToEdit?.name ?? name) {
+                NoteResetConfirmationSheet(
+                    currentText: notes,
+                    defaultText: defaultNotes
+                ) {
                     notes = defaultNotes
                 }
             }
-        } message: {
-            Text("Möchtest du die Notizen für diese Übung auf die Standardbeschreibung (Werkseinstellungen) zurücksetzen?")
         }
     }
     

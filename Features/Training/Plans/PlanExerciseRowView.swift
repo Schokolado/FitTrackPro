@@ -422,17 +422,17 @@ struct PlanExerciseNotesSheet: View {
                     }
                 }
             }
-            .alert("Notiz zurücksetzen?", isPresented: $showingResetAlert) {
-                Button("Abbrechen", role: .cancel) { }
-                Button("Zurücksetzen", role: .destructive) {
-                    if let defaultNote = defaultFactoryNote {
+            .sheet(isPresented: $showingResetAlert) {
+                if let defaultNote = defaultFactoryNote {
+                    NoteResetConfirmationSheet(
+                        currentText: isEditing ? draftNotes : planExercise.planSpecificNotes,
+                        defaultText: defaultNote
+                    ) {
                         planExercise.planSpecificNotes = defaultNote
                         draftNotes = defaultNote
                         try? modelContext.save()
                     }
                 }
-            } message: {
-                Text("Möchtest du diese Übungsnotiz im Plan auf die Standardbeschreibung (Werkseinstellungen) zurücksetzen?")
             }
             .onAppear {
                 draftNotes = planExercise.planSpecificNotes

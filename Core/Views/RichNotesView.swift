@@ -661,3 +661,105 @@ struct RichNotesEditSheet: View {
         .presentationDetents([.medium, .large])
     }
 }
+
+struct NoteResetConfirmationSheet: View {
+    @Environment(\.dismiss) private var dismiss
+
+    let currentText: String
+    let defaultText: String
+    let onConfirm: () -> Void
+
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
+                    HStack(alignment: .top, spacing: 12) {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .font(.title2)
+                            .foregroundColor(.orange)
+
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Aktuelle Notiz wird überschrieben")
+                                .font(.headline)
+                            Text("Wenn du fortfährst, wird dein aktueller Notiztext gelöscht und vollständig durch den Ausgangszustand (Standardbeschreibung) ersetzt.")
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                    .padding()
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(Color.orange.opacity(0.12))
+                    .cornerRadius(14)
+
+                    VStack(alignment: .leading, spacing: 8) {
+                        Label("Aktueller Text (wird gelöscht)", systemImage: "trash")
+                            .font(.subheadline.bold())
+                            .foregroundColor(.destructive)
+
+                        Group {
+                            let trimmed = currentText.trimmingCharacters(in: .whitespacesAndNewlines)
+                            if trimmed.isEmpty {
+                                Text("Keine aktuelle Notiz vorhanden.")
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary)
+                                    .italic()
+                            } else {
+                                RichNotesView(text: currentText)
+                            }
+                        }
+                        .padding()
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(Color.destructive.opacity(0.06))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(Color.destructive.opacity(0.25), lineWidth: 1)
+                        )
+                        .cornerRadius(12)
+                    }
+
+                    VStack(alignment: .leading, spacing: 8) {
+                        Label("Ausgangszustand (überschreibt aktuellen Text)", systemImage: "arrow.counterclockwise")
+                            .font(.subheadline.bold())
+                            .foregroundColor(.brand)
+
+                        RichNotesView(text: defaultText)
+                            .padding()
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .background(Color.brand.opacity(0.06))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .stroke(Color.brand.opacity(0.25), lineWidth: 1)
+                            )
+                            .cornerRadius(12)
+                    }
+                }
+                .padding()
+            }
+            .background(Color.backgroundPrimary)
+            .navigationTitle("Zurücksetzen bestätigen")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Abbrechen") { dismiss() }
+                }
+            }
+            .safeAreaInset(edge: .bottom) {
+                Button(role: .destructive) {
+                    onConfirm()
+                    dismiss()
+                } label: {
+                    Label("Überschreiben & Zurücksetzen", systemImage: "arrow.counterclockwise")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                        .background(Color.destructive)
+                        .cornerRadius(14)
+                }
+                .padding()
+                .background(.ultraThinMaterial)
+            }
+        }
+        .presentationDetents([.medium, .large])
+    }
+}

@@ -257,16 +257,16 @@ struct ExerciseDetailView: View {
         .fullScreenCover(isPresented: $showingFullScreenViewer) {
             FullScreenImageViewer(mediaPaths: exercise.localMediaPaths, initialIndex: selectedImageIndex)
         }
-        .alert("Notiz zurücksetzen?", isPresented: $showingResetNotesAlert) {
-            Button("Abbrechen", role: .cancel) { }
-            Button("Zurücksetzen", role: .destructive) {
-                if let def = SeedDataService.shared.defaultExerciseNotes(for: exercise.name) {
+        .sheet(isPresented: $showingResetNotesAlert) {
+            if let def = SeedDataService.shared.defaultExerciseNotes(for: exercise.name) {
+                NoteResetConfirmationSheet(
+                    currentText: exercise.notes,
+                    defaultText: def
+                ) {
                     exercise.notes = def
                     try? modelContext.save()
                 }
             }
-        } message: {
-            Text("Möchtest du die Notizen für diese Übung auf die Standardbeschreibung (Werkseinstellungen) zurücksetzen?")
         }
     }
     

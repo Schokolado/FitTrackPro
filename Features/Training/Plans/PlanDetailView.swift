@@ -964,17 +964,17 @@ struct PlanNotesSheetView: View {
                     }
                 }
             }
-            .alert("Notiz zurücksetzen?", isPresented: $showingResetAlert) {
-                Button("Abbrechen", role: .cancel) { }
-                Button("Zurücksetzen", role: .destructive) {
-                    if let defaultNote = defaultFactoryNote {
+            .sheet(isPresented: $showingResetAlert) {
+                if let defaultNote = defaultFactoryNote {
+                    NoteResetConfirmationSheet(
+                        currentText: isEditingNotes ? editNotes : plan.notes,
+                        defaultText: defaultNote
+                    ) {
                         plan.notes = defaultNote
                         editNotes = defaultNote
                         try? modelContext.save()
                     }
                 }
-            } message: {
-                Text("Möchtest du diese Plan-Notiz auf die Standardbeschreibung (Werkseinstellungen) zurücksetzen?")
             }
         }
         .presentationDetents([.medium, .large])
