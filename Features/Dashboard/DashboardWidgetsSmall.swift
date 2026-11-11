@@ -289,67 +289,6 @@ struct RecoveryCardSmall: View {
     }
 }
 
-struct CalorieBurnSummaryCardSmall: View {
-    let consumed: Double
-    let effectiveGoal: Double
-    let activeBurned: Double?
-    let totalBurned: Double?
-
-    private var balanceValue: Int {
-        let reference = totalBurned ?? effectiveGoal
-        return Int((consumed - reference).rounded())
-    }
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack(alignment: .top) {
-                Image(systemName: "flame.circle.fill")
-                    .foregroundColor(.orange)
-                    .font(.title2)
-                    .frame(width: 28, height: 28)
-                Spacer()
-                Image(systemName: "chevron.right")
-                    .foregroundColor(.gray)
-                    .frame(width: 28, height: 28)
-            }
-
-            Spacer()
-
-            VStack(alignment: .leading, spacing: 4) {
-                Text("Umsatz & Bilanz")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                    .lineLimit(1)
-
-                if let active = activeBurned {
-                    Text("\(Int(active)) aktiv")
-                        .font(.system(size: 22, weight: .bold, design: .rounded))
-                        .foregroundColor(.orange)
-                } else {
-                    Text("-- kcal")
-                        .font(.system(size: 22, weight: .bold, design: .rounded))
-                }
-
-                let prefix = balanceValue > 0 ? "+" : ""
-                let suffix = totalBurned != nil ? "vs. Umsatz" : "vs. Ziel"
-                Text("\(prefix)\(balanceValue) kcal \(suffix)")
-                    .font(.caption)
-                    .foregroundColor(balanceValue <= 0 ? .green : .orange)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.85)
-            }
-        }
-        .padding(20)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .frame(height: 160)
-        .background(
-            RoundedRectangle(cornerRadius: 24, style: .continuous)
-                .fill(Color.backgroundSecondary)
-                .shadow(color: .black.opacity(0.05), radius: 15, y: 8)
-        )
-    }
-}
-
 // MARK: - MoodSummaryCardSmall
 
 struct MoodSummaryCardSmall: View {

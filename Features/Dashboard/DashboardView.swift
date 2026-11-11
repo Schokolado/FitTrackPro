@@ -13,10 +13,6 @@ struct DashboardView: View {
     @AppStorage("daily_step_goal") private var dailyStepGoal: Int = 10000
     @AppStorage("userName") private var userName: String = ""
     @AppStorage(AppStorageKeys.healthKitEnabled) private var healthKitEnabled = false
-    @AppStorage(AppStorageKeys.userBirthDate) private var birthDateInterval: Double = 0
-    @AppStorage(AppStorageKeys.userBiologicalSex) private var userSex: String = "other"
-    @AppStorage(AppStorageKeys.userHeightCm) private var heightCm: Double = 175
-    @AppStorage(AppStorageKeys.onboardingWeightKg) private var onboardingWeightKg: Double = 0
     @Environment(\.scenePhase) private var scenePhase
     
     @AppStorage("cached_today_steps") private var cachedTodaySteps: Int = 0
@@ -81,24 +77,9 @@ struct DashboardView: View {
         dailyCalorieGoal + (addActiveCaloriesToGoal ? (todayActiveCalories ?? 0) : 0)
     }
 
-    private var todayEstimatedBMR: Double? {
-        let weight = weightEntries.first?.weightKg ?? (onboardingWeightKg > 0 ? onboardingWeightKg : nil)
-        return EnergyCalculator.estimatedBMR(
-            weightKg: weight,
-            heightCm: heightCm,
-            birthDateTimestamp: birthDateInterval,
-            biologicalSex: userSex
-        )
-    }
-
-    private var todayTotalBurnedCalories: Double? {
-        guard let active = todayActiveCalories, let bmr = todayEstimatedBMR else { return nil }
-        return bmr + active
-    }
     @State private var navId = UUID()
     @StateObject private var layoutManager = DashboardLayoutManager()
     @State private var isEditMode = false
-    @State private var showingCalorieBreakdown = false
     
     var body: some View {
         NavigationStack {
@@ -220,19 +201,6 @@ struct DashboardView: View {
                 }
                 .navigationDestination(isPresented: $showingStepTrackerFromWidget) {
                     StepTrackerView()
-                }
-                .sheet(isPresented: $showingCalorieBreakdown) {
-                    CalorieBreakdownSheet(
-                        date: Date(),
-                        consumed: consumedCalories,
-                        baseGoal: dailyCalorieGoal,
-                        activeBurned: todayActiveCalories,
-                        addActiveToGoal: addActiveCaloriesToGoal,
-                        bmr: todayEstimatedBMR,
-                        tolerance: nutritionTolerance,
-                        eveningHour: calorieWarningEveningHour
-                    )
-                    .presentationDetents([.medium, .large])
                 }
         }
         .id(navId)
@@ -405,28 +373,6 @@ struct DashboardView: View {
                 }
             }
             .buttonStyle(PlainButtonStyle())
-
-        case .calorieBurn:
-            Button(action: {
-                showingCalorieBreakdown = true
-            }) {
-                if config.size == .large {
-                    CalorieBurnSummaryCard(
-                        consumed: consumedCalories,
-                        effectiveGoal: effectiveDailyCalorieGoal,
-                        activeBurned: todayActiveCalories,
-                        totalBurned: todayTotalBurnedCalories
-                    )
-                } else {
-                    CalorieBurnSummaryCardSmall(
-                        consumed: consumedCalories,
-                        effectiveGoal: effectiveDailyCalorieGoal,
-                        activeBurned: todayActiveCalories,
-                        totalBurned: todayTotalBurnedCalories
-                    )
-                }
-            }
-            .buttonStyle(PlainButtonStyle())
             
         case .steps:
             NavigationLink(destination: StepTrackerView()) {
@@ -540,22 +486,6 @@ struct DashboardView: View {
                     goal: effectiveDailyCalorieGoal,
                     tolerance: nutritionTolerance,
                     eveningHour: calorieWarningEveningHour
-                )
-            }
-        case .calorieBurn:
-            if config.size == .large {
-                CalorieBurnSummaryCard(
-                    consumed: consumedCalories,
-                    effectiveGoal: effectiveDailyCalorieGoal,
-                    activeBurned: todayActiveCalories,
-                    totalBurned: todayTotalBurnedCalories
-                )
-            } else {
-                CalorieBurnSummaryCardSmall(
-                    consumed: consumedCalories,
-                    effectiveGoal: effectiveDailyCalorieGoal,
-                    activeBurned: todayActiveCalories,
-                    totalBurned: todayTotalBurnedCalories
                 )
             }
         case .steps:

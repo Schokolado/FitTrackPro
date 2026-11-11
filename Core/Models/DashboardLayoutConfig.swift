@@ -2,13 +2,12 @@ import SwiftUI
 import Combine
 
 enum DashboardCardType: String, Codable, CaseIterable, Identifiable {
-    case nutrition, calorieBurn, steps, weight, training, recovery, energy, water, sleep, mood
+    case nutrition, steps, weight, training, recovery, energy, water, sleep, mood
     var id: String { rawValue }
     
     var displayName: String {
         switch self {
         case .nutrition: return "Ernährung"
-        case .calorieBurn: return "Umsatz & Bilanz"
         case .steps: return "Schritte"
         case .weight: return "Gewicht"
         case .training: return "Training"
@@ -23,7 +22,6 @@ enum DashboardCardType: String, Codable, CaseIterable, Identifiable {
     var icon: String {
         switch self {
         case .nutrition: return "flame.fill"
-        case .calorieBurn: return "flame.circle.fill"
         case .steps: return "figure.walk"
         case .weight: return "scalemass"
         case .training: return "figure.run"
@@ -50,7 +48,6 @@ struct DashboardCardConfig: Codable, Identifiable, Equatable {
         DashboardCardConfig(type: .recovery, size: .small),
         DashboardCardConfig(type: .energy, size: .small),
         DashboardCardConfig(type: .nutrition, size: .large),
-        DashboardCardConfig(type: .calorieBurn, size: .large),
         DashboardCardConfig(type: .steps, size: .small),
         DashboardCardConfig(type: .weight, size: .small),
         DashboardCardConfig(type: .training, size: .small),
@@ -101,20 +98,27 @@ class DashboardLayoutManager: ObservableObject {
             NSUbiquitousKeyValueStore.default.synchronize()
         }
         
-        if let data = dataToDecode,
-           let decoded = try? JSONDecoder().decode([DashboardCardConfig].self, from: data),
-           !decoded.isEmpty {
-            
-            var loadedCards = decoded
-            for defaultCard in DashboardCardConfig.defaultLayout {
-                if !loadedCards.contains(where: { $0.type == defaultCard.type }) {
-                    loadedCards.append(defaultCard)
+        if let data = dataToDecode {
+            struct RawCard: Codable {
+                let type: String
+                let size: DashboardCardSize
+            }
+            if let rawCards = try? JSONDecoder().decode([RawCard].self, from: data) {
+                var loadedCards = rawCards.compactMap { raw in
+                    DashboardCardType(rawValue: raw.type).map { DashboardCardConfig(type: $0, size: raw.size) }
+                }
+                if !loadedCards.isEmpty {
+                    for defaultCard in DashboardCardConfig.defaultLayout {
+                        if !loadedCards.contains(where: { $0.type == defaultCard.type }) {
+                            loadedCards.append(defaultCard)
+                        }
+                    }
+                    self.cards = loadedCards
+                    return
                 }
             }
-            self.cards = loadedCards
-        } else {
-            self.cards = DashboardCardConfig.defaultLayout
         }
+        self.cards = DashboardCardConfig.defaultLayout
     }
     
     func save() {
