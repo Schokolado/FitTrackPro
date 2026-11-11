@@ -257,7 +257,11 @@ struct WeightTrackerView: View {
                             }
                         }
                         .chartYScale(domain: chartYScale)
-                        .chartXScale(range: .plotDimension(padding: 10))
+                        .edgeSafeDateXAxis(
+                            values: .automatic(desiredCount: selectedTimeRange == .year ? 5 : 4),
+                            format: weightXAxisFormat
+                        )
+                        .chartPlotStyle { $0.clipped() }
                         .chartXSelection(value: $selectedDate)
                         .frame(height: 250)
                         .padding()
@@ -375,6 +379,22 @@ struct WeightTrackerView: View {
     
     private func findClosestEntry(to date: Date) -> ChartDataPoint? {
         chartEntries.min(by: { abs($0.timestamp.timeIntervalSince(date)) < abs($1.timestamp.timeIntervalSince(date)) })
+    }
+
+    private var weightXAxisFormat: Date.FormatStyle {
+        switch selectedTimeRange {
+        case .week, .month:
+            return .dateTime.day().month(.abbreviated)
+        case .year:
+            return .dateTime.month(.abbreviated).year(.twoDigits)
+        case .all:
+            if let first = chartEntries.first?.timestamp,
+               let last = chartEntries.last?.timestamp,
+               last.timeIntervalSince(first) > 86400 * 540 {
+                return .dateTime.year()
+            }
+            return .dateTime.month(.abbreviated).year(.twoDigits)
+        }
     }
     
     private func deleteEntry(_ entry: WeightEntry) {

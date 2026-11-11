@@ -189,6 +189,10 @@ struct WaterTrackerView: View {
                                 .foregroundStyle(Color.cyan.opacity(0.5))
                         }
                         .chartYScale(domain: 0...(max(goalML + 500, (chartEntries.map { $0.amountML }.max() ?? goalML) + 500)))
+                        .edgeSafeDateXAxis(
+                            values: .automatic(desiredCount: 4),
+                            format: .dateTime.day().month(.abbreviated)
+                        )
                         .frame(height: 250)
                         .padding()
                         .background(

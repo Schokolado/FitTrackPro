@@ -107,12 +107,10 @@ struct StepTrackerView: View {
                                 .foregroundStyle(Color.blue.gradient)
                             }
                         }
-                        .chartXAxis {
-                            AxisMarks(values: .stride(by: .day, count: selectedTimeRange == .sevenDays ? 1 : 5)) { value in
-                                AxisGridLine()
-                                AxisValueLabel(format: .dateTime.day().month())
-                            }
-                        }
+                        .edgeSafeDateXAxis(
+                            values: .stride(by: .day, count: selectedTimeRange == .sevenDays ? 1 : 5),
+                            format: .dateTime.day().month(.abbreviated)
+                        )
                         .frame(height: 250)
                         .padding()
                         .background(Color(uiColor: .secondarySystemGroupedBackground))

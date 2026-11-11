@@ -9,8 +9,6 @@
 
 - [ ] **Farbhierarchie im aktiven Workout** *(Design)*
   - Klare Farbtrennung zwischen Satzpausen-Timer (`WorkoutTimerHeaderView`), „Workout angehalten“ (Orange) und „Workout beenden“ (Grün in `WorkoutSessionView`), z. B. Indigo/Cyan/`Color.brand` für Satzpause und Grün exklusiv für Start/Abschluss.
-- [ ] **Chart X-Achsen-Beschriftungen am Rand korrigieren** *(Klein)*
-  - Abgeschnittene Rand-Labels (z. B. im `WeightTrackerView`) sauber ohne gestauchtes Chart-Layout darstellen.
 - [ ] **Optional: Übergang zum Dashboard nach Workout-Abschluss** *(Klein)*
   - Prüfen/umsetzen, ob nach dem Speichern in `WorkoutSummaryView` (`.workoutFinished`) auf den Home-/Dashboard-Tab gewechselt werden soll.
 
@@ -79,4 +77,5 @@
 - [x] **Push-Benachrichtigungen / Reminder** (`4a78b25`) – Konfigurierbare Erinnerungen für Workout-Tage/Uhrzeit, Makro-/Protein-Restbedarf und Schrittziel in `SettingsView` & `NotificationService` (automatischer Tages-Sync bei App-Wechsel).
 - [x] **Apple Health Erweiterungen** – Manueller „Import aus Health“-Abgleich für Gewicht (`HealthKitService.importNewWeights`, `WeightTrackerView`, `SettingsView`), Kalorien-/Makro-Export (`exportNutrition` inkl. Sammel-Abgleich) sowie Auslesen/Berechnen verbrannter Workout-Kalorien aus Apple Watch Active Energy, Herzfrequenz (Keytel) oder MET-Schätzung inkl. `HKWorkout`-Export (`WorkoutSummaryView`, `WorkoutHistoryView`).
 - [x] **Vitalität-Tab (ehem. Akku / Recovery)** (`593c9e9`, `56c6db2`) – Eigenständiger 4. Tab in der Navigationsleiste (`AppRouter`, `VitalityView`) mit Segment-Wechsel zwischen **Erholung** (`RecoveryView`) und **Tagesenergie** (`EnergyDetailView`) sowie umbenannten Dashboard-Karten.
-- [x] **Voraussichtliche Trainingsdauer anzeigen** – Schätzung aus Sätzen, Ziel-Wdh./Zeit (`usesTimeInput`) und Pausenzeiten (`TrainingPlan.estimatedDurationText`), angezeigt in `PlanCard` (`TrainingPlansView`) und `PlanDetailView`.
+- [x] **Voraussichtliche Trainingsdauer anzeigen** (`2795f2b`) – Schätzung aus Sätzen, Ziel-Wdh./Zeit (`usesTimeInput`) und Pausenzeiten (`TrainingPlan.estimatedDurationText`), angezeigt in `PlanCard` (`TrainingPlansView`) und `PlanDetailView`.
+- [x] **Chart X-Achsen-Beschriftungen am Rand korrigieren** – Nach innen verankerte Rand-Labels (`ChartAxisHelper` / `edgeSafeDateXAxis` in `View+Modifiers.swift`) inkl. `.chartPlotStyle { $0.clipped() }` für `WeightTrackerView`, `ExerciseProgressChart`, `PlanProgressView`, `StepTrackerView`, `WaterTrackerView`, `SleepTrackerView` und `RecoveryFactorDetailView`.

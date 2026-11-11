@@ -64,12 +64,11 @@ struct PlanProgressView: View {
                             .cornerRadius(4)
                         }
                         .frame(height: 160)
-                        .chartXAxis {
-                            AxisMarks { val in
-                                AxisValueLabel(format: .dateTime.day().month())
-                                    .foregroundStyle(Color.textSecondary)
-                            }
-                        }
+                        .edgeSafeDateXAxis(
+                            values: .automatic(desiredCount: 4),
+                            format: .dateTime.day().month(.abbreviated),
+                            showGridLines: false
+                        )
                         .padding(.horizontal)
                     }
                 }

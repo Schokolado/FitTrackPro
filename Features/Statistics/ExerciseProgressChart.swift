@@ -55,14 +55,6 @@ struct ExerciseProgressChart: View {
             .foregroundStyle(accentColor)
             .symbolSize(dataPoints.count > 10 ? 20 : 35)
         }
-        .chartXAxis {
-            AxisMarks { value in
-                AxisValueLabel(format: .dateTime.day().month(.abbreviated))
-                    .foregroundStyle(Color.textSecondary)
-                AxisGridLine(stroke: StrokeStyle(lineWidth: 0.5))
-                    .foregroundStyle(Color.secondary.opacity(0.2))
-            }
-        }
         .chartYAxis {
             AxisMarks { value in
                 AxisValueLabel {
@@ -77,9 +69,9 @@ struct ExerciseProgressChart: View {
             }
         }
         .frame(height: 200)
-        .chartXScale(range: .plotDimension(padding: 15))
+        .edgeSafeDateXAxis(values: .automatic(desiredCount: 4), format: .dateTime.day().month(.abbreviated))
         .chartYScale(domain: yDomain)
-        .clipped()
+        .chartPlotStyle { $0.clipped() }
     }
 
     // MARK: - Empty State

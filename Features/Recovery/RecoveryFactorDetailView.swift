@@ -1012,14 +1012,10 @@ struct TrainingLoadDetailView: View {
                     .lineStyle(StrokeStyle(lineWidth: 1.8, dash: [4, 4]))
                 }
                 .frame(height: 170)
-                .chartXAxis {
-                    AxisMarks(values: .stride(by: .day, count: 14)) { _ in
-                        AxisValueLabel(format: .dateTime.day().month(.abbreviated))
-                            .font(.caption2)
-                        AxisGridLine(stroke: StrokeStyle(lineWidth: 0.5))
-                            .foregroundStyle(Color.secondary.opacity(0.2))
-                    }
-                }
+                .edgeSafeDateXAxis(
+                    values: .stride(by: .day, count: 14),
+                    format: .dateTime.day().month(.abbreviated)
+                )
             }
         }
         .padding(16)

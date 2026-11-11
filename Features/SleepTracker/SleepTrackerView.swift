@@ -223,6 +223,10 @@ struct SleepTrackerView: View {
                                 }
                             }
                         }
+                        .edgeSafeDateXAxis(
+                            values: .automatic(desiredCount: 4),
+                            format: .dateTime.day().month(.abbreviated)
+                        )
                         .chartOverlay { proxy in
                             GeometryReader { geometry in
                                 Rectangle().fill(.clear).contentShape(Rectangle())
