@@ -24,6 +24,7 @@ enum AppStorageKeys {
 
     // Dashboard-Ziele
     static let dailyCalorieGoal         = "dailyCalorieGoal"             // Double, default: 2500
+    static let addActiveCaloriesToGoal  = "add_active_calories_to_goal"  // Bool, default: true
     static let nutritionTolerance       = "nutritionTolerance"           // Double, default: 300
     static let calorieWarningEveningHour = "calorie_warning_evening_hour" // Int, default: 18
     static let dailyActiveCalorieGoal   = "daily_active_calorie_goal"    // Double, default: 600 (Belastungsziel)

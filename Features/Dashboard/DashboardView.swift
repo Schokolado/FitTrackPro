@@ -7,6 +7,7 @@ struct DashboardView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(WorkoutManager.self) private var workoutManager
     @AppStorage("dailyCalorieGoal") private var dailyCalorieGoal: Double = 2500
+    @AppStorage(AppStorageKeys.addActiveCaloriesToGoal) private var addActiveCaloriesToGoal: Bool = true
     @AppStorage(AppStorageKeys.nutritionTolerance) private var nutritionTolerance: Double = 300
     @AppStorage(AppStorageKeys.calorieWarningEveningHour) private var calorieWarningEveningHour: Int = 18
     @AppStorage("daily_step_goal") private var dailyStepGoal: Int = 10000
@@ -22,7 +23,7 @@ struct DashboardView: View {
     @AppStorage("cached_today_steps_date") private var cachedTodayStepsDate: String = ""
     
     @State private var todaySteps: Int = 0
-    @State private var todayActiveCalories: Double? = nil
+    @State private var todayHealthKitActiveCalories: Double? = nil
     @State private var showingStepTrackerFromWidget = false
     
     @Query(sort: \WeightEntry.timestamp, order: .reverse) private var weightEntries: [WeightEntry]
@@ -66,6 +67,18 @@ struct DashboardView: View {
     
     var consumedFat: Double {
         todayFoodEntries.reduce(0.0) { $0 + $1.fatGrams }
+    }
+
+    private var todayActiveCalories: Double? {
+        EnergyCalculator.totalActiveCalories(
+            healthKitActive: todayHealthKitActiveCalories,
+            sessions: workouts,
+            on: Date()
+        )
+    }
+
+    private var effectiveDailyCalorieGoal: Double {
+        dailyCalorieGoal + (addActiveCaloriesToGoal ? (todayActiveCalories ?? 0) : 0)
     }
 
     private var todayTotalBurnedCalories: Double? {
@@ -239,7 +252,7 @@ struct DashboardView: View {
                     await refreshSteps()
                 }
             } else {
-                todayActiveCalories = nil
+                todayHealthKitActiveCalories = nil
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.significantTimeChangeNotification)) { _ in
@@ -261,7 +274,7 @@ struct DashboardView: View {
 
             if let activeKcal = try? await HealthKitService.shared.fetchActiveEnergyBurned(for: Date()) {
                 await MainActor.run {
-                    self.todayActiveCalories = activeKcal
+                    self.todayHealthKitActiveCalories = activeKcal
                 }
             }
             
@@ -360,7 +373,7 @@ struct DashboardView: View {
                 if config.size == .large {
                     NutritionSummaryCard(
                         consumed: consumedCalories,
-                        goal: dailyCalorieGoal,
+                        goal: effectiveDailyCalorieGoal,
                         carbs: consumedCarbs,
                         protein: consumedProtein,
                         fat: consumedFat,
@@ -372,7 +385,7 @@ struct DashboardView: View {
                 } else {
                     NutritionSummaryCardSmall(
                         consumed: consumedCalories,
-                        goal: dailyCalorieGoal,
+                        goal: effectiveDailyCalorieGoal,
                         tolerance: nutritionTolerance,
                         eveningHour: calorieWarningEveningHour,
                         activeBurned: todayActiveCalories
@@ -480,7 +493,7 @@ struct DashboardView: View {
             if config.size == .large {
                 NutritionSummaryCard(
                     consumed: consumedCalories,
-                    goal: dailyCalorieGoal,
+                    goal: effectiveDailyCalorieGoal,
                     carbs: consumedCarbs,
                     protein: consumedProtein,
                     fat: consumedFat,
@@ -492,7 +505,7 @@ struct DashboardView: View {
             } else {
                 NutritionSummaryCardSmall(
                     consumed: consumedCalories,
-                    goal: dailyCalorieGoal,
+                    goal: effectiveDailyCalorieGoal,
                     tolerance: nutritionTolerance,
                     eveningHour: calorieWarningEveningHour,
                     activeBurned: todayActiveCalories

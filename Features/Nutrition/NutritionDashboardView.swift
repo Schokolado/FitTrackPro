@@ -8,6 +8,7 @@ struct NutritionDashboardView: View {
     @Environment(\.scenePhase) private var scenePhase
     @Query private var allDailyLogs: [DailyLog]
     @Query(sort: \WeightEntry.timestamp, order: .reverse) private var weightEntries: [WeightEntry]
+    @Query private var allWorkouts: [WorkoutSession]
     
     @State private var selectedDate: Date = Date()
     @State private var activeBurnedCalories: Double? = nil
@@ -22,6 +23,7 @@ struct NutritionDashboardView: View {
     @State private var showingDatePicker = false
     
     @AppStorage("dailyCalorieGoal") private var goalCalories: Double = 2500
+    @AppStorage(AppStorageKeys.addActiveCaloriesToGoal) private var addActiveCaloriesToGoal: Bool = true
     @AppStorage(AppStorageKeys.nutritionTolerance) private var nutritionTolerance: Double = 300
     @AppStorage(AppStorageKeys.calorieWarningEveningHour) private var calorieWarningEveningHour: Int = 18
     @AppStorage("nutritionGoalProtein") private var goalProtein: Double = 150
@@ -204,9 +206,15 @@ struct NutritionDashboardView: View {
             let totalProtein = todayEntries.reduce(0) { $0 + $1.proteinGrams }
             let totalCarbs = todayEntries.reduce(0) { $0 + $1.carbsGrams }
             let totalFat = todayEntries.reduce(0) { $0 + $1.fatGrams }
+            let activeBurned = EnergyCalculator.totalActiveCalories(
+                healthKitActive: activeBurnedCalories,
+                sessions: allWorkouts,
+                on: selectedDate
+            )
+            let effectiveGoal = goalCalories + (addActiveCaloriesToGoal ? (activeBurned ?? 0) : 0)
             let ringState = CalorieRingEvaluator.evaluate(
                 consumed: totalCals,
-                goal: goalCalories,
+                goal: effectiveGoal,
                 tolerance: nutritionTolerance,
                 date: selectedDate,
                 eveningHour: calorieWarningEveningHour
@@ -219,7 +227,7 @@ struct NutritionDashboardView: View {
                 Circle()
                     .stroke(ringState.color.opacity(0.25), lineWidth: 15)
                 Circle()
-                    .trim(from: 0, to: min(CGFloat(totalCals / max(goalCalories, 1)), 1.0))
+                    .trim(from: 0, to: min(CGFloat(totalCals / max(effectiveGoal, 1)), 1.0))
                     .stroke(ringState.color, style: StrokeStyle(lineWidth: 15, lineCap: .round))
                     .rotationEffect(.degrees(-90))
                     .animation(.spring(response: 0.6, dampingFraction: 0.8), value: totalCals)
@@ -227,15 +235,20 @@ struct NutritionDashboardView: View {
                 VStack {
                     Text("\(Int(totalCals))")
                         .font(.system(size: 32, weight: .bold))
-                    Text("/ \(Int(goalCalories)) kcal")
+                    Text("/ \(Int(effectiveGoal)) kcal")
                         .font(.caption)
                         .foregroundColor(.secondary)
+                    if addActiveCaloriesToGoal, let active = activeBurned, active > 0 {
+                        Text("\(Int(goalCalories)) + \(Int(active)) aktiv")
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+                    }
                     if ringState == .surplusWarning {
-                        Text("+\(Int(totalCals - goalCalories)) über Ziel")
+                        Text("+\(Int(totalCals - effectiveGoal)) über Ziel")
                             .font(.caption2.bold())
                             .foregroundColor(.destructive)
                     } else if ringState == .eveningDeficitWarning {
-                        Text("−\(Int(goalCalories - totalCals)) Defizit")
+                        Text("−\(Int(effectiveGoal - totalCals)) Defizit")
                             .font(.caption2.bold())
                             .foregroundColor(.warning)
                     }
@@ -244,7 +257,7 @@ struct NutritionDashboardView: View {
             .frame(height: 150)
             .padding(.vertical, Spacing.sm)
 
-            if let active = activeBurnedCalories {
+            if let active = activeBurned {
                 energyExpenditureStrip(consumed: totalCals, activeBurned: active)
             }
             
@@ -334,6 +347,9 @@ struct NutritionDashboardView: View {
             referenceDate: selectedDate
         )
         let totalBurned = bmr.map { $0 + activeBurned }
+        let referenceForBalance = totalBurned ?? (goalCalories + activeBurned)
+        let balance = Int((consumed - referenceForBalance).rounded())
+        let balancePrefix = balance > 0 ? "+" : ""
 
         HStack(spacing: 10) {
             energyMetricTile(
@@ -350,16 +366,14 @@ struct NutritionDashboardView: View {
                     icon: "bolt.fill",
                     tint: .brand
                 )
-
-                let balance = Int((consumed - totalBurned).rounded())
-                let balancePrefix = balance > 0 ? "+" : ""
-                energyMetricTile(
-                    title: "Bilanz",
-                    value: "\(balancePrefix)\(balance) kcal",
-                    icon: balance <= 0 ? "arrow.down.right" : "arrow.up.right",
-                    tint: balance <= 0 ? .green : .orange
-                )
             }
+
+            energyMetricTile(
+                title: "Bilanz",
+                value: "\(balancePrefix)\(balance) kcal",
+                icon: balance <= 0 ? "arrow.down.right" : "arrow.up.right",
+                tint: balance <= 0 ? .green : .orange
+            )
         }
     }
 

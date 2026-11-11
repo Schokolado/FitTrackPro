@@ -126,4 +126,29 @@ struct EnergyCalculator {
 
         return max(800, (base + offset).rounded())
     }
+
+    /// Kombiniert HealthKit-Aktivitätskalorien mit lokal ermittelten Workout-Kalorien für einen Tag ohne Doppelzählung.
+    static func totalActiveCalories(
+        healthKitActive: Double?,
+        sessions: [WorkoutSession],
+        on date: Date,
+        calendar: Calendar = .current
+    ) -> Double? {
+        let daySessions = sessions.filter { session in
+            session.endTime != nil &&
+            calendar.isDate(session.startTime, inSameDayAs: date) &&
+            (session.burnedCalories ?? 0) > 0
+        }
+
+        let localNonHKWorkouts = daySessions
+            .filter { $0.calorieSource != WorkoutCalorieSource.healthKitActiveEnergy.rawValue }
+            .reduce(0.0) { $0 + ($1.burnedCalories ?? 0) }
+
+        if let hkActive = healthKitActive {
+            return (hkActive + localNonHKWorkouts).rounded()
+        } else if localNonHKWorkouts > 0 {
+            return localNonHKWorkouts.rounded()
+        }
+        return nil
+    }
 }

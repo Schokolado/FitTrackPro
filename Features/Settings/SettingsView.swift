@@ -39,6 +39,7 @@ struct SettingsView: View {
     @AppStorage(AppStorageKeys.userBiologicalSex) private var userSex: String = "other"
     @AppStorage(AppStorageKeys.userHeightCm) private var heightCm: Double = 175
     @AppStorage(AppStorageKeys.dailyCalorieGoal) private var dailyCalorieGoal: Double = 2500
+    @AppStorage(AppStorageKeys.addActiveCaloriesToGoal) private var addActiveCaloriesToGoal: Bool = true
     @AppStorage(AppStorageKeys.dailyActiveCalorieGoal) private var dailyActiveCalorieGoal: Double = 600
     @AppStorage(AppStorageKeys.nutritionTolerance) private var nutritionTolerance: Double = 300
     @AppStorage(AppStorageKeys.calorieWarningEveningHour) private var calorieWarningEveningHour: Int = 18
@@ -126,6 +127,7 @@ struct SettingsView: View {
                             .keyboardType(.decimalPad)
                             .multilineTextAlignment(.trailing)
                     }
+                    Toggle("Aktive Kalorien zur Bilanz addieren", isOn: $addActiveCaloriesToGoal)
                     HStack {
                         Label("Toleranz (±)", systemImage: "arrow.up.and.down")
                         Spacer()
