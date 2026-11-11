@@ -14,7 +14,12 @@ struct WorkoutSummaryView: View {
     
     @AppStorage(AppStorageKeys.healthKitEnabled) private var healthKitEnabled = false
     @AppStorage(AppStorageKeys.healthKitAutoSync) private var healthKitAutoSync = true
+    @AppStorage(AppStorageKeys.userBirthDate) private var birthDateInterval: Double = 0
+    @AppStorage(AppStorageKeys.userBiologicalSex) private var userSex: String = "other"
+    @AppStorage(AppStorageKeys.onboardingWeightKg) private var onboardingWeightKg: Double = 0
+    @Query(sort: \WeightEntry.timestamp, order: .reverse) private var weightEntries: [WeightEntry]
     @State private var syncToHealth: Bool = false
+    @State private var calorieEstimate: WorkoutCalorieEstimate? = nil
     
     // Computed statistics
     private var totalVolume: Double {
@@ -59,10 +64,25 @@ struct WorkoutSummaryView: View {
                     .padding(.top, 20)
                     
                     // Stats Card
-                    HStack(spacing: 20) {
-                        StatBadge(title: "Dauer", value: durationString, icon: "clock")
-                        StatBadge(title: "Volumen", value: "\(Int(totalVolume)) kg", icon: "scalemass")
-                        StatBadge(title: "Sätze", value: "\(totalSets)", icon: "number")
+                    VStack(spacing: 10) {
+                        HStack(spacing: 12) {
+                            StatBadge(title: "Dauer", value: durationString, icon: "clock")
+                            StatBadge(title: "Volumen", value: "\(Int(totalVolume)) kg", icon: "scalemass")
+                            StatBadge(title: "Sätze", value: "\(totalSets)", icon: "number")
+                            if let estimate = calorieEstimate {
+                                StatBadge(title: "Verbrannt", value: "\(Int(estimate.calories)) kcal", icon: "flame.fill")
+                            }
+                        }
+                        if let estimate = calorieEstimate {
+                            HStack(spacing: 10) {
+                                Text("Quelle: \(estimate.source.rawValue)")
+                                if let avgHR = estimate.averageHeartRate {
+                                    Text("• Ø Puls: \(Int(avgHR.rounded())) bpm")
+                                }
+                            }
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+                        }
                     }
                     .frame(maxWidth: .infinity)
                     .padding()
@@ -168,6 +188,14 @@ struct WorkoutSummaryView: View {
                 // Init sync toggle
                 syncToHealth = healthKitEnabled && healthKitAutoSync
             }
+            .task {
+                await resolveCalories()
+            }
+            .onChange(of: intensity) { _, _ in
+                if calorieEstimate?.source == .metEstimate {
+                    Task { await resolveCalories() }
+                }
+            }
             .alert("Training verwerfen?", isPresented: $showingCancelAlert) {
                 Button("Ja, verwerfen", role: .destructive) {
                     cancelWorkout()
@@ -183,6 +211,11 @@ struct WorkoutSummaryView: View {
         session.moodRating = mood
         session.intensityRating = intensity
         session.notes = notes
+        if let estimate = calorieEstimate {
+            session.burnedCalories = estimate.calories
+            session.averageHeartRate = estimate.averageHeartRate
+            session.calorieSource = estimate.source.rawValue
+        }
         
         do {
             try modelContext.save()
@@ -217,6 +250,21 @@ struct WorkoutSummaryView: View {
             print("Error deleting session: \(error)")
         }
         NotificationCenter.default.post(name: .workoutCancelled, object: nil)
+    }
+
+    @MainActor
+    private func resolveCalories() async {
+        let weight = weightEntries.first?.weightKg ?? (onboardingWeightKg > 0 ? onboardingWeightKg : nil)
+        let estimate = await HealthKitService.shared.resolveWorkoutCalories(
+            startTime: session.startTime,
+            endTime: session.endTime ?? Date(),
+            rpeIntensity: intensity,
+            weightKg: weight,
+            birthDateTimestamp: birthDateInterval,
+            biologicalSex: userSex,
+            healthKitEnabled: healthKitEnabled
+        )
+        calorieEstimate = estimate
     }
 }
 

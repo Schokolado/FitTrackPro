@@ -1,6 +1,19 @@
 import Foundation
 import HealthKit
+import SwiftData
 import WidgetKit
+
+enum WorkoutCalorieSource: String {
+    case healthKitActiveEnergy = "Apple Watch / Health"
+    case heartRateFormula = "Herzfrequenz"
+    case metEstimate = "MET-Schätzung"
+}
+
+struct WorkoutCalorieEstimate {
+    let calories: Double
+    let averageHeartRate: Double?
+    let source: WorkoutCalorieSource
+}
 
 enum HealthKitError: Error {
     case notAvailable
@@ -50,6 +63,9 @@ final class HealthKitService {
         if let rhrType = HKObjectType.quantityType(forIdentifier: .restingHeartRate) {
             types.insert(rhrType)
         }
+        if let hrType = HKObjectType.quantityType(forIdentifier: .heartRate) {
+            types.insert(hrType)
+        }
         if let activeEnergyType = HKObjectType.quantityType(forIdentifier: .activeEnergyBurned) {
             types.insert(activeEnergyType)
         }
@@ -87,7 +103,7 @@ final class HealthKitService {
         }
     }
     
-    /// Exportiert ein abgeschlossenes Workout ohne Kalorien
+    /// Exportiert ein abgeschlossenes Workout (inkl. verbrannter Kalorien, falls vorhanden)
     func exportWorkout(session: WorkoutSession) async throws {
         guard isAvailable else { throw HealthKitError.notAvailable }
         
@@ -96,6 +112,9 @@ final class HealthKitService {
         
         let start = session.startTime
         let end = session.endTime ?? Date()
+        let energyQuantity: HKQuantity? = session.burnedCalories.flatMap {
+            $0 > 0 ? HKQuantity(unit: .kilocalorie(), doubleValue: $0) : nil
+        }
         
         // Workout erstellen (Krafttraining)
         let workout = HKWorkout(
@@ -103,7 +122,7 @@ final class HealthKitService {
             start: start,
             end: end,
             workoutEvents: nil,
-            totalEnergyBurned: nil, // OHNE Kalorien, gem. Anforderung
+            totalEnergyBurned: energyQuantity,
             totalDistance: nil,
             metadata: [
                 HKMetadataKeyExternalUUID: session.id.uuidString,
@@ -541,6 +560,32 @@ final class HealthKitService {
             healthStore.execute(query)
         }
     }
+
+    /// Importiert neue Gewichtseinträge aus Apple Health direkt in SwiftData und vermeidet Duplikate.
+    @MainActor
+    func importNewWeights(into modelContext: ModelContext) async throws -> Int {
+        let imported = try await importHistoricalWeights()
+        let existingWeights = (try? modelContext.fetch(FetchDescriptor<WeightEntry>())) ?? []
+        var importedCount = 0
+
+        for item in imported {
+            let exists = existingWeights.contains {
+                abs($0.timestamp.timeIntervalSince1970 - item.timestamp.timeIntervalSince1970) < 60 &&
+                abs($0.weightKg - item.weightKg) < 0.1
+            }
+            if !exists {
+                let entry = WeightEntry(weightKg: item.weightKg, timestamp: item.timestamp, notes: "Aus Apple Health importiert")
+                entry.syncedToHealthKit = true
+                modelContext.insert(entry)
+                importedCount += 1
+            }
+        }
+
+        if importedCount > 0 {
+            try? modelContext.save()
+        }
+        return importedCount
+    }
     
     // MARK: - Water & Sleep Export
     
@@ -913,13 +958,19 @@ final class HealthKitService {
     
     /// Holt die verbrannten Aktivitätskalorien für einen Tag
     func fetchActiveEnergyBurned(for date: Date) async throws -> Double {
-        guard isAvailable else { throw HealthKitError.notAvailable }
-        guard let type = HKObjectType.quantityType(forIdentifier: .activeEnergyBurned) else { throw HealthKitError.notAvailable }
-        
         let start = Calendar.current.startOfDay(for: date)
         let end = Calendar.current.date(byAdding: .day, value: 1, to: start)!
+        return try await fetchActiveEnergyBurned(from: start, to: end)
+    }
+
+    /// Holt die verbrannten Aktivitätskalorien in einem beliebigen Zeitfenster (z. B. während eines Workouts)
+    func fetchActiveEnergyBurned(from start: Date, to end: Date) async throws -> Double {
+        guard isAvailable else { throw HealthKitError.notAvailable }
+        guard let type = HKObjectType.quantityType(forIdentifier: .activeEnergyBurned) else { throw HealthKitError.notAvailable }
+        guard end > start else { return 0.0 }
+
         let predicate = HKQuery.predicateForSamples(withStart: start, end: end, options: .strictStartDate)
-        
+
         return try await withCheckedThrowingContinuation { continuation in
             let query = HKStatisticsQuery(quantityType: type, quantitySamplePredicate: predicate, options: .cumulativeSum) { _, result, error in
                 if let error = error {
@@ -931,6 +982,97 @@ final class HealthKitService {
             }
             healthStore.execute(query)
         }
+    }
+
+    /// Holt die durchschnittliche Herzfrequenz (bpm) im angegebenen Zeitfenster
+    func fetchAverageHeartRate(from start: Date, to end: Date) async throws -> Double? {
+        guard isAvailable else { throw HealthKitError.notAvailable }
+        guard let type = HKObjectType.quantityType(forIdentifier: .heartRate) else { throw HealthKitError.notAvailable }
+        guard end > start else { return nil }
+
+        let predicate = HKQuery.predicateForSamples(withStart: start, end: end, options: .strictStartDate)
+        let bpmUnit = HKUnit.count().unitDivided(by: .minute())
+
+        return try await withCheckedThrowingContinuation { continuation in
+            let query = HKStatisticsQuery(quantityType: type, quantitySamplePredicate: predicate, options: .discreteAverage) { _, result, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+                continuation.resume(returning: result?.averageQuantity()?.doubleValue(for: bpmUnit))
+            }
+            healthStore.execute(query)
+        }
+    }
+
+    /// Ermittelt verbrannte Workout-Kalorien in absteigender Genauigkeit:
+    /// 1. Apple Watch / HealthKit Active Energy im Workout-Zeitfenster
+    /// 2. Keytel-Herzfrequenzformel aus Ø-Puls im Zeitfenster
+    /// 3. Krafttraining-MET-Schätzung auf Basis von Dauer, Gewicht & RPE
+    func resolveWorkoutCalories(
+        startTime: Date,
+        endTime: Date,
+        rpeIntensity: Int?,
+        weightKg: Double?,
+        birthDateTimestamp: Double,
+        biologicalSex: String,
+        healthKitEnabled: Bool
+    ) async -> WorkoutCalorieEstimate {
+        let durationMinutes = max(1.0, endTime.timeIntervalSince(startTime) / 60.0)
+        let effectiveWeight = (weightKg ?? 0) > 0 ? weightKg! : 75.0
+        var avgHR: Double? = nil
+
+        if healthKitEnabled && isAvailable {
+            avgHR = try? await fetchAverageHeartRate(from: startTime, to: endTime)
+            if let hkActive = try? await fetchActiveEnergyBurned(from: startTime, to: endTime), hkActive >= 5 {
+                return WorkoutCalorieEstimate(
+                    calories: hkActive.rounded(),
+                    averageHeartRate: avgHR,
+                    source: .healthKitActiveEnergy
+                )
+            }
+        }
+
+        if let avgHR, avgHR >= 45 {
+            let ageYears: Double = {
+                guard birthDateTimestamp > 0 else { return 30 }
+                let birth = Date(timeIntervalSince1970: birthDateTimestamp)
+                let years = Calendar.current.dateComponents([.year], from: birth, to: startTime).year ?? 30
+                return Double(min(max(years, 14), 100))
+            }()
+
+            let maleKcalPerMin = (-55.0969 + (0.6309 * avgHR) + (0.1988 * effectiveWeight) + (0.2017 * ageYears)) / 4.184
+            let femaleKcalPerMin = (-20.4022 + (0.4472 * avgHR) - (0.1263 * effectiveWeight) + (0.074 * ageYears)) / 4.184
+            let kcalPerMin: Double
+            switch biologicalSex {
+            case "male": kcalPerMin = maleKcalPerMin
+            case "female": kcalPerMin = femaleKcalPerMin
+            default: kcalPerMin = (maleKcalPerMin + femaleKcalPerMin) / 2.0
+            }
+
+            let totalHRCalories = max(durationMinutes, kcalPerMin * durationMinutes)
+            return WorkoutCalorieEstimate(
+                calories: totalHRCalories.rounded(),
+                averageHeartRate: avgHR,
+                source: .heartRateFormula
+            )
+        }
+
+        let met: Double
+        switch rpeIntensity ?? 3 {
+        case 1: met = 3.0
+        case 2: met = 3.8
+        case 3: met = 4.8
+        case 4: met = 5.5
+        case 5...: met = 6.2
+        default: met = 4.5
+        }
+        let estimated = (met * 3.5 * effectiveWeight / 200.0) * durationMinutes
+        return WorkoutCalorieEstimate(
+            calories: max(1.0, estimated.rounded()),
+            averageHeartRate: avgHR,
+            source: .metEstimate
+        )
     }
 
     /// Holt den aktuellsten VO2max-Wert (ml/(kg·min)) aus den letzten `days` Tagen

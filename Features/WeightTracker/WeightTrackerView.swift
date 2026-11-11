@@ -21,11 +21,14 @@ struct WeightTrackerView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.miniPlayerBottomInset) private var miniPlayerBottomInset
     @Query(sort: \WeightEntry.timestamp, order: .reverse) private var entries: [WeightEntry]
+    @AppStorage(AppStorageKeys.healthKitEnabled) private var healthKitEnabled = false
     
     @State private var showingAddEntry = false
     @State private var entryToEdit: WeightEntry?
     @State private var selectedTimeRange: WeightTimeRange = .month // Default to month
     @State private var selectedDate: Date?
+    @State private var isImportingHealth = false
+    @State private var importAlertMessage: String? = nil
     
     var filteredEntries: [WeightEntry] {
         let now = Date()
@@ -294,6 +297,30 @@ struct WeightTrackerView: View {
         .background(Color.backgroundPrimary)
         .navigationTitle("")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            if healthKitEnabled {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
+                        Task { await importFromAppleHealth() }
+                    } label: {
+                        if isImportingHealth {
+                            ProgressView()
+                        } else {
+                            Label("Import aus Health", systemImage: "arrow.down.heart.fill")
+                        }
+                    }
+                    .disabled(isImportingHealth)
+                }
+            }
+        }
+        .alert("Apple Health Import", isPresented: Binding(
+            get: { importAlertMessage != nil },
+            set: { if !$0 { importAlertMessage = nil } }
+        )) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text(importAlertMessage ?? "")
+        }
         .overlay(alignment: .bottomTrailing) {
             Button(action: {
                 showingAddEntry = true
@@ -325,6 +352,25 @@ struct WeightTrackerView: View {
     
     private func deleteEntry(_ entry: WeightEntry) {
         modelContext.delete(entry)
+    }
+
+    @MainActor
+    private func importFromAppleHealth() async {
+        isImportingHealth = true
+        defer { isImportingHealth = false }
+        do {
+            try await HealthKitService.shared.requestAuthorization()
+            let count = try await HealthKitService.shared.importNewWeights(into: modelContext)
+            if count == 0 {
+                importAlertMessage = "Alle Gewichtseinträge aus Apple Health sind bereits vorhanden."
+            } else if count == 1 {
+                importAlertMessage = "1 neuer Gewichtseintrag aus Apple Health importiert."
+            } else {
+                importAlertMessage = "\(count) neue Gewichtseinträge aus Apple Health importiert."
+            }
+        } catch {
+            importAlertMessage = "Import aus Apple Health fehlgeschlagen."
+        }
     }
 }
 

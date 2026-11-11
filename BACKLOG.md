@@ -34,10 +34,6 @@
   - Umbau vom `.fullScreenCover` auf ein Custom-Overlay (`ZStack` im `AppRouter`), damit die Ansicht per Finger-Drag fließend in den Mini-Player gezogen werden kann.
 - [ ] **Widgets erweitern & verfeinern** *(Mittel)*
   - Design-Polishing bestehender Widgets sowie zusätzliche Formate (z. B. großes Widget oder dedizierte Workout-/Makro-Widgets).
-- [ ] **Apple Health Erweiterungen** *(Mittel)*
-  - Gewicht aus Apple Health importieren („Import aus Health“).
-  - Kalorien- und Makro-Export in Apple Health.
-  - Verbrannte Workout-Kalorien aus Watch-/Herzfrequenzdaten auslesen bzw. berechnen.
 - [ ] **Fitbit Integration** *(Groß)*
   - Direkte Anbindung an die Fitbit Web API via OAuth2 (Schritte, Schlaf, Herzfrequenz) als Alternative zu Apple HealthKit.
 
@@ -82,4 +78,5 @@
 - [x] **Biologisches Alter / Fitness-Alter** (`7498e28`, `db5e286`, `4c5deda`) – Berechnung mit HealthKit-`VO2max`, Ruhepuls, Schritten, Trainingsfrequenz, Schlaf sowie Körperfettanteil / Waist-to-Height-Ratio (mit BMI-Fallback).
 - [x] **Dynamische Farbgebung für Kalorien-Kreis (Dashboard & Ernährung)** (`d027585`) – `CalorieRingEvaluator` mit Warnfarben (Rot bei Überschuss, Orange bei abendlichem/vergangenem Defizit, Grün im Zielkorridor) auf Basis der konfigurierbaren Toleranz (`nutritionTolerance`) und Abend-Uhrzeit (`calorieWarningEveningHour`) in `SettingsView`.
 - [x] **Verbrannte Kalorien direkt im Dashboard & Ernährungs-Tab anzeigen** (`b8bbc92`) – Anzeige der aktiven HealthKit-Kalorien (`fetchActiveEnergyBurned(for:)`), geschätztem Tagesumsatz (`EnergyCalculator.estimatedBMR` + Aktiv) und Tagesbilanz in `NutritionSummaryCard`, `NutritionSummaryCardSmall` und `NutritionDashboardView`.
-- [x] **Push-Benachrichtigungen / Reminder** – Konfigurierbare Erinnerungen für Workout-Tage/Uhrzeit, Makro-/Protein-Restbedarf und Schrittziel in `SettingsView` & `NotificationService` (automatischer Tages-Sync bei App-Wechsel).
+- [x] **Push-Benachrichtigungen / Reminder** (`4a78b25`) – Konfigurierbare Erinnerungen für Workout-Tage/Uhrzeit, Makro-/Protein-Restbedarf und Schrittziel in `SettingsView` & `NotificationService` (automatischer Tages-Sync bei App-Wechsel).
+- [x] **Apple Health Erweiterungen** – Manueller „Import aus Health“-Abgleich für Gewicht (`HealthKitService.importNewWeights`, `WeightTrackerView`, `SettingsView`), Kalorien-/Makro-Export (`exportNutrition` inkl. Sammel-Abgleich) sowie Auslesen/Berechnen verbrannter Workout-Kalorien aus Apple Watch Active Energy, Herzfrequenz (Keytel) oder MET-Schätzung inkl. `HKWorkout`-Export (`WorkoutSummaryView`, `WorkoutHistoryView`).

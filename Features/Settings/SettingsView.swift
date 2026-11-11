@@ -278,10 +278,19 @@ struct SettingsView: View {
                     
                     if healthKitEnabled {
                         Toggle("Automatisch synchronisieren", isOn: $healthKitAutoSync)
+
+                        Button {
+                            Task { @MainActor in
+                                await performInitialSync()
+                            }
+                        } label: {
+                            Label("Jetzt mit Apple Health abgleichen", systemImage: "arrow.triangle.2.circlepath")
+                        }
+                        .disabled(isSyncing)
                         
                         Text(healthKitAutoSync
-                            ? "Workouts und Gewichtsdaten werden nach dem Speichern automatisch exportiert."
-                            : "Du kannst Daten manuell über einen Button exportieren.")
+                            ? "Workouts, Gewichts- sowie Kalorien-/Makrodaten werden automatisch mit Apple Health synchronisiert."
+                            : "Nutze den Abgleich-Button oder die Einzelansichten zum manuellen Synchronisieren.")
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
@@ -564,25 +573,7 @@ struct SettingsView: View {
         
         // Import historical weights
         do {
-            let imported = try await service.importHistoricalWeights()
-            
-            // Check for existing weights to prevent duplicates
-            let descriptor = FetchDescriptor<WeightEntry>()
-            let existingWeights = (try? modelContext.fetch(descriptor)) ?? []
-            
-            for item in imported {
-                // Check if a weight entry already exists with similar timestamp and weight
-                let exists = existingWeights.contains {
-                    abs($0.timestamp.timeIntervalSince1970 - item.timestamp.timeIntervalSince1970) < 60 &&
-                    abs($0.weightKg - item.weightKg) < 0.1
-                }
-                
-                if !exists {
-                    let entry = WeightEntry(weightKg: item.weightKg, timestamp: item.timestamp, notes: "Aus Apple Health importiert")
-                    entry.syncedToHealthKit = true
-                    modelContext.insert(entry)
-                }
-            }
+            _ = try await service.importNewWeights(into: modelContext)
         } catch {
             print("Failed to import historical weights: \(error)")
         }

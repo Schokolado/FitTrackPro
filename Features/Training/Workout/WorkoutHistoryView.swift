@@ -296,6 +296,11 @@ struct WorkoutHistoryDetailView: View {
     @State private var isSkippedExpanded = false
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
+    @AppStorage(AppStorageKeys.healthKitEnabled) private var healthKitEnabled = false
+    @AppStorage(AppStorageKeys.userBirthDate) private var birthDateInterval: Double = 0
+    @AppStorage(AppStorageKeys.userBiologicalSex) private var userSex: String = "other"
+    @AppStorage(AppStorageKeys.onboardingWeightKg) private var onboardingWeightKg: Double = 0
+    @Query(sort: \WeightEntry.timestamp, order: .reverse) private var weightEntries: [WeightEntry]
     @State private var showDeleteConfirm = false
     @State private var showActiveWarning = false
 
@@ -378,6 +383,24 @@ struct WorkoutHistoryDetailView: View {
                         let setsValue = completedSets.count < totalPlannedSetsCount ? "\(completedSets.count) von \(totalPlannedSetsCount)" : "\(completedSets.count)"
                         let setsLabel = completedSets.count < totalPlannedSetsCount ? "Sätzen" : "Sätze"
                         DetailStatBox(icon: "square.stack.3d.up.fill", label: setsLabel, value: setsValue, color: .orange)
+
+                        if let burned = session.burnedCalories, burned > 0 {
+                            DetailStatBox(
+                                icon: "flame.fill",
+                                label: session.calorieSource ?? "Verbrannt",
+                                value: "\(Int(burned)) kcal",
+                                color: .red
+                            )
+                        }
+
+                        if let avgHR = session.averageHeartRate, avgHR > 0 {
+                            DetailStatBox(
+                                icon: "heart.fill",
+                                label: "Ø Puls",
+                                value: "\(Int(avgHR.rounded())) bpm",
+                                color: .pink
+                            )
+                        }
                     }
 
                     // Ratings
@@ -583,6 +606,23 @@ struct WorkoutHistoryDetailView: View {
                 session.notes = updated
                 try? modelContext.save()
             }
+        }
+        .task(id: session.id) {
+            guard let endTime = session.endTime, session.burnedCalories == nil else { return }
+            let weight = weightEntries.first?.weightKg ?? (onboardingWeightKg > 0 ? onboardingWeightKg : nil)
+            let estimate = await HealthKitService.shared.resolveWorkoutCalories(
+                startTime: session.startTime,
+                endTime: endTime,
+                rpeIntensity: session.intensityRating,
+                weightKg: weight,
+                birthDateTimestamp: birthDateInterval,
+                biologicalSex: userSex,
+                healthKitEnabled: healthKitEnabled
+            )
+            session.burnedCalories = estimate.calories
+            session.averageHeartRate = estimate.averageHeartRate
+            session.calorieSource = estimate.source.rawValue
+            try? modelContext.save()
         }
     }
 
