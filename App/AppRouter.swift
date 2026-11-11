@@ -138,19 +138,24 @@ struct AppRouter: View {
     }
 }
 
-// MARK: - Native SwiftUI Mini-Player Safe Area Inset
+// MARK: - VStack Layout Container for Mini-Player (prevents overlapping FABs & bottom CTAs)
 private struct WorkoutMiniPlayerInsetModifier: ViewModifier {
     let viewModel: WorkoutSessionViewModel?
     let planName: String?
     let onTap: () -> Void
 
     func body(content: Content) -> some View {
-        content.safeAreaInset(edge: .bottom, spacing: 0) {
+        VStack(spacing: 0) {
+            content
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+
             if let vm = viewModel {
                 WorkoutMiniPlayerView(viewModel: vm, planName: planName, onTap: onTap)
+                    .background(Color.backgroundPrimary)
                     .transition(.move(edge: .bottom).combined(with: .opacity))
             }
         }
+        .animation(.easeInOut(duration: 0.2), value: viewModel != nil)
     }
 }
 
