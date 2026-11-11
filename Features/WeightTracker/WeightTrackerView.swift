@@ -27,28 +27,42 @@ struct WeightTrackerView: View {
     @State private var entryToEdit: WeightEntry?
     @State private var selectedTimeRange: WeightTimeRange = .month // Default to month
     @State private var selectedDate: Date?
+    @State private var hasAppliedInitialRangeFallback = false
     @State private var isImportingHealth = false
     @State private var importAlertMessage: String? = nil
-    
+
+    private var resolvedTimeData: (entries: [WeightEntry], fallbackAnchorDate: Date?) {
+        let current = entries(in: selectedTimeRange, relativeTo: Date())
+        if !current.isEmpty || entries.isEmpty {
+            return (current, nil)
+        }
+        guard let latest = entries.first else {
+            return ([], nil)
+        }
+        return (entries(in: selectedTimeRange, relativeTo: latest.timestamp), latest.timestamp)
+    }
+
     var filteredEntries: [WeightEntry] {
-        let now = Date()
+        resolvedTimeData.entries
+    }
+
+    private func entries(in range: WeightTimeRange, relativeTo referenceDate: Date) -> [WeightEntry] {
         let calendar = Calendar.current
-        
         return entries.filter { entry in
-            switch selectedTimeRange {
+            switch range {
             case .week:
-                if let aWeekAgo = calendar.date(byAdding: .day, value: -7, to: now) {
-                    return entry.timestamp >= aWeekAgo
+                if let aWeekAgo = calendar.date(byAdding: .day, value: -7, to: referenceDate) {
+                    return entry.timestamp >= aWeekAgo && entry.timestamp <= referenceDate
                 }
                 return true
             case .month:
-                if let aMonthAgo = calendar.date(byAdding: .month, value: -1, to: now) {
-                    return entry.timestamp >= aMonthAgo
+                if let aMonthAgo = calendar.date(byAdding: .month, value: -1, to: referenceDate) {
+                    return entry.timestamp >= aMonthAgo && entry.timestamp <= referenceDate
                 }
                 return true
             case .year:
-                if let aYearAgo = calendar.date(byAdding: .year, value: -1, to: now) {
-                    return entry.timestamp >= aYearAgo
+                if let aYearAgo = calendar.date(byAdding: .year, value: -1, to: referenceDate) {
+                    return entry.timestamp >= aYearAgo && entry.timestamp <= referenceDate
                 }
                 return true
             case .all:
@@ -170,10 +184,17 @@ struct WeightTrackerView: View {
                 
                 // Chart
                 if !filteredEntries.isEmpty {
-                    VStack(alignment: .leading) {
+                    VStack(alignment: .leading, spacing: 6) {
                         Text("Verlauf (\(selectedTimeRange.rawValue))")
                             .font(.headline)
                             .padding(.horizontal)
+
+                        if let anchorDate = resolvedTimeData.fallbackAnchorDate {
+                            Text("Aktuell keine Einträge – zeige letzten Zeitraum bis \(anchorDate.formatted(.dateTime.day().month().year()))")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                                .padding(.horizontal)
+                        }
                         
                         Chart {
                             ForEach(chartEntries) { entry in
@@ -251,7 +272,7 @@ struct WeightTrackerView: View {
                         Image(systemName: "chart.line.uptrend.xyaxis")
                             .font(.system(size: 40))
                             .foregroundColor(.secondary)
-                        Text(entries.isEmpty ? "Noch keine Daten vorhanden." : "Keine Daten in diesem Zeitraum.")
+                        Text("Noch keine Daten vorhanden.")
                             .foregroundColor(.secondary)
                     }
                     .padding(.vertical, 40)
@@ -297,6 +318,12 @@ struct WeightTrackerView: View {
         .background(Color.backgroundPrimary)
         .navigationTitle("")
         .navigationBarTitleDisplayMode(.inline)
+        .onAppear {
+            applyInitialRangeFallbackIfNeeded()
+        }
+        .onChange(of: selectedTimeRange) { _, _ in
+            selectedDate = nil
+        }
         .toolbar {
             if healthKitEnabled {
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -352,6 +379,17 @@ struct WeightTrackerView: View {
     
     private func deleteEntry(_ entry: WeightEntry) {
         modelContext.delete(entry)
+    }
+
+    private func applyInitialRangeFallbackIfNeeded() {
+        guard !hasAppliedInitialRangeFallback else { return }
+        hasAppliedInitialRangeFallback = true
+        guard !entries.isEmpty else { return }
+
+        let now = Date()
+        if let firstNonEmpty = [WeightTimeRange.month, .year, .all].first(where: { !entries(in: $0, relativeTo: now).isEmpty }) {
+            selectedTimeRange = firstNonEmpty
+        }
     }
 
     @MainActor
