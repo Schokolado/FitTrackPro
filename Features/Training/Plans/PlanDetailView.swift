@@ -75,10 +75,6 @@ struct PlanDetailView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.horizontal)
                         .padding(.top, 4)
-                        
-                    if !groupedExercises.isEmpty {
-                        startWorkoutButton
-                    }
                     
                     let planBalanceStats = StatisticsViewModel.muscleGroupBreakdown(for: plan)
                     if !planBalanceStats.isEmpty {
@@ -164,12 +160,11 @@ struct PlanDetailView: View {
                         }
                     }
                     
-                    if groupedExercises.isEmpty {
+                    if groupedExercises.isEmpty || isExercisesExpanded {
                         addExerciseButton
                     }
                 }
-                .padding(.top)
-                .padding(.bottom, 90)
+                .padding(.vertical)
                 .onChange(of: newlyAddedExerciseIds) { oldValue, newValue in
                     if let newId = newValue.subtracting(oldValue).first {
                         isExercisesExpanded = true
@@ -188,18 +183,16 @@ struct PlanDetailView: View {
         .onChange(of: workoutPrefillSourceRaw) { _, _ in
             autoFillPlanFromHistory()
         }
-        .overlay(alignment: .bottomTrailing) {
-            Button(action: { showingExerciseSelection = true }) {
-                Image(systemName: "plus")
-                    .font(.title)
-                    .foregroundColor(.white)
-                    .frame(width: 60, height: 60)
-                    .background(Color.brand)
-                    .clipShape(Circle())
-                    .shadow(color: Color.black.opacity(0.3), radius: 5, x: 0, y: 3)
+        .safeAreaInset(edge: .bottom) {
+            if !groupedExercises.isEmpty {
+                startWorkoutButton
+                    .padding(.top, 10)
+                    .padding(.bottom, 10)
+                    .background(
+                        .ultraThinMaterial,
+                        ignoresSafeAreaEdges: .bottom
+                    )
             }
-            .padding(.bottom, 20)
-            .padding(.trailing, 20)
         }
     }
     
@@ -233,7 +226,7 @@ struct PlanDetailView: View {
     }
     
     private var startWorkoutButton: some View {
-        Button(action: { 
+        Button(action: {
             if workoutManager.isWorkoutActive {
                 showingActiveWorkoutAlert = true
             } else {
@@ -241,9 +234,20 @@ struct PlanDetailView: View {
             }
         }) {
             Label("Workout Starten", systemImage: "play.fill")
+                .font(.headline.bold())
+                .foregroundColor(.white)
                 .frame(maxWidth: .infinity)
+                .padding(.vertical, 16)
+                .background(
+                    LinearGradient(
+                        colors: [Color.green, Color.green.opacity(0.85)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                .shadow(color: Color.green.opacity(0.28), radius: 8, y: 4)
         }
-        .primaryButtonStyle(backgroundColor: .green)
         .padding(.horizontal)
     }
 
