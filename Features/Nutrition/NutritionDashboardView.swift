@@ -19,7 +19,8 @@ struct NutritionDashboardView: View {
     @State private var showingDatePicker = false
     
     @AppStorage("dailyCalorieGoal") private var goalCalories: Double = 2500
-    @AppStorage("nutritionTolerance") private var nutritionTolerance: Double = 300
+    @AppStorage(AppStorageKeys.nutritionTolerance) private var nutritionTolerance: Double = 300
+    @AppStorage(AppStorageKeys.calorieWarningEveningHour) private var calorieWarningEveningHour: Int = 18
     @AppStorage("nutritionGoalProtein") private var goalProtein: Double = 150
     @AppStorage("nutritionGoalCarbs") private var goalCarbs: Double = 250
     @AppStorage("nutritionGoalFat") private var goalFat: Double = 70
@@ -180,17 +181,25 @@ struct NutritionDashboardView: View {
             let totalProtein = todayEntries.reduce(0) { $0 + $1.proteinGrams }
             let totalCarbs = todayEntries.reduce(0) { $0 + $1.carbsGrams }
             let totalFat = todayEntries.reduce(0) { $0 + $1.fatGrams }
+            let ringState = CalorieRingEvaluator.evaluate(
+                consumed: totalCals,
+                goal: goalCalories,
+                tolerance: nutritionTolerance,
+                date: selectedDate,
+                eveningHour: calorieWarningEveningHour
+            )
             
             Text("Kalorien")
                 .font(.headline)
             
             ZStack {
                 Circle()
-                    .stroke(Color.brandSecondary.opacity(0.3), lineWidth: 15)
+                    .stroke(ringState.color.opacity(0.25), lineWidth: 15)
                 Circle()
-                    .trim(from: 0, to: min(CGFloat(totalCals / goalCalories), 1.0))
-                    .stroke(Color.brand, style: StrokeStyle(lineWidth: 15, lineCap: .round))
+                    .trim(from: 0, to: min(CGFloat(totalCals / max(goalCalories, 1)), 1.0))
+                    .stroke(ringState.color, style: StrokeStyle(lineWidth: 15, lineCap: .round))
                     .rotationEffect(.degrees(-90))
+                    .animation(.spring(response: 0.6, dampingFraction: 0.8), value: totalCals)
                 
                 VStack {
                     Text("\(Int(totalCals))")
@@ -198,6 +207,15 @@ struct NutritionDashboardView: View {
                     Text("/ \(Int(goalCalories)) kcal")
                         .font(.caption)
                         .foregroundColor(.secondary)
+                    if ringState == .surplusWarning {
+                        Text("+\(Int(totalCals - goalCalories)) über Ziel")
+                            .font(.caption2.bold())
+                            .foregroundColor(.destructive)
+                    } else if ringState == .eveningDeficitWarning {
+                        Text("−\(Int(goalCalories - totalCals)) Defizit")
+                            .font(.caption2.bold())
+                            .foregroundColor(.warning)
+                    }
                 }
             }
             .frame(height: 150)

@@ -7,9 +7,35 @@ struct NutritionSummaryCard: View {
     let carbs: Double
     let protein: Double
     let fat: Double
+    var tolerance: Double = 300
+    var eveningHour: Int = 18
     
     var progress: Double {
         min(consumed / max(goal, 1), 1.0)
+    }
+
+    private var ringState: CalorieRingState {
+        CalorieRingEvaluator.evaluate(
+            consumed: consumed,
+            goal: goal,
+            tolerance: tolerance,
+            eveningHour: eveningHour
+        )
+    }
+
+    private var remainingText: String {
+        if consumed > goal {
+            return "+\(Int(consumed - goal)) kcal über Ziel"
+        }
+        return "\(Int(max(goal - consumed, 0))) kcal verbleibend"
+    }
+
+    private var remainingColor: Color {
+        switch ringState {
+        case .surplusWarning: return .destructive
+        case .eveningDeficitWarning: return .warning
+        case .normal, .onTrack: return .secondary
+        }
     }
     
     var body: some View {
@@ -17,17 +43,17 @@ struct NutritionSummaryCard: View {
             // Circular Progress
             ZStack {
                 Circle()
-                    .stroke(Color.brand.opacity(0.2), lineWidth: 10)
+                    .stroke(ringState.color.opacity(0.2), lineWidth: 10)
                 
                 Circle()
                     .trim(from: 0, to: progress)
-                    .stroke(Color.brand, style: StrokeStyle(lineWidth: 10, lineCap: .round))
+                    .stroke(ringState.color, style: StrokeStyle(lineWidth: 10, lineCap: .round))
                     .rotationEffect(.degrees(-90))
                     .animation(.spring(response: 0.6, dampingFraction: 0.8), value: progress)
                 
                 VStack(spacing: 2) {
                     Image(systemName: "flame.fill")
-                        .foregroundColor(.brand)
+                        .foregroundColor(ringState.color)
                         .font(.caption)
                     Text("\(Int(consumed))")
                         .font(.system(size: 20, weight: .bold, design: .rounded))
@@ -36,21 +62,21 @@ struct NutritionSummaryCard: View {
             .frame(width: 90, height: 90)
             
             // Texts
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: 6) {
                 Text("Ernährung heute")
                     .font(.headline)
                     .foregroundColor(.primary)
                 
-                Text("\(Int(max(goal - consumed, 0))) kcal verbleibend")
+                Text(remainingText)
                     .font(.subheadline)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(remainingColor)
                     
                 HStack(spacing: 12) {
                     MacroBadge(label: "K", value: Int(carbs), color: .blue)
                     MacroBadge(label: "P", value: Int(protein), color: .purple)
                     MacroBadge(label: "F", value: Int(fat), color: .orange)
                 }
-                .padding(.top, 4)
+                .padding(.top, 2)
             }
             
             Spacer()

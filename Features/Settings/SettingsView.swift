@@ -30,7 +30,8 @@ struct SettingsView: View {
     @AppStorage(AppStorageKeys.userHeightCm) private var heightCm: Double = 175
     @AppStorage(AppStorageKeys.dailyCalorieGoal) private var dailyCalorieGoal: Double = 2500
     @AppStorage(AppStorageKeys.dailyActiveCalorieGoal) private var dailyActiveCalorieGoal: Double = 600
-    @AppStorage("nutritionTolerance") private var nutritionTolerance: Double = 300
+    @AppStorage(AppStorageKeys.nutritionTolerance) private var nutritionTolerance: Double = 300
+    @AppStorage(AppStorageKeys.calorieWarningEveningHour) private var calorieWarningEveningHour: Int = 18
     @AppStorage(AppStorageKeys.dailyStepGoal) private var dailyStepGoal: Int = 10000
     @AppStorage(AppStorageKeys.dailyWaterGoalML) private var dailyWaterGoalML: Double = 2500
     @AppStorage(AppStorageKeys.dailySleepGoalHours) private var dailySleepGoalHours: Double = 8.0
@@ -116,12 +117,20 @@ struct SettingsView: View {
                             .multilineTextAlignment(.trailing)
                     }
                     HStack {
-                        Label("Toleranz (+/-)", systemImage: "arrow.up.and.down")
+                        Label("Toleranz (±)", systemImage: "arrow.up.and.down")
                         Spacer()
                         TextField("kcal", value: $nutritionTolerance, format: .number)
                             .keyboardType(.decimalPad)
                             .multilineTextAlignment(.trailing)
                     }
+                    HStack {
+                        Label("Defizit-Warnung ab", systemImage: "moon.stars")
+                        Spacer()
+                        Stepper("\(calorieWarningEveningHour):00 Uhr", value: $calorieWarningEveningHour, in: 16...22, step: 1)
+                    }
+                    Text("Bei Überschuss über +\(Int(max(nutritionTolerance, 0))) kcal färbt sich der Kalorien-Kreis rot; ab \(calorieWarningEveningHour):00 Uhr bei mehr als −\(Int(max(nutritionTolerance, 0))) kcal Defizit orange.")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
                     HStack {
                         Text("Protein (g)")
                         Spacer()

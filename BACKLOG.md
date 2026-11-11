@@ -13,8 +13,6 @@
   - Geschätzte Dauer eines Trainingsplans anhand der Übungen, Sätze und Pausenzeiten berechnen und in Plan-Karten / `PlanDetailView` anzeigen.
 - [ ] **Chart X-Achsen-Beschriftungen am Rand korrigieren** *(Klein)*
   - Abgeschnittene Rand-Labels (z. B. im `WeightTrackerView`) sauber ohne gestauchtes Chart-Layout darstellen.
-- [ ] **Dynamische Farbgebung für Kalorien-Kreis (Dashboard)** *(Klein–Mittel)*
-  - Warnfarben (z. B. Rot bei deutlichem Überschuss, Orange bei deutlichem Defizit am Abend) basierend auf einem in den Settings konfigurierbaren Limit (z. B. ±400 kcal).
 - [ ] **Verbrannte Kalorien direkt im Dashboard / Ernährungs-Tab anzeigen** *(Klein–Mittel)*
   - `HealthKitService.fetchActiveEnergyBurned(for:)` ist bereits implementiert (`RecoveryView` nutzt es); zusätzlich direkte Ausweisung im Dashboard-Kalorienwidget bzw. `NutritionDashboardView` für den echten Tagesumsatz.
 - [ ] **Optional: Übergang zum Dashboard nach Workout-Abschluss** *(Klein)*
@@ -86,3 +84,4 @@
 - [x] **Belastung / Erholung / Schlaf & Aktivitätszusammenfassung** (`6b79d08`, `ac1e2af`) – Vital-Ringe und Tages-/Wochenzusammenfassung in `RecoveryView`.
 - [x] **Trainingsbelastung & Fitness-Status (inkl. 6-Wochen-Verlauf)** (`c9425cc`) – Akute vs. chronische Belastung und Status-Timeline.
 - [x] **Biologisches Alter / Fitness-Alter** (`7498e28`, `db5e286`, `4c5deda`) – Berechnung mit HealthKit-`VO2max`, Ruhepuls, Schritten, Trainingsfrequenz, Schlaf sowie Körperfettanteil / Waist-to-Height-Ratio (mit BMI-Fallback).
+- [x] **Dynamische Farbgebung für Kalorien-Kreis (Dashboard & Ernährung)** – `CalorieRingEvaluator` mit Warnfarben (Rot bei Überschuss, Orange bei abendlichem/vergangenem Defizit, Grün im Zielkorridor) auf Basis der konfigurierbaren Toleranz (`nutritionTolerance`) und Abend-Uhrzeit (`calorieWarningEveningHour`) in `SettingsView`.

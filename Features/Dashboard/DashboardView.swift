@@ -7,6 +7,8 @@ struct DashboardView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(WorkoutManager.self) private var workoutManager
     @AppStorage("dailyCalorieGoal") private var dailyCalorieGoal: Double = 2500
+    @AppStorage(AppStorageKeys.nutritionTolerance) private var nutritionTolerance: Double = 300
+    @AppStorage(AppStorageKeys.calorieWarningEveningHour) private var calorieWarningEveningHour: Int = 18
     @AppStorage("daily_step_goal") private var dailyStepGoal: Int = 10000
     @AppStorage("userName") private var userName: String = ""
     @AppStorage(AppStorageKeys.healthKitEnabled) private var healthKitEnabled = false
@@ -329,9 +331,22 @@ struct DashboardView: View {
                 NotificationCenter.default.post(name: NSNotification.Name("ResetNutritionToToday"), object: nil)
             }) {
                 if config.size == .large {
-                    NutritionSummaryCard(consumed: consumedCalories, goal: dailyCalorieGoal, carbs: consumedCarbs, protein: consumedProtein, fat: consumedFat)
+                    NutritionSummaryCard(
+                        consumed: consumedCalories,
+                        goal: dailyCalorieGoal,
+                        carbs: consumedCarbs,
+                        protein: consumedProtein,
+                        fat: consumedFat,
+                        tolerance: nutritionTolerance,
+                        eveningHour: calorieWarningEveningHour
+                    )
                 } else {
-                    NutritionSummaryCardSmall(consumed: consumedCalories, goal: dailyCalorieGoal)
+                    NutritionSummaryCardSmall(
+                        consumed: consumedCalories,
+                        goal: dailyCalorieGoal,
+                        tolerance: nutritionTolerance,
+                        eveningHour: calorieWarningEveningHour
+                    )
                 }
             }
             .buttonStyle(PlainButtonStyle())
@@ -433,9 +448,22 @@ struct DashboardView: View {
         switch config.type {
         case .nutrition:
             if config.size == .large {
-                NutritionSummaryCard(consumed: consumedCalories, goal: dailyCalorieGoal, carbs: consumedCarbs, protein: consumedProtein, fat: consumedFat)
+                NutritionSummaryCard(
+                    consumed: consumedCalories,
+                    goal: dailyCalorieGoal,
+                    carbs: consumedCarbs,
+                    protein: consumedProtein,
+                    fat: consumedFat,
+                    tolerance: nutritionTolerance,
+                    eveningHour: calorieWarningEveningHour
+                )
             } else {
-                NutritionSummaryCardSmall(consumed: consumedCalories, goal: dailyCalorieGoal)
+                NutritionSummaryCardSmall(
+                    consumed: consumedCalories,
+                    goal: dailyCalorieGoal,
+                    tolerance: nutritionTolerance,
+                    eveningHour: calorieWarningEveningHour
+                )
             }
         case .steps:
             if config.size == .large {

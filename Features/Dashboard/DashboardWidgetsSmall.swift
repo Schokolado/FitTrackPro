@@ -6,9 +6,35 @@ import SwiftData
 struct NutritionSummaryCardSmall: View {
     let consumed: Double
     let goal: Double
+    var tolerance: Double = 300
+    var eveningHour: Int = 18
     
     var progress: Double {
         min(consumed / max(goal, 1), 1.0)
+    }
+
+    private var ringState: CalorieRingState {
+        CalorieRingEvaluator.evaluate(
+            consumed: consumed,
+            goal: goal,
+            tolerance: tolerance,
+            eveningHour: eveningHour
+        )
+    }
+
+    private var subtitleText: String {
+        if ringState == .surplusWarning {
+            return "+\(Int(consumed - goal)) über Ziel"
+        }
+        return "von \(Int(goal)) kcal"
+    }
+
+    private var subtitleColor: Color {
+        switch ringState {
+        case .surplusWarning: return .destructive
+        case .eveningDeficitWarning: return .warning
+        case .normal, .onTrack: return .secondary
+        }
     }
     
     var body: some View {
@@ -35,20 +61,20 @@ struct NutritionSummaryCardSmall: View {
                     Text("\(Int(consumed)) kcal")
                         .font(.system(size: 24, weight: .bold, design: .rounded))
                     
-                    Text("von \(Int(goal)) kcal")
+                    Text(subtitleText)
                         .font(.caption)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(subtitleColor)
                 }
                 
                 Spacer()
                 
                 ZStack {
                     Circle()
-                        .stroke(Color.brand.opacity(0.2), lineWidth: 4)
+                        .stroke(ringState.color.opacity(0.2), lineWidth: 4)
                     
                     Circle()
                         .trim(from: 0, to: progress)
-                        .stroke(Color.brand, style: StrokeStyle(lineWidth: 4, lineCap: .round))
+                        .stroke(ringState.color, style: StrokeStyle(lineWidth: 4, lineCap: .round))
                         .rotationEffect(.degrees(-90))
                         .animation(.spring(response: 0.6, dampingFraction: 0.8), value: progress)
                 }

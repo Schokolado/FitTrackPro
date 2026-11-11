@@ -24,6 +24,8 @@ enum AppStorageKeys {
 
     // Dashboard-Ziele
     static let dailyCalorieGoal         = "dailyCalorieGoal"             // Double, default: 2500
+    static let nutritionTolerance       = "nutritionTolerance"           // Double, default: 300
+    static let calorieWarningEveningHour = "calorie_warning_evening_hour" // Int, default: 18
     static let dailyActiveCalorieGoal   = "daily_active_calorie_goal"    // Double, default: 600 (Belastungsziel)
     static let dailyStepGoal            = "daily_step_goal"              // Int, default: 10000
     static let dailyWaterGoalML         = "dailyWaterGoalML"             // Double
@@ -59,6 +61,7 @@ class CloudProfileService {
         AppStorageKeys.userHeightCm,
         AppStorageKeys.onboardingWeightKg,
         AppStorageKeys.dailyCalorieGoal,
+        AppStorageKeys.nutritionTolerance,
         AppStorageKeys.dailyActiveCalorieGoal,
         "nutritionGoalProtein",
         "nutritionGoalCarbs",
@@ -66,7 +69,8 @@ class CloudProfileService {
     ]
     
     private let intKeys = [
-        AppStorageKeys.dailyStepGoal
+        AppStorageKeys.dailyStepGoal,
+        AppStorageKeys.calorieWarningEveningHour
     ]
     
     private init() {
