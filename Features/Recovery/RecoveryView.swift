@@ -1,8 +1,45 @@
 import SwiftUI
 import SwiftData
 
+struct VitalityView: View {
+    @AppStorage("vitalitySelectedTab") private var selectedSection = 0
+    @State private var navId = UUID()
+
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 0) {
+                Picker("Bereich", selection: $selectedSection) {
+                    Text("Erholung").tag(0)
+                    Text("Tagesenergie").tag(1)
+                }
+                .pickerStyle(.segmented)
+                .padding()
+                .background(Color.backgroundPrimary)
+
+                if selectedSection == 0 {
+                    RecoveryView(isEmbeddedInTab: true)
+                } else {
+                    EnergyDetailView(isEmbeddedInTab: true)
+                }
+            }
+            .background(Color.backgroundPrimary)
+            .navigationTitle("Vitalität")
+            .navigationBarTitleDisplayMode(.large)
+        }
+        .id(navId)
+        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("TabReselected"))) { notification in
+            if let tab = notification.object as? Int, tab == 3 {
+                navId = UUID()
+            }
+        }
+    }
+}
+
 struct RecoveryView: View {
+    var isEmbeddedInTab: Bool = false
+
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.miniPlayerBottomInset) private var miniPlayerBottomInset
     @Query private var workouts: [WorkoutSession]
     @Query(sort: \SleepEntry.wakeTime, order: .reverse) private var manualSleeps: [SleepEntry]
     @Query(sort: \WeightEntry.timestamp, order: .reverse) private var weightEntries: [WeightEntry]
@@ -211,11 +248,13 @@ struct RecoveryView: View {
                     }
                 }
             }
-            .padding(.bottom, 40)
+            .padding(.bottom, 40 + (isEmbeddedInTab ? miniPlayerBottomInset : 0))
         }
         .background(Color.backgroundPrimary)
-        .navigationTitle("Akku / Recovery")
-        .navigationBarTitleDisplayMode(.inline)
+        .refreshable {
+            await calculateRecovery()
+        }
+        .modifier(VitalityNavigationModifier(isEmbedded: isEmbeddedInTab, title: "Vitalität"))
         .task {
             await calculateRecovery()
         }
@@ -592,6 +631,22 @@ struct RecoveryView: View {
             vo2Max: vo2Max,
             referenceDate: today
         )
+    }
+}
+
+struct VitalityNavigationModifier: ViewModifier {
+    let isEmbedded: Bool
+    let title: String
+
+    @ViewBuilder
+    func body(content: Content) -> some View {
+        if isEmbedded {
+            content
+        } else {
+            content
+                .navigationTitle(title)
+                .navigationBarTitleDisplayMode(.inline)
+        }
     }
 }
 

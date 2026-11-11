@@ -418,7 +418,10 @@ struct DashboardView: View {
             .buttonStyle(PlainButtonStyle())
             
         case .recovery:
-            NavigationLink(destination: RecoveryView()) {
+            Button(action: {
+                UserDefaults.standard.set(0, forKey: "vitalitySelectedTab")
+                selectedTab = 3
+            }) {
                 if config.size == .large {
                     RecoveryCard()
                 } else {
@@ -428,7 +431,10 @@ struct DashboardView: View {
             .buttonStyle(PlainButtonStyle())
             
         case .energy:
-            NavigationLink(destination: EnergyDetailView()) {
+            Button(action: {
+                UserDefaults.standard.set(1, forKey: "vitalitySelectedTab")
+                selectedTab = 3
+            }) {
                 if config.size == .large {
                     EnergyCardLarge()
                 } else {

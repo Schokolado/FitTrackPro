@@ -52,7 +52,7 @@ struct RecoveryCard: View {
             
             // Texts
             VStack(alignment: .leading, spacing: 8) {
-                Text("Akku / Recovery")
+                Text("Vitalität")
                     .font(.headline)
                     .foregroundColor(.primary)
                 

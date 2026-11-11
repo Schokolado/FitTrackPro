@@ -64,6 +64,18 @@ struct AppRouter: View {
                     Label("Ernährung", systemImage: "fork.knife")
                 }
                 .tag(2)
+
+            VitalityView()
+                .workoutMiniPlayerInset(
+                    viewModel: showingWorkoutSession ? nil : workoutManager.activeViewModel,
+                    planName: workoutManager.activeSession?.plan?.name
+                ) {
+                    showingWorkoutSession = true
+                }
+                .tabItem {
+                    Label("Vitalität", systemImage: "heart.text.square.fill")
+                }
+                .tag(3)
         }
         .tint(.brand)
         .preferredColorScheme(appTheme.colorScheme)

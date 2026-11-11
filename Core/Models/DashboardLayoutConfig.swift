@@ -11,7 +11,7 @@ enum DashboardCardType: String, Codable, CaseIterable, Identifiable {
         case .steps: return "Schritte"
         case .weight: return "Gewicht"
         case .training: return "Training"
-        case .recovery: return "Recovery"
+        case .recovery: return "Vitalität"
         case .energy: return "Tagesenergie"
         case .water: return "Wasser"
         case .sleep: return "Schlaf"

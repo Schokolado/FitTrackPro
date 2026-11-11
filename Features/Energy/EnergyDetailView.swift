@@ -4,6 +4,9 @@ import SwiftUI
 import SwiftData
 
 struct EnergyDetailView: View {
+    var isEmbeddedInTab: Bool = false
+
+    @Environment(\.miniPlayerBottomInset) private var miniPlayerBottomInset
     @Query(sort: \SleepEntry.wakeTime, order: .reverse) private var sleepEntries: [SleepEntry]
 
     @Query(sort: \WorkoutSession.startTime, order: .reverse) private var workouts: [WorkoutSession]
@@ -116,6 +119,7 @@ struct EnergyDetailView: View {
                 .background(RoundedRectangle(cornerRadius: 16).fill(Color.yellow.opacity(0.1)))
                 .padding(.horizontal)
                 } // End of VStack(spacing: 32)
+                .padding(.bottom, 32 + (isEmbeddedInTab ? miniPlayerBottomInset : 0))
             } else {
                 Text("Keine Daten verfügbar")
                     .foregroundColor(.secondary)
@@ -123,8 +127,10 @@ struct EnergyDetailView: View {
             }
         }
         .background(Color.backgroundPrimary)
-        .navigationTitle("Tagesenergie")
-        .navigationBarTitleDisplayMode(.inline)
+        .refreshable {
+            await calculateEnergy()
+        }
+        .modifier(VitalityNavigationModifier(isEmbedded: isEmbeddedInTab, title: "Tagesenergie"))
         .onAppear {
             Task { await calculateEnergy() }
         }

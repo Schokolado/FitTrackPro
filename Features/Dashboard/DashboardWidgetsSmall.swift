@@ -192,7 +192,7 @@ struct RecoveryCardSmall: View {
             Spacer()
             
             VStack(alignment: .leading, spacing: 4) {
-                Text("Recovery")
+                Text("Vitalität")
                     .font(.subheadline)
                     .foregroundColor(.secondary)
                 
