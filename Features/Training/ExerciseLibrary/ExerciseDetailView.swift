@@ -55,33 +55,36 @@ struct ExerciseDetailView: View {
                     }
 
                     ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 8) {
-                            Label("\(Int(exercise.defaultRestDuration))s Pause", systemImage: "timer")
-                                .font(.caption.weight(.medium))
-                                .foregroundColor(.secondary)
-                                .padding(.horizontal, 10)
-                                .padding(.vertical, 5)
-                                .background(Color.backgroundSecondary)
-                                .clipShape(Capsule())
-
-                            Label(trackingChipLabel, systemImage: exercise.usesTimeInput ? "clock" : "arrow.triangle.2.circlepath")
-                                .font(.caption.weight(.medium))
-                                .foregroundColor(.secondary)
-                                .padding(.horizontal, 10)
-                                .padding(.vertical, 5)
-                                .background(Color.backgroundSecondary)
-                                .clipShape(Capsule())
-
-                            if exercise.isCustom {
-                                Label("Eigene Übung", systemImage: "person.fill")
-                                    .font(.caption.weight(.semibold))
-                                    .foregroundColor(themeManager.color(for: exercise.category))
+                        Button(action: { showingEditForm = true }) {
+                            HStack(spacing: 8) {
+                                Label("\(Int(exercise.defaultRestDuration))s Pause", systemImage: "timer")
+                                    .font(.caption.weight(.medium))
+                                    .foregroundColor(.secondary)
                                     .padding(.horizontal, 10)
                                     .padding(.vertical, 5)
-                                    .background(themeManager.color(for: exercise.category).opacity(0.14))
+                                    .background(Color.backgroundSecondary)
                                     .clipShape(Capsule())
+
+                                Label(trackingChipLabel, systemImage: exercise.usesTimeInput ? "clock" : "arrow.triangle.2.circlepath")
+                                    .font(.caption.weight(.medium))
+                                    .foregroundColor(.secondary)
+                                    .padding(.horizontal, 10)
+                                    .padding(.vertical, 5)
+                                    .background(Color.backgroundSecondary)
+                                    .clipShape(Capsule())
+
+                                if exercise.isCustom {
+                                    Label("Eigene Übung", systemImage: "person.fill")
+                                        .font(.caption.weight(.semibold))
+                                        .foregroundColor(themeManager.color(for: exercise.category))
+                                        .padding(.horizontal, 10)
+                                        .padding(.vertical, 5)
+                                        .background(themeManager.color(for: exercise.category).opacity(0.14))
+                                        .clipShape(Capsule())
+                                }
                             }
                         }
+                        .buttonStyle(.plain)
                     }
                 }
                 .padding(.horizontal)
