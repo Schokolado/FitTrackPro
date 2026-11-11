@@ -56,6 +56,12 @@ final class HealthKitService {
         if let vo2MaxType = HKObjectType.quantityType(forIdentifier: .vo2Max) {
             types.insert(vo2MaxType)
         }
+        if let bodyFatType = HKObjectType.quantityType(forIdentifier: .bodyFatPercentage) {
+            types.insert(bodyFatType)
+        }
+        if let waistType = HKObjectType.quantityType(forIdentifier: .waistCircumference) {
+            types.insert(waistType)
+        }
         
         let sleepType = HKObjectType.categoryType(forIdentifier: .sleepAnalysis)!
         types.insert(sleepType)
@@ -929,15 +935,38 @@ final class HealthKitService {
 
     /// Holt den aktuellsten VO2max-Wert (ml/(kg·min)) aus den letzten `days` Tagen
     func fetchLatestVO2Max(days: Int = 90) async throws -> Double? {
+        let unit = HKUnit.literUnit(with: .milli)
+            .unitDivided(by: HKUnit.gramUnit(with: .kilo).unitMultiplied(by: HKUnit.minute()))
+        return try await fetchLatestQuantitySample(identifier: .vo2Max, unit: unit, days: days)
+    }
+
+    /// Holt den aktuellsten Körperfettanteil in % (z. B. 15.4) aus den letzten `days` Tagen
+    func fetchLatestBodyFatPercent(days: Int = 90) async throws -> Double? {
+        guard let ratio = try await fetchLatestQuantitySample(identifier: .bodyFatPercentage, unit: .percent(), days: days) else {
+            return nil
+        }
+        return ratio * 100.0
+    }
+
+    /// Holt den aktuellsten Taillenumfang in cm aus den letzten `days` Tagen
+    func fetchLatestWaistCm(days: Int = 90) async throws -> Double? {
+        try await fetchLatestQuantitySample(identifier: .waistCircumference, unit: .meterUnit(with: .centi), days: days)
+    }
+
+    private func fetchLatestQuantitySample(
+        identifier: HKQuantityTypeIdentifier,
+        unit: HKUnit,
+        days: Int
+    ) async throws -> Double? {
         guard isAvailable else { return nil }
-        guard let vo2Type = HKObjectType.quantityType(forIdentifier: .vo2Max) else { return nil }
+        guard let quantityType = HKObjectType.quantityType(forIdentifier: identifier) else { return nil }
 
         let startDate = Calendar.current.date(byAdding: .day, value: -days, to: Date())!
         let predicate = HKQuery.predicateForSamples(withStart: startDate, end: Date(), options: .strictStartDate)
         let sort = NSSortDescriptor(key: HKSampleSortIdentifierEndDate, ascending: false)
 
         return try await withCheckedThrowingContinuation { continuation in
-            let query = HKSampleQuery(sampleType: vo2Type, predicate: predicate, limit: 1, sortDescriptors: [sort]) { _, samples, error in
+            let query = HKSampleQuery(sampleType: quantityType, predicate: predicate, limit: 1, sortDescriptors: [sort]) { _, samples, error in
                 if let error = error {
                     continuation.resume(throwing: error)
                     return
@@ -946,8 +975,6 @@ final class HealthKitService {
                     continuation.resume(returning: nil)
                     return
                 }
-                let unit = HKUnit.literUnit(with: .milli)
-                    .unitDivided(by: HKUnit.gramUnit(with: .kilo).unitMultiplied(by: HKUnit.minute()))
                 continuation.resume(returning: sample.quantity.doubleValue(for: unit))
             }
             healthStore.execute(query)

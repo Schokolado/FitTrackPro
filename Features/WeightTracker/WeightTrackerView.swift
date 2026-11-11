@@ -338,6 +338,17 @@ struct WeightEntryRow: View {
                     .font(.title3.bold())
                     + Text(" kg").font(.body).foregroundColor(.secondary)
                 
+                let metricsSummary = [
+                    entry.bodyFatPercent.map { String(format: "%.1f%% KFA", $0) },
+                    entry.waistCm.map { String(format: "%.0f cm Taille", $0) }
+                ].compactMap { $0 }.joined(separator: " • ")
+
+                if !metricsSummary.isEmpty {
+                    Text(metricsSummary)
+                        .font(.caption)
+                        .foregroundColor(.brand)
+                }
+
                 if !entry.notes.isEmpty {
                     Text(entry.notes)
                         .font(.caption)

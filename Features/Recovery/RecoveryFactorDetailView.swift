@@ -1112,6 +1112,8 @@ extension FitnessAgeFactorKind {
         case .steps:    return .green
         case .workouts: return .blue
         case .sleep:    return .indigo
+        case .waist:    return .orange
+        case .bodyFat:  return .mint
         case .bmi:      return .purple
         case .vo2max:   return .teal
         }

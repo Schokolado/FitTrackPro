@@ -360,7 +360,7 @@ struct TrainingLoadCalculator {
 // MARK: - Biologisches Alter / Fitness-Alter
 
 enum FitnessAgeFactorKind: String, CaseIterable {
-    case rhr, steps, workouts, sleep, bmi, vo2max
+    case rhr, steps, workouts, sleep, waist, bodyFat, bmi, vo2max
 }
 
 struct FitnessAgeFactor: Identifiable {
@@ -393,6 +393,8 @@ struct FitnessAgeCalculator {
         biologicalSex: String,
         heightCm: Double,
         weightKg: Double?,
+        bodyFatPercent: Double? = nil,
+        waistCm: Double? = nil,
         restingHR: Double?,
         avgDailySteps: Double?,
         workoutsLast28Days: Int,
@@ -505,25 +507,78 @@ struct FitnessAgeCalculator {
             ))
         }
 
-        // 5. BMI (mit Toleranz bis BMI 26 bei regelmäßigem Krafttraining >= 3x/Woche)
-        if let w = weightKg, w > 0, heightCm > 0 {
-            let hM = heightCm / 100.0
-            let bmi = w / (hM * hM)
-            let upperHealthy = workoutsPerWeek >= 3.0 ? 26.2 : 24.9
-            let bmiDelta: Double = {
-                if bmi >= 19.0 && bmi <= upperHealthy { return -1.0 }
-                if (bmi > upperHealthy && bmi <= 28.5) || (bmi >= 18.0 && bmi < 19.0) { return 0.6 }
+        // 5. Körperkomposition: Echte Metriken (WHtR / KFA) vor BMI-Fallback
+        var usedDirectCompositionMetric = false
+
+        if let waist = waistCm, waist > 0, heightCm > 0 {
+            usedDirectCompositionMetric = true
+            let whtr = waist / heightCm
+            let whtrDelta: Double = {
+                if whtr >= 0.42 && whtr <= 0.49 { return -1.8 }
+                if whtr < 0.42 || (whtr > 0.49 && whtr <= 0.52) { return -0.6 }
+                if whtr <= 0.56 { return 0.7 }
+                return 2.0
+            }()
+            factors.append(FitnessAgeFactor(
+                kind: .waist,
+                title: "Taille / WHtR",
+                systemIcon: "ruler.fill",
+                valueText: String(format: "%.2f (%d cm)", whtr, Int(waist.rounded())),
+                targetText: "Optimal: 0,42–0,49",
+                deltaYears: whtrDelta,
+                hasData: true,
+                tip: "Das Taille-zu-Größe-Verhältnis (WHtR) bewertet viszerales Fett unabhängig von deiner Muskelmasse."
+            ))
+        }
+
+        if let kfa = bodyFatPercent, kfa > 0 {
+            usedDirectCompositionMetric = true
+            let (optimalLow, optimalHigh, okHigh): (Double, Double, Double) = {
+                switch biologicalSex {
+                case "male":   return (10.0, 18.0, 22.5)
+                case "female": return (18.0, 26.0, 30.5)
+                default:       return (14.0, 22.0, 26.5)
+                }
+            }()
+            let kfaDelta: Double = {
+                if kfa >= optimalLow && kfa <= optimalHigh { return -1.6 }
+                if (kfa >= optimalLow - 3 && kfa < optimalLow) || (kfa > optimalHigh && kfa <= okHigh) { return 0.0 }
+                if kfa > okHigh && kfa <= okHigh + 4 { return 0.9 }
                 return 1.8
             }()
             factors.append(FitnessAgeFactor(
+                kind: .bodyFat,
+                title: "Körperfettanteil (KFA)",
+                systemIcon: "figure.arms.open",
+                valueText: String(format: "%.1f %%", kfa),
+                targetText: String(format: "Optimal: %.0f–%.0f %%", optimalLow, optimalHigh),
+                deltaYears: kfaDelta,
+                hasData: true,
+                tip: "Der KFA trennt Fett- und Muskelmasse sauber – ideal für Kraftsportler."
+            ))
+        }
+
+        // BMI nur als Fallback, wenn weder Taillenumfang noch KFA vorliegt (ohne Malus bei aktivem Krafttraining)
+        if !usedDirectCompositionMetric, let w = weightKg, w > 0, heightCm > 0 {
+            let hM = heightCm / 100.0
+            let bmi = w / (hM * hM)
+            let isActiveAthlete = workoutsPerWeek >= 2.0
+            let upperHealthy = isActiveAthlete ? 28.5 : 24.9
+            let bmiDelta: Double = {
+                if bmi >= 19.0 && bmi <= 24.9 { return -0.8 }
+                if isActiveAthlete && bmi > 24.9 && bmi <= upperHealthy { return 0.0 }
+                if (bmi > upperHealthy && bmi <= 30.0) || (bmi >= 18.0 && bmi < 19.0) { return 0.6 }
+                return 1.6
+            }()
+            factors.append(FitnessAgeFactor(
                 kind: .bmi,
-                title: "BMI / Körperkomposition",
+                title: "BMI (Hinweiswert)",
                 systemIcon: "scalemass.fill",
                 valueText: String(format: "%.1f (%.1f kg)", bmi, w),
-                targetText: workoutsPerWeek >= 3.0 ? "Sport-Norm: 19–26" : "Optimal: 19–24,9",
+                targetText: isActiveAthlete ? "Athleten-Toleranz aktiv" : "Optimal: 19–24,9",
                 deltaYears: bmiDelta,
                 hasData: true,
-                tip: "Ein ausgewogenes Verhältnis von Muskelmasse und Körperfett entlastet Herz und Gelenke."
+                tip: "BMI unterscheidet nicht zwischen Muskel- und Fettmasse. Erfasse KFA oder Taillenumfang im Gewichts-Tracker für echte Präzision."
             ))
         }
 
