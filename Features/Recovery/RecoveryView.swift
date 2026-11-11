@@ -567,10 +567,14 @@ struct RecoveryView: View {
 
         let vo2Max = try? await HealthKitService.shared.fetchLatestVO2Max()
         let currentWeightKg: Double? = weightEntries.first?.weightKg ?? (onboardingWeightKg > 0 ? onboardingWeightKg : nil)
-        let localBodyFat = weightEntries.first(where: { ($0.bodyFatPercent ?? 0) > 0 })?.bodyFatPercent
-        let effectiveBodyFat = localBodyFat ?? (try? await HealthKitService.shared.fetchLatestBodyFatPercent())
-        let localWaist = weightEntries.first(where: { ($0.waistCm ?? 0) > 0 })?.waistCm
-        let effectiveWaist = localWaist ?? (try? await HealthKitService.shared.fetchLatestWaistCm())
+        var effectiveBodyFat = weightEntries.first(where: { ($0.bodyFatPercent ?? 0) > 0 })?.bodyFatPercent
+        if effectiveBodyFat == nil {
+            effectiveBodyFat = try? await HealthKitService.shared.fetchLatestBodyFatPercent()
+        }
+        var effectiveWaist = weightEntries.first(where: { ($0.waistCm ?? 0) > 0 })?.waistCm
+        if effectiveWaist == nil {
+            effectiveWaist = try? await HealthKitService.shared.fetchLatestWaistCm()
+        }
         let effectiveRHR = rhrScore ?? rhrBaseline
 
         fitnessAgeResult = FitnessAgeCalculator.calculate(
