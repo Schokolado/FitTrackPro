@@ -311,6 +311,16 @@ struct PlanDetailView: View {
                         .clipShape(Capsule())
                 }
 
+                if let durationText = plan.estimatedDurationText {
+                    Label(durationText, systemImage: "timer")
+                        .font(.caption.weight(.medium))
+                        .foregroundColor(.secondary)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 5)
+                        .background(Color.backgroundSecondary)
+                        .clipShape(Capsule())
+                }
+
                 if let last = lastCompleted {
                     Label("Zuletzt \(last.startTime.formatted(.dateTime.day().month()))", systemImage: "clock")
                         .font(.caption.weight(.medium))

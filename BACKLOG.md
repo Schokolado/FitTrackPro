@@ -9,8 +9,6 @@
 
 - [ ] **Farbhierarchie im aktiven Workout** *(Design)*
   - Klare Farbtrennung zwischen Satzpausen-Timer (`WorkoutTimerHeaderView`), „Workout angehalten“ (Orange) und „Workout beenden“ (Grün in `WorkoutSessionView`), z. B. Indigo/Cyan/`Color.brand` für Satzpause und Grün exklusiv für Start/Abschluss.
-- [ ] **Voraussichtliche Trainingsdauer anzeigen** *(Klein)*
-  - Geschätzte Dauer eines Trainingsplans anhand der Übungen, Sätze und Pausenzeiten berechnen und in Plan-Karten / `PlanDetailView` anzeigen.
 - [ ] **Chart X-Achsen-Beschriftungen am Rand korrigieren** *(Klein)*
   - Abgeschnittene Rand-Labels (z. B. im `WeightTrackerView`) sauber ohne gestauchtes Chart-Layout darstellen.
 - [ ] **Optional: Übergang zum Dashboard nach Workout-Abschluss** *(Klein)*
@@ -80,4 +78,5 @@
 - [x] **Verbrannte Kalorien direkt im Dashboard & Ernährungs-Tab anzeigen** (`b8bbc92`) – Anzeige der aktiven HealthKit-Kalorien (`fetchActiveEnergyBurned(for:)`), geschätztem Tagesumsatz (`EnergyCalculator.estimatedBMR` + Aktiv) und Tagesbilanz in `NutritionSummaryCard`, `NutritionSummaryCardSmall` und `NutritionDashboardView`.
 - [x] **Push-Benachrichtigungen / Reminder** (`4a78b25`) – Konfigurierbare Erinnerungen für Workout-Tage/Uhrzeit, Makro-/Protein-Restbedarf und Schrittziel in `SettingsView` & `NotificationService` (automatischer Tages-Sync bei App-Wechsel).
 - [x] **Apple Health Erweiterungen** – Manueller „Import aus Health“-Abgleich für Gewicht (`HealthKitService.importNewWeights`, `WeightTrackerView`, `SettingsView`), Kalorien-/Makro-Export (`exportNutrition` inkl. Sammel-Abgleich) sowie Auslesen/Berechnen verbrannter Workout-Kalorien aus Apple Watch Active Energy, Herzfrequenz (Keytel) oder MET-Schätzung inkl. `HKWorkout`-Export (`WorkoutSummaryView`, `WorkoutHistoryView`).
-- [x] **Vitalität-Tab (ehem. Akku / Recovery)** – Eigenständiger 4. Tab in der Navigationsleiste (`AppRouter`, `VitalityView`) mit Segment-Wechsel zwischen **Erholung** (`RecoveryView`) und **Tagesenergie** (`EnergyDetailView`) sowie umbenannten Dashboard-Karten.
+- [x] **Vitalität-Tab (ehem. Akku / Recovery)** (`593c9e9`, `56c6db2`) – Eigenständiger 4. Tab in der Navigationsleiste (`AppRouter`, `VitalityView`) mit Segment-Wechsel zwischen **Erholung** (`RecoveryView`) und **Tagesenergie** (`EnergyDetailView`) sowie umbenannten Dashboard-Karten.
+- [x] **Voraussichtliche Trainingsdauer anzeigen** – Schätzung aus Sätzen, Ziel-Wdh./Zeit (`usesTimeInput`) und Pausenzeiten (`TrainingPlan.estimatedDurationText`), angezeigt in `PlanCard` (`TrainingPlansView`) und `PlanDetailView`.

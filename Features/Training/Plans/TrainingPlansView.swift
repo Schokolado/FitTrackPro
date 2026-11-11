@@ -361,13 +361,24 @@ struct PlanCardView: View {
                 
                 Spacer(minLength: 20)
                 
-                HStack(spacing: 16) {
+                HStack(spacing: 12) {
                     HStack(spacing: 4) {
                         Image(systemName: "dumbbell.fill")
                         Text("\(plan.planExercises?.count ?? 0) Übungen")
                     }
                     .font(.subheadline)
                     .foregroundColor(.white.opacity(0.9))
+                    .lineLimit(1)
+
+                    if let durationText = plan.estimatedDurationText {
+                        HStack(spacing: 4) {
+                            Image(systemName: "timer")
+                            Text(durationText)
+                        }
+                        .font(.subheadline)
+                        .foregroundColor(.white.opacity(0.9))
+                        .lineLimit(1)
+                    }
                     
                     if let group = plan.group {
                         HStack(spacing: 4) {
@@ -376,6 +387,7 @@ struct PlanCardView: View {
                         }
                         .font(.subheadline)
                         .foregroundColor(.white.opacity(0.9))
+                        .lineLimit(1)
                     }
                     
                     Spacer()
