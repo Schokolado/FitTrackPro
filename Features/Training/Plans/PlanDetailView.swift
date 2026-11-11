@@ -35,6 +35,7 @@ struct PlanDetailView: View {
     @State private var generatedPDFUrl: URL?
     @State private var isGeneratingPDF = false
     @State private var isExercisesExpanded = true
+    @State private var isScrolledDown = false
     
     private var planSessions: [WorkoutSession] {
         allSessions.filter { $0.plan?.id == plan.id }
@@ -114,10 +115,11 @@ struct PlanDetailView: View {
                         } header: {
                             Button {
                                 let willCollapse = isExercisesExpanded
+                                let shouldScrollToTop = willCollapse && isScrolledDown
                                 withAnimation(.easeInOut(duration: 0.25)) {
                                     isExercisesExpanded.toggle()
                                 }
-                                if willCollapse {
+                                if shouldScrollToTop {
                                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
                                         withAnimation(.easeInOut(duration: 0.25)) {
                                             proxy.scrollTo("planTop", anchor: .top)
@@ -182,6 +184,11 @@ struct PlanDetailView: View {
                     }
                 }
             }
+        }
+        .onScrollGeometryChange(for: Bool.self) { geo in
+            (geo.contentOffset.y + geo.contentInsets.top) > 30
+        } action: { _, newValue in
+            isScrolledDown = newValue
         }
         .onAppear {
             autoFillPlanFromHistory()
