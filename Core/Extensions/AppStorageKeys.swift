@@ -52,7 +52,10 @@ enum AppStorageKeys {
     static let stepReminderMinute       = "step_reminder_minute"         // Int, default: 0
 
     // Share Workout
-    static let shareWorkoutAutoSaveToPhotos = "share_workout_auto_save_to_photos" // Bool, default: false
+    static let shareWorkoutAutoSaveToPhotos   = "share_workout_auto_save_to_photos"   // Bool, default: false
+    static let shareWorkoutAutoRotateTheme    = "share_workout_auto_rotate_theme"    // Bool, default: true
+    static let shareWorkoutSelectedTheme      = "share_workout_selected_theme"       // String (WorkoutShareTheme.rawValue)
+    static let shareWorkoutLastAutoThemeIndex = "share_workout_last_auto_theme_idx"  // Int, default: -1
 }
 
 import Combine

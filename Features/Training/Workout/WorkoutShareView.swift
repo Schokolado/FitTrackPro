@@ -22,11 +22,90 @@ enum WorkoutShareAspectRatio: String, CaseIterable, Identifiable {
 }
 
 enum WorkoutShareTheme: String, CaseIterable, Identifiable {
-    case brand = "Vantage"
-    case dark  = "Nacht"
-    case light = "Minimal"
+    case brand   = "Vantage"
+    case dark    = "Nacht"
+    case inferno = "Inferno"
+    case emerald = "Emerald"
+    case violet  = "Violet"
+    case volt    = "Volt"
+    case light   = "Minimal"
 
     var id: String { rawValue }
+
+    var accentColor: Color {
+        switch self {
+        case .brand:   return .cyan
+        case .dark:    return .cyan
+        case .inferno: return .orange
+        case .emerald: return .mint
+        case .violet:  return Color(red: 0.80, green: 0.48, blue: 1.0)
+        case .volt:    return Color(red: 0.78, green: 0.98, blue: 0.22)
+        case .light:   return .blue
+        }
+    }
+
+    /// Ensures bright, high-contrast accents when rendered over dark selfie scrims.
+    var photoAccentColor: Color {
+        self == .light ? .cyan : accentColor
+    }
+
+    var glowColor: Color {
+        switch self {
+        case .brand:   return .cyan
+        case .dark:    return .blue
+        case .inferno: return .orange
+        case .emerald: return .mint
+        case .violet:  return .purple
+        case .volt:    return Color(red: 0.78, green: 0.98, blue: 0.22)
+        case .light:   return .blue
+        }
+    }
+
+    var gradientColors: [Color] {
+        switch self {
+        case .brand:
+            return [
+                Color(red: 0.04, green: 0.11, blue: 0.26),
+                Color(red: 0.06, green: 0.25, blue: 0.56),
+                Color(red: 0.04, green: 0.14, blue: 0.34)
+            ]
+        case .dark:
+            return [
+                Color(red: 0.07, green: 0.08, blue: 0.11),
+                Color(red: 0.12, green: 0.14, blue: 0.19),
+                Color(red: 0.06, green: 0.07, blue: 0.10)
+            ]
+        case .inferno:
+            return [
+                Color(red: 0.14, green: 0.04, blue: 0.03),
+                Color(red: 0.38, green: 0.11, blue: 0.05),
+                Color(red: 0.18, green: 0.05, blue: 0.03)
+            ]
+        case .emerald:
+            return [
+                Color(red: 0.02, green: 0.12, blue: 0.10),
+                Color(red: 0.05, green: 0.29, blue: 0.23),
+                Color(red: 0.02, green: 0.15, blue: 0.12)
+            ]
+        case .violet:
+            return [
+                Color(red: 0.10, green: 0.04, blue: 0.18),
+                Color(red: 0.25, green: 0.09, blue: 0.44),
+                Color(red: 0.12, green: 0.05, blue: 0.22)
+            ]
+        case .volt:
+            return [
+                Color(red: 0.04, green: 0.05, blue: 0.05),
+                Color(red: 0.10, green: 0.13, blue: 0.08),
+                Color(red: 0.04, green: 0.05, blue: 0.04)
+            ]
+        case .light:
+            return [
+                Color(red: 0.96, green: 0.97, blue: 0.99),
+                Color(red: 0.90, green: 0.93, blue: 0.97)
+            ]
+        }
+    }
 }
 
 private struct IdentifiableShareImage: Identifiable {
@@ -158,6 +237,10 @@ struct WorkoutShareSheet: View {
 
     @State private var aspectRatio: WorkoutShareAspectRatio = .card
     @State private var theme: WorkoutShareTheme = .brand
+    @State private var hasInitializedTheme = false
+    @AppStorage(AppStorageKeys.shareWorkoutAutoRotateTheme) private var autoRotateTheme = true
+    @AppStorage(AppStorageKeys.shareWorkoutSelectedTheme) private var savedThemeRaw = WorkoutShareTheme.brand.rawValue
+    @AppStorage(AppStorageKeys.shareWorkoutLastAutoThemeIndex) private var lastAutoThemeIndex = -1
     @State private var showExercises = true
     @State private var showCalories = true
     @AppStorage(AppStorageKeys.shareWorkoutAutoSaveToPhotos) private var autoSaveToCameraRoll = false
@@ -202,6 +285,9 @@ struct WorkoutShareSheet: View {
                         dismiss()
                     }
                 }
+            }
+            .onAppear {
+                initializeThemeIfNeeded()
             }
             .onChange(of: selectedPickerItem) { _, newItem in
                 guard let newItem else { return }
@@ -331,32 +417,65 @@ struct WorkoutShareSheet: View {
             }
 
             HStack(spacing: 8) {
-                if selfiePhoto == nil {
-                    Menu {
-                        ForEach(WorkoutShareTheme.allCases) { option in
-                            Button {
-                                theme = option
-                            } label: {
-                                if theme == option {
-                                    Label(option.rawValue, systemImage: "checkmark")
-                                } else {
-                                    Text(option.rawValue)
-                                }
-                            }
+                Menu {
+                    Button {
+                        autoRotateTheme.toggle()
+                        if autoRotateTheme {
+                            advanceToNextTheme()
+                        } else {
+                            savedThemeRaw = theme.rawValue
                         }
                     } label: {
-                        HStack(spacing: 5) {
-                            Image(systemName: "paintpalette.fill")
-                            Text(theme.rawValue)
+                        if autoRotateTheme {
+                            Label("Automatisch wechseln", systemImage: "checkmark")
+                        } else {
+                            Label("Automatisch wechseln", systemImage: "arrow.triangle.2.circlepath")
                         }
-                        .font(.caption.weight(.semibold))
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 7)
+                    }
+
+                    Divider()
+
+                    ForEach(WorkoutShareTheme.allCases) { option in
+                        Button {
+                            withAnimation(.easeInOut(duration: 0.2)) {
+                                theme = option
+                            }
+                            autoRotateTheme = false
+                            savedThemeRaw = option.rawValue
+                        } label: {
+                            if !autoRotateTheme && theme == option {
+                                Label(option.rawValue, systemImage: "checkmark")
+                            } else {
+                                Text(option.rawValue)
+                            }
+                        }
+                    }
+                } label: {
+                    HStack(spacing: 6) {
+                        Circle()
+                            .fill(theme.accentColor)
+                            .frame(width: 8, height: 8)
+                        Text(autoRotateTheme ? "Auto · \(theme.rawValue)" : theme.rawValue)
+                    }
+                    .font(.caption.weight(.semibold))
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 7)
+                    .background(Color.backgroundSecondary)
+                    .foregroundColor(.primary)
+                    .clipShape(Capsule())
+                }
+
+                Button {
+                    advanceToNextTheme()
+                } label: {
+                    Image(systemName: "die.face.5.fill")
+                        .font(.caption)
+                        .padding(7)
                         .background(Color.backgroundSecondary)
                         .foregroundColor(.primary)
-                        .clipShape(Capsule())
-                    }
+                        .clipShape(Circle())
                 }
+                .accessibilityLabel("Nächstes Farbschema")
 
                 if !data.exerciseHighlights.isEmpty {
                     optionChip(title: "Übungen", isActive: $showExercises)
@@ -434,6 +553,34 @@ struct WorkoutShareSheet: View {
             showExercises: showExercises,
             showCalories: showCalories
         )
+    }
+
+    private func initializeThemeIfNeeded() {
+        guard !hasInitializedTheme else { return }
+        hasInitializedTheme = true
+        if autoRotateTheme {
+            advanceToNextTheme(animated: false)
+        } else {
+            theme = WorkoutShareTheme(rawValue: savedThemeRaw) ?? .brand
+        }
+    }
+
+    private func advanceToNextTheme(animated: Bool = true) {
+        let all = WorkoutShareTheme.allCases
+        let currentIdx = all.firstIndex(of: theme) ?? lastAutoThemeIndex
+        let nextIdx = ((currentIdx < 0 ? -1 : currentIdx) + 1) % all.count
+        lastAutoThemeIndex = nextIdx
+        let nextTheme = all[nextIdx]
+        if !autoRotateTheme {
+            savedThemeRaw = nextTheme.rawValue
+        }
+        if animated {
+            withAnimation(.easeInOut(duration: 0.2)) {
+                theme = nextTheme
+            }
+        } else {
+            theme = nextTheme
+        }
     }
 
     private func openFrontCamera() {
@@ -552,12 +699,7 @@ struct WorkoutShareCardContent: View {
     }
 
     private var accentColor: Color {
-        if photo != nil { return Color.cyan }
-        switch theme {
-        case .brand: return Color.cyan
-        case .dark:  return Color.cyan
-        case .light: return Color.blue
-        }
+        photo != nil ? theme.photoAccentColor : theme.accentColor
     }
 
     private var maxVisibleExercises: Int {
@@ -665,33 +807,11 @@ struct WorkoutShareCardContent: View {
     }
 
     private var backgroundGradientColors: [Color] {
-        switch theme {
-        case .brand:
-            return [
-                Color(red: 0.04, green: 0.11, blue: 0.26),
-                Color(red: 0.06, green: 0.25, blue: 0.56),
-                Color(red: 0.04, green: 0.14, blue: 0.34)
-            ]
-        case .dark:
-            return [
-                Color(red: 0.07, green: 0.08, blue: 0.11),
-                Color(red: 0.12, green: 0.14, blue: 0.19),
-                Color(red: 0.06, green: 0.07, blue: 0.10)
-            ]
-        case .light:
-            return [
-                Color(red: 0.96, green: 0.97, blue: 0.99),
-                Color(red: 0.90, green: 0.93, blue: 0.97)
-            ]
-        }
+        theme.gradientColors
     }
 
     private var glowColor: Color {
-        switch theme {
-        case .brand: return .cyan
-        case .dark:  return .blue
-        case .light: return .blue
-        }
+        theme.glowColor
     }
 
     private var headerRow: some View {
