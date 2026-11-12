@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import Photos
 import PhotosUI
 import AVFoundation
 import UIKit
@@ -159,6 +160,8 @@ struct WorkoutShareSheet: View {
     @State private var theme: WorkoutShareTheme = .brand
     @State private var showExercises = true
     @State private var showCalories = true
+    @AppStorage(AppStorageKeys.shareWorkoutAutoSaveToPhotos) private var autoSaveToCameraRoll = false
+    @State private var savedToPhotosBanner = false
 
     @State private var showingCamera = false
     @State private var alertTitle = ""
@@ -366,6 +369,23 @@ struct WorkoutShareSheet: View {
                 Spacer()
             }
 
+            Toggle(isOn: $autoSaveToCameraRoll) {
+                Label("Automatisch in Fotos sichern", systemImage: "square.and.arrow.down")
+                    .font(.subheadline)
+            }
+            .tint(.brand)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
+            .background(Color.backgroundSecondary)
+            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+
+            if savedToPhotosBanner {
+                Label("In deiner Fotos-Mediathek gesichert", systemImage: "checkmark.circle.fill")
+                    .font(.caption.weight(.semibold))
+                    .foregroundColor(.green)
+                    .transition(.opacity)
+            }
+
             // Primary Share CTA
             Button {
                 renderAndShare()
@@ -460,8 +480,39 @@ struct WorkoutShareSheet: View {
         renderer.scale = 3.0
         renderer.isOpaque = true
 
-        if let uiImage = renderer.uiImage {
+        guard let uiImage = renderer.uiImage else { return }
+
+        if autoSaveToCameraRoll {
+            Task {
+                let saved = await saveImageToPhotoLibrary(uiImage)
+                await MainActor.run {
+                    withAnimation {
+                        savedToPhotosBanner = saved
+                    }
+                    sharePayload = IdentifiableShareImage(image: uiImage)
+                }
+            }
+        } else {
+            savedToPhotosBanner = false
             sharePayload = IdentifiableShareImage(image: uiImage)
+        }
+    }
+
+    private func saveImageToPhotoLibrary(_ image: UIImage) async -> Bool {
+        var status = PHPhotoLibrary.authorizationStatus(for: .addOnly)
+        if status == .notDetermined {
+            status = await PHPhotoLibrary.requestAuthorization(for: .addOnly)
+        }
+        guard status == .authorized || status == .limited else {
+            return false
+        }
+        do {
+            try await PHPhotoLibrary.shared().performChanges {
+                PHAssetChangeRequest.creationRequestForAsset(from: image)
+            }
+            return true
+        } catch {
+            return false
         }
     }
 }

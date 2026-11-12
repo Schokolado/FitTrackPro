@@ -50,6 +50,9 @@ enum AppStorageKeys {
     static let stepReminderEnabled      = "step_reminder_enabled"        // Bool, default: false
     static let stepReminderHour         = "step_reminder_hour"           // Int, default: 20
     static let stepReminderMinute       = "step_reminder_minute"         // Int, default: 0
+
+    // Share Workout
+    static let shareWorkoutAutoSaveToPhotos = "share_workout_auto_save_to_photos" // Bool, default: false
 }
 
 import Combine

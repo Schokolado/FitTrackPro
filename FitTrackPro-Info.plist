@@ -24,5 +24,7 @@
 	<true/>
 	<key>NSCameraUsageDescription</key>
 	<string>Vantage benötigt die Kamera für Workout-Selfies und zum Scannen von Lebensmittel-Barcodes.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Vantage speichert deine geteilten Workout-Grafiken auf Wunsch automatisch in deinen Fotos.</string>
 </dict>
 </plist>

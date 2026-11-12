@@ -2,3 +2,4 @@
 "NSHealthShareUsageDescription" = "Vantage reads health data for your fitness tracking.";
 "NSHealthUpdateUsageDescription" = "Vantage writes workout and weight data to Apple Health.";
 "NSPhotoLibraryUsageDescription" = "Select images and videos for your exercises.";
+"NSPhotoLibraryAddUsageDescription" = "Vantage saves your shared workout graphics to your Photos library when enabled.";
