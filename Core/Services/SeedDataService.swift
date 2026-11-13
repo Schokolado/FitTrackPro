@@ -19,7 +19,7 @@ class SeedDataService {
     private let hasSeededMobilityPlansKey = "hasSeededMobilityPlansV2"
     private let hasUpgradedMobilityNotesKey = "hasUpgradedMobilityNotesV3"
     private let hasUpgradedMobilityPlansKey = "hasUpgradedMobilityPlansV4"
-    private let hasSeededDefaultFoodsKey = "hasSeededDefaultFoodsV2"
+    private let hasSeededDefaultFoodsKey = "hasSeededDefaultFoodsV3"
     
     func seedExercisesIfNeeded(context: ModelContext) {
         let lang = Locale.current.language.languageCode?.identifier == "de" ? "de" : "en"
@@ -967,7 +967,7 @@ class SeedDataService {
     
     // MARK: - Default Staple Foods
     
-    struct SeedFood {
+    struct SeedFood: Codable {
         let name: String
         let calories: Double
         let protein: Double
@@ -978,11 +978,22 @@ class SeedDataService {
     func seedDefaultFoodsIfNeeded(context: ModelContext) {
         guard !UserDefaults.standard.bool(forKey: hasSeededDefaultFoodsKey) else { return }
         
+        var foodsToSeed: [SeedFood] = []
+        if let url = Bundle.main.url(forResource: "DefaultFoods_de", withExtension: "json"),
+           let data = try? Data(contentsOf: url),
+           let decoded = try? JSONDecoder().decode([SeedFood].self, from: data) {
+            foodsToSeed = decoded
+        }
+        
+        if foodsToSeed.isEmpty {
+            foodsToSeed = Self.defaultStapleFoods
+        }
+        
         let descriptor = FetchDescriptor<SavedFood>()
         let existingFoods = (try? context.fetch(descriptor)) ?? []
         let existingNames = Set(existingFoods.map { $0.name.lowercased() })
         
-        for (idx, item) in Self.defaultStapleFoods.enumerated() {
+        for (idx, item) in foodsToSeed.enumerated() {
             if !existingNames.contains(item.name.lowercased()) {
                 let food = SavedFood(
                     name: item.name,

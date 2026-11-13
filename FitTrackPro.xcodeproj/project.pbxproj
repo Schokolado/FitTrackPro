@@ -92,6 +92,7 @@
 		C3FDADDF2FCAD75500E8767F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C3FDADD02FCAD75500E8767F /* Assets.xcassets */; };
 		C3FDADE03FCADD8C00E87682 /* DefaultExercises_de.json in Resources */ = {isa = PBXBuildFile; fileRef = C3FDADE03FCADD8C00E87680 /* DefaultExercises_de.json */; };
 		C3FDADE03FCADD8C00E87683 /* DefaultExercises_en.json in Resources */ = {isa = PBXBuildFile; fileRef = C3FDADE03FCADD8C00E87681 /* DefaultExercises_en.json */; };
+		C3FDAE003FCADD8C00E87690 /* DefaultFoods_de.json in Resources */ = {isa = PBXBuildFile; fileRef = C3FDAE003FCADD8C00E87691 /* DefaultFoods_de.json */; };
 		C3FDADE82FCADD8C00E8767F /* WorkoutSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3FDADE62FCADD8C00E8767F /* WorkoutSession.swift */; };
 		C3FDADE92FCADD8C00E8767F /* PlanExercise.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3FDADE32FCADD8C00E8767F /* PlanExercise.swift */; };
 		C3FDADEA2FCADD8C00E8767F /* TrainingPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3FDADE42FCADD8C00E8767F /* TrainingPlan.swift */; };
@@ -231,6 +232,7 @@
 		C3FDADE02FCADD8C00E8767F /* DailyLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyLog.swift; sourceTree = "<group>"; };
 		C3FDADE03FCADD8C00E87680 /* DefaultExercises_de.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = DefaultExercises_de.json; sourceTree = "<group>"; };
 		C3FDADE03FCADD8C00E87681 /* DefaultExercises_en.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = DefaultExercises_en.json; sourceTree = "<group>"; };
+		C3FDAE003FCADD8C00E87691 /* DefaultFoods_de.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = DefaultFoods_de.json; sourceTree = "<group>"; };
 		C3FDADE12FCADD8C00E8767F /* Exercise.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Exercise.swift; sourceTree = "<group>"; };
 		C3FDADE22FCADD8C00E8767F /* FoodEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodEntry.swift; sourceTree = "<group>"; };
 		C3FDADE32FCADD8C00E8767F /* PlanExercise.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanExercise.swift; sourceTree = "<group>"; };
@@ -737,6 +739,7 @@
 				C3FDADD62FCAD75500E8767F /* Localizable.strings */,
 				C3FDADE03FCADD8C00E87680 /* DefaultExercises_de.json */,
 				C3FDADE03FCADD8C00E87681 /* DefaultExercises_en.json */,
+				C3FDAE003FCADD8C00E87691 /* DefaultFoods_de.json */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -902,6 +905,7 @@
 				C3FDADDF2FCAD75500E8767F /* Assets.xcassets in Resources */,
 				C3FDADE03FCADD8C00E87682 /* DefaultExercises_de.json in Resources */,
 				C3FDADE03FCADD8C00E87683 /* DefaultExercises_en.json in Resources */,
+				C3FDAE003FCADD8C00E87690 /* DefaultFoods_de.json in Resources */,
 				A3268CA138CE40874E8F2CFF /* LaunchScreen.storyboard in Resources */,
 				EFE16CD833F4617F911E2A45 /* LaunchLogoV3_raw.png in Resources */,
 				016F39B52EFA1ED9E15955AA /* VigrLaunchLogo_raw.png in Resources */,

@@ -7,12 +7,27 @@ struct FoodManagementView: View {
     @Query(sort: \Recipe.createdAt, order: .reverse) private var recipes: [Recipe]
     
     @State private var selectedTab = 0 // 0 = Lebensmittel, 1 = Rezepte
+    @State private var searchText = ""
     
     // Navigation State
     @State private var showSavedFoodForm = false
     @State private var showRecipeBuilder = false
     @State private var foodToEdit: SavedFood?
     @State private var recipeToEdit: Recipe?
+    
+    private var filteredSavedFoods: [SavedFood] {
+        if searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            return savedFoods
+        }
+        return savedFoods.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
+    }
+    
+    private var filteredRecipes: [Recipe] {
+        if searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            return recipes
+        }
+        return recipes.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
+    }
     
     var body: some View {
         VStack(spacing: 0) {
@@ -32,6 +47,7 @@ struct FoodManagementView: View {
         .background(Color.backgroundPrimary)
         .navigationTitle("Verwaltung")
         .navigationBarTitleDisplayMode(.inline)
+        .searchable(text: $searchText, prompt: selectedTab == 0 ? "Lebensmittel suchen..." : "Rezepte suchen...")
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button(action: {
@@ -59,13 +75,14 @@ struct FoodManagementView: View {
         }
     }
     
+    @ViewBuilder
     private var savedFoodsList: some View {
         List {
-            if savedFoods.isEmpty {
-                Text("Noch keine eigenen Lebensmittel gespeichert.")
+            if filteredSavedFoods.isEmpty {
+                Text(searchText.isEmpty ? "Noch keine eigenen Lebensmittel gespeichert." : "Keine Lebensmittel für „\(searchText)“ gefunden.")
                     .foregroundColor(.secondary)
             } else {
-                ForEach(savedFoods) { food in
+                ForEach(filteredSavedFoods) { food in
                     Button(action: {
                         foodToEdit = food
                     }) {
@@ -91,13 +108,14 @@ struct FoodManagementView: View {
         }
     }
     
+    @ViewBuilder
     private var recipesList: some View {
         List {
-            if recipes.isEmpty {
-                Text("Noch keine eigenen Rezepte erstellt.")
+            if filteredRecipes.isEmpty {
+                Text(searchText.isEmpty ? "Noch keine eigenen Rezepte erstellt." : "Keine Rezepte für „\(searchText)“ gefunden.")
                     .foregroundColor(.secondary)
             } else {
-                ForEach(recipes) { recipe in
+                ForEach(filteredRecipes) { recipe in
                     Button(action: {
                         recipeToEdit = recipe
                     }) {
