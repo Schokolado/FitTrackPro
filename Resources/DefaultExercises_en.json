@@ -116,57 +116,120 @@
     "notes": "### 🎯 Target / Focus\nChest & shoulder opener.\n\n### ⏱️ Duration\n**1–1.5 min per side** *(3 min total)*\n\n### 📋 Execution\n- Place forearm on door frame\n- Step forward\n- Rotate torso slightly until stretch is felt"
   },
   {
-    "name": "Chin Tucks & Wall Slides",
+    "name": "Chin Tucks",
     "category": "Mobilität",
-    "defaultRestDuration": 30,
+    "defaultRestDuration": 15,
     "sortOrder": 88,
     "isTimeBased": false,
     "timeUnit": "Wdh",
-    "notes": "### 🎯 Target / Focus\nDeep neck flexors & lower trap activation.\n\n### ⏱️ Duration\n**2 sets of 12 reps**\n\n### 📋 Execution\n- **Chin tucks:** Create double chin against resistance\n- **Wall slides:** Slide arms up wall smoothly"
+    "notes": "### 🎯 Target / Focus\nStrengthen deep neck flexors and relieve cervical spine tension.\n\n### ⏱️ Duration\n**2 sets of 12 reps**\n\n### 📋 Execution\n- Stand or sit tall\n- Glide chin horizontally backward (create double chin)\n- Hold for 2–3 seconds and release smoothly"
+  },
+  {
+    "name": "Wall Slides",
+    "category": "Mobilität",
+    "defaultRestDuration": 30,
+    "sortOrder": 89,
+    "isTimeBased": false,
+    "timeUnit": "Wdh",
+    "notes": "### 🎯 Target / Focus\nThoracic spine extension, lower trapezius and serratus anterior activation.\n\n### ⏱️ Duration\n**2 sets of 12 reps**\n\n### 📋 Execution\n- Stand with back, head, and glutes against a wall\n- Place arms in 90° W/U-shape against the wall\n- Slide arms upward smoothly without arching lower back"
   },
   {
     "name": "Faszienbehandlung (Oberer Rücken)",
     "category": "Mobilität",
     "defaultRestDuration": 15,
-    "sortOrder": 89,
+    "sortOrder": 90,
     "isTimeBased": true,
     "timeUnit": "Min",
     "notes": "### 🎯 Target / Focus\nRelieve upper back tension along spine.\n\n### ⏱️ Duration\n**3 min**\n\n### 📋 Execution\n- Roll out muscles along spine with peanut ball\n- **Note:** Avoid spinal bones directly"
   },
   {
-    "name": "Katze-Kuh & Threading the Needle",
+    "name": "Katze-Kuh (Cat-Cow)",
     "category": "Mobilität",
     "defaultRestDuration": 15,
-    "sortOrder": 90,
+    "sortOrder": 91,
     "isTimeBased": false,
     "timeUnit": "Wdh",
-    "notes": "### 🎯 Target / Focus\nSpine warm-up and mobility.\n\n### ⏱️ Duration\n**10 reps**\n\n### 📋 Execution\n- Hands and knees, alternate between arching and rounding back\n- Thread arm through underneath"
+    "notes": "### 🎯 Target / Focus\nSpine warm-up and segmental mobility.\n\n### ⏱️ Duration\n**10–12 reps**\n\n### 📋 Execution\n- On all fours: Inhale, drop belly slightly, lift chest (Cow)\n- Exhale, round spine upward, tuck chin to chest (Cat)"
+  },
+  {
+    "name": "Threading the Needle (BWS-Rotation)",
+    "category": "Mobilität",
+    "defaultRestDuration": 15,
+    "sortOrder": 92,
+    "isTimeBased": false,
+    "timeUnit": "Wdh",
+    "notes": "### 🎯 Target / Focus\nThoracic rotation and posterior shoulder capsule release.\n\n### ⏱️ Duration\n**10 reps per side**\n\n### 📋 Execution\n- From hands and knees, reach one arm up toward ceiling\n- Thread arm underneath torso until shoulder touches floor\n- Breathe deeply into the twist"
   },
   {
     "name": "Glute Bridge mit Miniband",
     "category": "Mobilität",
     "defaultRestDuration": 30,
-    "sortOrder": 91,
+    "sortOrder": 93,
     "isTimeBased": false,
     "timeUnit": "Wdh",
     "notes": "### 🎯 Target / Focus\nGlute activation before heavy squats or deadlifts.\n\n### ⏱️ Duration\n**2 sets of 15 reps**\n\n### 📋 Execution\n- Lie on back with miniband above knees\n- Push knees outward\n- Lift hips to full extension"
   },
   {
-    "name": "Pallof Press / Deadbugs",
+    "name": "Pallof Press (Kabelzug oder Band)",
     "category": "Mobilität",
     "defaultRestDuration": 30,
-    "sortOrder": 92,
+    "sortOrder": 94,
     "isTimeBased": false,
     "timeUnit": "Wdh",
-    "notes": "### 🎯 Target / Focus\nAnti-rotation & core stability.\n\n### ⏱️ Duration\n**2 sets of 10–12 reps**\n\n### 📋 Execution\n- **Pallof Press:** Cable/band anti-rotation press\n- **Deadbug:** Lower opposite arm and leg while lower back stays flat"
+    "notes": "### 🎯 Target / Focus\nAnti-rotation and deep core stability.\n\n### ⏱️ Duration\n**2 sets of 10–12 reps**\n\n### 📋 Execution\n- Stand sideways to cable or band at chest height\n- Press hands straight forward, resisting torso rotation\n- Hold 1–2 seconds and return smoothly"
   },
   {
-    "name": "Dynamische Hüftkreise & Beinschwünge",
+    "name": "Deadbugs (Käfer-Übung)",
     "category": "Mobilität",
-    "defaultRestDuration": 15,
-    "sortOrder": 93,
+    "defaultRestDuration": 30,
+    "sortOrder": 95,
     "isTimeBased": false,
     "timeUnit": "Wdh",
-    "notes": "### 🎯 Target / Focus\nDynamic hip range of motion warm-up.\n\n### ⏱️ Duration\n**10–12 reps per side**\n\n### 📋 Execution\n- Stand on one leg\n- Swing free leg forward/back with control\n- Perform wide hip circles"
+    "notes": "### 🎯 Target / Focus\nDeep core stability and cross-body coordination without lumbar arching.\n\n### ⏱️ Duration\n**2 sets of 12 reps (6 per side)**\n\n### 📋 Execution\n- Lie on back, knees at 90°, arms pointing up\n- Lower opposite arm and leg toward floor\n- Keep lower back pressed flat into floor throughout"
+  },
+  {
+    "name": "Dynamische Hüftkreise",
+    "category": "Mobilität",
+    "defaultRestDuration": 15,
+    "sortOrder": 96,
+    "isTimeBased": false,
+    "timeUnit": "Wdh",
+    "notes": "### 🎯 Target / Focus\nHip joint lubrication and full range of motion preparation.\n\n### ⏱️ Duration\n**10–12 reps per side**\n\n### 📋 Execution\n- Stand tall, holding wall for balance if needed\n- Lift knee and draw wide, controlled circles outward and inward\n- Keep pelvis stable"
+  },
+  {
+    "name": "Dynamische Beinschwünge",
+    "category": "Mobilität",
+    "defaultRestDuration": 15,
+    "sortOrder": 97,
+    "isTimeBased": false,
+    "timeUnit": "Wdh",
+    "notes": "### 🎯 Target / Focus\nDynamic active stretch for hamstrings and hip flexors.\n\n### ⏱️ Duration\n**10–12 reps per side**\n\n### 📋 Execution\n- Stand perpendicular to wall, holding with one hand\n- Swing leg forward and backward with control\n- Gradually increase range of motion while staying upright"
+  },
+  {
+    "name": "Hamstring-Dehnung (Beinbeuger)",
+    "category": "Mobilität",
+    "defaultRestDuration": 15,
+    "sortOrder": 98,
+    "isTimeBased": true,
+    "timeUnit": "Min",
+    "notes": "### 🎯 Target / Focus\nTargeted hamstring stretching and pelvic decompression.\n\n### ⏱️ Duration\n**1.5–2 min per side**\n\n### 📋 Execution\n- Place foot on low elevation or ground, toes pointing up\n- Hinge forward from hips with a flat spine\n- Breathe deeply into the stretch along back of thigh"
+  },
+  {
+    "name": "Adduktoren-Dehnung (Frosch-Pose)",
+    "category": "Mobilität",
+    "defaultRestDuration": 15,
+    "sortOrder": 99,
+    "isTimeBased": true,
+    "timeUnit": "Min",
+    "notes": "### 🎯 Target / Focus\nGroin and adductor stretch, hip capsule opening.\n\n### ⏱️ Duration\n**1.5–2 min**\n\n### 📋 Execution\n- On all fours, slide knees as wide as comfortable\n- Rest on forearms and press hips gently backward\n- Sink deeper into the stretch with each exhalation"
+  },
+  {
+    "name": "Wadendehnung (an der Wand)",
+    "category": "Mobilität",
+    "defaultRestDuration": 15,
+    "sortOrder": 100,
+    "isTimeBased": true,
+    "timeUnit": "Min",
+    "notes": "### 🎯 Target / Focus\nCalf (gastrocnemius/soleus) and Achilles tendon stretch, ankle dorsiflexion.\n\n### ⏱️ Duration\n**1–1.5 min per side**\n\n### 📋 Execution\n- Face wall with hands placed at shoulder height\n- Step one leg back, keeping rear heel grounded\n- Bend front knee until a deep calf stretch is felt"
   }
 ]

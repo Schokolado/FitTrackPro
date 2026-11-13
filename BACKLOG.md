@@ -7,6 +7,10 @@
 
 ## 1. Offene Features & UX (Klein bis Mittel)
 
+- [ ] **Passende Icons für die jeweiligen Übungsgruppen** *(Design / Assets)*
+  - Passende Vektor-Icons (SF Symbols / Custom Assets) für alle 9 Übungskategorien (`Brust`, `Rücken`, `Beine`, `Schultern`, `Arme`, `Bauch / Core`, `Cardio`, `Ganzkörper`, `Mobilität`) zur optischen Differenzierung in Bibliothekslisten, Filterleiste, Statistiken und Plan-Headern.
+- [ ] **Passende Bilder für die Ausführung der jeweiligen Übung** *(Content / Assets)*
+  - Illustrierte Start- und Endpositions-Grafiken / Schritt-für-Schritt-Bilder für die Standard-Übungen (insbesondere Grundübungen und Mobilitäts-Drills), integriert in `ExerciseDetailView` und im aktiven Workout als optische Orientierungshilfe.
 - [ ] **Farbhierarchie im aktiven Workout** *(Design)*
   - Klare Farbtrennung zwischen Satzpausen-Timer (`WorkoutTimerHeaderView`), „Workout angehalten“ (Orange) und „Workout beenden“ (Grün in `WorkoutSessionView`), z. B. Indigo/Cyan/`Color.brand` für Satzpause und Grün exklusiv für Start/Abschluss.
 - [ ] **Optional: Übergang zum Dashboard nach Workout-Abschluss** *(Klein)*
@@ -78,3 +82,5 @@
 - [x] **Voraussichtliche Trainingsdauer anzeigen** (`2795f2b`) – Schätzung aus Sätzen, Ziel-Wdh./Zeit (`usesTimeInput`) und Pausenzeiten (`TrainingPlan.estimatedDurationText`), angezeigt in `PlanCard` (`TrainingPlansView`) und `PlanDetailView`.
 - [x] **Chart X-Achsen-Beschriftungen am Rand korrigieren** – Nach innen verankerte Rand-Labels (`ChartAxisHelper` / `edgeSafeDateXAxis` in `View+Modifiers.swift`) inkl. `.chartPlotStyle { $0.clipped() }` für `WeightTrackerView`, `ExerciseProgressChart`, `PlanProgressView`, `StepTrackerView`, `WaterTrackerView`, `SleepTrackerView` und `RecoveryFactorDetailView`.
 - [x] **Share Workout inkl. Selfie-Foto** – `WorkoutShareSheet` & `WorkoutShareCardContent` (`WorkoutShareView.swift`) mit `Feed (4:5)` / `Story (9:16)` Format, Themes, optionalem In-Memory-Selfie (Frontkamera via `UIImagePickerController` oder `PhotosPicker`, ohne Speicherung) und `@3x` Export via `ImageRenderer` & `ShareSheet` in `WorkoutSummaryView` und `WorkoutHistoryDetailView`.
+- [x] **Neuer Dehn-Plan Unterkörper & Übungs-Extraktion** – Neuer Plan `Mobility D: Dehnen Unterkörper, Hamstrings & Hüfte`, Trennung aller kombinierten Übungen (`Chin Tucks`, `Wall Slides`, `Katze-Kuh`, `Threading the Needle`, `Pallof Press`, `Deadbugs`, `Dynamische Hüftkreise`, `Dynamische Beinschwünge`) in eigenständige Übungen und Bereinigung aller Standardpläne ohne kombinierte Doppelübungen.
+- [x] **Österreichischer Lebensmittel- & Bierkatalog** – Erweiterung der Standard-Lebensmittel um österreichische Spezialitäten und beliebteste Biersorten (Gösser Märzen/Radler, Wieselburger, Ottakringer, Stiegl, Puntigamer, Zipfer, Heineken; Wiener Schnitzel Kalb/Schwein, Kaisersemmel, Kornspitz, Schwarzbrot, Roggenbrot, Dinkelbrot, Speisetopfen, Leberkäse, Kaspressknödel, Kürbiskernöl, Almdudler etc.).

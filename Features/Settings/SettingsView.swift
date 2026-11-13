@@ -500,7 +500,9 @@ struct SettingsView: View {
             
             // Re-seed standard exercises and foods
             UserDefaults.standard.removeObject(forKey: "hasSeededDefaultFoodsV1")
+            UserDefaults.standard.removeObject(forKey: "hasSeededDefaultFoodsV2")
             UserDefaults.standard.removeObject(forKey: "hasSeededMobilityPlansV2")
+            UserDefaults.standard.removeObject(forKey: "hasUpgradedMobilityPlansV4")
             UserDefaults.standard.removeObject(forKey: "hasUpgradedMobilityNotesV3")
             SeedDataService.shared.seedExercisesIfNeeded(context: modelContext)
             

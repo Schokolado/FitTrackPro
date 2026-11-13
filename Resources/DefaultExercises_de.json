@@ -119,57 +119,120 @@
     "notes": "### 🎯 Ziel / Fokus\nDehnung des großen & kleinen Brustmuskels *(Pectoralis)*, Schulteröffnung.\n\n### ⏱️ Dauer / Umfang\n**1–1,5 Min. pro Seite** *(3 Min. gesamt)*\n\n### 📋 Ausführung\n- Unterarm an einen Türrahmen legen\n- Einen Schritt nach vorne machen\n- Oberkörper leicht eindrehen, bis eine angenehme Dehnung spürbar ist"
   },
   {
-    "name": "Chin Tucks & Wall Slides (Nacken & Rücken)",
+    "name": "Chin Tucks (Doppelkinn-Aktivierung)",
     "category": "Mobilität",
-    "defaultRestDuration": 30,
+    "defaultRestDuration": 15,
     "sortOrder": 88,
     "isTimeBased": false,
     "timeUnit": "Wdh",
-    "notes": "### 🎯 Ziel / Fokus\nNacken entlasten, tiefe Nackenbeuger stärken, unteren Trapez & Rhomboiden aktivieren.\n\n### ⏱️ Dauer / Umfang\n**2 Sätze á 12 Wdh.** *(ca. 3 Min.)*\n\n### 📋 Ausführung\n- **Chin Tucks:** Gezielte Doppelkinn-Aktivierung für die tiefen Nackenbeuger\n- **Wall Slides:** Aufrecht an der Wand Arme hoch- und tiefgleiten für unteren Trapez & Rhomboiden"
+    "notes": "### 🎯 Ziel / Fokus\nNacken entlasten, tiefe Nackenbeuger stärken, Haltung verbessern.\n\n### ⏱️ Dauer / Umfang\n**2 Sätze á 12 Wdh.** *(ca. 2 Min.)*\n\n### 📋 Ausführung\n- Aufrecht stehen oder sitzen\n- Kinn waagerecht nach hinten-unten schieben (Doppelkinn formen)\n- Position 2–3 Sek. halten und kontrolliert lösen\n- Blick bleibt geradeaus gerichtet"
+  },
+  {
+    "name": "Wall Slides (Schulter- & BWS-Aktivierung)",
+    "category": "Mobilität",
+    "defaultRestDuration": 30,
+    "sortOrder": 89,
+    "isTimeBased": false,
+    "timeUnit": "Wdh",
+    "notes": "### 🎯 Ziel / Fokus\nAufrichtung der Brustwirbelsäule, Aktivierung von unterem Trapez und Rhomboiden.\n\n### ⏱️ Dauer / Umfang\n**2 Sätze á 12 Wdh.** *(ca. 2–3 Min.)*\n\n### 📋 Ausführung\n- Mit Rücken und Hinterkopf flach an eine Wand stellen\n- Arme in 90°-U-Haltung an die Wand anlegen\n- Unterarme und Handrücken an der Wand entlang nach oben gleiten lassen"
   },
   {
     "name": "Faszienbehandlung (Oberer Rücken)",
     "category": "Mobilität",
     "defaultRestDuration": 15,
-    "sortOrder": 89,
+    "sortOrder": 90,
     "isTimeBased": true,
     "timeUnit": "Min",
     "notes": "### 🎯 Ziel / Fokus\nLösen von Verspannungen der paravertebralen Muskulatur im oberen Rücken.\n\n### ⏱️ Dauer / Umfang\n**3 Min.**\n\n### 📋 Ausführung\n- Muskelstränge links und rechts der Wirbelsäule mit dem Duoball ausrollen\n- **Wichtig:** Die Dornfortsätze der Wirbelsäule dabei aussparen"
   },
   {
-    "name": "Katze-Kuh & Threading the Needle",
+    "name": "Katze-Kuh (Cat-Cow)",
     "category": "Mobilität",
     "defaultRestDuration": 15,
-    "sortOrder": 90,
+    "sortOrder": 91,
     "isTimeBased": false,
     "timeUnit": "Wdh",
-    "notes": "### 🎯 Ziel / Fokus\nMobilisierung und Durchbewegung von Brust- und Lendenwirbelsäule (BWS & LWS).\n\n### ⏱️ Dauer / Umfang\n**10 Wiederholungen**\n\n### 📋 Ausführung\n- Im Vierfüßlerstand im Wechsel Rücken runden *(Katze)* und leicht durchhängen *(Kuh)*\n- Anschließend einen Arm rotierend unter dem Körper durchfädeln *(Threading the Needle)*"
+    "notes": "### 🎯 Ziel / Fokus\nMobilisierung und Durchbewegung von Brust- und Lendenwirbelsäule (BWS & LWS).\n\n### ⏱️ Dauer / Umfang\n**10–12 Wdh.** *(ca. 1–2 Min.)*\n\n### 📋 Ausführung\n- Im Vierfüßlerstand: Mit der Einatmung Brustbein heben und Rücken leicht durchhängen lassen *(Kuh)*\n- Mit der Ausatmung Rücken maximal runden und Kinn zur Brust ziehen *(Katze)*"
+  },
+  {
+    "name": "Threading the Needle (BWS-Rotation)",
+    "category": "Mobilität",
+    "defaultRestDuration": 15,
+    "sortOrder": 92,
+    "isTimeBased": false,
+    "timeUnit": "Wdh",
+    "notes": "### 🎯 Ziel / Fokus\nRotation der Brustwirbelsäule, Öffnung der Schulter und Entlastung der Schulterblätter.\n\n### ⏱️ Dauer / Umfang\n**10 Wdh. pro Seite** *(ca. 2 Min.)*\n\n### 📋 Ausführung\n- Aus dem Vierfüßlerstand einen Arm zur Decke öffnen\n- Anschließend den Arm unter dem Brustkorb durchfädeln, bis Schulter und Kopf sanft ablegen\n- Tief und gleichmäßig in die Drehung atmen"
   },
   {
     "name": "Glute Bridge mit Miniband",
     "category": "Mobilität",
     "defaultRestDuration": 30,
-    "sortOrder": 91,
+    "sortOrder": 93,
     "isTimeBased": false,
     "timeUnit": "Wdh",
     "notes": "### 🎯 Ziel / Fokus\nGezielte Aktivierung der Gesäßmuskulatur vor Kniebeugen oder Kreuzheben.\n\n### ⏱️ Dauer / Umfang\n**2 Sätze á 15 Wiederholungen**\n\n### 📋 Ausführung\n- Rückenlage, Miniband oberhalb der Knie platzieren\n- Knie aktiv nach außen gegen das Band drücken\n- Becken hochdrücken, bis Oberschenkel und Oberkörper eine Linie bilden"
   },
   {
-    "name": "Pallof Press / Deadbugs",
+    "name": "Pallof Press (Kabelzug oder Band)",
     "category": "Mobilität",
     "defaultRestDuration": 30,
-    "sortOrder": 92,
+    "sortOrder": 94,
     "isTimeBased": false,
     "timeUnit": "Wdh",
-    "notes": "### 🎯 Ziel / Fokus\nAntirotation & Rumpfstabilität aufbauen ohne Überlastung der Hüftbeuger.\n\n### ⏱️ Dauer / Umfang\n**2 Sätze á 10–12 Wiederholungen**\n\n### 📋 Ausführung\n- **Pallof Press:** Am Kabelzug oder Band stabil gegen die Rotation halten\n- **Deadbugs:** Kontrolliert diagonal Arm und Bein absenken – **LWS bleibt fest am Boden**"
+    "notes": "### 🎯 Ziel / Fokus\nAntirotation & Rumpfstabilität aufbauen ohne Überlastung der Hüftbeuger.\n\n### ⏱️ Dauer / Umfang\n**2 Sätze á 10–12 Wiederholungen**\n\n### 📋 Ausführung\n- Seitlich zum Kabelzug oder Widerstandsband aufstellen, Griff vor die Brust halten\n- Arme kontrolliert gerade nach vorne strecken, Rotation im Rumpf aktiv verhindern\n- 1–2 Sekunden halten und langsam zurück zur Brust führen"
   },
   {
-    "name": "Dynamische Hüftkreise & Beinschwünge",
+    "name": "Deadbugs (Käfer-Übung)",
     "category": "Mobilität",
-    "defaultRestDuration": 15,
-    "sortOrder": 93,
+    "defaultRestDuration": 30,
+    "sortOrder": 95,
     "isTimeBased": false,
     "timeUnit": "Wdh",
-    "notes": "### 🎯 Ziel / Fokus\nDynamische Bereitstellung des vollen Bewegungsausmaßes *(Range of Motion)*.\n\n### ⏱️ Dauer / Umfang\n**10–12 Wdh. pro Seite**\n\n### 📋 Ausführung\n- Einbeinig stehen *(bei Bedarf leicht abstützen)*\n- Freies Bein kontrolliert vor- und zurückschwingen\n- Weite Hüftkreise nach außen und innen durchführen"
+    "notes": "### 🎯 Ziel / Fokus\nTiefe Core-Stabilität und Koordination, Lendenwirbelsäule gegen Hohlkreuz stabilisieren.\n\n### ⏱️ Dauer / Umfang\n**2 Sätze á 12 Wdh. (6 pro Seite)**\n\n### 📋 Ausführung\n- In Rückenlage Beine im 90°-Winkel anheben, Arme senkrecht nach oben strecken\n- Diagonal gegengleichen Arm und Bein kontrolliert absenken\n- **Wichtig:** Unterer Rücken bleibt durchgehend flach auf den Boden gepresst"
+  },
+  {
+    "name": "Dynamische Hüftkreise",
+    "category": "Mobilität",
+    "defaultRestDuration": 15,
+    "sortOrder": 96,
+    "isTimeBased": false,
+    "timeUnit": "Wdh",
+    "notes": "### 🎯 Ziel / Fokus\nGelenkschmierung und Vorbereitung der Hüftinnen- und Außenrotation.\n\n### ⏱️ Dauer / Umfang\n**10–12 Wdh. pro Seite**\n\n### 📋 Ausführung\n- Aufrecht stehen, bei Bedarf leicht an einer Wand abstützen\n- Knie anheben und weite, geführte Kreise von innen nach außen und umgekehrt ziehen\n- Becken dabei möglichst stabil und gerade halten"
+  },
+  {
+    "name": "Dynamische Beinschwünge",
+    "category": "Mobilität",
+    "defaultRestDuration": 15,
+    "sortOrder": 97,
+    "isTimeBased": false,
+    "timeUnit": "Wdh",
+    "notes": "### 🎯 Ziel / Fokus\nDynamische Dehnung der Hamstrings (Beinbeuger) und Hüftbeuger vor dem Training.\n\n### ⏱️ Dauer / Umfang\n**10–12 Wdh. pro Seite**\n\n### 📋 Ausführung\n- Seitlich zur Wand stehen und mit einer Hand festhalten\n- Freies Bein kontrolliert vor- und zurückschwingen\n- Schwungamplitude stetig vergrößern, Oberkörper aufrecht halten"
+  },
+  {
+    "name": "Hamstring-Dehnung (Beinbeuger)",
+    "category": "Mobilität",
+    "defaultRestDuration": 15,
+    "sortOrder": 98,
+    "isTimeBased": true,
+    "timeUnit": "Min",
+    "notes": "### 🎯 Ziel / Fokus\nGezielte Dehnung der Ischiocruralen Muskulatur (Hamstrings / Beinbeuger), Linderung von Becken- und LWS-Spannung.\n\n### ⏱️ Dauer / Umfang\n**1,5–2 Min. pro Seite** *(3–4 Min. gesamt)*\n\n### 📋 Ausführung\n- Ein Bein auf einer leichten Erhöhung oder am Boden gerade ausstrecken, Zehen anziehen\n- Mit gerader Wirbelsäule aus der Hüfte nach vorne beugen\n- Sanften, tiefen Dehnreiz an der Oberschenkelrückseite halten und gleichmäßig atmen"
+  },
+  {
+    "name": "Adduktoren-Dehnung (Frosch-Pose)",
+    "category": "Mobilität",
+    "defaultRestDuration": 15,
+    "sortOrder": 99,
+    "isTimeBased": true,
+    "timeUnit": "Min",
+    "notes": "### 🎯 Ziel / Fokus\nÖffnung der Hüfte, Dehnung der inneren Oberschenkelmuskeln (Adduktoren).\n\n### ⏱️ Dauer / Umfang\n**1,5–2 Min.**\n\n### 📋 Ausführung\n- Im Vierfüßlerstand Knie weit nach außen schieben, Unterschenkel parallel halten\n- Unterarme auflegen und das Gesäß vorsichtig nach hinten-unten schieben\n- Bei jedem Ausatmen die Dehnung in der Leistengegend vertiefen"
+  },
+  {
+    "name": "Wadendehnung (an der Wand)",
+    "category": "Mobilität",
+    "defaultRestDuration": 15,
+    "sortOrder": 100,
+    "isTimeBased": true,
+    "timeUnit": "Min",
+    "notes": "### 🎯 Ziel / Fokus\nDehnung von Wadenmuskulatur (Gastrocnemius & Soleus) und Achillessehne, Verbesserung der Sprunggelenksmobilität.\n\n### ⏱️ Dauer / Umfang\n**1–1,5 Min. pro Seite** *(2–3 Min. gesamt)*\n\n### 📋 Ausführung\n- Vor einer Wand aufstellen, Hände auf Schulterhöhe an die Wand stützen\n- Ein Bein in weitem Ausfallschritt nach hinten stellen, Ferse fest in den Boden drücken\n- Hinteres Knie durchstrecken und vorderes Knie beugen, bis ein deutlicher Zug in der Wade entsteht"
   }
 ]
