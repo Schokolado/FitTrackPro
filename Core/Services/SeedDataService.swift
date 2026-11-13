@@ -19,7 +19,7 @@ class SeedDataService {
     private let hasSeededMobilityPlansKey = "hasSeededMobilityPlansV2"
     private let hasUpgradedMobilityNotesKey = "hasUpgradedMobilityNotesV3"
     private let hasUpgradedMobilityPlansKey = "hasUpgradedMobilityPlansV4"
-    private let hasSeededDefaultFoodsKey = "hasSeededDefaultFoodsV3"
+    private let hasSeededDefaultFoodsKey = "hasSeededDefaultFoodsV4"
     
     func seedExercisesIfNeeded(context: ModelContext) {
         let lang = Locale.current.language.languageCode?.identifier == "de" ? "de" : "en"
