@@ -39,8 +39,11 @@ class MediaStorageService {
         }
     }
     
-    /// Lädt ein UIImage anhand des relativen Dateinamens
+    /// Lädt ein UIImage anhand des relativen Dateinamens oder Asset-Namens
     func loadImage(named fileName: String) -> UIImage? {
+        if let assetImage = UIImage(named: fileName) {
+            return assetImage
+        }
         let fileURL = mediaDirectory.appendingPathComponent(fileName)
         guard fileManager.fileExists(atPath: fileURL.path) else { return nil }
         

@@ -119,15 +119,31 @@ extension Exercise {
     
     var themeIcon: String {
         switch category.lowercased() {
+        case "brust", "chest": return "figure.strengthtraining.traditional"
+        case "rücken", "back": return "figure.rowing"
+        case "beine", "legs": return "figure.step.training"
+        case "schultern", "shoulders": return "figure.arms.open"
+        case "arme", "arms": return "dumbbell.fill"
+        case "bauch / core", "abs / core", "bauch": return "figure.core.training"
         case "cardio": return "figure.run"
+        case "ganzkörper", "full body": return "figure.highintensity.intervaltraining"
         case "mobilität", "mobility": return "figure.flexibility"
-        case "beine", "legs": return "figure.walk" // Fallback since no custom icon
-        case "ganzkörper", "full body": return "figure.mixed.cardio" // Fallback since no custom icon
         default: return "dumbbell.fill"
         }
     }
     
     var customIconName: String? {
-        return nil
+        switch category.lowercased() {
+        case "brust", "chest": return "IconChest"
+        case "rücken", "back": return "IconBack"
+        case "beine", "legs": return "IconLegs"
+        case "schultern", "shoulders": return "IconShoulders"
+        case "arme", "arms": return "IconArms"
+        case "bauch / core", "abs / core", "bauch": return "IconAbs"
+        case "cardio": return "IconCardio"
+        case "ganzkörper", "full body": return "IconFullBody"
+        case "mobilität", "mobility": return "IconMobility"
+        default: return nil
+        }
     }
 }

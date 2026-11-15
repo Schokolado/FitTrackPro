@@ -9,21 +9,6 @@ struct ExerciseCardView: View {
         themeManager.color(for: exercise.category)
     }
     
-    private var categoryIcon: String {
-        switch exercise.category.lowercased() {
-        case "brust": return "figure.strengthtraining.traditional"
-        case "rücken": return "figure.core.training"
-        case "beine": return "figure.run"
-        case "schultern": return "figure.cross.training"
-        case "arme": return "figure.mind.and.body"
-        case "bauch": return "figure.pilates"
-        case "cardio": return "heart.fill"
-        case "ganzkörper": return "figure.highintensity.intervaltraining"
-        case "mobilität", "mobility": return "figure.flexibility"
-        default: return "dumbbell.fill"
-        }
-    }
-    
     var body: some View {
         HStack(spacing: 16) {
             // Icon Badge
@@ -36,9 +21,8 @@ struct ExerciseCardView: View {
                     .fill(LinearGradient(gradient: Gradient(colors: [categoryColor.opacity(0.7), categoryColor]), startPoint: .topLeading, endPoint: .bottomTrailing))
                     .frame(width: 50, height: 50)
                 
-                Image(systemName: categoryIcon)
+                ExerciseIconView(exercise: exercise, size: 24)
                     .foregroundColor(.white)
-                    .font(.title3)
             }
             .shadow(color: Color.black.opacity(0.15), radius: 2, x: 1, y: 0)
             

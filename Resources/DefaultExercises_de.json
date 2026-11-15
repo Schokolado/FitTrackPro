@@ -1,51 +1,247 @@
 [
-  { "name": "Bankdrücken (Langhantel)", "category": "Brust", "defaultRestDuration": 90, "sortOrder": 1 },
-  { "name": "Schrägbankdrücken (Kurzhanteln)", "category": "Brust", "defaultRestDuration": 90, "sortOrder": 2 },
-  { "name": "Butterfly (Maschine)", "category": "Brust", "defaultRestDuration": 90, "sortOrder": 3 },
-  { "name": "Fliegende am Kabelzug", "category": "Brust", "defaultRestDuration": 90, "sortOrder": 4 },
-  { "name": "Liegestütze", "category": "Brust", "defaultRestDuration": 60, "sortOrder": 5 },
-  
-  { "name": "Kreuzheben", "category": "Rücken", "defaultRestDuration": 120, "sortOrder": 10 },
-  { "name": "Klimmzüge", "category": "Rücken", "defaultRestDuration": 90, "sortOrder": 11 },
-  { "name": "Latzug", "category": "Rücken", "defaultRestDuration": 90, "sortOrder": 12 },
-  { "name": "Rudern vorgebeugt (Langhantel)", "category": "Rücken", "defaultRestDuration": 90, "sortOrder": 13 },
-  { "name": "Rudern sitzend (Kabelzug)", "category": "Rücken", "defaultRestDuration": 90, "sortOrder": 14 },
-  { "name": "Rudern sitzend (Maschine)", "category": "Rücken", "defaultRestDuration": 90, "sortOrder": 15 },
-  
-  { "name": "Kniebeugen (Langhantel)", "category": "Beine", "defaultRestDuration": 120, "sortOrder": 20 },
-  { "name": "Beinpresse", "category": "Beine", "defaultRestDuration": 120, "sortOrder": 21 },
-  { "name": "Beinbeuger (Maschine)", "category": "Beine", "defaultRestDuration": 90, "sortOrder": 22 },
-  { "name": "Beinstrecker (Maschine)", "category": "Beine", "defaultRestDuration": 90, "sortOrder": 23 },
-  { "name": "Ausfallschritte (Lunges)", "category": "Beine", "defaultRestDuration": 90, "sortOrder": 24 },
-  { "name": "Wadenheben", "category": "Beine", "defaultRestDuration": 60, "sortOrder": 25 },
-  
-  { "name": "Schulterdrücken (Kurzhanteln)", "category": "Schultern", "defaultRestDuration": 90, "sortOrder": 30 },
-  { "name": "Military Press (Langhantel)", "category": "Schultern", "defaultRestDuration": 90, "sortOrder": 31 },
-  { "name": "Seitheben (Kurzhanteln)", "category": "Schultern", "defaultRestDuration": 60, "sortOrder": 32 },
-  { "name": "Seitheben (Sitzend)", "category": "Schultern", "defaultRestDuration": 60, "sortOrder": 33 },
-  { "name": "Seitheben (Maschine)", "category": "Schultern", "defaultRestDuration": 60, "sortOrder": 34 },
-  { "name": "Seitheben (Kabelzug)", "category": "Schultern", "defaultRestDuration": 60, "sortOrder": 37 },
-  { "name": "Face Pulls (Kabelzug)", "category": "Schultern", "defaultRestDuration": 60, "sortOrder": 35 },
-  { "name": "Shrugs", "category": "Schultern", "defaultRestDuration": 60, "sortOrder": 36 },
-  
-  { "name": "Bizeps Curls (Kurzhanteln)", "category": "Arme", "defaultRestDuration": 60, "sortOrder": 40 },
-  { "name": "Hammer Curls", "category": "Arme", "defaultRestDuration": 60, "sortOrder": 41 },
-  { "name": "Trizepsdrücken (Kabelzug)", "category": "Arme", "defaultRestDuration": 60, "sortOrder": 42 },
-  { "name": "Dips", "category": "Arme", "defaultRestDuration": 90, "sortOrder": 43 },
-  { "name": "French Press (SZ-Stange)", "category": "Arme", "defaultRestDuration": 60, "sortOrder": 44 },
-  
-  { "name": "Crunches", "category": "Bauch / Core", "defaultRestDuration": 60, "sortOrder": 50 },
-  { "name": "Beinheben (hängend)", "category": "Bauch / Core", "defaultRestDuration": 60, "sortOrder": 51 },
-  { "name": "Plank (Unterarmstütz)", "category": "Bauch / Core", "defaultRestDuration": 60, "sortOrder": 52 },
-  { "name": "Cable Crunches", "category": "Bauch / Core", "defaultRestDuration": 60, "sortOrder": 53 },
-  
-  { "name": "Laufband", "category": "Cardio", "defaultRestDuration": 0, "sortOrder": 60 },
-  { "name": "Rudergerät", "category": "Cardio", "defaultRestDuration": 0, "sortOrder": 61 },
-  { "name": "Fahrrad-Ergometer", "category": "Cardio", "defaultRestDuration": 0, "sortOrder": 62 },
-  { "name": "Stairmaster", "category": "Cardio", "defaultRestDuration": 0, "sortOrder": 63 },
-  
-  { "name": "Burpees", "category": "Nicht zugeordnet", "defaultRestDuration": 60, "sortOrder": 70 },
-  
+  {
+    "name": "Bankdrücken (Langhantel)",
+    "category": "Brust",
+    "defaultRestDuration": 90,
+    "sortOrder": 1,
+    "localMediaPaths": [
+      "Exercise_Bankdruecken"
+    ]
+  },
+  {
+    "name": "Schrägbankdrücken (Kurzhanteln)",
+    "category": "Brust",
+    "defaultRestDuration": 90,
+    "sortOrder": 2
+  },
+  {
+    "name": "Butterfly (Maschine)",
+    "category": "Brust",
+    "defaultRestDuration": 90,
+    "sortOrder": 3
+  },
+  {
+    "name": "Fliegende am Kabelzug",
+    "category": "Brust",
+    "defaultRestDuration": 90,
+    "sortOrder": 4
+  },
+  {
+    "name": "Liegestütze",
+    "category": "Brust",
+    "defaultRestDuration": 60,
+    "sortOrder": 5
+  },
+  {
+    "name": "Kreuzheben",
+    "category": "Rücken",
+    "defaultRestDuration": 120,
+    "sortOrder": 10,
+    "localMediaPaths": [
+      "Exercise_Kreuzheben"
+    ]
+  },
+  {
+    "name": "Klimmzüge",
+    "category": "Rücken",
+    "defaultRestDuration": 90,
+    "sortOrder": 11
+  },
+  {
+    "name": "Latzug",
+    "category": "Rücken",
+    "defaultRestDuration": 90,
+    "sortOrder": 12
+  },
+  {
+    "name": "Rudern vorgebeugt (Langhantel)",
+    "category": "Rücken",
+    "defaultRestDuration": 90,
+    "sortOrder": 13
+  },
+  {
+    "name": "Rudern sitzend (Kabelzug)",
+    "category": "Rücken",
+    "defaultRestDuration": 90,
+    "sortOrder": 14
+  },
+  {
+    "name": "Rudern sitzend (Maschine)",
+    "category": "Rücken",
+    "defaultRestDuration": 90,
+    "sortOrder": 15
+  },
+  {
+    "name": "Kniebeugen (Langhantel)",
+    "category": "Beine",
+    "defaultRestDuration": 120,
+    "sortOrder": 20,
+    "localMediaPaths": [
+      "Exercise_Kniebeugen"
+    ]
+  },
+  {
+    "name": "Beinpresse",
+    "category": "Beine",
+    "defaultRestDuration": 120,
+    "sortOrder": 21
+  },
+  {
+    "name": "Beinbeuger (Maschine)",
+    "category": "Beine",
+    "defaultRestDuration": 90,
+    "sortOrder": 22
+  },
+  {
+    "name": "Beinstrecker (Maschine)",
+    "category": "Beine",
+    "defaultRestDuration": 90,
+    "sortOrder": 23
+  },
+  {
+    "name": "Ausfallschritte (Lunges)",
+    "category": "Beine",
+    "defaultRestDuration": 90,
+    "sortOrder": 24
+  },
+  {
+    "name": "Wadenheben",
+    "category": "Beine",
+    "defaultRestDuration": 60,
+    "sortOrder": 25
+  },
+  {
+    "name": "Schulterdrücken (Kurzhanteln)",
+    "category": "Schultern",
+    "defaultRestDuration": 90,
+    "sortOrder": 30
+  },
+  {
+    "name": "Military Press (Langhantel)",
+    "category": "Schultern",
+    "defaultRestDuration": 90,
+    "sortOrder": 31
+  },
+  {
+    "name": "Seitheben (Kurzhanteln)",
+    "category": "Schultern",
+    "defaultRestDuration": 60,
+    "sortOrder": 32
+  },
+  {
+    "name": "Seitheben (Sitzend)",
+    "category": "Schultern",
+    "defaultRestDuration": 60,
+    "sortOrder": 33
+  },
+  {
+    "name": "Seitheben (Maschine)",
+    "category": "Schultern",
+    "defaultRestDuration": 60,
+    "sortOrder": 34
+  },
+  {
+    "name": "Seitheben (Kabelzug)",
+    "category": "Schultern",
+    "defaultRestDuration": 60,
+    "sortOrder": 37
+  },
+  {
+    "name": "Face Pulls (Kabelzug)",
+    "category": "Schultern",
+    "defaultRestDuration": 60,
+    "sortOrder": 35
+  },
+  {
+    "name": "Shrugs",
+    "category": "Schultern",
+    "defaultRestDuration": 60,
+    "sortOrder": 36
+  },
+  {
+    "name": "Bizeps Curls (Kurzhanteln)",
+    "category": "Arme",
+    "defaultRestDuration": 60,
+    "sortOrder": 40
+  },
+  {
+    "name": "Hammer Curls",
+    "category": "Arme",
+    "defaultRestDuration": 60,
+    "sortOrder": 41
+  },
+  {
+    "name": "Trizepsdrücken (Kabelzug)",
+    "category": "Arme",
+    "defaultRestDuration": 60,
+    "sortOrder": 42
+  },
+  {
+    "name": "Dips",
+    "category": "Arme",
+    "defaultRestDuration": 90,
+    "sortOrder": 43
+  },
+  {
+    "name": "French Press (SZ-Stange)",
+    "category": "Arme",
+    "defaultRestDuration": 60,
+    "sortOrder": 44
+  },
+  {
+    "name": "Crunches",
+    "category": "Bauch / Core",
+    "defaultRestDuration": 60,
+    "sortOrder": 50
+  },
+  {
+    "name": "Beinheben (hängend)",
+    "category": "Bauch / Core",
+    "defaultRestDuration": 60,
+    "sortOrder": 51
+  },
+  {
+    "name": "Plank (Unterarmstütz)",
+    "category": "Bauch / Core",
+    "defaultRestDuration": 60,
+    "sortOrder": 52
+  },
+  {
+    "name": "Cable Crunches",
+    "category": "Bauch / Core",
+    "defaultRestDuration": 60,
+    "sortOrder": 53
+  },
+  {
+    "name": "Laufband",
+    "category": "Cardio",
+    "defaultRestDuration": 0,
+    "sortOrder": 60
+  },
+  {
+    "name": "Rudergerät",
+    "category": "Cardio",
+    "defaultRestDuration": 0,
+    "sortOrder": 61
+  },
+  {
+    "name": "Fahrrad-Ergometer",
+    "category": "Cardio",
+    "defaultRestDuration": 0,
+    "sortOrder": 62
+  },
+  {
+    "name": "Stairmaster",
+    "category": "Cardio",
+    "defaultRestDuration": 0,
+    "sortOrder": 63
+  },
+  {
+    "name": "Burpees",
+    "category": "Nicht zugeordnet",
+    "defaultRestDuration": 60,
+    "sortOrder": 70
+  },
   {
     "name": "Couch Stretch (Hüftbeuger-Dehnung)",
     "category": "Mobilität",
@@ -53,7 +249,10 @@
     "sortOrder": 80,
     "isTimeBased": true,
     "timeUnit": "Min",
-    "notes": "### 🎯 Ziel / Fokus\nHüftbeuger entlasten, Becken aufrichten und LWS entlasten.\n\n### ⏱️ Dauer / Umfang\n**2 Min. pro Seite** *(4 Min. gesamt)*\n\n### 📋 Ausführung\n- Knie nah an eine Wand oder Couch stellen\n- Oberen Fuß an der Wand aufstellen\n- Becken aufrichten und den Po der hinteren Seite fest anspannen"
+    "notes": "### 🎯 Ziel / Fokus\nHüftbeuger entlasten, Becken aufrichten und LWS entlasten.\n\n### ⏱️ Dauer / Umfang\n**2 Min. pro Seite** *(4 Min. gesamt)*\n\n### 📋 Ausführung\n- Knie nah an eine Wand oder Couch stellen\n- Oberen Fuß an der Wand aufstellen\n- Becken aufrichten und den Po der hinteren Seite fest anspannen",
+    "localMediaPaths": [
+      "Exercise_CouchStretch"
+    ]
   },
   {
     "name": "Taube / Pigeon Pose (Gluteus & Piriformis)",
