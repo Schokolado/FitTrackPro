@@ -3,7 +3,6 @@ import SwiftData
 
 struct ExerciseLibraryView: View {
     @Environment(\.modelContext) private var modelContext
-    @EnvironmentObject var themeManager: ThemeManager
     @Query(sort: \Exercise.sortOrder) private var allExercises: [Exercise]
     
     private var availableCategories: [String] {
@@ -22,26 +21,12 @@ struct ExerciseLibraryView: View {
                     
                     ForEach(sortedCategories, id: \.self) { category in
                         Section(header: 
-                            HStack(spacing: 8) {
-                                if let custom = themeManager.iconName(for: category),
-                                   UIImage(named: custom) != nil {
-                                    Image(custom)
-                                        .resizable()
-                                        .renderingMode(.template)
-                                        .scaledToFit()
-                                        .frame(width: 20, height: 20)
-                                        .foregroundColor(themeManager.color(for: category))
-                                } else {
-                                    Image(systemName: themeManager.sfSymbol(for: category))
-                                        .foregroundColor(themeManager.color(for: category))
-                                }
-                                Text(category)
-                                    .font(.title3)
-                                    .fontWeight(.bold)
-                                    .foregroundColor(.primary)
-                            }
-                            .textCase(nil)
-                            .padding(.leading, -8) // slight offset to align with cards
+                            Text(category)
+                                .font(.title3)
+                                .fontWeight(.bold)
+                                .foregroundColor(.primary)
+                                .textCase(nil)
+                                .padding(.leading, -8) // slight offset to align with cards
                         ) {
                             ForEach(grouped[category] ?? []) { exercise in
                                 ZStack {

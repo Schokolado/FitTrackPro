@@ -9,7 +9,6 @@ struct SeedExercise: Codable {
     var notes: String?
     var isTimeBased: Bool?
     var timeUnit: String?
-    var localMediaPaths: [String]?
 }
 
 @MainActor
@@ -45,32 +44,13 @@ class SeedDataService {
         let existingExercises = (try? context.fetch(fetchDescriptor)) ?? []
         let existingNames = Set(existingExercises.map { $0.name })
         
-        let standardMediaMap: [String: [String]] = [
-            "Bankdrücken (Langhantel)": ["Exercise_Bankdruecken"],
-            "Bench Press (Barbell)": ["Exercise_Bankdruecken"],
-            "Kniebeugen (Langhantel)": ["Exercise_Kniebeugen"],
-            "Squats (Barbell)": ["Exercise_Kniebeugen"],
-            "Kreuzheben": ["Exercise_Kreuzheben"],
-            "Deadlift": ["Exercise_Kreuzheben"],
-            "Couch Stretch (Hüftbeuger-Dehnung)": ["Exercise_CouchStretch"],
-            "Couch Stretch (Hip Flexor Stretch)": ["Exercise_CouchStretch"]
-        ]
-        
-        for existing in existingExercises {
-            if existing.localMediaPaths.isEmpty, let media = standardMediaMap[existing.name] {
-                existing.localMediaPaths = media
-            }
-        }
-        
         for seed in seedData {
             if !existingNames.contains(seed.name) {
                 let category = seed.category
-                let initialMedia = seed.localMediaPaths ?? standardMediaMap[seed.name] ?? []
                 let exercise = Exercise(
                     name: seed.name,
                     category: category,
                     notes: seed.notes ?? "",
-                    localMediaPaths: initialMedia,
                     defaultRestDuration: seed.defaultRestDuration,
                     isCustom: false,
                     sortOrder: seed.sortOrder,

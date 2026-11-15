@@ -62,36 +62,6 @@ class ThemeManager: ObservableObject {
         categoryColors[key] = color.toHex()
         saveColors()
     }
-
-    func iconName(for category: String) -> String? {
-        switch category.lowercased() {
-        case "brust", "chest": return "IconChest"
-        case "rücken", "back": return "IconBack"
-        case "beine", "legs": return "IconLegs"
-        case "schultern", "shoulders": return "IconShoulders"
-        case "arme", "arms": return "IconArms"
-        case "bauch / core", "abs / core", "bauch": return "IconAbs"
-        case "cardio": return "IconCardio"
-        case "ganzkörper", "full body": return "IconFullBody"
-        case "mobilität", "mobility": return "IconMobility"
-        default: return nil
-        }
-    }
-
-    func sfSymbol(for category: String) -> String {
-        switch category.lowercased() {
-        case "brust", "chest": return "figure.strengthtraining.traditional"
-        case "rücken", "back": return "figure.rowing"
-        case "beine", "legs": return "figure.step.training"
-        case "schultern", "shoulders": return "figure.arms.open"
-        case "arme", "arms": return "dumbbell.fill"
-        case "bauch / core", "abs / core", "bauch": return "figure.core.training"
-        case "cardio": return "figure.run"
-        case "ganzkörper", "full body": return "figure.highintensity.intervaltraining"
-        case "mobilität", "mobility": return "figure.flexibility"
-        default: return "dumbbell.fill"
-        }
-    }
 }
 
 extension Color {

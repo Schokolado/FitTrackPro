@@ -7,10 +7,10 @@
 
 ## 1. Offene Features & UX (Klein bis Mittel)
 
-- [x] **Passende Icons für die jeweiligen Übungsgruppen** *(Design / Assets)*
-  - Vollständige Vektor- & Asset-Ausstattung für alle 9 Übungskategorien (`Brust`, `Rücken`, `Beine`, `Schultern`, `Arme`, `Bauch / Core`, `Cardio`, `Ganzkörper`, `Mobilität`). Custom Monochrome Template-Icons (`IconChest`, `IconBack`, `IconLegs`, `IconShoulders`, `IconArms`, `IconAbs`, `IconCardio`, `IconFullBody`, `IconMobility`) in `Assets.xcassets` integriert, plus abgestimmte SF Symbol Fallbacks in `ThemeManager` & `ExerciseIconView`. Sichtbar in Übungsbibliothek-Karten, Kategorie-Headern, `ExerciseDetailView` und im aktiven Workout.
-- [x] **Passende Bilder für die Ausführung der jeweiligen Übung** *(Content / Assets)*
-  - Hochauflösende (800px) illustrierte 2D-Vektorgrafiken für Grundübungen und Mobilität (`Bankdrücken`, `Kniebeugen`, `Kreuzheben`, `Couch Stretch`) mit aktiven Muskel-Highlights und Haltungs-Cues in `Assets.xcassets` (`Exercise_Bankdruecken`, `Exercise_Kniebeugen`, `Exercise_Kreuzheben`, `Exercise_CouchStretch`) integriert. Anbindung über `MediaStorageService` und automatische Verknüpfung via `SeedDataService` & `DefaultExercises_de.json`.
+- [ ] **Passende Icons für die jeweiligen Übungsgruppen** *(Design / Assets)*
+  - Passende Vektor-Icons (SF Symbols / Custom Assets) für alle 9 Übungskategorien (`Brust`, `Rücken`, `Beine`, `Schultern`, `Arme`, `Bauch / Core`, `Cardio`, `Ganzkörper`, `Mobilität`) zur optischen Differenzierung in Bibliothekslisten, Filterleiste, Statistiken und Plan-Headern.
+- [ ] **Passende Bilder für die Ausführung der jeweiligen Übung** *(Content / Assets)*
+  - Illustrierte Start- und Endpositions-Grafiken / Schritt-für-Schritt-Bilder für die Standard-Übungen (insbesondere Grundübungen und Mobilitäts-Drills), integriert in `ExerciseDetailView` und im aktiven Workout als optische Orientierungshilfe.
 - [ ] **Farbhierarchie im aktiven Workout** *(Design)*
   - Klare Farbtrennung zwischen Satzpausen-Timer (`WorkoutTimerHeaderView`), „Workout angehalten“ (Orange) und „Workout beenden“ (Grün in `WorkoutSessionView`), z. B. Indigo/Cyan/`Color.brand` für Satzpause und Grün exklusiv für Start/Abschluss.
 - [ ] **Optional: Übergang zum Dashboard nach Workout-Abschluss** *(Klein)*
